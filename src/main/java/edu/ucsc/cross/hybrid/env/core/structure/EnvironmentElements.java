@@ -7,7 +7,7 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.settings.Settings;
 
-public class EnvironmentElements extends Component
+public class EnvironmentElements// extends Component
 {
 
 	private String environmentTitle;
@@ -19,21 +19,21 @@ public class EnvironmentElements extends Component
 
 	public EnvironmentElements(String environment_title)
 	{
-		super(environment_title, ComponentClassification.ENVIRONMENT);
+		//	super(environment_title, ComponentClassification.ENVIRONMENT);
 		setEnvironmentTitle(environment_title);
 		initializeDataStructures();
 	}
 
 	public EnvironmentElements()
 	{
-		super("Hybrid Environment", ComponentClassification.ENVIRONMENT);
+		//super("Hybrid Environment", ComponentClassification.ENVIRONMENT);
 		setEnvironmentTitle("Hybrid Environment");
 		initializeDataStructures();
 	}
 
 	private void initializeDataStructures()
 	{
-		startTime = Time.newSecondsValue();
+		startTime = Time.newSecondsValue(0.0);
 		settings = Settings.getSettings();
 		envTime = Time.newSecondsValue(0.0);
 		systems = new ArrayList<HybridSystem>();
@@ -101,11 +101,11 @@ public class EnvironmentElements extends Component
 		this.environmentTitle = environmentTitle;
 	}
 
-	@Override
-	public void initialize()
-	{
-		// TODO Auto-generated method stub
-
-	}
+	//	@Override
+	//	public void initialize()
+	//	{
+	//		// TODO Auto-generated method stub
+	//
+	//	}
 
 }

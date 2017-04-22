@@ -57,7 +57,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 				{
 					DataSet elements = (DataSet) component;
 					elements.simulated(this.simulate());
-					//	elements.initializeElements();
+					//elements.initializeElements();
 				} catch (Exception nonElements)
 				{
 

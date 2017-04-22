@@ -16,10 +16,10 @@ public enum ComponentClassification
 		false),
 	PROPERTY(
 		"Property",
-		true),
+		false),
 	DATA(
 		"Data",
-		true),
+		false),
 
 	// Structure Classifications
 	DATA_SET(

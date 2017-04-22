@@ -17,8 +17,9 @@ class DomainEvaluator extends Processor implements EventHandler
 
 	public double g(double t, double[] y)
 	{
+		System.out.println("Environment time?" + t);
 		//System.out.println(XMLParser.serializeObject(y, MessageCategory.DEV));
-		//getEnvironment().getSimTime().seconds(t);
+		getEnvironment().getEnvTime().seconds(t);
 		getComputationEngine().updateValues(y);
 
 		if (getComponents().jumpOccurring())
@@ -30,6 +31,7 @@ class DomainEvaluator extends Processor implements EventHandler
 		} else
 
 		{
+			//getEnvironment().getEnvTime().seconds(t);
 			getData().storeData(t, false);
 			return 1 * flag;
 		}

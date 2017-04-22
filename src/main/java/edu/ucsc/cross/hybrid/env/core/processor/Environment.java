@@ -35,6 +35,7 @@ public class Environment//implements Environment
 
 	private void initializeComponents()
 	{
+
 		//queue = new ArrayList<Environment>();
 		simEngine = new SimulationEngine(this);
 		simThread = new ExecutionManager(this);

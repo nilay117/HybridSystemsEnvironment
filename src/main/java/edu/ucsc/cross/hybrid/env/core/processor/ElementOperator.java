@@ -39,7 +39,7 @@ public class ElementOperator extends Processor
 				if (!getEnvironment().getAllComponents().contains(component))
 				{
 					getEnvironment().getAllComponents().add(component);
-					Component.setEnvironment(component, getEnvironment());
+
 					//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
 					//					{
 					//						Elements elements = ((Elements) component);
@@ -79,6 +79,7 @@ public class ElementOperator extends Processor
 		for (Component component : allComponents)
 		{
 			component.clearMapsIfEmpty();
+			Component.setEnvironment(component, getEnvironment());
 		}
 	}
 
@@ -138,7 +139,7 @@ public class ElementOperator extends Processor
 	{
 		if (jump_occurred)
 		{
-			storePrejumpValues();
+			//storePrejumpValues();
 		}
 		for (HybridSystem componen : getEnvironment().getAllSystems())
 		{

@@ -60,6 +60,11 @@ public abstract class ProtectedData<T> extends Component
 		this.element = element;
 	}
 
+	public static <S> void setSettable(ProtectedData<S> element, boolean set)
+	{
+		element.settable = set;
+	}
+
 	public static <S> void setValOverride(ProtectedData<S> element, S value)
 	{
 		element.setOverride(value);

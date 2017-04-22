@@ -91,11 +91,11 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	public void clearMapsIfEmpty()
 	{
-		//	System.out.println("Size components : " + getAllComponents(true).size());
+		System.out.println("Size components : " + getAllComponents(true).size());
 		if (getAllComponents(true).size() == 0)
 		{
-			globalElementMap = null;
-			localElementMap = null;
+			globalElementMap.clear();
+			localElementMap.clear();
 		}
 	}
 
@@ -289,8 +289,16 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	public void saveComponentToFile(String directory_path, String file_name)
 	{
-
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name), XMLParser.serializeObject(this));
+		Object clonedComponent = ObjectCloner.xmlClone(this);
+		((Component) clonedComponent).loadAllComponents();
+		((Component) clonedComponent).storeSubComponents(((Component) clonedComponent));
+		((Component) clonedComponent).clearMapsIfEmpty();
+		for (Component subComponent : ((Component) clonedComponent).getAllComponents(true))
+		{
+			subComponent.clearMapsIfEmpty();
+		}
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(clonedComponent));
 
 	}
 

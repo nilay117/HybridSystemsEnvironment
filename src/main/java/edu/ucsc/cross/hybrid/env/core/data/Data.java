@@ -61,7 +61,13 @@ public class Data<T> extends DynamicData<T>
 			}
 		} else
 		{
-			set(initialVal.getValue());
+			try
+			{
+				Data.setValueUnprotected(this, (T) initialVal.getRange().getValue());
+			} catch (Exception ee)
+			{
+				ee.printStackTrace();
+			}
 		}
 		//	}
 	}
