@@ -12,6 +12,15 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	/*
 	 * Constructor that allows the user to name the data set
 	 */
+	public DataSet()
+	{
+		super("Data Set", ComponentClassification.DATA_SET);
+		simulated(true);
+	}
+
+	/*
+	 * Constructor that allows the user to name the data set
+	 */
 	public DataSet(String title)
 	{
 		super(title, ComponentClassification.DATA_SET);
@@ -48,7 +57,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 				{
 					DataSet elements = (DataSet) component;
 					elements.simulated(this.simulate());
-					elements.initializeElements();
+					//	elements.initializeElements();
 				} catch (Exception nonElements)
 				{
 
@@ -60,6 +69,12 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	public void simulated(boolean simulate)
 	{
 		this.simulated = simulate;
+	}
+
+	@Override
+	public void initialize()
+	{
+
 	}
 
 }

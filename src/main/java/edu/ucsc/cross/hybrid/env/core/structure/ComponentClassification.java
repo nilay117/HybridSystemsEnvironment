@@ -16,7 +16,7 @@ public enum ComponentClassification
 		false),
 	PROPERTY(
 		"Property",
-		false),
+		true),
 	DATA(
 		"Data",
 		true),

@@ -118,11 +118,12 @@ public abstract class Component implements Initializer//implements ComponentInte
 	public void loadAllComponents()
 	{
 		loadAllComponents(this);
+
 		//clearMapsIfEmpty();
 		//initializeComponents(true);
 	}
 
-	private void loadAllComponents(Object sys_obj)
+	protected void loadAllComponents(Object sys_obj)
 	{
 		Object sysObj = sys_obj;
 		Class<? extends Object> superClass = sys_obj.getClass();
@@ -137,6 +138,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 			//	System.out.println(superClass.getName());
 
 		}
+		//storeSubComponents((Component) sysObj);
 		//		Object currentObj = this;
 		//		Class currentClass = this.getClass();
 		//		while (!currentClass.equals(Object.class))
@@ -191,7 +193,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 		}
 	}
 
-	private void storeSubComponents(Component component)
+	protected void storeSubComponents(Component component)
 	{
 		storeComponent(component, true);
 		//System.out.println("All Components " + component.getAllComponents(true));
@@ -207,25 +209,49 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	}
 
+	public HybridSystem prepSys(HybridSystem sys)
+	{
+		HybridSystem prepped = sys;
+		prepped.loadAllComponents();
+		if (!sys.equals(this))
+		{
+			this.storeSubComponents(prepped);
+		}
+		return prepped;
+	}
+
 	public void addSubSystem(HybridSystem sys, Integer quantity)
 	{
+		String outp = (XMLParser.serializeObject(this) + "\n\n");
+		HybridSystem newSys = prepSys(sys);
 		for (Integer sysNum = 0; sysNum < quantity; sysNum++)
 		{
-			HybridSystem newSys = (HybridSystem) ObjectCloner.xmlClone(sys);//clone(sys);//, this.hierarchy());
-			loadAllComponents(newSys);
-			this.storeSubComponents(newSys);
-
-			for (Component component : newSys.getAllComponents(true))
+			HybridSystem cloneSys = (HybridSystem) ObjectCloner.xmlClone(newSys);//clone(sys);//, this.hierarchy());
+			if (sys.equals(this))
 			{
-				if (component.initialized == null)
+				this.storeSubComponents(cloneSys);
+			}
+			//	loadAllComponents(cloneSys);
+			//storeComponent(cloneSys, true);
+			//this.storeSubComponents(cloneSys);
+			//sys.s(sys);
+
+			for (Component component : cloneSys.getAllComponents(true))
+			{
+				if (Component.getInitialized(component) == null)
 				{
-					component.initialized = true;
+					Component.setInitialized(component, true);
 				} else
 				{
-					component.initialized = false;
+					Component.setInitialized(component, false);
 				}
 			}
-
+			newSys = cloneSys;
+			outp += "\n\n" + (XMLParser.serializeObject(this) + "\n\n");
+			outp += "\n\n" + (XMLParser.serializeObject(cloneSys) + "\n\n");
+			FileSystemOperator.createOutputFile("./addSubSystem.xml", outp);
+			System.out
+			.println((this.getAllComponents(true).toArray(new Component[this.getAllComponents(true).size()]).length));
 			//loadComponents(newSys);
 		}
 
@@ -273,4 +299,8 @@ public abstract class Component implements Initializer//implements ComponentInte
 		component.initialized = initialized;
 	}
 
+	public static Boolean getInitialized(Component component)
+	{
+		return component.initialized;
+	}
 }

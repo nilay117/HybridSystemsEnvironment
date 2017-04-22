@@ -7,7 +7,7 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.settings.Settings;
 
-public class EnvironmentElements
+public class EnvironmentElements extends Component
 {
 
 	private String environmentTitle;
@@ -19,13 +19,14 @@ public class EnvironmentElements
 
 	public EnvironmentElements(String environment_title)
 	{
-
+		super(environment_title, ComponentClassification.ENVIRONMENT);
 		setEnvironmentTitle(environment_title);
 		initializeDataStructures();
 	}
 
 	public EnvironmentElements()
 	{
+		super("Hybrid Environment", ComponentClassification.ENVIRONMENT);
 		setEnvironmentTitle("Hybrid Environment");
 		initializeDataStructures();
 	}
@@ -41,6 +42,7 @@ public class EnvironmentElements
 
 	public <T extends HybridSystem> void addSystem(T component)
 	{
+		//systems.add(component);
 		addSystem(component, 1);
 	}
 
@@ -51,7 +53,11 @@ public class EnvironmentElements
 		for (Integer ind = 0; ind < quantity; ind++)
 		{
 			T clonedComponent = (T) ObjectCloner.xmlClone(componentToClone);
-			systems.add(clonedComponent);
+			if (!systems.contains(clonedComponent))
+			{
+				systems.add(clonedComponent);
+			}
+			componentToClone = clonedComponent;
 		}
 	}
 
@@ -93,6 +99,13 @@ public class EnvironmentElements
 	public void setEnvironmentTitle(String environmentTitle)
 	{
 		this.environmentTitle = environmentTitle;
+	}
+
+	@Override
+	public void initialize()
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

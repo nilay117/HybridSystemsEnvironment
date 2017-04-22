@@ -28,6 +28,11 @@ public class Data<T> extends DynamicData<T>
 		return initialVal;
 	}
 
+	public boolean nullElement()
+	{
+		return (get() == null);
+	}
+
 	public T getPrejumpValue()
 	{
 		return preJumpValue;
@@ -289,6 +294,15 @@ public class Data<T> extends DynamicData<T>
 		return Data.getDiscreteStateElement(object, null);
 	}
 
+	public static final <T> Data<T> getProperty(T object, String name, boolean save)
+	{
+
+		Data newElement = Data.getElement(object, true, ComponentClassification.PROPERTY, name, "");
+		Data.setStoreValues(newElement, save);
+		//HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
+		return newElement;
+	}
+
 	public static final <T> Data<T> getProperty(T object, String name)
 	{
 
@@ -305,7 +319,7 @@ public class Data<T> extends DynamicData<T>
 	public static <T> Data<T> getParameter(T object, String name, boolean save)
 	{
 
-		Data newElement = Data.getElement(object, false, ComponentClassification.PARAMETER, name, "");
+		Data newElement = Data.getElement(object, true, ComponentClassification.PARAMETER, name, "");
 		Data.setStoreValues(newElement, save);
 		//HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
 		return newElement;
@@ -382,7 +396,7 @@ public class Data<T> extends DynamicData<T>
 		try
 		{
 
-			value = ((Double) element.savedValues.get(time));
+			value = (Number) element.savedValues.get(time);
 		} catch (Exception notDouble)
 		{
 			try

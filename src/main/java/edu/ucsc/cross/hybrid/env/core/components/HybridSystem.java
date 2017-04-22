@@ -54,7 +54,13 @@ public abstract class HybridSystem extends Component
 				Boolean jumpOccurring = localBehavior.jumpOccurring(true);
 				if (jumpOccurring != null)
 				{
-					jumpOccurred = jumpOccurred || localBehavior.jumpOccurring(jumpOccurring);
+					try
+					{
+						jumpOccurred = jumpOccurred || localBehavior.jumpOccurring(jumpOccurring);
+					} catch (Exception outOfDomain)
+					{
+
+					}
 				}
 			} catch (Exception e)
 			{

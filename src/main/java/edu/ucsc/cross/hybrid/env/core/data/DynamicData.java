@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import bs.commons.io.system.IO;
+import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitValue;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
@@ -26,15 +27,26 @@ public class DynamicData<T> extends ProtectedData<T>
 	{
 
 		super(obj, type, can_be_set, name, description);
-		if (type.equals(ComponentClassification.DYNAMIC_STATE))
+		derivative = cloneZeroDerivative(obj);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private T cloneZeroDerivative(T obj)
+	{
+		T derivative;
+		if (FieldFinder.containsSuper(obj, Number.class))
+		{
+			return (T) (Double) 0.0;
+		} else if (FieldFinder.containsSuper(obj, UnitValue.class))
 		{
 			derivative = (T) ObjectCloner.xmlClone(obj);
-			if (obj.getClass().equals(Double.class) || obj.getClass().getSuperclass().equals(UnitValue.class))
+			try
 			{
-				derivative = (T) ObjectCloner.xmlClone(obj);
-			} else
+				((UnitValue) derivative).set(0.0, ((UnitValue) derivative).getUnit());
+			} catch (Exception badUnit)
 			{
-				new Exception().printStackTrace();
+				badUnit.printStackTrace();
 				System.err.println("dynamic variable creation failed : non-numeric classes not allowed");
 				System.exit(1);
 			}
@@ -42,7 +54,7 @@ public class DynamicData<T> extends ProtectedData<T>
 		{
 			derivative = null;
 		}
-
+		return derivative;
 	}
 
 	public T getDt()

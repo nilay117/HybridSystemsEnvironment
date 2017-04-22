@@ -91,6 +91,7 @@ public class ElementOperator extends Processor
 	{
 		for (Component component : allComponents)
 		{
+
 			if (initialize_behavior)
 			{
 				if (component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
@@ -113,7 +114,6 @@ public class ElementOperator extends Processor
 					}
 				}
 			}
-
 			try
 			{
 				DataSet elements = ((DataSet) component);

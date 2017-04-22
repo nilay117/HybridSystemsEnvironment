@@ -90,6 +90,7 @@ public class Environment//implements Environment
 
 	public void prepareEnvironment()
 	{
+		//environment.scanAllSystems();
 		elements.initialize();
 		simEngine.initialize();
 		data.loadStoreStates();
