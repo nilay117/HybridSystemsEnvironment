@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.data;
+package edu.ucsc.cross.hybrid.env.core.components;
 
 import java.util.HashMap;
 
@@ -8,6 +8,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
+import edu.ucsc.cross.hybrid.env.core.data.ConditionalData;
+import edu.ucsc.cross.hybrid.env.core.data.DynamicData;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
 @SuppressWarnings(
@@ -232,6 +234,15 @@ public class Data<T> extends DynamicData<T>
 		}
 	}
 
+	private void storeValue(Double time, boolean override_save)
+	{
+		if (save || override_save)
+		{
+			T storeValue = getStoreValue();
+			savedValues.put(time, storeValue);
+		}
+	}
+
 	private T getStoreValue()
 	{
 		{
@@ -339,6 +350,11 @@ public class Data<T> extends DynamicData<T>
 	public static <T> Data<T> getParameter(T object)
 	{
 		return Data.getParameter(object, null);
+	}
+
+	public static <S> void storeValue(Data<S> element, Double time, boolean override_save)
+	{
+		element.storeValue(time, override_save);
 	}
 
 	public static <S> void storeValue(Data<S> element, Double time)

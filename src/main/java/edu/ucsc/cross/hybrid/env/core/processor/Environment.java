@@ -89,6 +89,11 @@ public class Environment//implements Environment
 		return this.environment.getSettings();
 	}
 
+	public ElementOperator getElementOperator()
+	{
+		return elements;
+	}
+
 	public void prepareEnvironment()
 	{
 		//environment.scanAllSystems();

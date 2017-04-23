@@ -7,6 +7,7 @@ import bs.commons.io.system.IO;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitValue;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
 public class DynamicData<T> extends ProtectedData<T>
@@ -22,7 +23,6 @@ public class DynamicData<T> extends ProtectedData<T>
 
 	}
 
-	@SuppressWarnings("unchecked")
 	protected DynamicData(T obj, boolean can_be_set, ComponentClassification type, String name, String description)
 	{
 
@@ -31,7 +31,8 @@ public class DynamicData<T> extends ProtectedData<T>
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	private T cloneZeroDerivative(T obj)
 	{
 		T derivative;
@@ -120,7 +121,7 @@ public class DynamicData<T> extends ProtectedData<T>
 	}
 
 	@SuppressWarnings("rawtypes")
-	static final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
+	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
 
 	//	@Override

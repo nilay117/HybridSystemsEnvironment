@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import bs.commons.io.system.IO;
 import bs.commons.io.system.StringFormatter;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.data.Data;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 

@@ -13,8 +13,12 @@ public class DataStorageSettings
 	public String autoStoreDirectory; // location where new directories will be created containing results
 	public boolean environmentNameSubDirectory; // flag to create a subdirectory with the name of the environment
 
+	public boolean storePreJumpValue; // flag to store data values before a jump ocurs
+
 	public DataStorageSettings()
 	{
+
+		storePreJumpValue = false;
 		automaticallyStoreResults = true; // flag to store results automatically
 		storeAtEveryJump = false;
 		storeDataAtIncrements = true; // flag to determine whether data is stored at a specified increment,

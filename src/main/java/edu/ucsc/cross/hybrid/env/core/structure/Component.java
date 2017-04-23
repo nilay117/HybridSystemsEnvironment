@@ -44,29 +44,6 @@ public abstract class Component implements Initializer//implements ComponentInte
 		initializeMaps();
 	}
 
-	//	public ArrayList<Component> getAllComponents(boolean include_global)
-	//	{
-	//		ArrayList<Component> allComponents = new ArrayList<Component>();
-	//		for (ArrayList<Component> components : localElementMap.values())
-	//		{
-	//			allComponents.addAll(components);
-	//		}
-	//		if (include_global)
-	//		{
-	//			for (ArrayList<Component> components : globalElementMap.values())
-	//			{
-	//				for (Component component : components)
-	//				{
-	//					if (!allComponents.contains(component))
-	//					{
-	//						allComponents.addAll(components);
-	//					}
-	//				}
-	//			}
-	//		}
-	//		return allComponents;
-	//	}
-
 	public ArrayList<Component> getAllComponents(boolean include_global)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();

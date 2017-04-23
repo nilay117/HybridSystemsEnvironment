@@ -8,8 +8,8 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.data.Data;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 

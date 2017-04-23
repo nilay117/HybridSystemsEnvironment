@@ -2,7 +2,7 @@ package edu.ucsc.cross.hybrid.env.core.settings;
 
 import bs.commons.objects.manipulation.XMLParser;
 
-public class PrintOutSettings
+public class PrintSettings
 {
 
 	public final boolean printProgressUpdates; //= true;
@@ -11,7 +11,7 @@ public class PrintOutSettings
 	public boolean printStoreDataIndicator;
 	public boolean printStoreDataReport;
 
-	public PrintOutSettings()
+	public PrintSettings()
 	{
 		totalSimTimePrintOuts = 20;
 		printStoreDataIndicator = true;
@@ -23,7 +23,7 @@ public class PrintOutSettings
 	public static void main(String args[])
 	{
 		//FileSystemOperator.createOutputFile("resources/io/settings.xml", XMLParser.serializeObject(new IOSettings()));
-		PrintOutSettings inputted = (PrintOutSettings) XMLParser.getObject("resources/io/settings.xml");
+		PrintSettings inputted = (PrintSettings) XMLParser.getObject("resources/io/settings.xml");
 		System.out.println(inputted.printProgressUpdates);
 	}
 }

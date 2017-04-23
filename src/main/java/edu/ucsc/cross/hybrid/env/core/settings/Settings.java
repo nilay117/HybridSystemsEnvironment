@@ -9,17 +9,17 @@ import bs.commons.objects.manipulation.XMLParser;
 public class Settings
 {
 
-	private PrintOutSettings io;
+	private PrintSettings printSettings;
 	private ComputationSettings computation;
 	private DataStorageSettings data;
-	private TrialSettings trial;
+	private ExecutionSettings trial;
 
 	private Settings()
 	{
-		io = new PrintOutSettings();
+		printSettings = new PrintSettings();
 		computation = new ComputationSettings();
 		data = new DataStorageSettings();
-		trial = new TrialSettings();
+		trial = new ExecutionSettings();
 	}
 
 	public static Settings getSettings()
@@ -63,9 +63,9 @@ public class Settings
 		return computation;
 	}
 
-	public PrintOutSettings io()
+	public PrintSettings io()
 	{
-		return io;
+		return printSettings;
 	}
 
 	public static void setComputationSettings(Settings settings, ComputationSettings computation)
@@ -83,12 +83,12 @@ public class Settings
 		settings.data = data;
 	}
 
-	public TrialSettings trial()
+	public ExecutionSettings trial()
 	{
 		return trial;
 	}
 
-	public static void setTrialSettings(Settings settings, TrialSettings simulation)
+	public static void setTrialSettings(Settings settings, ExecutionSettings simulation)
 	{
 		settings.trial = simulation;
 	}
@@ -103,7 +103,7 @@ public class Settings
 			DataStorageSettings.class),
 		TRIAL(
 			"Trial",
-			TrialSettings.class);
+			ExecutionSettings.class);
 		//		TRIAL_CONFIG(
 		//			"TrialConfig",
 		//			TrialConfiguration.class);

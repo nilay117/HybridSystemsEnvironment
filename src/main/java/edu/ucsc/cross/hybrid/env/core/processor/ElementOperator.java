@@ -2,16 +2,22 @@ package edu.ucsc.cross.hybrid.env.core.processor;
 
 import java.util.ArrayList;
 
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.data.Data;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
+import edu.ucsc.cross.hybrid.env.core.structure.DataCategory;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
 public class ElementOperator extends Processor
 {
+
+	public ArrayList<Data> getAllData()
+	{
+		return allData;
+	}
 
 	private ArrayList<Data> allData;
 
@@ -39,7 +45,7 @@ public class ElementOperator extends Processor
 				if (!getEnvironment().getAllComponents().contains(component))
 				{
 					getEnvironment().getAllComponents().add(component);
-
+					//Component.setEnvironment(component, getEnvironment());
 					//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
 					//					{
 					//						Elements elements = ((Elements) component);
@@ -139,7 +145,10 @@ public class ElementOperator extends Processor
 	{
 		if (jump_occurred)
 		{
-			//storePrejumpValues();
+			if (getSettings().getData().storePreJumpValue)
+			{
+				storePrejumpValues();
+			}
 		}
 		for (HybridSystem componen : getEnvironment().getAllSystems())
 		{
@@ -151,7 +160,10 @@ public class ElementOperator extends Processor
 	{
 		for (Data data : allData)
 		{
-			Data.storePreJumpValue(data);
+			if (DataCategory.STATE_ELEMENTS.containsObj(data))
+			{
+				Data.storePreJumpValue(data);
+			}
 		}
 	}
 

@@ -42,7 +42,7 @@ public abstract class Processor
 	//@Override
 	protected EnvironmentElements getEnvironment()
 	{
-		return processor.environment;
+		return processor.getEnvironment();
 	}
 
 	//@Override

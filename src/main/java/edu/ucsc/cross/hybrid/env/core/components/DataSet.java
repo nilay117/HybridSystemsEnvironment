@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hybrid.env.core.components;
 
-import edu.ucsc.cross.hybrid.env.core.data.Data;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
@@ -69,12 +68,6 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	public void simulated(boolean simulate)
 	{
 		this.simulated = simulate;
-	}
-
-	@Override
-	public void initialize()
-	{
-
 	}
 
 }

@@ -3,7 +3,7 @@ package edu.ucsc.cross.hybrid.env.core.structure;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import edu.ucsc.cross.hybrid.env.core.data.Data;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 
 public enum DataCategory
 {

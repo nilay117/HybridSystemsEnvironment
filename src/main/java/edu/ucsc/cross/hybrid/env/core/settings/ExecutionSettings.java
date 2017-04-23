@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hybrid.env.core.settings;
 
-public class TrialSettings
+public class ExecutionSettings
 {
 
 	public String name;
@@ -13,7 +13,7 @@ public class TrialSettings
 
 	public Double simDuration;
 
-	public TrialSettings()
+	public ExecutionSettings()
 	{
 		numberOfTrials = 1;
 		maxParallelExecutions = 1;

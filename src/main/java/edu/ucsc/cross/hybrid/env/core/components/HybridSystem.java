@@ -29,12 +29,10 @@ public abstract class HybridSystem extends Component
 			Behavior localBehavior = (Behavior) behaviorComponent;
 			try
 			{
-
 				localBehavior.updateStates(true, jump_occurred);
-
-			} catch (Exception e)
+			} catch (Exception behaviorFail)
 			{
-				e.printStackTrace();
+				behaviorFail.printStackTrace();
 			}
 		}
 		if (jump_occurred && jumpOccurring())
@@ -59,12 +57,11 @@ public abstract class HybridSystem extends Component
 						jumpOccurred = jumpOccurred || localBehavior.jumpOccurring(jumpOccurring);
 					} catch (Exception outOfDomain)
 					{
-
 					}
 				}
-			} catch (Exception e)
+			} catch (Exception behaviorFail)
 			{
-				e.printStackTrace();
+				behaviorFail.printStackTrace();
 			}
 		}
 		return jumpOccurred;
