@@ -11,7 +11,7 @@ import edu.ucsc.cross.hybrid.env.core.structure.DataCategory;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class ElementOperator extends Processor
+public class ElementOperator extends ProcessorComponent
 {
 
 	public ArrayList<Data> getAllData()

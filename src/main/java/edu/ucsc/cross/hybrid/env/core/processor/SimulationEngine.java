@@ -15,7 +15,7 @@ import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
-public class SimulationEngine extends Processor implements FirstOrderDifferentialEquations
+public class SimulationEngine extends ProcessorComponent implements FirstOrderDifferentialEquations
 {
 
 	// mapping of all state elements used by the ode to the corresponding ode

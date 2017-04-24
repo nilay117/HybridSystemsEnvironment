@@ -6,32 +6,32 @@ import java.io.IOException;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.manipulation.XMLParser;
 
-public class Settings
+public class SettingCollection
 {
 
 	private PrintSettings printSettings;
 	private ComputationSettings computation;
-	private DataStorageSettings data;
+	private DataSettings data;
 	private ExecutionSettings trial;
 
-	private Settings()
+	private SettingCollection()
 	{
 		printSettings = new PrintSettings();
 		computation = new ComputationSettings();
-		data = new DataStorageSettings();
+		data = new DataSettings();
 		trial = new ExecutionSettings();
 	}
 
-	public static Settings getSettings()
+	public static SettingCollection getSettings()
 	{
-		Settings settings = null;
+		SettingCollection settings = null;
 		try
 		{
-			if (new File(DataStorageSettings.defaultSettingDirectory, DataStorageSettings.defaultSettingFileName)
+			if (new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName)
 			.exists())
 			{
-				settings = (Settings) XMLParser.getObject(
-				new File(DataStorageSettings.defaultSettingDirectory, DataStorageSettings.defaultSettingFileName));
+				settings = (SettingCollection) XMLParser.getObject(
+				new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName));
 			} else
 			{
 				throw new IOException();
@@ -39,11 +39,11 @@ public class Settings
 		} catch (Exception badDefault)
 		{
 			badDefault.printStackTrace();
-			settings = new Settings();
+			settings = new SettingCollection();
 			try
 			{
 				FileSystemOperator.createOutputFile(
-				new File(DataStorageSettings.defaultSettingDirectory, DataStorageSettings.defaultSettingFileName),
+				new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName),
 				XMLParser.serializeObject(settings));
 			} catch (Exception badFile)
 			{
@@ -52,7 +52,7 @@ public class Settings
 		}
 		if (settings == null)
 		{
-			settings = new Settings();
+			settings = new SettingCollection();
 		}
 		return settings;
 
@@ -68,17 +68,17 @@ public class Settings
 		return printSettings;
 	}
 
-	public static void setComputationSettings(Settings settings, ComputationSettings computation)
+	public static void setComputationSettings(SettingCollection settings, ComputationSettings computation)
 	{
 		settings.computation = computation;
 	}
 
-	public DataStorageSettings getData()
+	public DataSettings getData()
 	{
 		return data;
 	}
 
-	public static void setDataSettings(Settings settings, DataStorageSettings data)
+	public static void setDataSettings(SettingCollection settings, DataSettings data)
 	{
 		settings.data = data;
 	}
@@ -88,7 +88,7 @@ public class Settings
 		return trial;
 	}
 
-	public static void setTrialSettings(Settings settings, ExecutionSettings simulation)
+	public static void setTrialSettings(SettingCollection settings, ExecutionSettings simulation)
 	{
 		settings.trial = simulation;
 	}
@@ -100,7 +100,7 @@ public class Settings
 			ComputationSettings.class),
 		DATA(
 			"Data",
-			DataStorageSettings.class),
+			DataSettings.class),
 		TRIAL(
 			"Trial",
 			ExecutionSettings.class);

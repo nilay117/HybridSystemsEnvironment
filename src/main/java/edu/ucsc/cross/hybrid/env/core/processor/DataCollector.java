@@ -13,7 +13,7 @@ import edu.ucsc.cross.hybrid.env.core.structure.DataCategory;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataCollector extends Processor
+public class DataCollector extends ProcessorComponent
 {
 
 	public Double getLastStoreTime()

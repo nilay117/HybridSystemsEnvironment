@@ -9,7 +9,7 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import bs.commons.io.system.IO;
 import bs.commons.objects.access.Protected;
 
-public class ExecutionManager extends Processor
+public class ExecutionManager extends ProcessorComponent
 {
 
 	private Thread thread;
@@ -33,7 +33,8 @@ public class ExecutionManager extends Processor
 
 		} else
 		{
-			runSimulation();
+			//runSimulation();
+			launchEnvironment();
 		}
 
 	}

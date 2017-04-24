@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hybrid.env.core.processor;
 
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.settings.Settings;
+import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
 import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentElements;
 
 public class Environment//implements Environment
@@ -51,7 +51,7 @@ public class Environment//implements Environment
 	{
 		prepareEnvironment();
 		environment.getStartTime().seconds(Double.valueOf(System.currentTimeMillis()) / 1000);//Time.newSecondValue(0.0);
-		simThread.runSim(true);
+		simThread.runSim(false);
 	}
 
 	public <S extends HybridSystem> void addSystem(S component)
@@ -79,12 +79,12 @@ public class Environment//implements Environment
 		return data;
 	}
 
-	public void setSettings(Settings settings)
+	public void setSettings(SettingCollection settings)
 	{
 		this.environment.setSettings(settings);
 	}
 
-	public Settings getSettings()
+	public SettingCollection getSettings()
 	{
 		return this.environment.getSettings();
 	}

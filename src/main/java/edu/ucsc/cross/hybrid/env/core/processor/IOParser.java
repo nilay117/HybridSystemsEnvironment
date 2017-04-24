@@ -9,7 +9,7 @@ import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentElements;
 
-public class IOParser extends Processor
+public class IOParser extends ProcessorComponent
 {
 
 	protected IOParser(Environment processor)

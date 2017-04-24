@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.settings.Settings;
+import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
 
 public class EnvironmentElements extends Component
 {
@@ -15,7 +15,7 @@ public class EnvironmentElements extends Component
 	private ArrayList<HybridSystem> systems;
 	private ArrayList<Component> allComponents;
 	private Time envTime;
-	private Settings settings;
+	private SettingCollection settings;
 
 	public EnvironmentElements(String environment_title)
 	{
@@ -34,7 +34,7 @@ public class EnvironmentElements extends Component
 	private void initializeDataStructures()
 	{
 		startTime = Time.newSecondsValue(0.0);
-		settings = Settings.getSettings();
+		settings = SettingCollection.getSettings();
 		envTime = Time.newSecondsValue(0.0);
 		systems = new ArrayList<HybridSystem>();
 		allComponents = new ArrayList<Component>();
@@ -76,12 +76,12 @@ public class EnvironmentElements extends Component
 		return envTime;
 	}
 
-	public Settings getSettings()
+	public SettingCollection getSettings()
 	{
 		return settings;
 	}
 
-	public void setSettings(Settings settings)
+	public void setSettings(SettingCollection settings)
 	{
 		this.settings = settings;
 	}

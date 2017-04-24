@@ -4,7 +4,7 @@ import org.apache.commons.math3.ode.events.EventHandler;
 
 import bs.commons.io.system.IO;
 
-class DomainEvaluator extends Processor implements EventHandler
+class DomainEvaluator extends ProcessorComponent implements EventHandler
 {
 
 	public Double flag = 1.0;
@@ -17,7 +17,7 @@ class DomainEvaluator extends Processor implements EventHandler
 
 	public double g(double t, double[] y)
 	{
-		System.out.println("Environment time?" + t);
+		//System.out.println("Environment time?" + t);
 		//System.out.println(XMLParser.serializeObject(y, MessageCategory.DEV));
 		getEnvironment().getEnvTime().seconds(t);
 		getComputationEngine().updateValues(y);
@@ -55,6 +55,8 @@ class DomainEvaluator extends Processor implements EventHandler
 	{
 		getComputationEngine().updateValues(y);
 		getEnvironment().getEnvTime().seconds(t);
+		getData().storeData(t - getSettings().getData().dataStoreIncrement,
+		(true && getSettings().getData().storeAtEveryJump));
 		getComponents().performTasks(true);
 		getData().storeData(t, (true && getSettings().getData().storeAtEveryJump));
 		getComputationEngine().setODEValueVector(y);

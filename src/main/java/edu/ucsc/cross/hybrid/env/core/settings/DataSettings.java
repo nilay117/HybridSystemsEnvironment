@@ -1,10 +1,11 @@
 package edu.ucsc.cross.hybrid.env.core.settings;
 
-public class DataStorageSettings
+public class DataSettings
 {
 
-	public static String defaultSettingFileName = "default.xml";
+	public static String defaultSettingFileName = "default.xml"; //  defalt setting file
 	public static String defaultSettingDirectory = "./settings";
+	public static Double postJumpStoreIncrement = .0000000001;
 	public boolean automaticallyStoreResults; // flag to store results automatically
 	public boolean storeDataAtIncrements; // flag to determine whether data is stored at a specified increment,
 
@@ -15,7 +16,7 @@ public class DataStorageSettings
 
 	public boolean storePreJumpValue; // flag to store data values before a jump ocurs
 
-	public DataStorageSettings()
+	public DataSettings()
 	{
 
 		storePreJumpValue = false;

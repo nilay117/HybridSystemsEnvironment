@@ -1,15 +1,15 @@
 package edu.ucsc.cross.hybrid.env.core.processor;
 
 import bs.commons.unitvars.values.Time;
-import edu.ucsc.cross.hybrid.env.core.settings.Settings;
+import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
 import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentElements;
 
-public abstract class Processor
+public abstract class ProcessorComponent
 {
 
 	private Environment processor;
 
-	protected Processor(Environment processor)
+	protected ProcessorComponent(Environment processor)
 	{
 		this.processor = processor;
 	}
@@ -51,7 +51,7 @@ public abstract class Processor
 		return processor.notifier;
 	}
 
-	protected Settings getSettings()
+	protected SettingCollection getSettings()
 	{
 		return processor.getSettings();
 	}
@@ -79,7 +79,7 @@ public abstract class Processor
 	}
 
 	//@Override
-	protected void setSettings(Settings settings)
+	protected void setSettings(SettingCollection settings)
 	{
 		processor.setSettings(settings);
 	}

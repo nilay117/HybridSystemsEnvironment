@@ -10,7 +10,7 @@ import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
-public class OutputConsole extends Processor
+public class OutputConsole extends ProcessorComponent
 {
 
 	private Double nextPrintTime;
