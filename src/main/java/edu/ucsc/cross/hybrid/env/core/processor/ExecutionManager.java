@@ -163,7 +163,7 @@ public class ExecutionManager extends ProcessorComponent
 				IO.warn("Integrator failure due to large step size - adjusting step size and restarting integrator");
 				getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep / 2;
 				getSettings().computation().odeMinStep = getSettings().computation().odeMinStep / 2;
-				getComponents().performTasks();
+				//getComponents().performTasks(getComponents().jumpOccurring());
 			}
 
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)

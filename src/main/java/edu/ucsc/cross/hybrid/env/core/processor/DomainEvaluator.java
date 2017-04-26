@@ -7,7 +7,7 @@ import bs.commons.io.system.IO;
 class DomainEvaluator extends ProcessorComponent implements EventHandler
 {
 
-	public Double flag = 1.0;
+	private Double flag;
 
 	DomainEvaluator(Environment processor)
 	{
@@ -15,17 +15,14 @@ class DomainEvaluator extends ProcessorComponent implements EventHandler
 
 	}
 
+	@Override
 	public double g(double t, double[] y)
 	{
-		//System.out.println("Environment time?" + t);
-		//System.out.println(XMLParser.serializeObject(y, MessageCategory.DEV));
 		getEnvironment().getEnvTime().seconds(t);
 		getComputationEngine().updateValues(y);
 
 		if (getComponents().jumpOccurring())
 		{
-			//getEnvironment().storePreJumpStates();
-			//getSimEngine().updateValues(y);
 			return -1 * flag;
 
 		} else
@@ -37,6 +34,7 @@ class DomainEvaluator extends ProcessorComponent implements EventHandler
 		}
 	}
 
+	@Override
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
 		//getComputationEngine().updateValues(y);
@@ -48,6 +46,7 @@ class DomainEvaluator extends ProcessorComponent implements EventHandler
 	@Override
 	public void init(double t0, double[] y0, double t)
 	{
+		flag = 1.0;
 	}
 
 	@Override

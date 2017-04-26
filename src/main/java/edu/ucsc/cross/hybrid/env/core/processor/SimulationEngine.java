@@ -103,6 +103,7 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 	{
 		updateValues(y);
 		getConsole().printUpdates();
+
 		//	sim.environment().storePreJumpStates();
 		getComponents().performTasks(false);
 		updateYDotVector(yDot);

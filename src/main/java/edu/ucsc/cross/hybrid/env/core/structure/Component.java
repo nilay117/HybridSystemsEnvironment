@@ -45,7 +45,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 	private ComponentProperties properties;
 	private EnvironmentElements environment;
 	@CoreComponent
-	public HashMap<ComponentClassification, ArrayList<Component>> globalElementMap;
+	public HashMap<ComponentClassification, ArrayList<Component>> localSubElementMap;
 	@CoreComponent
 	public HashMap<ComponentClassification, ArrayList<Component>> localElementMap;
 
@@ -61,22 +61,24 @@ public abstract class Component implements Initializer//implements ComponentInte
 	public ArrayList<Component> getAllComponents(boolean include_global)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		if (globalElementMap != null)
+
+		if (include_global)
 		{
-			if (include_global)
+			if (localSubElementMap != null)
 			{
-				for (ArrayList<Component> components : globalElementMap.values())
-				{
-					allComponents.addAll(components);
-				}
-			} else
-			{
-				for (ArrayList<Component> components : localElementMap.values())
+				for (ArrayList<Component> components : localSubElementMap.values())
 				{
 					allComponents.addAll(components);
 				}
 			}
+		} else
+		{
+			for (ArrayList<Component> components : localElementMap.values())
+			{
+				allComponents.addAll(components);
+			}
 		}
+
 		return allComponents;
 	}
 
@@ -85,25 +87,25 @@ public abstract class Component implements Initializer//implements ComponentInte
 		System.out.println("Size components : " + getAllComponents(true).size());
 		if (getAllComponents(true).size() == 0)
 		{
-			globalElementMap.clear();
+			localSubElementMap.clear();
 			localElementMap.clear();
 		}
 	}
 
 	private void initializeMaps()
 	{
-		globalElementMap = initializeMap();
-		localElementMap = initializeMap();
+		localSubElementMap = initializeElementMap();
+		localElementMap = initializeElementMap();
 	}
 
-	private HashMap<ComponentClassification, ArrayList<Component>> initializeMap()
+	private static HashMap<ComponentClassification, ArrayList<Component>> initializeElementMap()
 	{
-		localElementMap = new HashMap<ComponentClassification, ArrayList<Component>>();
+		HashMap<ComponentClassification, ArrayList<Component>> elementMap = new HashMap<ComponentClassification, ArrayList<Component>>();
 		for (ComponentClassification c : ComponentClassification.values())
 		{
-			localElementMap.put(c, new ArrayList<Component>());
+			elementMap.put(c, new ArrayList<Component>());
 		}
-		return localElementMap;
+		return elementMap;
 	}
 
 	public void loadAllComponents()
@@ -118,17 +120,22 @@ public abstract class Component implements Initializer//implements ComponentInte
 	{
 		Object sysObj = sys_obj;
 		Class<? extends Object> superClass = sys_obj.getClass();
-		while (superClass != Object.class)
-		{
-			//System.out.println("Class " + superClass + " Object " + sysObj.toString());
-			((Component) sysObj).loadComponents(sysObj);
-			superClass = superClass.getSuperclass();
-			Object newSysObj = superClass.cast(sysObj);
-			sysObj = newSysObj;
-			//System.out.println("Class " + superClass);
-			//	System.out.println(superClass.getName());
 
+		{
+			while (superClass != Object.class)
+			{
+				//System.out.println("Class " + superClass + " Object " + sysObj.toString());
+
+				((Component) sysObj).loadComponents(sysObj);
+				superClass = superClass.getSuperclass();
+				Object newSysObj = superClass.cast(sysObj);
+				sysObj = newSysObj;
+				//System.out.println("Class " + superClass);
+				//	System.out.println(superClass.getName());
+
+			}
 		}
+		//	objectScanned(sys_obj);
 		//storeSubComponents((Component) sysObj);
 		//		Object currentObj = this;
 		//		Class currentClass = this.getClass();
@@ -145,33 +152,44 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	private void loadComponents(Object load)
 	{
+
 		for (Object field : FieldFinder.getObjectFieldValues(load, true))
 		{
-			//System.out.println(field.toString());
 
-			//for (Object allCurrent : ComponentLocator.components(field, Component.class))
-			//			{
-			//				((Component) allCurrent).loadAllComponents();
-			//				//((Component) field).storeSubComponents((Component) allCurrent);
-			//			}
-			//System.out.println(getContainerComponents(field, Component.class));
-			for (Component containerField : getContainerComponents(field, Component.class))
+			if (field != null)
 			{
-				storeComponent(containerField, true);
-				loadAllComponents(containerField);
-			}
-			if (FieldFinder.containsSuper(field, Component.class))
-			{
-				//((Component) load).storeComponent((Component) field, true);
-				//storeSubComponents((Component) field);
-				loadAllComponents(field);
-				((Component) load).storeSubComponents((Component) field);
+				{
+					//System.out.println(field.toString());
 
-				//	((Component) field).loadAllComponents();
-				//	storeComponent((Component) field, true);
+					//for (Object allCurrent : ComponentLocator.components(field, Component.class))
+					//			{
+					//				((Component) allCurrent).loadAllComponents();
+					//				//((Component) field).storeSubComponents((Component) allCurrent);
+					//			}
+					//System.out.println(getContainerComponents(field, Component.class));
+					for (Component containerField : getContainerComponents(field, Component.class))
+					{
+						loadAllComponents(containerField);
+						((Component) load).storeSubComponents(containerField);
+					}
+					if (FieldFinder.containsSuper(field, Component.class))
+					{
+						//((Component) load).storeComponent((Component) field, true);
+						//storeSubComponents((Component) field);
+
+						{
+							loadAllComponents(field);
+							((Component) load).storeSubComponents((Component) field);
+						}
+
+						//	((Component) field).loadAllComponents();
+						//	storeComponent((Component) field, true);
+					}
+				}
 			}
+
 		}
-
+		//	
 	}
 
 	private void storeComponent(Component component, boolean local)
@@ -183,11 +201,12 @@ public abstract class Component implements Initializer//implements ComponentInte
 				localElementMap.get(component.properties.getClassification()).add(component);//..getProperties().getClassification()).add(allCurrent))));
 			}
 		}
-		if (!globalElementMap.get(component.properties.getClassification()).contains(component))
+		if (!localSubElementMap.get(component.properties.getClassification()).contains(component))
 		{
 			//	System.out.println(component);
-			globalElementMap.get(component.properties.getClassification()).add(component);//..getProperties().getClassification()).add(allCurrent))));
+			localSubElementMap.get(component.properties.getClassification()).add(component);//..getProperties().getClassification()).add(allCurrent))));
 		}
+
 	}
 
 	protected void storeSubComponents(Component component)
@@ -254,17 +273,39 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	}
 
-	//@Override
 	public ArrayList<Component> getComponents(ComponentClassification type, boolean global)
+	{
+
+		return getComponents(type, Component.class, global);
+
+	}
+
+	public <T> ArrayList<T> getComponents(ComponentClassification type, Class<T> type_class, boolean global)
 	{
 		// TODO Auto-generated method stub
 		if (global)
 		{
-			return globalElementMap.get(type);
+			return (ArrayList<T>) localSubElementMap.get(type);
 		} else
 		{
-			return localElementMap.get(type);
+			return (ArrayList<T>) localElementMap.get(type);
 		}
+	}
+
+	public ArrayList<Component> getComponents(DataCategory category, boolean global)
+	{
+		// TODO Auto-generated method stub
+		for (ComponentClassification type : category.subTypes)
+		{
+			if (global)
+			{
+				return localSubElementMap.get(type);
+			} else
+			{
+				return localElementMap.get(type);
+			}
+		}
+		return null;
 	}
 
 	public EnvironmentElements getEnvironment()
@@ -335,28 +376,37 @@ public abstract class Component implements Initializer//implements ComponentInte
 		//System.out.println("h" + container);
 
 		ArrayList<T> components = new ArrayList<T>();
+
 		if (!FieldFinder.containsInterface(container, CoreComponent.class))
 		{
 			try
 			{
-				for (T entry : ((HashMap<?, T>) (HashMap.class.cast(container))).values())
+				//	for (T entry : ((HashMap<?, T>) (HashMap.class.cast(container))).values())
+				for (T entry : ((HashMap<?, T>) container).values())
 				{
 					//System.out.println("h" + container);
 					if (FieldFinder.containsSuper(entry, search))
 					{
-						components.add((T) entry);
+						//	if (!objectScanned(entry))
+						{
+							components.add((T) entry);
+						}
 					}
 				}
 			} catch (Exception e)
 			{
 				try
 				{
-					for (T entry : ((ArrayList<T>) (ArrayList.class.cast(container))))
+					//		for (T entry : ((ArrayList<T>) (ArrayList.class.cast(container))))
+					for (T entry : ((ArrayList<T>) container))
 					{
 						//System.out.println("h" + container);
 						if (FieldFinder.containsSuper(entry, search))
 						{
-							components.add((T) entry);
+							//	if (!objectScanned(entry))
+							{
+								components.add((T) entry);
+							}
 						}
 					}
 				} catch (Exception ee)
@@ -365,6 +415,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 				}
 			}
 		}
+
 		return components;
 	}
 }
