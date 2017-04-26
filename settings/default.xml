@@ -1,0 +1,41 @@
+<edu.ucsc.cross.hybrid.env.core.settings.SettingCollection>
+  <printSettings>
+    <printProgressUpdates>true</printProgressUpdates>
+    <totalSimTimePrintOuts>20</totalSimTimePrintOuts>
+    <printDiscreteEventIndicator>true</printDiscreteEventIndicator>
+    <printStoreDataIndicator>true</printStoreDataIndicator>
+    <printStoreDataReport>true</printStoreDataReport>
+  </printSettings>
+  <computation>
+    <odeMinStep>0.01</odeMinStep>
+    <odeMaxStep>0.1</odeMaxStep>
+    <odeScalAbsoluteTolerance>1.0E-6</odeScalAbsoluteTolerance>
+    <odeScalRelativeTolerance>1.0E-6</odeScalRelativeTolerance>
+    <ehMaxCheckInterval>0.001</ehMaxCheckInterval>
+    <ehConvergence>0.001</ehConvergence>
+    <ehMaxIterationCount>10</ehMaxIterationCount>
+    <jumpPriority>true</jumpPriority>
+    <maxRecursiveStackSize>1000</maxRecursiveStackSize>
+    <integrator>DORMAND_PRINCE_853</integrator>
+    <integratorOptions>
+         Integrator Options : 
+         - Euler = EULER
+         - Dormand Prince 853 = DORMAND_PRINCE_853
+</integratorOptions>
+  </computation>
+  <data>
+    <automaticallyStoreResults>true</automaticallyStoreResults>
+    <storeDataAtIncrements>true</storeDataAtIncrements>
+    <storeAtEveryJump>false</storeAtEveryJump>
+    <dataStoreIncrement>0.1</dataStoreIncrement>
+    <autoStoreDirectory>./results</autoStoreDirectory>
+    <environmentNameSubDirectory>true</environmentNameSubDirectory>
+    <storePreJumpValue>false</storePreJumpValue>
+  </data>
+  <trial>
+    <runThreadded>true</runThreadded>
+    <numberOfTrials>1</numberOfTrials>
+    <maxParallelExecutions>1</maxParallelExecutions>
+    <simDuration>10.0</simDuration>
+  </trial>
+</edu.ucsc.cross.hybrid.env.core.settings.SettingCollection>

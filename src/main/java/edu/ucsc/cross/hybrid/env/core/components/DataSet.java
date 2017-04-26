@@ -44,7 +44,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	{ "unchecked", "rawtypes" })
 	public void initializeElements()
 	{
-		for (Component component : this.getAllComponents(true))
+		for (Component component : this.getAllllComponents(true))
 		{
 			try
 			{

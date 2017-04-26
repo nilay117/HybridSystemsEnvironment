@@ -120,9 +120,9 @@ public class DataCollector extends ProcessorComponent
 			try
 			{
 				DataSet set = (DataSet) component;
-				if (set.getAllComponents(true).contains(data))
+				if (set.getAllllComponents(true).contains(data))
 				{
-					for (Component subComponent : set.getAllComponents(true))
+					for (Component subComponent : set.getAllllComponents(true))
 					{
 						try
 						{

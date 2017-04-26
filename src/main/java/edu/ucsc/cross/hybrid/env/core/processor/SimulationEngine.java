@@ -6,14 +6,11 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
-import bs.commons.io.system.IO;
-import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
@@ -23,7 +20,6 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 	// mapping of all state elements used by the ode to the corresponding ode
 	// state vector index. The ode state vector is made up of all the elements
 	// that can change continuously
-
 	private HashMap<Integer, Data> odeVectorMap;
 
 	SimulationEngine(Environment processor)
@@ -34,7 +30,7 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 
 	void initialize()
 	{
-		this.initializeIndicies();
+		initializeIndicies();
 	}
 
 	private void initializeIndicies()
@@ -43,7 +39,7 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 		Integer odeIndex = 0;
 		for (HybridSystem componen : getEnvironment().getAllSystems())
 		{
-			for (Component component : componen.getComponents(ComponentClassification.DYNAMIC_STATE, true))//.loadComponents();//.getSpecificComponent(Data.class, null))
+			for (Component component : componen.getComponents(Data.class, true))//.loadComponents();//.getSpecificComponent(Data.class, null))
 			{
 				try
 				{
@@ -56,11 +52,9 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 				{
 					e.printStackTrace();
 				}
-
 			}
 		}
-		IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
-		IO.debug("ODE Vector Map:\n" + this.getProcessor().elements.getAllData().size() + "\n");
+		//	IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
 
 		//	System.exit(0);
 

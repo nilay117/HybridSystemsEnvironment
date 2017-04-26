@@ -2,7 +2,7 @@ package edu.ucsc.cross.hybrid.env.core.processor;
 
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
-import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentElements;
+import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
 
 public abstract class ProcessorComponent
 {
@@ -17,14 +17,14 @@ public abstract class ProcessorComponent
 	//@Override
 	protected Time getEnvTime()
 	{
-		return processor.environment.getEnvTime();
+		return processor.environment.time();
 	}
 
 	//@Override
 	protected void setEnvTime(Time time)
 	{
 		// TODO Auto-generated method stub
-		processor.environment.getEnvTime().seconds(time.seconds());
+		processor.environment.time().seconds(time.seconds());
 	}
 
 	//@Override
@@ -40,7 +40,7 @@ public abstract class ProcessorComponent
 	}
 
 	//@Override
-	protected EnvironmentElements getEnvironment()
+	protected EnvironmentContents getEnvironment()
 	{
 		return processor.getEnvironment();
 	}

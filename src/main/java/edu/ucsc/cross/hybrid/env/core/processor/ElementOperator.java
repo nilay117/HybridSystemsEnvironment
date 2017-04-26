@@ -37,10 +37,10 @@ public class ElementOperator extends ProcessorComponent
 	protected void initializeSystems()
 	{
 		//getEnvironment().getAllComponents().clear();
-		getEnvironment().loadAllComponents();
-		for (Component component : getEnvironment().getAllComponents(true))
+		getEnvironment().load();
+		for (Component component : getEnvironment().getAllllComponents(true))
 		{
-			component.loadAllComponents();
+			component.load();
 			if (!getEnvironment().getAllComponents().contains(component))
 			{
 				getEnvironment().getAllComponents().add(component);
@@ -59,30 +59,30 @@ public class ElementOperator extends ProcessorComponent
 
 	}
 
-	protected void zinitializeSystems()
-	{
-		getEnvironment().getAllComponents().clear();
-		for (HybridSystem sysCom : getEnvironment().getAllSystems())
-		{
-			sysCom.loadAllComponents();
-			for (Component component : sysCom.getAllComponents(true))
-			{
-				if (!getEnvironment().getAllComponents().contains(component))
-				{
-					getEnvironment().getAllComponents().add(component);
-					Component.setEnvironment(component, getEnvironment());
-					//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
-					//					{
-					//						Elements elements = ((Elements) component);
-					//						elements.initializeElements();
-					//					}
-				}
-			}
-		}
-		initializeSimulated(false);
-		initializeSimulated(true);
-		clearEmptyMaps();
-	}
+	//	protected void zinitializeSystems()
+	//	{
+	//		getEnvironment().getAllComponents().clear();
+	//		for (HybridSystem sysCom : getEnvironment().getAllSystems())
+	//		{
+	//			sysCom.loadAllComponents();
+	//			for (Component component : sysCom.getAllllComponents(true))
+	//			{
+	//				if (!getEnvironment().getAllComponents().contains(component))
+	//				{
+	//					getEnvironment().getAllComponents().add(component);
+	//					Component.setEnvironment(component, getEnvironment());
+	//					//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
+	//					//					{
+	//					//						Elements elements = ((Elements) component);
+	//					//						elements.initializeElements();
+	//					//					}
+	//				}
+	//			}
+	//		}
+	//		initializeSimulated(false);
+	//		initializeSimulated(true);
+	//		clearEmptyMaps();
+	//	}
 
 	private void initializeData()
 	{
@@ -177,8 +177,7 @@ public class ElementOperator extends ProcessorComponent
 				storePrejumpValues();
 			}
 		}
-		for (HybridSystem componen : getEnvironment().getComponents(ComponentClassification.HYBRID_SYSTEM,
-		HybridSystem.class, true))//getEnvironment().getAllSystems())
+		for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())
 		{
 			componen.performTasks(jump_occurred);
 		}
@@ -199,8 +198,7 @@ public class ElementOperator extends ProcessorComponent
 	protected boolean jumpOccurring()
 	{
 		boolean jumpOccurred = false;
-		for (HybridSystem componen : getEnvironment().getComponents(ComponentClassification.HYBRID_SYSTEM,
-		HybridSystem.class, true))
+		for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))
 		{
 			jumpOccurred = jumpOccurred || componen.jumpOccurring();
 		}

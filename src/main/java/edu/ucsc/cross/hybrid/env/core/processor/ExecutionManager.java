@@ -13,13 +13,13 @@ public class ExecutionManager extends ProcessorComponent
 {
 
 	private Thread thread;
-	private DomainEvaluator jumpHandler;
+	private ActionEvaluator jumpHandler;
 	private InterruptHandler terminator;
 
 	ExecutionManager(Environment processor)
 	{
 		super(processor);
-		jumpHandler = new DomainEvaluator(processor);
+		jumpHandler = new ActionEvaluator(processor);
 		terminator = new InterruptHandler(processor);
 	}
 
@@ -152,7 +152,7 @@ public class ExecutionManager extends ProcessorComponent
 	{
 		try
 		{
-			Double stopTime = integrator.integrate(ode, getEnvironment().getEnvTime().seconds(),
+			Double stopTime = integrator.integrate(ode, getEnvironment().time().seconds(),
 			getComputationEngine().getODEValueVector(), getSettings().trial().simDuration,
 			getComputationEngine().getODEValueVector());
 			return stopTime;
@@ -171,7 +171,7 @@ public class ExecutionManager extends ProcessorComponent
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
 			} else
 			{
-				return getEnvironment().getEnvTime().seconds();
+				return getEnvironment().time().seconds();
 			}
 
 		}

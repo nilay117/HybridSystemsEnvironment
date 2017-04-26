@@ -7,7 +7,7 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
 
-public class EnvironmentElements extends Component
+public class EnvironmentContents extends Component
 {
 
 	private String environmentTitle;
@@ -17,14 +17,14 @@ public class EnvironmentElements extends Component
 	private Time envTime;
 	private SettingCollection settings;
 
-	public EnvironmentElements(String environment_title)
+	public EnvironmentContents(String environment_title)
 	{
 		super(environment_title, ComponentClassification.ENVIRONMENT);
 		setEnvironmentTitle(environment_title);
 		initializeDataStructures();
 	}
 
-	public EnvironmentElements()
+	public EnvironmentContents()
 	{
 		super("Hybrid Systems Environment", ComponentClassification.ENVIRONMENT);
 		setEnvironmentTitle("Hybrid Environment");
@@ -61,6 +61,22 @@ public class EnvironmentElements extends Component
 		}
 	}
 
+	public <T extends Component> void addComponent(T component)
+	{
+		addComponent(component, 1);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Component> void addComponent(T component, Integer quantity)
+	{
+		T initialClone = (T) ObjectCloner.xmlClone(component);
+		for (Integer ind = 0; ind < quantity; ind++)
+		{
+			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
+			storeComponent(clonedComponent, true);
+		}
+	}
+
 	public ArrayList<HybridSystem> getAllSystems()
 	{
 		return systems;
@@ -71,7 +87,7 @@ public class EnvironmentElements extends Component
 		return allComponents;
 	}
 
-	public Time getEnvTime()
+	public Time time()
 	{
 		return envTime;
 	}

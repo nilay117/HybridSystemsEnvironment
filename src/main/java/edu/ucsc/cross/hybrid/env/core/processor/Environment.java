@@ -2,13 +2,13 @@ package edu.ucsc.cross.hybrid.env.core.processor;
 
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
-import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentElements;
+import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
 
 public class Environment//implements Environment
 {
 
 	// Execution
-	EnvironmentElements environment;
+	EnvironmentContents environment;
 	ElementOperator elements;
 	DataCollector data;
 	SimulationEngine simEngine;
@@ -18,17 +18,17 @@ public class Environment//implements Environment
 
 	public Environment()
 	{
-		this.environment = new EnvironmentElements();
+		this.environment = new EnvironmentContents();
 		initializeComponents();
 	}
 
-	public Environment(EnvironmentElements environment)
+	public Environment(EnvironmentContents environment)
 	{
 		this.environment = environment;
 		initializeComponents();
 	}
 
-	public void loadEnvironment(EnvironmentElements environment)
+	public void loadEnvironment(EnvironmentContents environment)
 	{
 		this.environment = environment;
 	}
@@ -64,7 +64,7 @@ public class Environment//implements Environment
 		environment.addSystem(component, quantity);
 	}
 
-	public EnvironmentElements getEnvironment()
+	public EnvironmentContents getEnvironment()
 	{
 		return environment;
 	}

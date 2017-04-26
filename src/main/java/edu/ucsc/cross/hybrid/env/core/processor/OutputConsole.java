@@ -30,12 +30,12 @@ public class OutputConsole extends ProcessorComponent
 
 	public void progressUpdate()
 	{
-		if (nextPrintTime < getEnvironment().getEnvTime().seconds())
+		if (nextPrintTime < getEnvironment().time().seconds())
 		{
-			nextPrintTime = getEnvironment().getEnvTime().seconds() + printInterval;
-			Double percentComplete = 100 * getEnvironment().getEnvTime().seconds() / getSettings().trial().simDuration;
+			nextPrintTime = getEnvironment().time().seconds() + printInterval;
+			Double percentComplete = 100 * getEnvironment().time().seconds() / getSettings().trial().simDuration;
 			IO.out("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
-			+ getEnvironment().getEnvTime().seconds() + " seconds");
+			+ getEnvironment().time().seconds() + " seconds");
 		}
 	}
 
@@ -44,7 +44,7 @@ public class OutputConsole extends ProcessorComponent
 		String string = null;
 		if (getSettings().io().printDiscreteEventIndicator)
 		{
-			string = ("discrete event detected at " + getEnvironment().getEnvTime().seconds() + " seconds");
+			string = ("discrete event detected at " + getEnvironment().time().seconds() + " seconds");
 		}
 		return string;
 	}
@@ -78,7 +78,7 @@ public class OutputConsole extends ProcessorComponent
 						storeString += sysName + " - [" + dataSetName + " ";
 						try
 						{
-							for (Component element : dataSet.getAllComponents(true))
+							for (Component element : dataSet.getAllllComponents(true))
 								try
 								{
 									Data data = (Data) element;

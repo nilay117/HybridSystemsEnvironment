@@ -3,6 +3,7 @@ package edu.ucsc.cross.hybrid.env.core.structure;
 public class ComponentProperties
 {
 
+	protected Class<?> baseComponentClass; // base component of this class
 	protected ComponentClassification classification; // classification of the element
 	protected Integer environmentAddress; // address of the environment (0 by default but may be different if running more than one environment simultaneously)
 	protected Integer localAddress; // local address of the element ie with respect to the other elements of the parent
@@ -17,6 +18,13 @@ public class ComponentProperties
 		this.name = name;
 		this.classification = (classification);
 		this.description = name;
+	}
+
+	public ComponentProperties(String name, Class<?> base_component_class)
+	{
+		this.name = name;
+		this.description = name;
+		this.baseComponentClass = base_component_class;
 	}
 
 	public String getName()

@@ -4,21 +4,20 @@ import org.apache.commons.math3.ode.events.EventHandler;
 
 import bs.commons.io.system.IO;
 
-class DomainEvaluator extends ProcessorComponent implements EventHandler
+class ActionEvaluator extends ProcessorComponent implements EventHandler
 {
 
 	private Double flag;
 
-	DomainEvaluator(Environment processor)
+	ActionEvaluator(Environment processor)
 	{
 		super(processor);
-
 	}
 
 	@Override
 	public double g(double t, double[] y)
 	{
-		getEnvironment().getEnvTime().seconds(t);
+		getEnvironment().time().seconds(t);
 		getComputationEngine().updateValues(y);
 
 		if (getComponents().jumpOccurring())
@@ -53,7 +52,7 @@ class DomainEvaluator extends ProcessorComponent implements EventHandler
 	public void resetState(double t, double[] y)
 	{
 		getComputationEngine().updateValues(y);
-		getEnvironment().getEnvTime().seconds(t);
+		getEnvironment().time().seconds(t);
 		getData().storeData(t - getSettings().getData().dataStoreIncrement,
 		(true && getSettings().getData().storeAtEveryJump));
 		getComponents().performTasks(true);

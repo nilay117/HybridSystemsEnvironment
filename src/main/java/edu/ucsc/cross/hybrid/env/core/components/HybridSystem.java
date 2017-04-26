@@ -25,7 +25,7 @@ public abstract class HybridSystem extends Component
 	public void performTasks(boolean jump_occurred)
 	{
 
-		for (Component behaviorComponent : getComponents(ComponentClassification.BEHAVIOR, true))
+		for (Component behaviorComponent : getComponents(Behavior.class, true))
 		{
 			Behavior localBehavior = (Behavior) behaviorComponent;
 			try
