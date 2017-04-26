@@ -2,11 +2,15 @@ package edu.ucsc.cross.hybrid.env.core.structure;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
+import bs.commons.objects.access.ObjectFinder;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
@@ -14,6 +18,16 @@ import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 
 public abstract class Component implements Initializer//implements ComponentInterface
 {
+
+	private static Class[] deeperSearchClasses = loadDeeperSearchClasses();
+
+	private static Class[] loadDeeperSearchClasses()
+	{
+		Class[] deeper = new Class[]
+		{ Component.class, HashMap.class, ArrayList.class };
+		ObjectFinder.setDeeperSearchClasses(deeper);
+		return deeper;
+	}
 
 	private Boolean initialized;
 
@@ -140,6 +154,12 @@ public abstract class Component implements Initializer//implements ComponentInte
 			//				((Component) allCurrent).loadAllComponents();
 			//				//((Component) field).storeSubComponents((Component) allCurrent);
 			//			}
+			//System.out.println(getContainerComponents(field, Component.class));
+			for (Component containerField : getContainerComponents(field, Component.class))
+			{
+				storeComponent(containerField, true);
+				loadAllComponents(containerField);
+			}
 			if (FieldFinder.containsSuper(field, Component.class))
 			{
 				//((Component) load).storeComponent((Component) field, true);
@@ -287,5 +307,64 @@ public abstract class Component implements Initializer//implements ComponentInte
 	public static Boolean getInitialized(Component component)
 	{
 		return component.initialized;
+	}
+
+	public static ArrayList<Object> getMapOrListElements(Object obj)
+	{
+		ArrayList<Object> values = new ArrayList<Object>();
+		try
+		{
+			Collection<Object> objects = ((Map) obj).values();
+			values.addAll(objects);
+		} catch (Exception notMap)
+		{
+			try
+			{
+				Collection<Object> objects = ((List) obj);
+				values.addAll(objects);
+			} catch (Exception notList)
+			{
+
+			}
+		}
+		return values;
+	}
+
+	public static <T> ArrayList<T> getContainerComponents(Object container, Class<T> search)
+	{
+		//System.out.println("h" + container);
+
+		ArrayList<T> components = new ArrayList<T>();
+		if (!FieldFinder.containsInterface(container, CoreComponent.class))
+		{
+			try
+			{
+				for (T entry : ((HashMap<?, T>) (HashMap.class.cast(container))).values())
+				{
+					//System.out.println("h" + container);
+					if (FieldFinder.containsSuper(entry, search))
+					{
+						components.add((T) entry);
+					}
+				}
+			} catch (Exception e)
+			{
+				try
+				{
+					for (T entry : ((ArrayList<T>) (ArrayList.class.cast(container))))
+					{
+						//System.out.println("h" + container);
+						if (FieldFinder.containsSuper(entry, search))
+						{
+							components.add((T) entry);
+						}
+					}
+				} catch (Exception ee)
+				{
+
+				}
+			}
+		}
+		return components;
 	}
 }

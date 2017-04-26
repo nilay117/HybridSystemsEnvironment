@@ -6,6 +6,8 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
+import bs.commons.io.system.IO;
+import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
@@ -43,14 +45,25 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 		{
 			for (Component component : componen.getComponents(ComponentClassification.DYNAMIC_STATE, true))//.loadComponents();//.getSpecificComponent(Data.class, null))
 			{
-				Data dat = (Data) component;
-				if (Data.isSimulated(dat))
+				try
 				{
-					odeVectorMap.put(odeIndex++, dat);
+					Data dat = (Data) component;
+					if (Data.isSimulated(dat))
+					{
+						odeVectorMap.put(odeIndex++, dat);
+					}
+				} catch (Exception e)
+				{
+					e.printStackTrace();
 				}
+
 			}
 		}
-		//IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
+		IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
+		IO.debug("ODE Vector Map:\n" + this.getProcessor().elements.getAllData().size() + "\n");
+
+		//	System.exit(0);
+
 	}
 
 	public void updateValues(double y[])

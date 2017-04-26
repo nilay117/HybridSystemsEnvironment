@@ -45,7 +45,7 @@ public class ElementOperator extends ProcessorComponent
 				if (!getEnvironment().getAllComponents().contains(component))
 				{
 					getEnvironment().getAllComponents().add(component);
-					//Component.setEnvironment(component, getEnvironment());
+					Component.setEnvironment(component, getEnvironment());
 					//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
 					//					{
 					//						Elements elements = ((Elements) component);
