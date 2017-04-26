@@ -38,15 +38,11 @@ public class ElementOperator extends ProcessorComponent
 	{
 		//getEnvironment().getAllComponents().clear();
 		getEnvironment().load();
-		for (Component component : getEnvironment().getAllllComponents(true))
+		for (Component component : getEnvironment().getComponents(true))
 		{
-			component.load();
-			if (!getEnvironment().getAllComponents().contains(component))
-			{
-				getEnvironment().getAllComponents().add(component);
-				//component.initialize();
-				Component.setEnvironment(component, getEnvironment());
-			}
+			//component.load();
+			//component.initialize();
+			Component.setEnvironment(component, getEnvironment());
 			//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
 			//					{
 			//						Elements elements = ((Elements) component);
@@ -87,7 +83,7 @@ public class ElementOperator extends ProcessorComponent
 	private void initializeData()
 	{
 		allData.clear();
-		for (Component component : getEnvironment().getAllComponents())
+		for (Component component : getEnvironment().getComponents(true))
 		{
 			try
 			{
@@ -116,7 +112,7 @@ public class ElementOperator extends ProcessorComponent
 
 	protected void initializeSimulated(boolean initialize_behavior)
 	{
-		initializeSimulated(initialize_behavior, getEnvironment().getAllComponents());
+		initializeSimulated(initialize_behavior, getEnvironment().getComponents(true));
 	}
 
 	protected void initializeSimulated(boolean initialize_behavior, ArrayList<Component> allComponents)

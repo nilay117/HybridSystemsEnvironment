@@ -137,6 +137,11 @@ public abstract class Component implements Initializer//implements ComponentInte
 		{
 
 		}
+		if (components == null)
+		{
+			components = (ArrayList<T>) loadMap(component_class, include_children);
+			//components = getComponents(component_class, include_children);
+		}
 
 		return components;
 	}

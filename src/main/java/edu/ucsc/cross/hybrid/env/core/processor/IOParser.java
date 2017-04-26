@@ -67,7 +67,7 @@ public class IOParser extends ProcessorComponent
 	private <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		component.loadAllComponents();
+		component.load();
 		//allComponents.add(component);
 		for (Component subComponent : component.getAllllComponents(true))
 		{

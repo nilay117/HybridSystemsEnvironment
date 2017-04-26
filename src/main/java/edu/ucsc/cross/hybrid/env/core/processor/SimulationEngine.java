@@ -6,11 +6,13 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
+import bs.commons.io.system.IO;
+import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
+import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
@@ -37,28 +39,28 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 	{
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
-		for (HybridSystem componen : getEnvironment().getAllSystems())
+
+		for (Component component : getEnvironment().getComponents(true))//.loadComponents();//.getSpecificComponent(Data.class, null))
 		{
-			for (Component component : componen.getComponents(Data.class, true))//.loadComponents();//.getSpecificComponent(Data.class, null))
+			try
 			{
-				try
+				Data dat = (Data) component;
+				if (dat.getProperties().getClassification().equals(ComponentClassification.DYNAMIC_STATE))
 				{
-					Data dat = (Data) component;
 					if (Data.isSimulated(dat))
 					{
 						odeVectorMap.put(odeIndex++, dat);
 					}
-				} catch (Exception e)
-				{
-					e.printStackTrace();
 				}
+			} catch (Exception e)
+			{
+				//e.printStackTrace();
 			}
 		}
-		//	IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
 
-		//	System.exit(0);
-
+		IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
 	}
+	//	System.exit(0);
 
 	public void updateValues(double y[])
 	{

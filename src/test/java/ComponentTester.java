@@ -53,10 +53,12 @@ public class ComponentTester
 		Environment env = new Environment();
 		Beh b = new Beh();
 		//	b.load();
+		Beh c = new Beh();
+		b.addComponent(c);
 		env.getEnvironment().addComponent(b);
 		//env.prepareEnvironment();
 		env.getEnvironment().load();
 		b.load();
-		System.out.println(b + " " + env.getEnvironment().getComponents(true));
+		System.out.println(b + " " + env.getEnvironment().getComponents(Behavior.class, true));
 	}
 }

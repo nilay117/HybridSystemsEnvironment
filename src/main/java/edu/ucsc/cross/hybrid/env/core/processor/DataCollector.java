@@ -56,7 +56,7 @@ public class DataCollector extends ProcessorComponent
 	public void loadStoreStates()
 	{
 		dataStates.clear();
-		for (Component component : super.getEnvironment().getAllComponents())
+		for (Component component : super.getEnvironment().getComponents(true))
 		{
 			try
 			{

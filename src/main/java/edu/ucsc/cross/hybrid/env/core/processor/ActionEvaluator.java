@@ -7,7 +7,7 @@ import bs.commons.io.system.IO;
 class ActionEvaluator extends ProcessorComponent implements EventHandler
 {
 
-	private Double flag;
+	public Double flag;
 
 	ActionEvaluator(Environment processor)
 	{
@@ -36,7 +36,7 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 	@Override
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
-		//getComputationEngine().updateValues(y);
+		getComputationEngine().updateValues(y);
 		IO.out(getConsole().getDiscreteEventIndication());
 		flag = -1.0 * flag;
 		return EventHandler.Action.RESET_STATE;

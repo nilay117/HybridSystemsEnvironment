@@ -8,7 +8,6 @@ import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 
 public class OutputConsole extends ProcessorComponent
 {
@@ -69,7 +68,7 @@ public class OutputConsole extends ProcessorComponent
 					systemNames.put(sysName, rootSystem);
 					storeString += "\n" + sysName + " - [";
 					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
-					for (Component component : rootSystem.getComponents(ComponentClassification.DATA_SET, true))
+					for (Component component : rootSystem.getComponents(Data.class, true))
 					{
 						DataSet dataSet = (DataSet) component;
 						String dataSetName = StringFormatter.getAppendedName(dataSet.getProperties().getName(),

@@ -45,7 +45,7 @@ public abstract class HybridSystem extends Component
 	public Boolean jumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (Component behaviorComponent : getComponents(ComponentClassification.BEHAVIOR, true))
+		for (Component behaviorComponent : getComponents(Behavior.class, true))
 		{
 			Behavior localBehavior = (Behavior) behaviorComponent;
 			try
