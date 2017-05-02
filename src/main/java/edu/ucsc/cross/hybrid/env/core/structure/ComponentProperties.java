@@ -18,6 +18,7 @@ public class ComponentProperties
 		this.name = name;
 		this.classification = (classification);
 		this.description = name;
+		this.baseComponentClass = Component.class;
 	}
 
 	public ComponentProperties(String name, Class<?> base_component_class)
@@ -25,6 +26,14 @@ public class ComponentProperties
 		this.name = name;
 		this.description = name;
 		this.baseComponentClass = base_component_class;
+	}
+
+	public ComponentProperties(String name, Class<?> base_component_class, ComponentClassification classification)
+	{
+		this.name = name;
+		this.description = name;
+		this.baseComponentClass = base_component_class;
+		this.classification = classification;
 	}
 
 	public String getName()
@@ -75,6 +84,11 @@ public class ComponentProperties
 	public ComponentClassification getClassification()
 	{
 		return classification;
+	}
+
+	public Class<?> getBaseComponentClass()
+	{
+		return baseComponentClass;
 	}
 
 	public Integer getEnvironmentAddress()

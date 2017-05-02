@@ -72,15 +72,8 @@ public class ExecutionManager extends ProcessorComponent
 			{
 				launchEnvironment(running_processes);
 			}
-
 		};
 		return task;
-	}
-
-	private void runSimulation()
-
-	{
-
 	}
 
 	public FirstOrderIntegrator getIntegrator()

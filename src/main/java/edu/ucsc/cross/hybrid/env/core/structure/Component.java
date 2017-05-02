@@ -32,15 +32,15 @@ public abstract class Component implements Initializer//implements ComponentInte
 	}
 
 	@CoreComponent
-	private ComponentProperties properties;
+	private ComponentProperties properties; // properties of the component
 	@CoreComponent
-	private EnvironmentContents environment;
+	private EnvironmentContents environment; // environment that the component is in
 	@CoreComponent
-	private Component parent;
+	private Component parent; // parent component
 	@CoreComponent
-	private ArrayList<Component> rootComponents;
+	private ArrayList<Component> rootComponents; // direct children of this component (no childrens children)
 	@CoreComponent
-	private ArrayList<Component> childComponents;
+	private ArrayList<Component> childComponents; // all children of this component (all children & childrens children)
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> childElementMap;
 	@CoreComponent
@@ -54,6 +54,12 @@ public abstract class Component implements Initializer//implements ComponentInte
 	}
 
 	public Component(String name, Class<?> component_base_class)
+	{
+		properties = new ComponentProperties(name, component_base_class);
+		setup();
+	}
+
+	public Component(String name, Class<?> component_base_class, ComponentClassification type)
 	{
 		properties = new ComponentProperties(name, component_base_class);
 		setup();
@@ -178,7 +184,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 			}
 		}
-		processFields(this, allFields);
+		processFields((Component) sysObj, allFields);
 	}
 
 	private void processFields(Component parent, ArrayList<Object> fields)
@@ -208,6 +214,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 	{
 		for (Object content : getContainerContents(container))
 		{
+			//System.out.println(content);
 			processField(parent, content);
 		}
 	}
@@ -273,7 +280,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 		ObjectType type = ObjectType.UNKNOWN;
 		if (object != null)
 		{
-			if (FieldFinder.containsSuper(object, Map.class) || FieldFinder.containsSuper(object, List.class))
+			if (FieldFinder.containsSuper(object, HashMap.class) || FieldFinder.containsSuper(object, ArrayList.class))
 			{
 				type = ObjectType.CONTAINER;
 			} else if (FieldFinder.containsSuper(object, Component.class))
@@ -310,29 +317,8 @@ public abstract class Component implements Initializer//implements ComponentInte
 				components.add(component);//..getProperties().getClassification()).add(allCurrent))));
 			}
 		}
-		//mapComponents(component_class, components, children);
 		return components;
 	}
-
-	//	private void mapComponents(Class<?> component_class, ArrayList<Component> components, boolean children)
-	//	{
-	//
-	//		if (!children)
-	//		{
-	//
-	//			if (!rootElementMap.get(component.properties.getClassification()).contains(component))
-	//			{
-	//				rootElementMap.get(component.properties.getClassification()).add(component);//..getProperties().getClassification()).add(allCurrent))));
-	//			}
-	//		}
-	//		//	}if(!childElementMap.get(component.properties.getClassification()).contains(component))
-	//
-	//		//{
-	//		//	System.out.println(component);
-	//		//childElementMap.get(component.properties.getClassification()).add(component);//..getProperties().getClassification()).add(allCurrent))));
-	//		//}
-	//
-	//	}
 
 	protected void storeComponent(Component component, boolean local)
 	{
@@ -455,22 +441,23 @@ public abstract class Component implements Initializer//implements ComponentInte
 		{
 			try
 			{
-				for (Object entry : ((HashMap<?, ?>) container).values())
+				for (Object entry : ((ArrayList) container))
 				{
 					components.add(entry);
 				}
+
 			} catch (Exception notMap)
 			{
-
+				//notMap.printStackTrace();
 				try
 				{
-					for (Object entry : ((ArrayList<?>) container))
+					for (Object entry : (HashMap.class.cast(container)).values())
 					{
 						components.add(entry);
 					}
 				} catch (Exception ee)
 				{
-
+					//	ee.printStackTrace();
 				}
 			}
 		}

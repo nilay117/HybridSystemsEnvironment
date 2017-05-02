@@ -17,13 +17,13 @@ import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 public class Data<T> extends DynamicData<T>
 {
 
-	private boolean simulated;
-	private final boolean cloneToStore;
-	private HashMap<Double, T> savedValues;
-	public boolean save;
-	private InitialValue<T> initialVal;
-	private T preJumpValue;
-	private Unit defaultUnit;
+	private boolean simulated; // flag indicating whether object is simulated
+	private final boolean cloneToStore; // flag indicating if object needs to be cloned to store (data structures)
+	private HashMap<Double, T> savedValues; // mapping of saved values
+	public boolean save; // flag indicating if object should be stored 
+	private InitialValue<T> initialVal; // initial value of object
+	private T preJumpValue; // stored pre-jump value
+	private Unit defaultUnit; // default unit (if object has units)
 
 	public InitialValue<T> getInitialVal()
 	{
@@ -58,7 +58,6 @@ public class Data<T> extends DynamicData<T>
 				((UnitValue) get()).set((Double) initialVal.getValue(), ((UnitValue) get()).getUnit());
 			} catch (UnitException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else

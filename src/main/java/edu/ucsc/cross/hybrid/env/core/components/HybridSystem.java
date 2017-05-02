@@ -11,7 +11,7 @@ public abstract class HybridSystem extends Component
 	 */
 	public HybridSystem(String title)
 	{
-		super(title, ComponentClassification.HYBRID_SYSTEM);
+		super(title, HybridSystem.class, ComponentClassification.HYBRID_SYSTEM);
 	}
 
 	/*
@@ -19,7 +19,7 @@ public abstract class HybridSystem extends Component
 	 */
 	public HybridSystem()
 	{
-		super("Hybrid System", ComponentClassification.HYBRID_SYSTEM);
+		super("Hybrid System", HybridSystem.class, ComponentClassification.HYBRID_SYSTEM);
 	}
 
 	public void performTasks(boolean jump_occurred)

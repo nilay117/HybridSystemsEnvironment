@@ -12,7 +12,7 @@ public abstract class Behavior extends Component implements DynamicalModel
 	 */
 	public Behavior(String name)
 	{
-		super(name, ComponentClassification.BEHAVIOR);
+		super(name, Behavior.class, ComponentClassification.BEHAVIOR);
 	}
 
 	/*
@@ -20,7 +20,7 @@ public abstract class Behavior extends Component implements DynamicalModel
 	 */
 	public Behavior()
 	{
-		super("Behavior", ComponentClassification.BEHAVIOR);
+		super("Behavior", Behavior.class, ComponentClassification.BEHAVIOR);
 	}
 
 	public Boolean jumpOccurring(boolean jump_priority)

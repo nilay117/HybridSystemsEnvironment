@@ -22,15 +22,13 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 
 		if (getComponents().jumpOccurring())
 		{
-			return -1 * flag;
+			flag = -1 * flag;
 
 		} else
-
 		{
-			//getEnvironment().getEnvTime().seconds(t);
 			getData().storeData(t, false);
-			return 1 * flag;
 		}
+		return flag;
 	}
 
 	@Override

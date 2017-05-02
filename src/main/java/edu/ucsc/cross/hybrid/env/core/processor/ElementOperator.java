@@ -2,11 +2,11 @@ package edu.ucsc.cross.hybrid.env.core.processor;
 
 import java.util.ArrayList;
 
+import edu.ucsc.cross.hybrid.env.core.components.Behavior;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 import edu.ucsc.cross.hybrid.env.core.structure.DataCategory;
 
 @SuppressWarnings(
@@ -36,49 +36,15 @@ public class ElementOperator extends ProcessorComponent
 
 	protected void initializeSystems()
 	{
-		//getEnvironment().getAllComponents().clear();
 		getEnvironment().load();
 		for (Component component : getEnvironment().getComponents(true))
 		{
-			//component.load();
-			//component.initialize();
 			Component.setEnvironment(component, getEnvironment());
-			//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
-			//					{
-			//						Elements elements = ((Elements) component);
-			//						elements.initializeElements();
-			//					}
 		}
 		initializeSimulated(false);
 		initializeSimulated(true);
 		clearEmptyMaps();
-
 	}
-
-	//	protected void zinitializeSystems()
-	//	{
-	//		getEnvironment().getAllComponents().clear();
-	//		for (HybridSystem sysCom : getEnvironment().getAllSystems())
-	//		{
-	//			sysCom.loadAllComponents();
-	//			for (Component component : sysCom.getAllllComponents(true))
-	//			{
-	//				if (!getEnvironment().getAllComponents().contains(component))
-	//				{
-	//					getEnvironment().getAllComponents().add(component);
-	//					Component.setEnvironment(component, getEnvironment());
-	//					//					if (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
-	//					//					{
-	//					//						Elements elements = ((Elements) component);
-	//					//						elements.initializeElements();
-	//					//					}
-	//				}
-	//			}
-	//		}
-	//		initializeSimulated(false);
-	//		initializeSimulated(true);
-	//		clearEmptyMaps();
-	//	}
 
 	private void initializeData()
 	{
@@ -122,7 +88,8 @@ public class ElementOperator extends ProcessorComponent
 
 			if (initialize_behavior)
 			{
-				if (component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
+				//if (component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
+				if (component.getProperties().getBaseComponentClass().equals(Behavior.class))
 				{
 					if (!component.isInitialized())
 					{
@@ -133,7 +100,8 @@ public class ElementOperator extends ProcessorComponent
 			} else
 			{
 
-				if (!component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
+				//if (!component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
+				if (!component.getProperties().getBaseComponentClass().equals(Behavior.class))
 				{
 					if (!component.isInitialized())
 					{
@@ -156,12 +124,7 @@ public class ElementOperator extends ProcessorComponent
 
 	protected void performTasks()
 	{
-		//		for (HybridSystem componen : getEnvironment().getAllSystems())
-		//		{
-		//			componen.performTasks(jumpOccurring());
-		//		}
 		performTasks(false);
-
 	}
 
 	protected void performTasks(boolean jump_occurred)
@@ -200,16 +163,5 @@ public class ElementOperator extends ProcessorComponent
 		}
 		return jumpOccurred;
 	}
-
-	//	protected void storePrejumpValues()
-	//	{
-	//		boolean jumpOccurred = false;
-	//		for (Component componen : getEnvironment().get
-	//		{
-	//		
-	//			jumpOccurred = jumpOccurred || componen.jumpOccurring();
-	//		}
-	//		return jumpOccurred;
-	//	}
 
 }

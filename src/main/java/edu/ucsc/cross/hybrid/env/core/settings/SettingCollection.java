@@ -27,11 +27,10 @@ public class SettingCollection
 		SettingCollection settings = null;
 		try
 		{
-			if (new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName)
-			.exists())
+			if (new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName).exists())
 			{
-				settings = (SettingCollection) XMLParser.getObject(
-				new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName));
+				settings = (SettingCollection) XMLParser
+				.getObject(new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName));
 			} else
 			{
 				throw new IOException();
@@ -42,8 +41,8 @@ public class SettingCollection
 			settings = new SettingCollection();
 			try
 			{
-				FileSystemOperator.createOutputFile(
-				new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName),
+				FileSystemOperator
+				.createOutputFile(new File(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName),
 				XMLParser.serializeObject(settings));
 			} catch (Exception badFile)
 			{
