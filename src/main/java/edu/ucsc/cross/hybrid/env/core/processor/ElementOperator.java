@@ -132,14 +132,32 @@ public class ElementOperator extends ProcessorComponent
 	{
 		if (jump_occurred)
 		{
+			getData().storeData(getEnvironment().time().seconds() - .000001,
+			(true && getSettings().getData().storeAtEveryJump));
 			if (getSettings().getData().storePreJumpValue)
 			{
 				storePrejumpValues();
 			}
-		}
-		for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())
+			performAllJumps();
+			getData().storeData(getEnvironment().time().seconds(), (true && getSettings().getData().storeAtEveryJump));
+		} else
 		{
-			componen.performTasks(jump_occurred);
+			for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())
+			{
+				componen.performTasks(jump_occurred);
+			}
+		}
+	}
+
+	protected void performAllJumps()
+	{
+
+		while (getComponents().jumpOccurring())
+		{
+			for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())
+			{
+				componen.performTasks(true);
+			}
 		}
 
 	}

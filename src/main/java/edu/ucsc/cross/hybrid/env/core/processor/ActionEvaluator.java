@@ -7,6 +7,7 @@ import bs.commons.io.system.IO;
 class ActionEvaluator extends ProcessorComponent implements EventHandler
 {
 
+	public Integer toggles = 0;
 	public Double flag;
 
 	ActionEvaluator(Environment processor)
@@ -23,6 +24,7 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 		if (getComponents().jumpOccurring())
 		{
 			flag = -1 * flag;
+			toggles = toggles + 1;
 
 		} else
 		{
@@ -35,29 +37,32 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
 		getComputationEngine().updateValues(y);
+		getEnvironment().time().seconds(t);
 		IO.out(getConsole().getDiscreteEventIndication());
-		flag = -1.0 * flag;
+		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
+		{
+			flag = -1.0 * flag;
+		}
+		toggles = 0;
 		return EventHandler.Action.RESET_STATE;
 	}
 
 	@Override
 	public void init(double t0, double[] y0, double t)
 	{
+
 		flag = 1.0;
 	}
 
 	@Override
 	public void resetState(double t, double[] y)
 	{
-		getComputationEngine().updateValues(y);
-		getEnvironment().time().seconds(t);
-		getData().storeData(t - getSettings().getData().dataStoreIncrement,
-		(true && getSettings().getData().storeAtEveryJump));
-		while (getComponents().jumpOccurring())
-		{
-			getComponents().performTasks(true);
-		}
-		getData().storeData(t, (true && getSettings().getData().storeAtEveryJump));
+		//getComputationEngine().updateValues(y);
+		//getEnvironment().time().seconds(t);
+		//		getData().storeData(t - getSettings().getData().dataStoreIncrement,
+		//		(true && getSettings().getData().storeAtEveryJump));
+		getComponents().performTasks(true);
+		//getData().storeData(t, (true && getSettings().getData().storeAtEveryJump));
 		getComputationEngine().setODEValueVector(y);
 		y = getComputationEngine().getODEValueVector();
 		//	System.out.println(y[0] + " " + y[1] + " " + y[2] + " " + y[3]);

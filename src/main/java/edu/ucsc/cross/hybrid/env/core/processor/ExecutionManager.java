@@ -1,8 +1,10 @@
 package edu.ucsc.cross.hybrid.env.core.processor;
 
+import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
@@ -89,6 +91,11 @@ public class ExecutionManager extends ProcessorComponent
 			getSettings().computation().odeMaxStep, getSettings().computation().odeScalAbsoluteTolerance,
 			getSettings().computation().odeScalRelativeTolerance);
 			break;
+		case DORMAND_PRINCE_54:
+			integrator = new DormandPrince54Integrator(getSettings().computation().odeMinStep,
+			getSettings().computation().odeMaxStep, getSettings().computation().odeScalAbsoluteTolerance,
+			getSettings().computation().odeScalRelativeTolerance);
+			break;
 		}
 		getEventHandlers(integrator);
 		return integrator;
@@ -132,6 +139,7 @@ public class ExecutionManager extends ProcessorComponent
 	Double start_time, Double duration, double[] ode_vector)
 	{
 		Double endTime = 0.0;
+		getComponents().performTasks(true);
 		while (endTime < duration)
 		{
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
@@ -151,16 +159,12 @@ public class ExecutionManager extends ProcessorComponent
 			return stopTime;
 		} catch (Exception e)
 		{
-			if (e.getClass().equals(NumberIsTooSmallException.class))
-			{
-				IO.warn("Integrator failure due to large step size - adjusting step size and restarting integrator");
-				getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep / 2;
-				getSettings().computation().odeMinStep = getSettings().computation().odeMinStep / 2;
-
-				this.jumpHandler.resetState(super.getEnvironment().time().seconds(),
-				super.getComputationEngine().getODEValueVector());
-			}
-
+			//e.printStackTrace();
+			boolean problemResolved = false;
+			problemResolved = problemResolved || handleStepSizeIssues(e);
+			problemResolved = problemResolved || handleBracketingIssues(e);
+			printOutUnresolvedIssues(e, problemResolved);
+			getComponents().performTasks(true);
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
@@ -171,6 +175,45 @@ public class ExecutionManager extends ProcessorComponent
 
 		}
 
+	}
+
+	private boolean handleStepSizeIssues(Exception exc)
+	{
+		boolean handledIssue = false;
+		if (exc.getClass().equals(NumberIsTooSmallException.class))
+		{
+			IO.warn("Integrator failure due to large step size - adjusting step size and restarting integrator");
+			getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep / 2;
+			getSettings().computation().odeMinStep = getSettings().computation().odeMinStep / 2;
+			handledIssue = true;
+		}
+		return handledIssue;
+
+	}
+
+	private boolean handleBracketingIssues(Exception exc)
+	{
+		boolean handledIssue = false;
+		if (exc.getClass().equals(NoBracketingException.class))
+		{
+			IO.warn(
+			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
+			getEnvironment().getSettings()
+			.computation().ehConvergence = getEnvironment().getSettings().computation().ehConvergence / 1.5;
+			getEnvironment().getSettings()
+			.computation().ehMaxCheckInterval = getEnvironment().getSettings().computation().ehMaxCheckInterval / 1.5;
+			handledIssue = true;
+		}
+		return handledIssue;
+	}
+
+	private void printOutUnresolvedIssues(Exception exc, boolean resolved)
+	{
+		if (!resolved)
+		{
+			IO.warn("Integrator failure due to another cause - please see stack trace for details");
+			exc.printStackTrace();
+		}
 	}
 
 	public InterruptHandler getTerminator()
