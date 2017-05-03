@@ -7,6 +7,7 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
 import bs.commons.io.system.IO;
+import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
@@ -49,7 +50,11 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 				{
 					if (Data.isSimulated(dat))
 					{
-						odeVectorMap.put(odeIndex++, dat);
+						if (FieldFinder.containsSuper(dat.get(), UnitValue.class)
+						|| FieldFinder.containsSuper(dat.get(), Number.class))
+						{
+							odeVectorMap.put(odeIndex++, dat);
+						}
 					}
 				}
 			} catch (Exception e)

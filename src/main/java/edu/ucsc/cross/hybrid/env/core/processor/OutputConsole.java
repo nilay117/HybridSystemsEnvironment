@@ -68,7 +68,7 @@ public class OutputConsole extends ProcessorComponent
 					systemNames.put(sysName, rootSystem);
 					storeString += "\n" + sysName + " - [";
 					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
-					for (Component component : rootSystem.getComponents(Data.class, true))
+					for (Component component : rootSystem.getComponents(DataSet.class, true))
 					{
 						DataSet dataSet = (DataSet) component;
 						String dataSetName = StringFormatter.getAppendedName(dataSet.getProperties().getName(),

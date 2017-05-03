@@ -34,7 +34,9 @@ public class ComputationSettings
 		EULER(
 			"Euler"),
 		DORMAND_PRINCE_853(
-			"Dormand Prince 853");
+			"Dormand Prince 853"),
+		DORMAND_PRINCE_54(
+			"Dormand Prince 54");
 
 		@ChoiceName
 		public final String choice;

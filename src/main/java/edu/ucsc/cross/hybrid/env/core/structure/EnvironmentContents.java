@@ -12,6 +12,7 @@ public class EnvironmentContents extends Component
 
 	private String environmentTitle;
 	private Time startTime;
+	private Integer jumpIndex;
 	private ArrayList<HybridSystem> systems;
 	private ArrayList<Component> allComponents;
 	private Time envTime;
@@ -36,6 +37,7 @@ public class EnvironmentContents extends Component
 		startTime = Time.newSecondsValue(0.0);
 		settings = SettingCollection.getSettings();
 		envTime = Time.newSecondsValue(0.0);
+		jumpIndex = 0;
 		systems = new ArrayList<HybridSystem>();
 		allComponents = new ArrayList<Component>();
 	}
@@ -90,6 +92,18 @@ public class EnvironmentContents extends Component
 	public Time time()
 	{
 		return envTime;
+	}
+
+	public Integer incrementJumpIndex()
+	{
+
+		return incrementJumpIndex(1);
+	}
+
+	public Integer incrementJumpIndex(Integer quantity)
+	{
+		jumpIndex = jumpIndex + quantity;
+		return jumpIndex;
 	}
 
 	public SettingCollection getSettings()

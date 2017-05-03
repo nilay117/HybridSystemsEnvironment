@@ -18,19 +18,8 @@ import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 public abstract class Component implements Initializer//implements ComponentInterface
 {
 
+	@CoreComponent
 	private Boolean initialized;
-
-	public Boolean isInitialized()
-	{
-		if (initialized == null)
-		{
-			return true;
-		} else
-		{
-			return initialized;
-		}
-	}
-
 	@CoreComponent
 	private ComponentProperties properties; // properties of the component
 	@CoreComponent
@@ -63,7 +52,6 @@ public abstract class Component implements Initializer//implements ComponentInte
 	{
 		properties = new ComponentProperties(name, component_base_class);
 		setup();
-
 	}
 
 	private void setup()
@@ -390,15 +378,30 @@ public abstract class Component implements Initializer//implements ComponentInte
 	public void saveComponentToFile(String directory_path, String file_name)
 	{
 		Object clonedComponent = ObjectCloner.xmlClone(this);
-		//((Component) clonedComponent).loadAllComponents();
-		((Component) clonedComponent).storeSubComponents(((Component) clonedComponent));
-		((Component) clonedComponent).clearMapsIfEmpty();
-		for (Component subComponent : ((Component) clonedComponent).getAllllComponents(true))
-		{
-			subComponent.clearMapsIfEmpty();
-		}
+		((Component) clonedComponent).load();//.loadAllComponents();
+		//	((Component) clonedComponent).storeSubComponents(((Component) clonedComponent));
+		//((Component) clonedComponent).clearMapsIfEmpty();
+		//		for (Component subComponent : ((Component) clonedComponent).getAllllComponents(true))
+		//		{
+		//			subComponent.clearMapsIfEmpty();
+		//		}
 		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
 		XMLParser.serializeObject(clonedComponent));
+
+	}
+
+	public static Component getComponentFromFile(String file_path)
+	{
+		Component component = null;
+		try
+		{
+
+			component = (Component) XMLParser.getObject(file_path);
+		} catch (Exception badComponent)
+		{
+			badComponent.printStackTrace();
+		}
+		return component;
 
 	}
 
@@ -540,5 +543,16 @@ public abstract class Component implements Initializer//implements ComponentInte
 			//loadComponents(newSys);
 		}
 
+	}
+
+	public Boolean isInitialized()
+	{
+		if (initialized == null)
+		{
+			return true;
+		} else
+		{
+			return initialized;
+		}
 	}
 }

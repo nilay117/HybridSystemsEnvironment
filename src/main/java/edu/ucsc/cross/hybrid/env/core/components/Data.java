@@ -30,6 +30,12 @@ public class Data<T> extends DynamicData<T>
 		return initialVal;
 	}
 
+	public void updateInitialVal(InitialValue<T> initial_val)
+	{
+		initialVal = initial_val;
+		set(initialVal.getValue());
+	}
+
 	public boolean nullElement()
 	{
 		return (get() == null);

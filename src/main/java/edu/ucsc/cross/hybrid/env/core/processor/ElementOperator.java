@@ -54,6 +54,7 @@ public class ElementOperator extends ProcessorComponent
 			try
 			{
 				Data data = (Data) component;
+				data.initializeValue();
 				allData.add(data);
 			} catch (Exception notData)
 			{

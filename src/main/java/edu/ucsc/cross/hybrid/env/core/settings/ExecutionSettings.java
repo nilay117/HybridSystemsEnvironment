@@ -13,11 +13,14 @@ public class ExecutionSettings
 
 	public Double simDuration;
 
+	public Integer jumpLimit;
+
 	public ExecutionSettings()
 	{
 		numberOfTrials = 1;
 		maxParallelExecutions = 1;
 		simDuration = 10.0;
+		jumpLimit = 20;
 		runThreadded = true;
 	}
 }

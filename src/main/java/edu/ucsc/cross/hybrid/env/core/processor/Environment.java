@@ -51,7 +51,7 @@ public class Environment//implements Environment
 	{
 		prepareEnvironment();
 		environment.getStartTime().seconds(Double.valueOf(System.currentTimeMillis()) / 1000);//Time.newSecondValue(0.0);
-		simThread.runSim(false);
+		simThread.runSim(true);
 	}
 
 	public <S extends HybridSystem> void addSystem(S component)

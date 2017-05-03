@@ -53,7 +53,10 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 		getEnvironment().time().seconds(t);
 		getData().storeData(t - getSettings().getData().dataStoreIncrement,
 		(true && getSettings().getData().storeAtEveryJump));
-		getComponents().performTasks(true);
+		while (getComponents().jumpOccurring())
+		{
+			getComponents().performTasks(true);
+		}
 		getData().storeData(t, (true && getSettings().getData().storeAtEveryJump));
 		getComputationEngine().setODEValueVector(y);
 		y = getComputationEngine().getODEValueVector();
