@@ -4,6 +4,9 @@ import edu.ucsc.cross.hybrid.env.core.components.Data;
 
 public enum BaseComponents implements ComponenDefinition
 {
+	DATA_ITEM(
+		"Single Data Item",
+		false),
 	DATA_SET(
 		"Data Set",
 		false),

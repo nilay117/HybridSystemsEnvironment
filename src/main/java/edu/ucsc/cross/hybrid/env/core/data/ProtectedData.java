@@ -18,7 +18,7 @@ public abstract class ProtectedData<T> extends Component
 
 	protected ProtectedData(T element, ComponenDefinition type, String label, String name)
 	{
-		super(name, type);
+		super(label, type);
 		this.element = element;
 
 	}
@@ -30,27 +30,31 @@ public abstract class ProtectedData<T> extends Component
 
 	public void set(T element)
 	{
-		if (!(get().getClass().getSuperclass().equals(UnitValue.class)
-		&& element.getClass().getSuperclass().equals(UnitValue.class)))
+		this.element = element;
+		if (element != null)
 		{
-			this.element = element;
-		} else if (element != null)
-		{
-
-			if (get().getClass().getSuperclass().equals(UnitValue.class)
-			&& element.getClass().getSuperclass().equals(UnitValue.class))
+			if (!(get().getClass().getSuperclass().equals(UnitValue.class)
+			&& element.getClass().getSuperclass().equals(UnitValue.class)))
 			{
-				try
-				{
-					UnitValue currentVal = (UnitValue) get();
-					UnitValue newVal = (UnitValue) element;
-					currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
-				} catch (UnitException ue)
-				{
-					ue.printStackTrace();
-				}
-			}
+				this.element = element;
+			} else if (element != null)
+			{
 
+				if (get().getClass().getSuperclass().equals(UnitValue.class)
+				&& element.getClass().getSuperclass().equals(UnitValue.class))
+				{
+					try
+					{
+						UnitValue currentVal = (UnitValue) get();
+						UnitValue newVal = (UnitValue) element;
+						currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
+					} catch (UnitException ue)
+					{
+						ue.printStackTrace();
+					}
+				}
+
+			}
 		}
 	}
 
