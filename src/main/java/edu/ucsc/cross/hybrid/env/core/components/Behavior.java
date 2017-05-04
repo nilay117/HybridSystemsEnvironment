@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hybrid.env.core.components;
 
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
 import edu.ucsc.cross.hybrid.env.core.structure.DynamicalModel;
+import edu.ucsc.cross.hybrid.env.structural.BaseComponents;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 public abstract class Behavior extends Component implements DynamicalModel
 {
@@ -12,7 +12,7 @@ public abstract class Behavior extends Component implements DynamicalModel
 	 */
 	public Behavior(String name)
 	{
-		super(name, Behavior.class, ComponentClassification.BEHAVIOR);
+		super(name, BaseComponents.BEHAVIOR);
 	}
 
 	/*
@@ -20,7 +20,7 @@ public abstract class Behavior extends Component implements DynamicalModel
 	 */
 	public Behavior()
 	{
-		super("Behavior", Behavior.class, ComponentClassification.BEHAVIOR);
+		super("Behavior", BaseComponents.BEHAVIOR);
 	}
 
 	public Boolean jumpOccurring(boolean jump_priority)

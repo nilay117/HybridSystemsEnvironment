@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.structure;
+package edu.ucsc.cross.hybrid.env.structural;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
+import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
 
 public abstract class Component implements Initializer//implements ComponentInterface
 {
@@ -25,32 +25,20 @@ public abstract class Component implements Initializer//implements ComponentInte
 	@CoreComponent
 	private EnvironmentContents environment; // environment that the component is in
 	@CoreComponent
-	private Component parent; // parent component
+	private Component parentComponent; // parent component
 	@CoreComponent
-	private ArrayList<Component> rootComponents; // direct children of this component (no childrens children)
+	private ArrayList<Component> childComponents; // direct children of this component (no childrens children)
 	@CoreComponent
-	private ArrayList<Component> childComponents; // all children of this component (all children & childrens children)
+	private ArrayList<Component> descendantComponents; // all children of this component (all children & childrens children)
 	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Component>> childElementMap;
+	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Component>> rootElementMap;
+	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
 
-	public Component(String name, ComponentClassification type)
+	public Component(String name, ComponenDefinition type)
 	{
 		properties = new ComponentProperties(name, type);
 		initialized = false;
-		setup();
-	}
-
-	public Component(String name, Class<?> component_base_class)
-	{
-		properties = new ComponentProperties(name, component_base_class);
-		setup();
-	}
-
-	public Component(String name, Class<?> component_base_class, ComponentClassification type)
-	{
-		properties = new ComponentProperties(name, component_base_class);
 		setup();
 	}
 
@@ -83,13 +71,13 @@ public abstract class Component implements Initializer//implements ComponentInte
 		{
 			if (global)
 			{
-				for (ArrayList<Component> components : childElementMap.values())
+				for (ArrayList<Component> components : descendantComponentMap.values())
 				{
 					allComponents.addAll(components);
 				}
 			} else
 			{
-				for (ArrayList<Component> components : rootElementMap.values())
+				for (ArrayList<Component> components : childComponentMap.values())
 				{
 					allComponents.addAll(components);
 				}
@@ -106,11 +94,11 @@ public abstract class Component implements Initializer//implements ComponentInte
 	{
 		if (include_children)
 		{
-			return childComponents;
+			return descendantComponents;
 
 		} else
 		{
-			return rootComponents;
+			return childComponents;
 		}
 	}
 
@@ -122,10 +110,10 @@ public abstract class Component implements Initializer//implements ComponentInte
 		{
 			if (include_children)
 			{
-				components = (ArrayList<T>) childElementMap.get(component_class);
+				components = (ArrayList<T>) descendantComponentMap.get(component_class);
 			} else
 			{
-				components = (ArrayList<T>) rootElementMap.get(component_class);
+				components = (ArrayList<T>) childComponentMap.get(component_class);
 			}
 		} catch (Exception noComponents)
 		{
@@ -142,10 +130,10 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	private void initializeContainers()
 	{
-		childElementMap = new HashMap<Class<?>, ArrayList<Component>>();
-		rootElementMap = new HashMap<Class<?>, ArrayList<Component>>();
-		rootComponents = new ArrayList<Component>();
+		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
+		childComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
 		childComponents = new ArrayList<Component>();
+		descendantComponents = new ArrayList<Component>();
 	}
 
 	protected void loadHierarchyComponents()
@@ -209,49 +197,10 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	private void processComponent(Component parent, Component field)
 	{
-		field.parent = parent;
+		field.parentComponent = parent;
 		field.loadHierarchyComponents();
 		parent.storeComponent(field, true);
 	}
-
-	//	private void loadComponents(Object load)
-	//	{
-	//
-	//		for (Object field : FieldFinder.getObjectFieldValues(load, true))
-	//		{
-	//			switch (getElementType()
-	//				//System.out.println(field.toString());
-	//
-	//				//for (Object allCurrent : ComponentLocator.components(field, Component.class))
-	//				//			{
-	//				//				((Component) allCurrent).loadAllComponents();
-	//				//				//((Component) field).storeSubComponents((Component) allCurrent);
-	//				//			}
-	//				//System.out.println(getContainerComponents(field, Component.class));
-	//
-	//				//				if (FieldFinder.containsSuper(field, Component.class))
-	//				//				{
-	//				//					//((Component) load).storeComponent((Component) field, true);
-	//				//					//storeSubComponents((Component) field);
-	//				//
-	//				//					{
-	//				//						loadAllComponents(field);
-	//				//						((Component) load).storeSubComponents((Component) field);
-	//				//					}
-	//				//
-	//				//					//	((Component) field).loadAllComponents();
-	//				//					//	storeComponent((Component) field, true);
-	//				//				} else if (isContainer(field))
-	//				//				{
-	//				//					for (Object containerField : getContainerContents(field)
-	//				//					{
-	//				//						if (FieldFinder.containsSuper(containerField)
-	//				//						loadAllComponents(containerField);
-	//				//						((Component) load).storeSubComponents(containerField);
-	//				//					}
-	//				//				}
-	//			}
-	//		}
 
 	public static enum ObjectType
 	{
@@ -314,49 +263,49 @@ public abstract class Component implements Initializer//implements ComponentInte
 		{
 			if (local)
 			{
-				if (!rootComponents.contains(component))
+				if (!childComponents.contains(component))
 				{
-					rootComponents.add(component);
+					childComponents.add(component);
 				}
-				if (!rootElementMap.containsKey(component.properties.baseComponentClass))
+				if (!childComponentMap.containsKey(component.properties.baseComponentClass))
 				{
-					rootElementMap.put(component.properties.baseComponentClass, new ArrayList<Component>());//..getProperties().getClassification()).add(allCurrent))));
+					childComponentMap.put(component.properties.baseComponentClass, new ArrayList<Component>());//..getProperties().getClassification()).add(allCurrent))));
 				}
-				if (!rootElementMap.get(component.properties.baseComponentClass).contains(component))
+				if (!childComponentMap.get(component.properties.baseComponentClass).contains(component))
 				{
-					rootElementMap.get(component.properties.baseComponentClass).add(component);
+					childComponentMap.get(component.properties.baseComponentClass).add(component);
 				}
 			}
-			if (!childComponents.contains(component))
+			if (!descendantComponents.contains(component))
 			{
-				childComponents.add(component);
+				descendantComponents.add(component);
 			}
-			if (!childElementMap.containsKey(component.properties.baseComponentClass))
+			if (!descendantComponentMap.containsKey(component.properties.baseComponentClass))
 			{
-				childElementMap.put(component.properties.baseComponentClass, new ArrayList<Component>());//..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.properties.baseComponentClass, new ArrayList<Component>());//..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!childElementMap.get(component.properties.baseComponentClass).contains(component))
+			if (!descendantComponentMap.get(component.properties.baseComponentClass).contains(component))
 			{
-				childElementMap.get(component.properties.baseComponentClass).add(component);
+				descendantComponentMap.get(component.properties.baseComponentClass).add(component);
 			}
 		}
 	}
 
-	public ArrayList<Component> getData(DataCategory category, boolean global)
-	{
-		// TODO Auto-generated method stub
-		for (ComponentClassification type : category.subTypes)
-		{
-			if (global)
-			{
-				return childElementMap.get(type);
-			} else
-			{
-				return rootElementMap.get(type);
-			}
-		}
-		return null;
-	}
+	//	public ArrayList<Component> getData(DataCategory category, boolean global)
+	//	{
+	//		// TODO Auto-generated method stub
+	//		for (ComponentClassification type : category.subTypes)
+	//		{
+	//			if (global)
+	//			{
+	//				return descendantComponentMap.get(type);
+	//			} else
+	//			{
+	//				return childComponentMap.get(type);
+	//			}
+	//		}
+	//		return null;
+	//	}
 
 	public EnvironmentContents getEnvironment()
 	{
@@ -469,90 +418,4 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	}
 
-	//// Depreciating 
-
-	public void clearMapsIfEmpty()
-	{
-		System.out.println("Size components : " + getAllllComponents(true).size());
-		if (getAllllComponents(true).size() == 0)
-		{
-			childElementMap.clear();
-			rootElementMap.clear();
-		}
-	}
-
-	protected void storeSubComponents(Component component)
-	{
-		storeComponent(component, true);
-		//System.out.println("All Components " + component.getAllComponents(true));
-		for (Component subComponent : component.getAllllComponents(true))
-		{
-			storeComponent(subComponent, false);
-		}
-	}
-
-	public void addSubSystem(HybridSystem sys)
-	{
-		addSubSystem(sys, 1);
-
-	}
-
-	public HybridSystem prepSys(HybridSystem sys)
-	{
-		HybridSystem prepped = sys;
-		//prepped.loadAllComponents();
-		if (!sys.equals(this))
-		{
-			this.storeSubComponents(prepped);
-		}
-		return prepped;
-	}
-
-	public void addSubSystem(HybridSystem sys, Integer quantity)
-	{
-		String outp = (XMLParser.serializeObject(this) + "\n\n");
-		HybridSystem newSys = prepSys(sys);
-		for (Integer sysNum = 0; sysNum < quantity; sysNum++)
-		{
-			HybridSystem cloneSys = (HybridSystem) ObjectCloner.xmlClone(newSys);//clone(sys);//, this.hierarchy());
-			if (sys.equals(this))
-			{
-				this.storeSubComponents(cloneSys);
-			}
-			//	loadAllComponents(cloneSys);
-			//storeComponent(cloneSys, true);
-			//this.storeSubComponents(cloneSys);
-			//sys.s(sys);
-
-			for (Component component : cloneSys.getAllllComponents(true))
-			{
-				if (Component.getInitialized(component) == null)
-				{
-					Component.setInitialized(component, true);
-				} else
-				{
-					Component.setInitialized(component, false);
-				}
-			}
-			newSys = cloneSys;
-			outp += "\n\n" + (XMLParser.serializeObject(this) + "\n\n");
-			outp += "\n\n" + (XMLParser.serializeObject(cloneSys) + "\n\n");
-			FileSystemOperator.createOutputFile("./addSubSystem.xml", outp);
-			System.out.println(
-			(this.getAllllComponents(true).toArray(new Component[this.getAllllComponents(true).size()]).length));
-			//loadComponents(newSys);
-		}
-
-	}
-
-	public Boolean isInitialized()
-	{
-		if (initialized == null)
-		{
-			return true;
-		} else
-		{
-			return initialized;
-		}
-	}
 }

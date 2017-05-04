@@ -8,8 +8,8 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 import bs.commons.io.system.IO;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.DataCategory;
+import edu.ucsc.cross.hybrid.env.structural.BaseGroup;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -26,7 +26,7 @@ public class DataCollector extends ProcessorComponent
 		return dataStates;
 	}
 
-	private Double lastStoreTime = 0.0;
+	private Double lastStoreTime = -10.0;
 	private ArrayList<Data> dataStates;
 
 	DataCollector(Environment processor)
@@ -62,7 +62,7 @@ public class DataCollector extends ProcessorComponent
 			{
 				Data element = (Data) component;
 
-				if (DataCategory.ALL_STATES.containsObj(element))
+				if (BaseGroup.ALL_STATES.containsObj(element))
 				{
 					if (Data.isStored(element))
 					{

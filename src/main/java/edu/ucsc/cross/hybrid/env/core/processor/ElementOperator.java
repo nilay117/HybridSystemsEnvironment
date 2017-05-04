@@ -6,8 +6,8 @@ import edu.ucsc.cross.hybrid.env.core.components.Behavior;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.DataCategory;
+import edu.ucsc.cross.hybrid.env.structural.BaseGroup;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -72,7 +72,7 @@ public class ElementOperator extends ProcessorComponent
 	{
 		for (Component component : allComponents)
 		{
-			component.clearMapsIfEmpty();
+			//component.clearMapsIfEmpty();
 			Component.setEnvironment(component, getEnvironment());
 		}
 	}
@@ -92,7 +92,7 @@ public class ElementOperator extends ProcessorComponent
 				//if (component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
 				if (component.getProperties().getBaseComponentClass().equals(Behavior.class))
 				{
-					if (!component.isInitialized())
+					if (!Data.getInitialized(component))
 					{
 						component.initialize();
 						Component.setInitialized(component, true);
@@ -104,7 +104,7 @@ public class ElementOperator extends ProcessorComponent
 				//if (!component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
 				if (!component.getProperties().getBaseComponentClass().equals(Behavior.class))
 				{
-					if (!component.isInitialized())
+					if (!Data.getInitialized(component))
 					{
 						component.initialize();
 						Component.setInitialized(component, true);
@@ -166,7 +166,7 @@ public class ElementOperator extends ProcessorComponent
 	{
 		for (Data data : allData)
 		{
-			if (DataCategory.STATE_ELEMENTS.containsObj(data))
+			if (BaseGroup.STATE_ELEMENTS.contains(data))
 			{
 				Data.storePreJumpValue(data);
 			}

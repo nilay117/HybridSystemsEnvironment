@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hybrid.env.core.structure;
 
+import edu.ucsc.cross.hybrid.env.structural.Component;
+
 public class ComponentProperties
 {
 

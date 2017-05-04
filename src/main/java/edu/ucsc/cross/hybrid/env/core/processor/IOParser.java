@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
 import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 public class IOParser extends ProcessorComponent
 {

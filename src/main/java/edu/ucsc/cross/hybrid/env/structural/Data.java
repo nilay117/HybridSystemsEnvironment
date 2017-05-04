@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.components;
+package edu.ucsc.cross.hybrid.env.structural;
 
 import java.util.HashMap;
 
@@ -167,7 +167,7 @@ public class Data<T> extends DynamicData<T>
 		}
 	}
 
-	public static <S> Data<S> instantiateData(S obj, DataClassification type, String name, String description,
+	protected static <S> Data<S> instantiateData(S obj, DataClassification type, String name, String description,
 	Boolean save_default)
 	{
 		Data<S> newData = new Data<S>(obj, type, name, description, save_default);//type, name, description);

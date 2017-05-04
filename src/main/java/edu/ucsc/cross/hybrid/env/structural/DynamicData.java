@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.data;
+package edu.ucsc.cross.hybrid.env.structural;
 
 import bs.commons.io.system.IO;
 import bs.commons.objects.access.FieldFinder;

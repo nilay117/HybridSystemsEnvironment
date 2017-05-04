@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hybrid.env.core.components;
 
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
+import edu.ucsc.cross.hybrid.env.structural.BaseComponents;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 public abstract class DataSet extends Component// implements Initializer//DataSetProperties
 {
@@ -13,7 +13,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	 */
 	public DataSet()
 	{
-		super("Data Set", ComponentClassification.DATA_SET);
+		super("Data Set", BaseComponents.DATA_SET);
 		simulated(true);
 	}
 
@@ -22,7 +22,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	 */
 	public DataSet(String title)
 	{
-		super(title, ComponentClassification.DATA_SET);
+		super(title, BaseComponents.DATA_SET);
 		simulated(true);
 	}
 
@@ -31,7 +31,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	 */
 	public DataSet(String title, boolean simulated)
 	{
-		super(title, ComponentClassification.DATA_SET);
+		super(title, BaseComponents.DATA_SET);
 		simulated(simulated);
 	}
 
@@ -48,8 +48,8 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 		{
 			try
 			{
-				Data element = (Data) component;
-				Data.isSimulated(element, this.simulate());
+				//	Data element = (Data) component;
+				//Data.isSimulated(element, this.simulate());
 			} catch (Exception nonElement)
 			{
 				try

@@ -1,22 +1,26 @@
 package edu.ucsc.cross.hybrid.env.core.data;
 
-import bs.commons.io.system.IO;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
-import edu.ucsc.cross.hybrid.env.core.structure.ComponentClassification;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.structural.ComponenDefinition;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
+@SuppressWarnings(
+{ "unchecked", "rawtypes" })
 public abstract class ProtectedData<T> extends Component
 {
 
-	protected boolean settable;
 	protected T element;
 
-	protected ProtectedData(T element, ComponentClassification type, boolean settable, String name, String description)
+	protected ProtectedData(T element, ComponenDefinition type, String label, String name)
 	{
 		super(name, type);
 		this.element = element;
-		this.settable = settable;
+
 	}
 
 	public T get()
@@ -24,11 +28,10 @@ public abstract class ProtectedData<T> extends Component
 		return element;
 	}
 
-	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
 	public void set(T element)
 	{
-		if (settable)
+		if (!(get().getClass().getSuperclass().equals(UnitValue.class)
+		&& element.getClass().getSuperclass().equals(UnitValue.class)))
 		{
 			this.element = element;
 		} else if (element != null)
@@ -48,25 +51,43 @@ public abstract class ProtectedData<T> extends Component
 				}
 			}
 
-		} else
-		{
-			new Exception().printStackTrace();
-			IO.warn("attempted to set " + element + " when value setting is disabled");
 		}
 	}
 
-	protected void setOverride(T element)
+	@Override
+	public void initialize()
 	{
-		this.element = element;
+		// TODO Auto-generated method stub
+
 	}
 
-	public static <S> void setSettable(ProtectedData<S> element, boolean set)
+	public static <T> boolean isChangeableElement(T object)
 	{
-		element.settable = set;
+		if (object != null)
+		{
+			try
+			{
+				if (Data.changableClasses.contains(object.getClass()))
+				{
+					return true;
+				} else if (object.getClass().isEnum())
+				{
+					return true;
+				} else
+				{
+					return false;
+				}
+
+			} catch (Exception nullpt)
+			{
+			}
+		}
+		return true;
 	}
 
-	public static <S> void setValOverride(ProtectedData<S> element, S value)
-	{
-		element.setOverride(value);
-	}
+	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
+	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
+
+	//	@Override
+
 }

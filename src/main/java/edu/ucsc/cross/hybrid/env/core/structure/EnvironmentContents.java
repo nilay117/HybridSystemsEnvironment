@@ -6,6 +6,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
+import edu.ucsc.cross.hybrid.env.structural.BaseComponents;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 public class EnvironmentContents extends Component
 {
@@ -20,14 +22,14 @@ public class EnvironmentContents extends Component
 
 	public EnvironmentContents(String environment_title)
 	{
-		super(environment_title, ComponentClassification.ENVIRONMENT);
+		super(environment_title, BaseComponents.ENVIRONMENT);
 		setEnvironmentTitle(environment_title);
 		initializeDataStructures();
 	}
 
 	public EnvironmentContents()
 	{
-		super("Hybrid Systems Environment", ComponentClassification.ENVIRONMENT);
+		super("Hybrid Systems Environment", BaseComponents.ENVIRONMENT);
 		setEnvironmentTitle("Hybrid Environment");
 		initializeDataStructures();
 	}

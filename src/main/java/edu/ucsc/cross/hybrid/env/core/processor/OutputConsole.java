@@ -7,7 +7,7 @@ import bs.commons.io.system.StringFormatter;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.structure.Component;
+import edu.ucsc.cross.hybrid.env.structural.Component;
 
 public class OutputConsole extends ProcessorComponent
 {
