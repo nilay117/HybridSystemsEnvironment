@@ -1,8 +1,8 @@
-package edu.ucsc.cross.hybrid.env.core.classifications;
+package edu.ucsc.cross.hybrid.env.core.classification;
 
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 
-public interface DataClass extends ComponentClass
+public interface DataType
 {
 
 	public boolean changesContinuously();
@@ -10,6 +10,8 @@ public interface DataClass extends ComponentClass
 	public boolean isStoredByDefault();
 
 	public boolean isState();
+
+	public String baseLabel();
 
 	public <T> Data<T> create(T initial_value);
 

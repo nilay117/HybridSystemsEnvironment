@@ -1,14 +1,26 @@
-<edu.ucsc.cross.hybrid.env.core.processor.SettingConfigurer>
+<edu.ucsc.cross.hybrid.env.core.containers.SettingConfiguration>
   <settings>
     <entry>
-      <java-class>edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings</java-class>
-      <edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings>
-        <runThreadded>true</runThreadded>
-        <numberOfTrials>1</numberOfTrials>
-        <maxParallelExecutions>1</maxParallelExecutions>
-        <simDuration>10.0</simDuration>
-        <jumpLimit>20</jumpLimit>
-      </edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings>
+      <java-class>edu.ucsc.cross.hybrid.env.core.settings.DataSettings</java-class>
+      <edu.ucsc.cross.hybrid.env.core.settings.DataSettings>
+        <automaticallyStoreResults>true</automaticallyStoreResults>
+        <storeDataAtIncrements>true</storeDataAtIncrements>
+        <storeAtEveryJump>false</storeAtEveryJump>
+        <dataStoreIncrement>0.1</dataStoreIncrement>
+        <autoStoreDirectory>./results</autoStoreDirectory>
+        <environmentNameSubDirectory>true</environmentNameSubDirectory>
+        <storePreJumpValue>false</storePreJumpValue>
+      </edu.ucsc.cross.hybrid.env.core.settings.DataSettings>
+    </entry>
+    <entry>
+      <java-class>edu.ucsc.cross.hybrid.env.core.settings.PrintSettings</java-class>
+      <edu.ucsc.cross.hybrid.env.core.settings.PrintSettings>
+        <printProgressUpdates>true</printProgressUpdates>
+        <totalSimTimePrintOuts>20</totalSimTimePrintOuts>
+        <printDiscreteEventIndicator>true</printDiscreteEventIndicator>
+        <printStoreDataIndicator>true</printStoreDataIndicator>
+        <printStoreDataReport>true</printStoreDataReport>
+      </edu.ucsc.cross.hybrid.env.core.settings.PrintSettings>
     </entry>
     <entry>
       <java-class>edu.ucsc.cross.hybrid.env.core.settings.ComputationSettings</java-class>
@@ -31,26 +43,14 @@
       </edu.ucsc.cross.hybrid.env.core.settings.ComputationSettings>
     </entry>
     <entry>
-      <java-class>edu.ucsc.cross.hybrid.env.core.settings.DataSettings</java-class>
-      <edu.ucsc.cross.hybrid.env.core.settings.DataSettings>
-        <automaticallyStoreResults>true</automaticallyStoreResults>
-        <storeDataAtIncrements>true</storeDataAtIncrements>
-        <storeAtEveryJump>false</storeAtEveryJump>
-        <dataStoreIncrement>0.1</dataStoreIncrement>
-        <autoStoreDirectory>./results</autoStoreDirectory>
-        <environmentNameSubDirectory>true</environmentNameSubDirectory>
-        <storePreJumpValue>true</storePreJumpValue>
-      </edu.ucsc.cross.hybrid.env.core.settings.DataSettings>
-    </entry>
-    <entry>
-      <java-class>edu.ucsc.cross.hybrid.env.core.settings.PrintSettings</java-class>
-      <edu.ucsc.cross.hybrid.env.core.settings.PrintSettings>
-        <printProgressUpdates>true</printProgressUpdates>
-        <totalSimTimePrintOuts>20</totalSimTimePrintOuts>
-        <printDiscreteEventIndicator>true</printDiscreteEventIndicator>
-        <printStoreDataIndicator>true</printStoreDataIndicator>
-        <printStoreDataReport>true</printStoreDataReport>
-      </edu.ucsc.cross.hybrid.env.core.settings.PrintSettings>
+      <java-class>edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings</java-class>
+      <edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings>
+        <runThreadded>true</runThreadded>
+        <numberOfTrials>1</numberOfTrials>
+        <maxParallelExecutions>1</maxParallelExecutions>
+        <simDuration>10.0</simDuration>
+        <jumpLimit>20</jumpLimit>
+      </edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings>
     </entry>
   </settings>
-</edu.ucsc.cross.hybrid.env.core.processor.SettingConfigurer>
+</edu.ucsc.cross.hybrid.env.core.containers.SettingConfiguration>

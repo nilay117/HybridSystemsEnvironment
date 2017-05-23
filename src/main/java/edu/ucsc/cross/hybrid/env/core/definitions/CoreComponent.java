@@ -1,9 +1,6 @@
 package edu.ucsc.cross.hybrid.env.core.definitions;
 
-import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-
-public enum CoreComponent implements ComponentClass
+public enum CoreComponent //implements ComponentClass
 {
 	DATA_ITEM(
 		"Single Data Item",
@@ -39,21 +36,6 @@ public enum CoreComponent implements ComponentClass
 	public boolean storeDefault()
 	{
 		return storeDefault;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> Class<T> baseClass()
-	{
-		// TODO Auto-generated method stub
-		return (Class<T>) Data.class;
-	}
-
-	@Override
-	public String baseLabel()
-	{
-		// TODO Auto-generated method stub
-		return classificationName;
 	}
 
 	//	public static void changeStoreDefault(ComponentClassification element, boolean store)

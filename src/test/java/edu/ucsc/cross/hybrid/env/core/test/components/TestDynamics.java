@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hybrid.env.core.components.Behavior;
 
 public class TestDynamics extends Behavior
@@ -46,7 +45,7 @@ public class TestDynamics extends Behavior
 	@Override
 	public void jumpMap()
 	{
-		state.hybrid.set(1.0);
+		state.hybrid.set(Math.random() * 3 + Math.random() + 1);
 	}
 
 	@Override

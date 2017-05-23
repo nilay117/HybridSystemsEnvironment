@@ -18,7 +18,7 @@ class DomainEvaluator extends Processor implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
-		getEnvironment().time().seconds(t);
+		getEnvironment().environmentTime().seconds(t);
 		getComputationEngine().updateValues(y);
 		if (getComponents().jumpOccurring())
 		{
@@ -36,7 +36,7 @@ class DomainEvaluator extends Processor implements EventHandler
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
 		getComputationEngine().updateValues(y);
-		getEnvironment().time().seconds(t);
+		getEnvironment().environmentTime().seconds(t);
 		IO.out(getConsole().getDiscreteEventIndication());
 		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
 		{
@@ -57,7 +57,7 @@ class DomainEvaluator extends Processor implements EventHandler
 	public void resetState(double t, double[] y)
 	{
 		getComputationEngine().updateValues(y);
-		getEnvironment().time().seconds(t);
+		getEnvironment().environmentTime().seconds(t);
 		//		getData().storeData(t - getSettings().getData().dataStoreIncrement,
 		//		(true && getSettings().getData().storeAtEveryJump));
 		getComponents().performTasks(true);

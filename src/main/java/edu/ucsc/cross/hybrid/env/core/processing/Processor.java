@@ -2,6 +2,7 @@ package edu.ucsc.cross.hybrid.env.core.processing;
 
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
+import edu.ucsc.cross.hybrid.env.core.containers.SettingConfiguration;
 
 public abstract class Processor
 {
@@ -16,41 +17,41 @@ public abstract class Processor
 	//@Override
 	protected Time getEnvTime()
 	{
-		return processor.environment.time();
+		return processor.environmentContent.environmentTime();
 	}
 
 	//@Override
 	protected void setEnvTime(Time time)
 	{
 		// TODO Auto-generated method stub
-		processor.environment.time().seconds(time.seconds());
+		processor.environmentContent.environmentTime().seconds(time.seconds());
 	}
 
 	//@Override
 	protected SimulationEngine getComputationEngine()
 	{
-		return processor.simEngine;
+		return processor.simulationEngine;
 	}
 
 	//@Override
 	protected ExecutionMonitor getEnvironmentMonitor()
 	{
-		return processor.simThread;
+		return processor.executionMonitor;
 	}
 
 	//@Override
 	protected EnvironmentContent getEnvironment()
 	{
-		return processor.getEnvironment();
+		return processor.environmentContent();
 	}
 
 	//@Override
-	protected OutputPrinter getConsole()
+	protected SystemConsole getConsole()
 	{
-		return processor.notifier;
+		return processor.outputPrinter;
 	}
 
-	protected SettingConfigurer getSettings()
+	protected SettingConfiguration getSettings()
 	{
 		return processor.getSettings();
 	}
@@ -74,11 +75,11 @@ public abstract class Processor
 
 	protected FileParser getSaveUtility()
 	{
-		return processor.saver;
+		return processor.fileParser;
 	}
 
 	//@Override
-	protected void setSettings(SettingConfigurer settings)
+	protected void setSettings(SettingConfiguration settings)
 	{
 		processor.setSettings(settings);
 	}

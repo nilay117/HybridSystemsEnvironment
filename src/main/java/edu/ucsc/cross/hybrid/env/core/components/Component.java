@@ -2,6 +2,7 @@ package edu.ucsc.cross.hybrid.env.core.components;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -13,57 +14,95 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
 import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
 import edu.ucsc.cross.hybrid.env.core.properties.ComponentProperties;
 
-public abstract class Component implements Initializer//implements ComponentInterface
+public abstract class Component implements Initializer //implements ComponentInterface
 {
 
 	@CoreComponent
-	private Boolean initialized;
+	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
 	@CoreComponent
-	private ComponentProperties properties; // properties of the component
-	@CoreComponent
-	private EnvironmentContent environment; // environment that the component is in
-	@CoreComponent
-	private Component parentComponent; // parent component
+	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 	@CoreComponent
 	private ArrayList<Component> childComponents; // direct children of this component (no childrens children)
 	@CoreComponent
 	private ArrayList<Component> descendantComponents; // all children of this component (all children & childrens children)
 	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
+	public HashMap<Class<?>, ArrayList<Object>> childObjectMap;
 	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
+	public HashMap<Class<?>, ArrayList<Object>> descendantObjectMap;
+	@CoreComponent
+	private ArrayList<Object> childObjects; // direct children of this component (no childrens children)
+	@CoreComponent
+	private ArrayList<Object> descendantObjects; // all children of this component (all children & childrens children)
+	@CoreComponent
+	private EnvironmentContent environment; // environment that the component is in
+	@CoreComponent
+	private Boolean initialized;
+	@CoreComponent
+	private Component parentComponent; // parent component
+	@CoreComponent
+	private ComponentProperties properties; // properties of the component
 
-	public Component(String name, ComponentClass type)
+	/*
+	 * Constructor that defines the name and base class of the component
+	 * 
+	 * @param title - title of the component
+	 * 
+	 * @param base_class - base class of the component
+	 */
+	public Component(String title, Class<?> base_class)
 	{
-		properties = new ComponentProperties(name, type);
-		initialized = false;
+		properties = new ComponentProperties(title, base_class);
 		setup();
 	}
 
-	private void setup()
+	/*
+	 * Constructor that defines the name of the component with this class
+	 * (Component) as the base class. This constructor is used to create
+	 * components that are not based off any of the core components:
+	 * Behavior,Data,DataSet, and HybridSystem.
+	 * 
+	 * @param title - title of the component
+	 */
+	public Component(String title)
 	{
-		initialized = false;
-		initializeContainers();
+		properties = new ComponentProperties(title, Component.class);
+		setup();
 	}
 
-	public void load()
+	/*
+	 * Adds a single sub-component to this component. This is used to add
+	 * components that are not explicitly defined in the main class, which
+	 * allows for variations without modifying the main component code itself
+	 * 
+	 * @param component - component to be added
+	 */
+	public <T extends Component> void addComponent(T component)
 	{
-		loadHierarchyComponents();
-		ArrayList<Component> init = new ArrayList<Component>();
-		init.addAll(getComponents(true));
-		for (Component component : init)
-		{
-			component.load();
-			for (Component componentChild : component.getComponents(true))
-			{
-				storeComponent(componentChild, false);
-			}
-		}
+		addComponent(component, 1);
+	}
 
+	/*
+	 * Adds a number of sub-components to this component. This is used to add
+	 * components that are not explicitly defined in the main class, which
+	 * allows for variations without modifying the main component code itself.
+	 * This method allows any number of duplicate components to be added
+	 * 
+	 * @param component - component to be added
+	 * 
+	 * @param quantity - number of components to be added
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Component> void addComponent(T component, Integer quantity)
+	{
+		T initialClone = (T) ObjectCloner.xmlClone(component);
+		for (Integer ind = 0; ind < quantity; ind++)
+		{
+			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
+			storeComponent(clonedComponent, true);
+		}
 	}
 
 	public ArrayList<Component> getAllllComponents(boolean global)
@@ -105,7 +144,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Component> ArrayList<T> getComponents(Class<T> component_class, boolean include_children)
+	public <T> ArrayList<T> getComponents(Class<T> component_class, boolean include_children)
 	{
 		ArrayList<T> components = new ArrayList<T>();
 		try
@@ -119,23 +158,185 @@ public abstract class Component implements Initializer//implements ComponentInte
 			}
 		} catch (Exception noComponents)
 		{
-
+			components = null;
 		}
 		if (components == null)
 		{
-			components = (ArrayList<T>) loadMap(component_class, include_children);
+			ArrayList<Component> componentz = scanForComponents(component_class, include_children);
+			if (include_children)
+			{
+				descendantComponentMap.put(component_class, componentz);
+			} else
+			{
+				childComponentMap.put(component_class, componentz);
+			}
+			components = (ArrayList<T>) componentz;
 			//components = getComponents(component_class, include_children);
 		}
 
 		return components;
 	}
 
+	//	@SuppressWarnings("unchecked")
+	//	public <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children)
+	//	{
+	//		ArrayList<T> components = new ArrayList<T>();
+	//		try
+	//		{
+	//			if (include_children)
+	//			{
+	//				components = (ArrayList<T>) descendantObjectMap.get(component_class);
+	//			} else
+	//			{
+	//				components = (ArrayList<T>) childObjectMap.get(component_class);
+	//			}
+	//		} catch (Exception noComponents)
+	//		{
+	//			components = null;
+	//		}
+	//		if (components == null)
+	//		{
+	//			ArrayList<Object> componentObjects = scanForObjects(component_class, include_children);
+	//			System.out.println(componentObjects.toString());
+	//			if (include_children)
+	//			{
+	//				descendantObjectMap.put(component_class, componentObjects);
+	//			} else
+	//			{
+	//				childObjectMap.put(component_class, componentObjects);
+	//			}
+	//			components = new ArrayList<T>();
+	//			components.addAll((ArrayList<T>) componentObjects);
+	//			//components = getComponents(component_class, include_children);
+	//		}
+	//
+	//		return components;
+	//	}
+
+	public EnvironmentContent getEnvironment()
+	{
+		return environment;
+		//return environment;
+	}
+
+	public ComponentProperties getProperties()
+	{
+		return properties;
+	}
+
+	public void load()
+	{
+		loadHierarchyComponents();
+		ArrayList<Component> init = new ArrayList<Component>();
+		init.addAll(getComponents(true));
+		for (Component component : init)
+		{
+			component.load();
+			for (Component componentChild : component.getComponents(true))
+			{
+				storeComponent(componentChild, false);
+			}
+		}
+
+	}
+
+	public void saveComponentToFile(String directory_path, String file_name)
+	{
+		Object clonedComponent = ObjectCloner.xmlClone(this);
+		((Component) clonedComponent).load();//.loadAllComponents();
+		//	((Component) clonedComponent).storeSubComponents(((Component) clonedComponent));
+		//((Component) clonedComponent).clearMapsIfEmpty();
+		//		for (Component subComponent : ((Component) clonedComponent).getAllllComponents(true))
+		//		{
+		//			subComponent.clearMapsIfEmpty();
+		//		}
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(clonedComponent));
+
+	}
+
 	private void initializeContainers()
 	{
 		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
 		childComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
+		descendantObjectMap = new HashMap<Class<?>, ArrayList<Object>>();
+		childObjectMap = new HashMap<Class<?>, ArrayList<Object>>();
 		childComponents = new ArrayList<Component>();
 		descendantComponents = new ArrayList<Component>();
+	}
+
+	private ArrayList<Component> loadMap(Class<?> component_class, boolean children)
+	{
+		ArrayList<Component> components = new ArrayList<Component>();
+		for (Component component : getComponents(children))
+		{
+			if (FieldFinder.containsSuper(component, component_class))
+			{
+				components.add(component);//..getProperties().getClassification()).add(allCurrent))));
+			}
+		}
+		return components;
+	}
+
+	private void processComponent(Component parent, Component field)
+	{
+		field.parentComponent = parent;
+		field.loadHierarchyComponents();
+		parent.storeComponent(field, true);
+	}
+
+	private void processContainer(Component parent, Object container)
+	{
+		for (Object content : getContainerContents(container))
+		{
+			//System.out.println(content);
+			processField(parent, content);
+		}
+	}
+
+	private void processField(Component parent, Object field)
+	{
+		switch (getElementType(field))
+		{
+		case COMPONENT:
+			processComponent(parent, (Component) field);
+			break;
+		case CONTAINER:
+			processContainer(parent, field);
+			break;
+		default:
+			break;
+		}
+	}
+
+	//	public ArrayList<Component> getData(DataCategory category, boolean global)
+	//	{
+	//		// TODO Auto-generated method stub
+	//		for (ComponentClassification type : category.subTypes)
+	//		{
+	//			if (global)
+	//			{
+	//				return descendantComponentMap.get(type);
+	//			} else
+	//			{
+	//				return childComponentMap.get(type);
+	//			}
+	//		}
+	//		return null;
+	//	}
+
+	private void processFields(Component parent, ArrayList<Object> fields)
+	{
+		for (Object field : fields)
+		{
+			processField(parent, field);
+		}
+	}
+
+	private void setup()
+	{
+		initialized = false;
+		initializeContainers();
 	}
 
 	protected void loadHierarchyComponents()
@@ -163,100 +364,6 @@ public abstract class Component implements Initializer//implements ComponentInte
 			}
 		}
 		processFields((Component) sysObj, allFields);
-	}
-
-	private void processFields(Component parent, ArrayList<Object> fields)
-	{
-		for (Object field : fields)
-		{
-			processField(parent, field);
-		}
-	}
-
-	private void processField(Component parent, Object field)
-	{
-		switch (getElementType(field))
-		{
-		case COMPONENT:
-			processComponent(parent, (Component) field);
-			break;
-		case CONTAINER:
-			processContainer(parent, field);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private void processContainer(Component parent, Object container)
-	{
-		for (Object content : getContainerContents(container))
-		{
-			//System.out.println(content);
-			processField(parent, content);
-		}
-	}
-
-	private void processComponent(Component parent, Component field)
-	{
-		field.parentComponent = parent;
-		field.loadHierarchyComponents();
-		parent.storeComponent(field, true);
-	}
-
-	public static enum ObjectType
-	{
-		COMPONENT,
-		CONTAINER,
-		JAVA,
-		UNKNOWN;
-
-	}
-
-	//	
-	public static <T> ObjectType getElementType(T object)
-	{
-		ObjectType type = ObjectType.UNKNOWN;
-		if (object != null)
-		{
-			if (FieldFinder.containsSuper(object, HashMap.class) || FieldFinder.containsSuper(object, ArrayList.class))
-			{
-				type = ObjectType.CONTAINER;
-			} else if (FieldFinder.containsSuper(object, Component.class))
-			{
-				type = ObjectType.COMPONENT;
-			}
-		}
-		return type;
-	}
-
-	public <T extends Component> void addComponent(T component)
-	{
-		addComponent(component, 1);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends Component> void addComponent(T component, Integer quantity)
-	{
-		T initialClone = (T) ObjectCloner.xmlClone(component);
-		for (Integer ind = 0; ind < quantity; ind++)
-		{
-			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-			storeComponent(clonedComponent, true);
-		}
-	}
-
-	private ArrayList<Component> loadMap(Class<?> component_class, boolean children)
-	{
-		ArrayList<Component> components = new ArrayList<Component>();
-		for (Component component : getComponents(children))
-		{
-			if (FieldFinder.containsSuper(component, component_class))
-			{
-				components.add(component);//..getProperties().getClassification()).add(allCurrent))));
-			}
-		}
-		return components;
 	}
 
 	protected void storeComponent(Component component, boolean local)
@@ -293,54 +400,6 @@ public abstract class Component implements Initializer//implements ComponentInte
 		}
 	}
 
-	//	public ArrayList<Component> getData(DataCategory category, boolean global)
-	//	{
-	//		// TODO Auto-generated method stub
-	//		for (ComponentClassification type : category.subTypes)
-	//		{
-	//			if (global)
-	//			{
-	//				return descendantComponentMap.get(type);
-	//			} else
-	//			{
-	//				return childComponentMap.get(type);
-	//			}
-	//		}
-	//		return null;
-	//	}
-
-	public EnvironmentContent getEnvironment()
-	{
-		return environment;
-		//return environment;
-	}
-
-	public static void setEnvironment(Component component, EnvironmentContent environment)
-	{
-		EnvironmentContent accessor = environment;
-		component.environment = accessor;
-	}
-
-	public ComponentProperties getProperties()
-	{
-		return properties;
-	}
-
-	public void saveComponentToFile(String directory_path, String file_name)
-	{
-		Object clonedComponent = ObjectCloner.xmlClone(this);
-		((Component) clonedComponent).load();//.loadAllComponents();
-		//	((Component) clonedComponent).storeSubComponents(((Component) clonedComponent));
-		//((Component) clonedComponent).clearMapsIfEmpty();
-		//		for (Component subComponent : ((Component) clonedComponent).getAllllComponents(true))
-		//		{
-		//			subComponent.clearMapsIfEmpty();
-		//		}
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
-		XMLParser.serializeObject(clonedComponent));
-
-	}
-
 	public static Component getComponentFromFile(String file_path)
 	{
 		Component component = null;
@@ -356,35 +415,30 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	}
 
-	public static void setInitialized(Component component, Boolean initialized)
+	private <T> ArrayList<Component> scanForComponents(Class<T> scan_class, boolean global)
 	{
-		component.initialized = initialized;
-	}
-
-	public static Boolean getInitialized(Component component)
-	{
-		return component.initialized;
-	}
-
-	public static ArrayList<Object> getMapOrListElements(Object obj)
-	{
-		ArrayList<Object> values = new ArrayList<Object>();
-		try
+		ArrayList<Component> foundObjects = new ArrayList<Component>();
+		ArrayList<Component> allComponents = new ArrayList<Component>();
+		if (global)
 		{
-			Collection<Object> objects = ((Map) obj).values();
-			values.addAll(objects);
-		} catch (Exception notMap)
+			allComponents = descendantComponents;
+		} else
 		{
-			try
+			allComponents = childComponents;
+		}
+		for (Component component : allComponents)
+		{
+			System.out
+			.println(component.getClass().getSimpleName() + " " + component.getClass().getInterfaces().length);
+			if (FieldFinder.containsSuper(component, scan_class))
 			{
-				Collection<Object> objects = ((List) obj);
-				values.addAll(objects);
-			} catch (Exception notList)
+				foundObjects.add(component);
+			} else if (Arrays.asList(component.getClass().getInterfaces()).contains(scan_class))
 			{
-
+				foundObjects.add(component);
 			}
 		}
-		return values;
+		return foundObjects;
 	}
 
 	public static ArrayList<Object> getContainerContents(Object container)
@@ -420,4 +474,71 @@ public abstract class Component implements Initializer//implements ComponentInte
 
 	}
 
+	//	
+	public static <T> ObjectType getElementType(T object)
+	{
+		ObjectType type = ObjectType.UNKNOWN;
+		if (object != null)
+		{
+			if (FieldFinder.containsSuper(object, HashMap.class) || FieldFinder.containsSuper(object, ArrayList.class))
+			{
+				type = ObjectType.CONTAINER;
+			} else if (FieldFinder.containsSuper(object, Component.class))
+			{
+				type = ObjectType.COMPONENT;
+			}
+		}
+		return type;
+	}
+
+	public static Boolean getInitialized(Component component)
+	{
+		return component.initialized;
+	}
+
+	public static ArrayList<Object> getMapOrListElements(Object obj)
+	{
+		ArrayList<Object> values = new ArrayList<Object>();
+		try
+		{
+			Collection<Object> objects = ((Map) obj).values();
+			values.addAll(objects);
+		} catch (Exception notMap)
+		{
+			try
+			{
+				Collection<Object> objects = ((List) obj);
+				values.addAll(objects);
+			} catch (Exception notList)
+			{
+
+			}
+		}
+		return values;
+	}
+
+	public static Boolean isInitialized(Component component)
+	{
+		return component.initialized;
+	}
+
+	public static void setEnvironment(Component component, EnvironmentContent environment)
+	{
+		EnvironmentContent accessor = environment;
+		component.environment = accessor;
+	}
+
+	public static void setInitialized(Component component, Boolean initialized)
+	{
+		component.initialized = initialized;
+	}
+
+	private static enum ObjectType
+	{
+		COMPONENT,
+		CONTAINER,
+		JAVA,
+		UNKNOWN;
+
+	}
 }

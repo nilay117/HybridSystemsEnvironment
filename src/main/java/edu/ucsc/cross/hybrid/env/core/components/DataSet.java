@@ -1,19 +1,17 @@
 package edu.ucsc.cross.hybrid.env.core.components;
 
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
-
 public abstract class DataSet extends Component// implements Initializer//DataSetProperties
 {
 
 	private boolean simulated;
 
 	/*
-	 * Constructor that allows the user to name the data set
+	 * Constructor that gives the set the generic name "Data Set"
 	 */
 	public DataSet()
 	{
-		super("Data Set", CoreComponent.DATA_SET);
-		simulated(true);
+		super("Data Set", DataSet.class);
+		simulated = true;
 	}
 
 	/*
@@ -21,20 +19,24 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	 */
 	public DataSet(String title)
 	{
-		super(title, CoreComponent.DATA_SET);
-		simulated(true);
+		super(title, DataSet.class);
+		simulated = true;
 	}
 
 	/*
-	 * Constructor that assigns generic name
+	 * Constructor that allows the user to name the data set and define if the
+	 * contained data is simulated or not
 	 */
 	public DataSet(String title, boolean simulated)
 	{
-		super(title, CoreComponent.DATA_SET);
-		simulated(simulated);
+		super(title, DataSet.class);
+		this.simulated = simulated;
 	}
 
-	public boolean simulate()
+	/*
+	 * Flag indicating whether the data should be simulated or not
+	 */
+	public boolean isSimulated()
 	{
 		return simulated;
 	}
@@ -54,7 +56,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 				try
 				{
 					DataSet elements = (DataSet) component;
-					elements.simulated(this.simulate());
+					//elements.setSimulated(this.isSimulated());
 					//elements.initializeElements();
 				} catch (Exception nonElements)
 				{
@@ -64,9 +66,24 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 		}
 	}
 
-	public void simulated(boolean simulate)
+	/*
+	 * Toggles whether the data contained in the data set is simulated or not
+	 */
+	public static void setSimulated(DataSet data_set, boolean simulate)
 	{
-		this.simulated = simulate;
+		boolean uninitialized = true;
+		if (Component.isInitialized(data_set) != null)
+		{
+			uninitialized = uninitialized && !Component.isInitialized(data_set);
+
+		}
+		if (uninitialized)
+		{
+			data_set.simulated = (simulate);
+		} else
+		{
+
+		}
 	}
 
 }

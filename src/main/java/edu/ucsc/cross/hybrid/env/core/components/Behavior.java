@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hybrid.env.core.components;
 
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
 import edu.ucsc.cross.hybrid.env.core.models.DynamicalModel;
 
 public abstract class Behavior extends Component implements DynamicalModel
@@ -11,7 +10,7 @@ public abstract class Behavior extends Component implements DynamicalModel
 	 */
 	public Behavior(String name)
 	{
-		super(name, CoreComponent.BEHAVIOR);
+		super(name, Behavior.class);
 	}
 
 	/*
@@ -19,27 +18,37 @@ public abstract class Behavior extends Component implements DynamicalModel
 	 */
 	public Behavior()
 	{
-		super("Behavior", CoreComponent.BEHAVIOR);
+		super("Behavior", Behavior.class);
 	}
 
 	public Boolean jumpOccurring(boolean jump_priority)
 	{
+		return Behavior.jumpOccurring(this, jump_priority);
+	}
+
+	public void updateStates(boolean jump_priority, boolean jump_occurring)
+	{
+		Behavior.updateStates(this, jump_priority, jump_occurring);
+	}
+
+	public static Boolean jumpOccurring(DynamicalModel dynamics, boolean jump_priority)
+	{
 		Boolean dom = null;
 		if (!jump_priority)
 		{
-			if (flowSet())
+			if (dynamics.flowSet())
 			{
 				dom = false;
-			} else if (jumpSet())
+			} else if (dynamics.jumpSet())
 			{
 				dom = true;
 			}
 		} else
 		{
-			if (jumpSet())
+			if (dynamics.jumpSet())
 			{
 				dom = true;
-			} else if (flowSet())
+			} else if (dynamics.flowSet())
 			{
 				dom = false;
 			}
@@ -47,36 +56,36 @@ public abstract class Behavior extends Component implements DynamicalModel
 		return dom;
 	}
 
-	public void updateStates(boolean jump_priority, boolean jump_occurring)
+	public static void updateStates(DynamicalModel dynamics, boolean jump_priority, boolean jump_occurring)
 	{
 		if (!jump_priority)
 		{
-			if (flowSet())
+			if (dynamics.flowSet())
 			{
 				if (!jump_occurring)
 				{
-					flowMap();
+					dynamics.flowMap();
 				}
-			} else if (jumpSet())
+			} else if (dynamics.jumpSet())
 			{
 				if (jump_occurring)
 				{
-					jumpMap();
+					dynamics.jumpMap();
 				}
 			}
 		} else
 		{
-			if (jumpSet())
+			if (dynamics.jumpSet())
 			{
 				if (jump_occurring)
 				{
-					jumpMap();
+					dynamics.jumpMap();
 				}
-			} else if (flowSet())
+			} else if (dynamics.flowSet())
 			{
 				if (!jump_occurring)
 				{
-					flowMap();
+					dynamics.flowMap();
 				}
 
 			}

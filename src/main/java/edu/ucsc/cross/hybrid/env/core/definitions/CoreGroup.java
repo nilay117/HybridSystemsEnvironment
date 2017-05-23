@@ -3,21 +3,20 @@ package edu.ucsc.cross.hybrid.env.core.definitions;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
-import edu.ucsc.cross.hybrid.env.core.classifications.GroupClass;
-import edu.ucsc.cross.hybrid.env.core.components.Component;
+import edu.ucsc.cross.hybrid.env.core.classification.DataGroup;
+import edu.ucsc.cross.hybrid.env.core.classification.DataType;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 
-public enum CoreGroup implements GroupClass
+public enum CoreGroup implements DataGroup
 {
 	ALL_STATES(
 		"All Data",
-		new ComponentClass[]
+		new DataType[]
 		{ CoreData.DYNAMIC_STATE, CoreData.DISCRETE_STATE, CoreData.PARAMETER, CoreData.PROPERTY }),
 
 	STATE_ELEMENTS(
 		"All States",
-		new ComponentClass[]
+		new DataType[]
 		{ CoreData.DISCRETE_STATE, CoreData.DYNAMIC_STATE }),
 
 	DYNAMIC_STATE_ELEMENTS(
@@ -25,13 +24,13 @@ public enum CoreGroup implements GroupClass
 		new CoreData[]
 		{ CoreData.DYNAMIC_STATE });
 
-	public final ArrayList<ComponentClass> subTypes;
+	public final ArrayList<DataType> subTypes;
 	private final String groupLabel;
 
-	private CoreGroup(String label, ComponentClass[] sub_types)
+	private CoreGroup(String label, DataType[] sub_types)
 	{
 		groupLabel = label;
-		subTypes = new ArrayList<ComponentClass>(Arrays.asList(sub_types));
+		subTypes = new ArrayList<DataType>(Arrays.asList(sub_types));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -48,16 +47,16 @@ public enum CoreGroup implements GroupClass
 	}
 
 	@Override
-	public ArrayList<ComponentClass> getContents()
+	public ArrayList<DataType> getContents()
 	{
 		// TODO Auto-generated method stub
 		return subTypes;
 	}
 
 	@Override
-	public boolean contains(Component type)
+	public boolean contains(Data type)
 	{
 		// TODO Auto-generated method stub
-		return subTypes.contains(type.getProperties().getClassification());
+		return subTypes.contains(type.getDataClass());
 	}
 }

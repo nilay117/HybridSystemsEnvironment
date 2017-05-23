@@ -1,13 +1,15 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
 import edu.ucsc.cross.hybrid.env.core.processing.Environment;
+import edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball.BouncingBallSystem;
 
 public class TestSimulation
 {
 
 	public static void test()
 	{
-		TestSystem ss = new TestSystem();
+		BouncingBallSystem ss = new BouncingBallSystem("yoooo");
+		//TestSystem ss = new TestSystem();
 		Environment environment = new Environment();
 		//Component ss = Component.getComponentFromFile(
 		//"/Users/beshort/Dropbox/Work/Code/HybridSystemsEnvironmentDevelopment/Toolbox/src/main/resources/xmlLibs/data/source/99.xml");
@@ -18,7 +20,7 @@ public class TestSimulation
 
 		//	environment.start();
 		// Launch Viewer (Optional)
-		environment.getEnvironment().addComponent(ss, 1);
+		environment.environmentContent().addComponent(ss, 12);
 		environment.start();
 	}
 

@@ -132,14 +132,14 @@ public class ElementManager extends Processor
 	{
 		if (jump_occurred)
 		{
-			getData().storeData(getEnvironment().time().seconds() - .000001,
+			getData().storeData(getEnvironment().environmentTime().seconds() - .000001,
 			(true && getSettings().getData().storeAtEveryJump));
 			if (getSettings().getData().storePreJumpValue)
 			{
 				storePrejumpValues();
 			}
 			performAllJumps();
-			getData().storeData(getEnvironment().time().seconds(), (true && getSettings().getData().storeAtEveryJump));
+			getData().storeData(getEnvironment().environmentTime().seconds(), (true && getSettings().getData().storeAtEveryJump));
 		} else
 		{
 			for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())

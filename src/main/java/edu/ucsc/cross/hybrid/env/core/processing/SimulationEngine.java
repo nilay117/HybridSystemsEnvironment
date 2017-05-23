@@ -13,7 +13,7 @@ import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hybrid.env.core.components.Component;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
@@ -46,14 +46,17 @@ public class SimulationEngine extends Processor implements FirstOrderDifferentia
 			try
 			{
 				Data dat = (Data) component;
-				if (dat.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
+				if (dat.getProperties().getClassification().equals(Data.class))
 				{
 					if (Data.isSimulated(dat))
 					{
-						if (FieldFinder.containsSuper(dat.get(), UnitValue.class)
-						|| FieldFinder.containsSuper(dat.get(), Number.class))
+						if (CoreGroup.DYNAMIC_STATE_ELEMENTS.contains(dat))
 						{
-							odeVectorMap.put(odeIndex++, dat);
+							if (FieldFinder.containsSuper(dat.get(), UnitValue.class)
+							|| FieldFinder.containsSuper(dat.get(), Number.class))
+							{
+								odeVectorMap.put(odeIndex++, dat);
+							}
 						}
 					}
 				}

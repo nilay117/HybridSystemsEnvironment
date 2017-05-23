@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import bs.commons.unitvars.values.Velocity;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
@@ -23,6 +22,7 @@ public class TestState extends DataSet
 	@Override
 	public void initialize()
 	{
+		hybrid.set(Math.random() * 3 + Math.random() + 1);
 		// TODO Auto-generated method stub
 
 	}

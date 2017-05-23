@@ -30,11 +30,13 @@ public class ExecutionMonitor extends Processor
 
 		if (run_threadded)
 		{
-			thread = new Thread(getSimTask());
-			thread.start();
+			runSim(null);
+			//thread = new Thread(getSimTask());
+			//thread.start();
 
 		} else
 		{
+			runSim(null);
 			//runSimulation();
 			launchEnvironment();
 		}
@@ -44,8 +46,13 @@ public class ExecutionMonitor extends Processor
 	public void runSim(Protected<Integer> running_processes)
 	{
 
-		thread = new Thread(getSimTask(running_processes));
+		thread = new Thread(getSimTask());//running_processes));
 		thread.start();
+		if (printStack)
+		{
+			stackPrinter = new Thread(getPrintTask());
+			stackPrinter.start();
+		}
 
 	}
 
@@ -58,6 +65,24 @@ public class ExecutionMonitor extends Processor
 			public void run()
 			{
 				launchEnvironment();
+			}
+
+		};
+		return task;
+	}
+
+	private Runnable getPrintTask()
+	{
+		Runnable task = new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				while (thread.isAlive())
+				{
+					printStack();
+				}
 			}
 
 		};
@@ -153,7 +178,7 @@ public class ExecutionMonitor extends Processor
 	{
 		try
 		{
-			Double stopTime = integrator.integrate(ode, getEnvironment().time().seconds(),
+			Double stopTime = integrator.integrate(ode, getEnvironment().environmentTime().seconds(),
 			getComputationEngine().getODEValueVector(), getSettings().trial().simDuration,
 			getComputationEngine().getODEValueVector());
 			return stopTime;
@@ -170,7 +195,7 @@ public class ExecutionMonitor extends Processor
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
 			} else
 			{
-				return getEnvironment().time().seconds();
+				return getEnvironment().environmentTime().seconds();
 			}
 
 		}
@@ -224,6 +249,30 @@ public class ExecutionMonitor extends Processor
 	public Thread getThread()
 	{
 		return thread;
+	}
+
+	// Debugger 
+
+	private Boolean printStack = false;
+	private Thread stackPrinter;
+	long lastPrint = System.currentTimeMillis();
+
+	private void printStack()
+	{
+		if (System.nanoTime() > lastPrint)
+		{
+			lastPrint = System.nanoTime() + 1;
+			StackTraceElement[] stack = thread.getStackTrace();
+			String stackString = stack[0].getClassName();
+			for (Integer ele = 1; ele < stack.length; ele++)
+			{
+				stackString += ", " + stack[ele];
+			}
+			if (stackString.contains("XMLParser"))
+			{
+				System.out.println(stackString);
+			}
+		}
 	}
 
 }

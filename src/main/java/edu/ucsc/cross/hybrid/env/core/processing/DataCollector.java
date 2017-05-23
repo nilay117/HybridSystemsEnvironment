@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 
-import bs.commons.io.system.IO;
 import edu.ucsc.cross.hybrid.env.core.components.Component;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
@@ -62,7 +61,7 @@ public class DataCollector extends Processor
 			{
 				Data element = (Data) component;
 
-				if (CoreGroup.ALL_STATES.containsObj(element))
+				if (CoreGroup.ALL_STATES.contains(element))
 				{
 					if (Data.isStored(element))
 					{

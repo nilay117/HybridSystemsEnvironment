@@ -1,91 +1,77 @@
 package edu.ucsc.cross.hybrid.env.core.processing;
 
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
+import edu.ucsc.cross.hybrid.env.core.containers.SettingConfiguration;
 
 public class Environment//implements Environment
 {
 
 	// Execution
-	EnvironmentContent environment;
+	EnvironmentContent environmentContent;
 	ElementManager elements;
 	DataCollector data;
-	SimulationEngine simEngine;
-	ExecutionMonitor simThread;
-	FileParser saver;
-	OutputPrinter notifier; // system notification manager ie % complet
+	SimulationEngine simulationEngine;
+	ExecutionMonitor executionMonitor;
+	FileParser fileParser;
+	SystemConsole outputPrinter; // system notification manager ie % complet
 
 	public Environment()
 	{
-		this.environment = new EnvironmentContent();
+		this.environmentContent = new EnvironmentContent();
 		initializeComponents();
 	}
 
 	public Environment(EnvironmentContent environment)
 	{
-		this.environment = environment;
+		this.environmentContent = environment;
 		initializeComponents();
 	}
 
 	public void loadEnvironment(EnvironmentContent environment)
 	{
-		this.environment = environment;
+		this.environmentContent = environment;
 	}
 
 	private void initializeComponents()
 	{
-
-		//queue = new ArrayList<Environment>();
-		simEngine = new SimulationEngine(this);
-		simThread = new ExecutionMonitor(this);
+		simulationEngine = new SimulationEngine(this);
+		executionMonitor = new ExecutionMonitor(this);
 		data = new DataCollector(this);
-		notifier = new OutputPrinter(this);
+		outputPrinter = new SystemConsole(this);
 		elements = new ElementManager(this);
-		saver = new FileParser(this);
-
-		//componentMonitor = new ComponentOperator(this);
+		fileParser = new FileParser(this);
 	}
 
 	public void start()
 	{
 		prepareEnvironment();
-		environment.getStartTime().seconds(Double.valueOf(System.currentTimeMillis()) / 1000);//Time.newSecondValue(0.0);
-		simThread.runSim(true);
+		environmentContent.getStartTime().seconds(Double.valueOf(System.currentTimeMillis()) / 1000);//Time.newSecondValue(0.0);
+		executionMonitor.runSim(true);
 	}
 
-	public <S extends HybridSystem> void addSystem(S component)
+	public EnvironmentContent environmentContent()
 	{
-		environment.addSystem(component, 1);
+		return environmentContent;
 	}
 
-	public <S extends HybridSystem> void addSystem(S component, Integer quantity)
+	public FileParser fileParser()
 	{
-		environment.addSystem(component, quantity);
+		return fileParser;
 	}
 
-	public EnvironmentContent getEnvironment()
-	{
-		return environment;
-	}
-
-	public FileParser getDataFileIOUtility()
-	{
-		return saver;
-	}
-
-	public DataCollector getDataCollector()
+	public DataCollector dataCollector()
 	{
 		return data;
 	}
 
-	public void setSettings(SettingConfigurer settings)
+	public void setSettings(SettingConfiguration settings)
 	{
-		this.environment.setSettings(settings);
+		this.environmentContent.setSettings(settings);
 	}
 
-	public SettingConfigurer getSettings()
+	public SettingConfiguration getSettings()
 	{
-		return this.environment.getSettings();
+		return this.environmentContent.getSettings();
 	}
 
 	public ElementManager getElementOperator()
@@ -97,7 +83,7 @@ public class Environment//implements Environment
 	{
 		//environment.scanAllSystems();
 		elements.initialize();
-		simEngine.initialize();
+		simulationEngine.initialize();
 		data.loadStoreStates();
 	}
 

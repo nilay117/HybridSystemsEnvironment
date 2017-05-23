@@ -11,8 +11,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
+import edu.ucsc.cross.hybrid.env.core.classification.DataType;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -27,7 +27,7 @@ public class Data<T> extends Component//DynamicData<T>
 	private InitialValue<T> initialVal; // initial value of object
 	private T preJumpValue; // stored pre-jump value
 	private Unit defaultUnit; // default unit (if object has units)
-	private DataClass dataClass;
+	private DataType dataClass;
 
 	public InitialValue<T> getInitialVal()
 	{
@@ -172,7 +172,7 @@ public class Data<T> extends Component//DynamicData<T>
 		}
 	}
 
-	public static <S> Data<S> instantiateData(S obj, DataClass type, String name, String description,
+	public static <S> Data<S> instantiateData(S obj, DataType type, String name, String description,
 	Boolean save_default)
 	{
 		Data<S> newData = new Data<S>(obj, type, name, description, save_default);//type, name, description);
@@ -180,10 +180,10 @@ public class Data<T> extends Component//DynamicData<T>
 		// TODO Auto-generated constructor stub
 	}
 
-	protected Data(T obj, DataClass type, String name, String description, Boolean save_default)
+	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
 	{
 		//super(obj, type, name, description);
-		super(name, type);
+		super(name, Data.class);
 		element = obj;
 		dataClass = type;
 		derivative = cloneZeroDerivative(element);
@@ -221,7 +221,7 @@ public class Data<T> extends Component//DynamicData<T>
 		// TODO Auto-generated constructor stub
 	}
 
-	protected static <S> Data<S> instantiateObj(S obj, DataClass type, String name, String description,
+	protected static <S> Data<S> instantiateObj(S obj, DataType type, String name, String description,
 	Boolean can_be_set, Boolean save_default)
 	{
 		Data<S> newObj = new Data<S>(obj, type, name, description, save_default);//type, name, description);
@@ -229,17 +229,17 @@ public class Data<T> extends Component//DynamicData<T>
 		// TODO Auto-generated constructor stub
 	}
 
-	protected static <S> Data<S> newObj(S obj, DataClass type, String name)
+	protected static <S> Data<S> newObj(S obj, DataType type, String name)
 	{
 		return newObj(obj, type, name, type.isStoredByDefault());
 	}
 
-	protected static <S> Data<S> newObj(S obj, DataClass type)
+	protected static <S> Data<S> newObj(S obj, DataType type)
 	{
 		return newObj(obj, type, null, type.isStoredByDefault());
 	}
 
-	protected static <S> Data<S> newObj(S obj, DataClass type, String name, boolean save_default)
+	protected static <S> Data<S> newObj(S obj, DataType type, String name, boolean save_default)
 	{
 		Data<S> newState = null;
 		if (name == null)
@@ -391,7 +391,7 @@ public class Data<T> extends Component//DynamicData<T>
 		element.storeValue(time);
 	}
 
-	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataClass type, String name, String description)
+	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataType type, String name, String description)
 	{
 		//System.out.println(obj + " " + can_be_set + " " + type + " " + name);
 		return new Data<T>(obj, type, name, description, type.isStoredByDefault());
@@ -465,7 +465,7 @@ public class Data<T> extends Component//DynamicData<T>
 
 	public T getDt()
 	{
-		if (!super.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
+		if (!CoreGroup.DYNAMIC_STATE_ELEMENTS.contains(this))//(CoreData.DYNAMIC_STATE))
 		{
 			IO.warn("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
 		}
@@ -474,7 +474,7 @@ public class Data<T> extends Component//DynamicData<T>
 
 	public void setDt(T derivative)
 	{
-		if (super.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
+		if (CoreGroup.DYNAMIC_STATE_ELEMENTS.contains(this))
 		{
 			this.derivative = derivative;
 		} else
@@ -574,6 +574,11 @@ public class Data<T> extends Component//DynamicData<T>
 			}
 		}
 		return true;
+	}
+
+	public DataType getDataClass()
+	{
+		return dataClass;
 	}
 
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]

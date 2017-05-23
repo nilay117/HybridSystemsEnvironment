@@ -6,10 +6,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hybrid.env.core.components.Component;
 import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
-import edu.ucsc.cross.hybrid.env.core.processing.SettingConfigurer;
 
-public class EnvironmentContent extends Component
+public class EnvironmentContent extends Component// implements ComponentClass
 {
 
 	private String environmentTitle;
@@ -18,18 +16,18 @@ public class EnvironmentContent extends Component
 	private ArrayList<HybridSystem> systems;
 	private ArrayList<Component> allComponents;
 	private Time envTime;
-	private SettingConfigurer settings;
+	private SettingConfiguration settings;
 
 	public EnvironmentContent(String environment_title)
 	{
-		super(environment_title, CoreComponent.ENVIRONMENT);
+		super(environment_title, EnvironmentContent.class);
 		setEnvironmentTitle(environment_title);
 		initializeDataStructures();
 	}
 
 	public EnvironmentContent()
 	{
-		super("Hybrid Systems Environment", CoreComponent.ENVIRONMENT);
+		super("Hybrid Systems Environment", EnvironmentContent.class);
 		setEnvironmentTitle("Hybrid Environment");
 		initializeDataStructures();
 	}
@@ -37,33 +35,33 @@ public class EnvironmentContent extends Component
 	private void initializeDataStructures()
 	{
 		startTime = Time.newSecondsValue(0.0);
-		settings = SettingConfigurer.getSettings();
+		settings = SettingConfiguration.loadSettings();
 		envTime = Time.newSecondsValue(0.0);
 		jumpIndex = 0;
 		systems = new ArrayList<HybridSystem>();
 		allComponents = new ArrayList<Component>();
 	}
 
-	public <T extends HybridSystem> void addSystem(T component)
-	{
-		//systems.add(component);
-		addSystem(component, 1);
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T extends HybridSystem> void addSystem(T component, Integer quantity)
-	{
-		T componentToClone = component;
-		for (Integer ind = 0; ind < quantity; ind++)
-		{
-			T clonedComponent = (T) ObjectCloner.xmlClone(componentToClone);
-			if (!systems.contains(clonedComponent))
-			{
-				systems.add(clonedComponent);
-			}
-			componentToClone = clonedComponent;
-		}
-	}
+	//	public <T extends HybridSystem> void addSystem(T component)
+	//	{
+	//		//systems.add(component);
+	//		addSystem(component, 1);
+	//	}
+	//
+	//	@SuppressWarnings("unchecked")
+	//	public <T extends HybridSystem> void addSystem(T component, Integer quantity)
+	//	{
+	//		T componentToClone = component;
+	//		for (Integer ind = 0; ind < quantity; ind++)
+	//		{
+	//			T clonedComponent = (T) ObjectCloner.xmlClone(componentToClone);
+	//			if (!systems.contains(clonedComponent))
+	//			{
+	//				systems.add(clonedComponent);
+	//			}
+	//			componentToClone = clonedComponent;
+	//		}
+	//	}
 
 	public <T extends Component> void addComponent(T component)
 	{
@@ -81,17 +79,12 @@ public class EnvironmentContent extends Component
 		}
 	}
 
-	public ArrayList<HybridSystem> getAllSystems()
-	{
-		return systems;
-	}
-
 	public ArrayList<Component> getAllComponents()
 	{
 		return allComponents;
 	}
 
-	public Time time()
+	public Time environmentTime()
 	{
 		return envTime;
 	}
@@ -108,12 +101,12 @@ public class EnvironmentContent extends Component
 		return jumpIndex;
 	}
 
-	public SettingConfigurer getSettings()
+	public SettingConfiguration getSettings()
 	{
 		return settings;
 	}
 
-	public void setSettings(SettingConfigurer settings)
+	public void setSettings(SettingConfiguration settings)
 	{
 		this.settings = settings;
 	}

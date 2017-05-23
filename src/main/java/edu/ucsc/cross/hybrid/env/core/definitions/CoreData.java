@@ -1,10 +1,10 @@
 package edu.ucsc.cross.hybrid.env.core.definitions;
 
-import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
+import edu.ucsc.cross.hybrid.env.core.classification.DataType;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
 
-public enum CoreData implements DataClass// ComponenClassification
+public enum CoreData implements DataType// ComponenClassification
 {
 	DYNAMIC_STATE(
 		"Dynamic State",
@@ -53,10 +53,10 @@ public enum CoreData implements DataClass// ComponenClassification
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Class<T> baseClass()
+	public String baseLabel()
 	{
 		// TODO Auto-generated method stub
-		return (Class<T>) Data.class;
+		return dataTypeName;
 	}
 
 	@Override
@@ -99,13 +99,6 @@ public enum CoreData implements DataClass// ComponenClassification
 	{
 		// TODO Auto-generated method stub
 		return dataFactory.newData(initial_value, label, name, this, stored_by_default);
-	}
-
-	@Override
-	public String baseLabel()
-	{
-		// TODO Auto-generated method stub
-		return dataTypeName;
 	}
 
 	@Override

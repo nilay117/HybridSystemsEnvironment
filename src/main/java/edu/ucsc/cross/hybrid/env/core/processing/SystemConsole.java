@@ -4,22 +4,29 @@ import java.util.HashMap;
 
 import bs.commons.io.system.IO;
 import bs.commons.io.system.StringFormatter;
+import bs.commons.objects.access.CallerRetriever;
 import edu.ucsc.cross.hybrid.env.core.components.Component;
 import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 
-public class OutputPrinter extends Processor
+public class SystemConsole extends Processor
 {
 
+	private static CallerRetriever classRetriever = new CallerRetriever();;
 	private Double nextPrintTime;
 	private Double printInterval;
 
-	OutputPrinter(Environment processor)
+	SystemConsole(Environment processor)
 	{
 		super(processor);
 		nextPrintTime = 0.0;
 		printInterval = getSettings().trial().simDuration / getSettings().io().totalSimTimePrintOuts;
+	}
+
+	private void initialize()
+	{
+		IO.settings.printCallingClass = false;
+		//classRetriever = new CallerRetriever();
 	}
 
 	public void printUpdates()
@@ -29,12 +36,13 @@ public class OutputPrinter extends Processor
 
 	public void progressUpdate()
 	{
-		if (nextPrintTime < getEnvironment().time().seconds())
+		if (nextPrintTime < getEnvironment().environmentTime().seconds())
 		{
-			nextPrintTime = getEnvironment().time().seconds() + printInterval;
-			Double percentComplete = 100 * getEnvironment().time().seconds() / getSettings().trial().simDuration;
+			nextPrintTime = getEnvironment().environmentTime().seconds() + printInterval;
+			Double percentComplete = 100 * getEnvironment().environmentTime().seconds()
+			/ getSettings().trial().simDuration;
 			IO.out("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
-			+ getEnvironment().time().seconds() + " seconds");
+			+ getEnvironment().environmentTime().seconds() + " seconds");
 		}
 	}
 
@@ -43,7 +51,7 @@ public class OutputPrinter extends Processor
 		String string = null;
 		if (getSettings().io().printDiscreteEventIndicator)
 		{
-			string = ("discrete event detected at " + getEnvironment().time().seconds() + " seconds");
+			string = ("discrete event detected at " + getEnvironment().environmentTime().seconds() + " seconds");
 		}
 		return string;
 	}
@@ -59,8 +67,8 @@ public class OutputPrinter extends Processor
 
 			if (getSettings().io().printStoreDataReport)
 			{
-				HashMap<String, HybridSystem> systemNames = new HashMap<String, HybridSystem>();
-				for (HybridSystem rootSystem : super.getEnvironment().getAllSystems())
+				HashMap<String, Component> systemNames = new HashMap<String, Component>();
+				for (Component rootSystem : super.getEnvironment().getAllComponents())
 
 				{
 					String sysName = StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
@@ -100,4 +108,20 @@ public class OutputPrinter extends Processor
 		}
 		return storeString;
 	}
+
+	public static String getCallingClassName()
+	{
+		return getCallingClassName(0);
+	}
+
+	public static String getCallingClassName(Integer increment)
+	{
+		return classRetriever.retriever.getCallingClasses()[2 + increment].getSimpleName();
+	}
+
+	public void print(String message)
+	{
+		System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" + getCallingClassName(1) + "] " + message);
+	}
+
 }
