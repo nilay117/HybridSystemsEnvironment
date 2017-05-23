@@ -56,6 +56,7 @@ public abstract class HybridSystem extends Component
 		if (jumpOccurring())
 		{
 			performTasks(true);
+			// System.exit(1);
 		}
 	}
 

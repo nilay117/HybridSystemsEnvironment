@@ -7,6 +7,7 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
+import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 import edu.ucsc.cross.hse.core.object.containers.GlobalEnvironmentContents;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.Processor;
@@ -45,7 +46,7 @@ public class FileParser extends Processor
 	public <T extends Component> T loadComponent(String file_directory, String file_name)
 	{
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.getAllComponents(true))
+		for (Component componen : component.getComponents(true))
 		{
 			Component.setInitialized(componen, null);
 			// try
@@ -69,9 +70,9 @@ public class FileParser extends Processor
 	private <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		component.load();
+		Hierarchy.load(component.getComponents());
 		// allComponents.add(component);
-		for (Component subComponent : component.getAllComponents(true))
+		for (Component subComponent : component.getComponents(true))
 		{
 			if (!allComponents.contains(subComponent))
 			{

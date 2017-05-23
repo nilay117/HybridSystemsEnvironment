@@ -71,7 +71,7 @@ public class SystemConsole extends Processor
 			if (getSettings().io().printStoreDataReport)
 			{
 				HashMap<String, Component> systemNames = new HashMap<String, Component>();
-				for (Component rootSystem : super.getEnvironment().getAllComponents(true))
+				for (Component rootSystem : super.getEnvironment().getComponents(true))
 
 				{
 					String sysName = StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
@@ -88,7 +88,7 @@ public class SystemConsole extends Processor
 						storeString += sysName + " - [" + dataSetName + " ";
 						try
 						{
-							for (Component element : dataSet.getAllComponents(true))
+							for (Component element : dataSet.getComponents(true))
 								try
 								{
 									Data data = (Data) element;

@@ -17,14 +17,15 @@ import edu.ucsc.cross.hse.core.component.constructors.Component;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class Data<T> extends Component//DynamicData<T>
+public class Data<T> extends Component// DynamicData<T>
 {
 
 	protected T element;
 	private boolean simulated; // flag indicating whether object is simulated
-	private final boolean cloneToStore; // flag indicating if object needs to be cloned to store (Obj structures)
+	private final boolean cloneToStore; // flag indicating if object needs to be
+										// cloned to store (Obj structures)
 	private HashMap<Double, T> savedValues; // mapping of saved values
-	public boolean save; // flag indicating if object should be stored 
+	public boolean save; // flag indicating if object should be stored
 	private InitialValue<T> initialVal; // initial value of object
 	private T preJumpValue; // stored pre-jump value
 	private Unit defaultUnit; // default unit (if object has units)
@@ -81,7 +82,7 @@ public class Data<T> extends Component//DynamicData<T>
 				ee.printStackTrace();
 			}
 		}
-		//	}
+		// }
 	}
 
 	private void storePreJumpValue()
@@ -176,14 +177,16 @@ public class Data<T> extends Component//DynamicData<T>
 	public static <S> Data<S> instantiateData(S obj, DataType type, String name, String description,
 	Boolean save_default)
 	{
-		Data<S> newData = new Data<S>(obj, type, name, description, save_default);//type, name, description);
+		Data<S> newData = new Data<S>(obj, type, name, description, save_default);// type,
+																					// name,
+																					// description);
 		return newData;
 		// TODO Auto-generated constructor stub
 	}
 
 	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
 	{
-		//super(obj, type, name, description);
+		// super(obj, type, name, description);
 		super(name, Data.class);
 		element = obj;
 		dataClass = type;
@@ -193,7 +196,7 @@ public class Data<T> extends Component//DynamicData<T>
 		simulated = true;
 		save = save_default;
 		savedValues = new HashMap<Double, T>();
-		cloneToStore = !isChangeableElement(obj); //super.id().description().information.set(description);
+		cloneToStore = !isChangeableElement(obj); // super.id().description().information.set(description);
 		try
 		{
 			if (obj.getClass().getSuperclass().equals(UnitValue.class))
@@ -205,6 +208,7 @@ public class Data<T> extends Component//DynamicData<T>
 				} catch (UnitException e)
 				{
 					// TODO Auto-generated catch block
+					// initialVal = new InitialValue<T>(get());
 					e.printStackTrace();
 				}
 			} else
@@ -225,7 +229,9 @@ public class Data<T> extends Component//DynamicData<T>
 	protected static <S> Data<S> instantiateObj(S obj, DataType type, String name, String description,
 	Boolean can_be_set, Boolean save_default)
 	{
-		Data<S> newObj = new Data<S>(obj, type, name, description, save_default);//type, name, description);
+		Data<S> newObj = new Data<S>(obj, type, name, description, save_default);// type,
+																					// name,
+																					// description);
 		return newObj;
 		// TODO Auto-generated constructor stub
 	}
@@ -287,101 +293,6 @@ public class Data<T> extends Component//DynamicData<T>
 
 	}
 
-	//	public static <T> ConditionalData getConditionBasedParameters(Data<?> state_value, T zero_element, String name)
-	//	{
-	//		ConditionalData stateBasedValue = new ConditionalData(state_value, zero_element);
-	//		return stateBasedValue;
-	//	}
-	//
-	//	public static final <T> Obj<T> getDynamicStateElement(T object, String name)
-	//	{
-	//		Obj<T> newElement = null;
-	//
-	//		if (object.getClass().equals(Double.class))
-	//		{
-	//			newElement = Obj.getElement(object, true, DataClassification.DYNAMIC_STATE, name, "");
-	//		} else
-	//		{
-	//			newElement = Obj.getElement(object, false, DataClassification.DYNAMIC_STATE, name, "");
-	//		}
-	//
-	//		//	HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
-	//		return newElement;
-	//	}
-	//
-	//	public static <T> Obj<T> getDynamicStateElement(T object)
-	//	{
-	//		return Obj.getDynamicStateElement(object, null);
-	//	}
-	//
-	//	public static final <T> Obj<T> getObjElement(T object, String name)
-	//	{
-	//		Obj<T> newElement = Obj.getElement(object, Obj.isChangeableElement(object), DataClassification.DATA, name,
-	//		null);
-	//		//System.out.println(XMLParser.serializeObject(CallingClass.INSTANCE.getCallingClasses()));
-	//		//	HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
-	//		return newElement;
-	//	}
-	//
-	//	public static final <T> Obj<T> getDiscreteStateElement(T object, String name, boolean save)
-	//	{
-	//		Obj<T> newElement = Obj.getElement(object, Obj.isChangeableElement(object), DataClassification.DISCRETE_STATE,
-	//		name, "");
-	//		Obj.setStoreValues(newElement, save);
-	//		return newElement;
-	//	}
-	//
-	//	public static final <T> Obj<T> getDiscreteStateElement(T object, String name)
-	//	{
-	//		return Obj.getDiscreteStateElement(object, name, false);
-	//	}
-	//
-	//	public static final <T> Obj<T> getDiscreteStateElement(T object)
-	//	{
-	//		return Obj.getDiscreteStateElement(object, null);
-	//	}
-	//
-	//	public static final <T> Obj<T> getProperty(T object, String name, boolean save)
-	//	{
-	//
-	//		Obj newElement = Obj.getElement(object, true, DataClassification.PROPERTY, name, "");
-	//		Obj.setStoreValues(newElement, save);
-	//		//HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
-	//		return newElement;
-	//	}
-	//
-	//	public static final <T> Obj<T> getProperty(T object, String name)
-	//	{
-	//
-	//		Obj<T> newElement = Obj.getElement(object, false, DataClassification.PROPERTY, name, "");
-	//		//HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
-	//		return newElement;
-	//	}
-	//
-	//	public static <T> Obj<T> getProperty(T object)
-	//	{
-	//		return Obj.getProperty(object, null);
-	//	}
-	//
-	//	public static <T> Obj<T> getParameter(T object, String name, boolean save)
-	//	{
-	//
-	//		Obj newElement = Obj.getElement(object, true, DataClassification.PARAMETER, name, "");
-	//		Obj.setStoreValues(newElement, save);
-	//		//HybridSystemFactory.storeField(CallingClass.INSTANCE.getCallingClasses(), newElement);
-	//		return newElement;
-	//	}
-	//
-	//	public static final <T> Obj<T> getParameter(T object, String name)
-	//	{
-	//		return getParameter(object, name, false);
-	//	}
-	//
-	//	public static <T> Obj<T> getParameter(T object)
-	//	{
-	//		return Obj.getParameter(object, null);
-	//	}
-
 	public static <S> void storeValue(Data<S> element, Double time, boolean override_save)
 	{
 		element.storeValue(time, override_save);
@@ -394,7 +305,7 @@ public class Data<T> extends Component//DynamicData<T>
 
 	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataType type, String name, String description)
 	{
-		//System.out.println(obj + " " + can_be_set + " " + type + " " + name);
+		// System.out.println(obj + " " + can_be_set + " " + type + " " + name);
 		return new Data<T>(obj, type, name, description, type.storePreviousDataByDefault());
 	}
 
@@ -466,7 +377,7 @@ public class Data<T> extends Component//DynamicData<T>
 
 	public T getDt()
 	{
-		if (!CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(this))//(CoreData.DYNAMIC_STATE))
+		if (!CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
 		{
 			IO.warn("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
 		}

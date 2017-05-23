@@ -6,9 +6,7 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
-import bs.commons.io.system.IO;
 import bs.commons.objects.access.FieldFinder;
-import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
@@ -43,8 +41,8 @@ public class SimulationEngine extends Processor implements FirstOrderDifferentia
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (Component component : getEnvironment().getAllComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
-																			// null))
+		for (Component component : getEnvironment().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
+																		// null))
 		{
 			try
 			{
@@ -69,7 +67,8 @@ public class SimulationEngine extends Processor implements FirstOrderDifferentia
 			}
 		}
 
-		IO.debug("ODE Vector Map:\n" + XMLParser.serializeObject(odeVectorMap) + "\n");
+		// IO.debug("ODE Vector Map:\n" +
+		// XMLParser.serializeObject(odeVectorMap) + "\n");
 	}
 	// System.exit(0);
 

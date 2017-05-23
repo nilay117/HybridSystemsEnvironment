@@ -57,7 +57,7 @@ public class DataCollector extends Processor
 	public void loadStoreStates()
 	{
 		dataStates.clear();
-		for (Component component : super.getEnvironment().getAllComponents(true))
+		for (Component component : super.getEnvironment().getComponents(true))
 		{
 			try
 			{
@@ -116,14 +116,14 @@ public class DataCollector extends Processor
 
 	public Data matchingElementsInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().getAllComponents(true))
+		for (Component component : getEnvironment().getComponents(true))
 		{
 			try
 			{
 				DataSet set = (DataSet) component;
-				if (set.getAllComponents(true).contains(data))
+				if (set.getComponents(true).contains(data))
 				{
-					for (Component subComponent : set.getAllComponents(true))
+					for (Component subComponent : set.getComponents(true))
 					{
 						try
 						{

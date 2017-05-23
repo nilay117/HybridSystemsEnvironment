@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.constructors.Behavior;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -28,33 +28,30 @@ public class ComponentOperator extends Processor
 		// this.environment = environment;
 	}
 
-	public void initialize()
+	void initialize()
 	{
-		initializeSystems();
-		initializeData();
-	}
-
-	private void initializeSystems()
-	{
-		getEnvironment().load();
-		for (Component component : getEnvironment().getAllComponents(true))
+		Hierarchy.load(getEnvironment().getComponents());
+		for (Component component : getEnvironment().getComponents(true))
 		{
 			Component.setEnvironment(component, getEnvironment());
 		}
-		initializeSimulated(false);
-		initializeSimulated(true);
+		initializeData();
+		initializeComponents();
+		// initializeSimulated(false);
+		// initializeSimulated(true);
 		clearEmptyMaps();
 	}
 
 	private void initializeData()
 	{
 		allData.clear();
-		for (Component component : getEnvironment().getAllComponents(true))
+		for (Component component : getEnvironment().getComponents(true))
 		{
 			try
 			{
 				Data data = (Data) component;
 				data.initializeValue();
+				data.setInitialized(data, true);
 				allData.add(data);
 			} catch (Exception notData)
 			{
@@ -65,7 +62,7 @@ public class ComponentOperator extends Processor
 
 	protected void clearEmptyMaps()
 	{
-		clearEmptyMaps(getEnvironment().getAllComponents(true));
+		clearEmptyMaps(getEnvironment().getComponents(true));
 	}
 
 	public void clearEmptyMaps(ArrayList<Component> allComponents)
@@ -79,7 +76,7 @@ public class ComponentOperator extends Processor
 
 	public void initializeSimulated(boolean initialize_behavior)
 	{
-		initializeSimulated(initialize_behavior, getEnvironment().getAllComponents(true));
+		initializeSimulated(initialize_behavior, getEnvironment().getComponents(true));
 	}
 
 	public void initializeSimulated(boolean initialize_behavior, ArrayList<Component> allComponents)
@@ -93,10 +90,13 @@ public class ComponentOperator extends Processor
 				// (component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
 				if (component.getProperties().getBaseComponentClass().equals(Behavior.class))
 				{
-					if (!Data.getInitialized(component))
+					if (!Component.isInitialized(component))
 					{
-						component.initialize();
-						Component.setInitialized(component, true);
+						// if (!Data.getInitialized(component))
+						{
+							component.initialize();
+							Component.setInitialized(component, true);
+						}
 					}
 				}
 			} else
@@ -106,21 +106,35 @@ public class ComponentOperator extends Processor
 				// (!component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
 				if (!component.getProperties().getBaseComponentClass().equals(Behavior.class))
 				{
-					if (!Data.getInitialized(component))
+					if (!Component.isInitialized(component))
 					{
-						component.initialize();
-						Component.setInitialized(component, true);
+						// if (!Data.getInitialized(component))
+						{
+							component.initialize();
+							Component.setInitialized(component, true);
+						}
 					}
 				}
 			}
-			try
-			{
-				DataSet elements = ((DataSet) component);
-				elements.initializeElements();
-			} catch (Exception nonElements)
-			{
 
+		}
+
+	}
+
+	public void initializeComponents()
+	{
+		for (Component component : getEnvironment().getComponents().getComponents(true))
+		{
+
+			if (!Component.isInitialized(component))
+			{
+				// if (!Data.getInitialized(component))
+				{
+					component.initialize();
+					Component.setInitialized(component, true);
+				}
 			}
+
 		}
 
 	}
