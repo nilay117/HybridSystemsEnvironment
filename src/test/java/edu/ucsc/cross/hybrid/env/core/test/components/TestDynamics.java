@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hybrid.env.core.constructors.Behavior;
+import edu.ucsc.cross.hse.core.component.constructors.Behavior;
 
 public class TestDynamics extends Behavior
 {

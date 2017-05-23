@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hybrid.env.core.constructors.Data;
-import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
-import edu.ucsc.cross.hybrid.env.core.factories.DataFactory;
+import edu.ucsc.cross.hse.core.component.constructors.DataSet;
+import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.data.DataFactory;
 
 public class TestState extends DataSet
 {

@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hybrid.env.core.constructors.Component;
+import edu.ucsc.cross.hse.core.component.constructors.Component;
 
 public class TestSystem extends Component// HybridSystem
 {

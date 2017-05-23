@@ -1,9 +1,9 @@
 package edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball;
 
 import bs.commons.unitvars.values.Velocity;
-import edu.ucsc.cross.hybrid.env.core.constructors.Data;
-import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
-import edu.ucsc.cross.hybrid.env.core.factories.DataFactory;
+import edu.ucsc.cross.hse.core.component.constructors.DataSet;
+import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.data.DataFactory;
 
 public class EnvironmentProperties extends DataSet
 {

@@ -2,7 +2,7 @@ package edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball;
 
 import java.util.Arrays;
 
-import edu.ucsc.cross.hybrid.env.core.constructors.HybridSystem;
+import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
 
 public class BouncingBallSystem extends HybridSystem
 {
