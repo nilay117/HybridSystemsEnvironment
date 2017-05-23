@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
+import edu.ucsc.cross.hybrid.env.core.constructors.Component;
 
-public class TestSystem extends HybridSystem
+public class TestSystem extends Component// HybridSystem
 {
 
 	public final TestState state;

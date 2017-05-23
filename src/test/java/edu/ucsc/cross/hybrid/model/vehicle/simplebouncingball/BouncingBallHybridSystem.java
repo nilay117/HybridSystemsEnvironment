@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball;
 
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
+import edu.ucsc.cross.hybrid.env.core.constructors.HybridSystem;
 
 public class BouncingBallHybridSystem extends HybridSystem
 {

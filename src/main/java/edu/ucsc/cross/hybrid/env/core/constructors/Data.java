@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.components;
+package edu.ucsc.cross.hybrid.env.core.constructors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hybrid.env.core.classification.DataType;
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
+import edu.ucsc.cross.hybrid.env.core.classifiers.DataType;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreDataGroup;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -231,12 +231,12 @@ public class Data<T> extends Component//DynamicData<T>
 
 	protected static <S> Data<S> newObj(S obj, DataType type, String name)
 	{
-		return newObj(obj, type, name, type.isStoredByDefault());
+		return newObj(obj, type, name, type.storePreviousDataByDefault());
 	}
 
 	protected static <S> Data<S> newObj(S obj, DataType type)
 	{
-		return newObj(obj, type, null, type.isStoredByDefault());
+		return newObj(obj, type, null, type.storePreviousDataByDefault());
 	}
 
 	protected static <S> Data<S> newObj(S obj, DataType type, String name, boolean save_default)
@@ -394,7 +394,7 @@ public class Data<T> extends Component//DynamicData<T>
 	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataType type, String name, String description)
 	{
 		//System.out.println(obj + " " + can_be_set + " " + type + " " + name);
-		return new Data<T>(obj, type, name, description, type.isStoredByDefault());
+		return new Data<T>(obj, type, name, description, type.storePreviousDataByDefault());
 	}
 
 	protected static <T> void setValueUnprotected(Data<T> obj, T new_val)
@@ -465,7 +465,7 @@ public class Data<T> extends Component//DynamicData<T>
 
 	public T getDt()
 	{
-		if (!CoreGroup.DYNAMIC_STATE_ELEMENTS.contains(this))//(CoreData.DYNAMIC_STATE))
+		if (!CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(this))//(CoreData.DYNAMIC_STATE))
 		{
 			IO.warn("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
 		}
@@ -474,7 +474,7 @@ public class Data<T> extends Component//DynamicData<T>
 
 	public void setDt(T derivative)
 	{
-		if (CoreGroup.DYNAMIC_STATE_ELEMENTS.contains(this))
+		if (CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(this))
 		{
 			this.derivative = derivative;
 		} else

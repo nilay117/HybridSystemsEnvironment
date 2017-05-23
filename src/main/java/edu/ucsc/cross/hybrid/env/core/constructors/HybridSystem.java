@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.components;
+package edu.ucsc.cross.hybrid.env.core.constructors;
 
 import edu.ucsc.cross.hybrid.env.core.models.DynamicalModel;
 
@@ -36,18 +36,23 @@ public abstract class HybridSystem extends Component
 	{
 
 		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
-		//for (Behavior localBehavior : getObjects(Behavior.class, true))
+		// for (Behavior localBehavior : getObjects(Behavior.class, true))
 		{
-			//	DynamicalModel localBehavior = (DynamicalModel) behaviorComponent;
+			// DynamicalModel localBehavior = (DynamicalModel)
+			// behaviorComponent;
 			try
 			{
-				Behavior.updateStates(localBehavior, true, jump_occurring);
+				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				if (jumpOccurred)
+				{
+					this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
+				}
 			} catch (Exception behaviorFail)
 			{
 				behaviorFail.printStackTrace();
 			}
 		}
-		//		if (jump_occurring && jumpOccurring())
+		// if (jump_occurring && jumpOccurring())
 		if (jumpOccurring())
 		{
 			performTasks(true);
@@ -64,12 +69,12 @@ public abstract class HybridSystem extends Component
 	{
 		Boolean jumpOccurred = false;
 		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
-		//for (Behavior localBehavior : getObjects(Behavior.class, true))
+		// for (Behavior localBehavior : getObjects(Behavior.class, true))
 		{
-			//Behavior localBehavior = (Behavior) behaviorComponent;
+			// Behavior localBehavior = (Behavior) behaviorComponent;
 			try
 			{
-				Boolean jumpOccurring = Behavior.jumpOccurring(localBehavior, true);
+				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					try

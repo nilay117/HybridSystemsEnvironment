@@ -1,14 +1,14 @@
 package edu.ucsc.cross.hybrid.env.core.processing;
 
-import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
-import edu.ucsc.cross.hybrid.env.core.containers.SettingConfiguration;
+import edu.ucsc.cross.hybrid.env.core.elements.GlobalContent;
+import edu.ucsc.cross.hybrid.env.core.settings.SettingConfiguration;
 
 public class Environment//implements Environment
 {
 
 	// Execution
-	EnvironmentContent environmentContent;
-	ElementManager elements;
+	GlobalContent environmentContent;
+	ComponentManager elements;
 	DataCollector data;
 	SimulationEngine simulationEngine;
 	ExecutionMonitor executionMonitor;
@@ -17,17 +17,17 @@ public class Environment//implements Environment
 
 	public Environment()
 	{
-		this.environmentContent = new EnvironmentContent();
+		this.environmentContent = new GlobalContent();
 		initializeComponents();
 	}
 
-	public Environment(EnvironmentContent environment)
+	public Environment(GlobalContent environment)
 	{
 		this.environmentContent = environment;
 		initializeComponents();
 	}
 
-	public void loadEnvironment(EnvironmentContent environment)
+	public void loadEnvironment(GlobalContent environment)
 	{
 		this.environmentContent = environment;
 	}
@@ -38,7 +38,7 @@ public class Environment//implements Environment
 		executionMonitor = new ExecutionMonitor(this);
 		data = new DataCollector(this);
 		outputPrinter = new SystemConsole(this);
-		elements = new ElementManager(this);
+		elements = new ComponentManager(this);
 		fileParser = new FileParser(this);
 	}
 
@@ -49,7 +49,7 @@ public class Environment//implements Environment
 		executionMonitor.runSim(true);
 	}
 
-	public EnvironmentContent environmentContent()
+	public GlobalContent environmentContent()
 	{
 		return environmentContent;
 	}
@@ -74,7 +74,7 @@ public class Environment//implements Environment
 		return this.environmentContent.getSettings();
 	}
 
-	public ElementManager getElementOperator()
+	public ComponentManager getElementOperator()
 	{
 		return elements;
 	}

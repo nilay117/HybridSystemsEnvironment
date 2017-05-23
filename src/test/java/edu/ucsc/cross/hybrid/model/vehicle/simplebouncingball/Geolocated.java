@@ -2,7 +2,7 @@ package edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball;
 
 import bs.commons.unitvars.values.Distance;
 import bs.commons.unitvars.values.Velocity;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
 
 public interface Geolocated
 {

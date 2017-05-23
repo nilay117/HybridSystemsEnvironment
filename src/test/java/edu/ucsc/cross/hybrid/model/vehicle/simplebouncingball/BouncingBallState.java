@@ -2,9 +2,9 @@ package edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball;
 
 import bs.commons.unitvars.values.Distance;
 import bs.commons.unitvars.values.Velocity;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
+import edu.ucsc.cross.hybrid.env.core.factories.DataFactory;
 
 public class BouncingBallState extends DataSet implements Geolocated
 {
@@ -19,10 +19,10 @@ public class BouncingBallState extends DataSet implements Geolocated
 	{
 		super("Bouncing Ball State");
 		envProps = new EnvironmentProperties();
-		xVel = DataFactory.dynamicState.create(Velocity.newMetersPerSecondValue(), "X Velocity");
-		yVel = DataFactory.dynamicState.create(Velocity.newMetersPerSecondValue(), "Y Velocity");
-		xPos = DataFactory.dynamicState.create(Distance.newMetersValue(), "X Position");
-		yPos = DataFactory.dynamicState.create(Distance.newMetersValue(9.0), "Y Position");
+		xVel = DataFactory.hybridState.create(Velocity.newMetersPerSecondValue(), "X Velocity");
+		yVel = DataFactory.hybridState.create(Velocity.newMetersPerSecondValue(), "Y Velocity");
+		xPos = DataFactory.hybridState.create(Distance.newMetersValue(), "X Position");
+		yPos = DataFactory.hybridState.create(Distance.newMetersValue(9.0), "Y Position");
 
 		initialize();
 		//yPos = Data.getDynamicStateData(Distance.newMeterValue(9.0), "Y Position");

@@ -11,9 +11,9 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hybrid.env.core.components.Component;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
+import edu.ucsc.cross.hybrid.env.core.constructors.Component;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreDataGroup;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
@@ -41,7 +41,7 @@ public class SimulationEngine extends Processor implements FirstOrderDifferentia
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (Component component : getEnvironment().getComponents(true))//.loadComponents();//.getSpecificComponent(Data.class, null))
+		for (Component component : getEnvironment().getAllComponents(true))//.loadComponents();//.getSpecificComponent(Data.class, null))
 		{
 			try
 			{
@@ -50,7 +50,7 @@ public class SimulationEngine extends Processor implements FirstOrderDifferentia
 				{
 					if (Data.isSimulated(dat))
 					{
-						if (CoreGroup.DYNAMIC_STATE_ELEMENTS.contains(dat))
+						if (CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(dat))
 						{
 							if (FieldFinder.containsSuper(dat.get(), UnitValue.class)
 							|| FieldFinder.containsSuper(dat.get(), Number.class))

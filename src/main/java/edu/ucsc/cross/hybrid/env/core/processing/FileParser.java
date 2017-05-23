@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.components.Component;
-import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
+import edu.ucsc.cross.hybrid.env.core.constructors.Component;
+import edu.ucsc.cross.hybrid.env.core.elements.GlobalContent;
 
 public class FileParser extends Processor
 {
@@ -17,7 +17,7 @@ public class FileParser extends Processor
 		super(processor);
 	}
 
-	protected void autoStoreData(EnvironmentContent data)
+	protected void autoStoreData(GlobalContent data)
 	{
 		if (getSettings().getData().automaticallyStoreResults)
 		{
@@ -25,7 +25,7 @@ public class FileParser extends Processor
 		}
 	}
 
-	public void storeEnvironmentData(EnvironmentContent data)
+	public void storeEnvironmentData(GlobalContent data)
 	{
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
@@ -43,7 +43,7 @@ public class FileParser extends Processor
 	public <T extends Component> T loadComponent(String file_directory, String file_name)
 	{
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.getAllllComponents(true))
+		for (Component componen : component.getAllComponents(true))
 		{
 			Component.setInitialized(componen, null);
 			//			try
@@ -69,7 +69,7 @@ public class FileParser extends Processor
 		ArrayList<Component> allComponents = new ArrayList<Component>();
 		component.load();
 		//allComponents.add(component);
-		for (Component subComponent : component.getAllllComponents(true))
+		for (Component subComponent : component.getAllComponents(true))
 		{
 			if (!allComponents.contains(subComponent))
 			{

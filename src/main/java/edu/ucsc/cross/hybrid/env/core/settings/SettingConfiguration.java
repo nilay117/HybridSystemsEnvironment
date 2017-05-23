@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.containers;
+package edu.ucsc.cross.hybrid.env.core.settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,10 +6,6 @@ import java.util.HashMap;
 
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.settings.ComputationSettings;
-import edu.ucsc.cross.hybrid.env.core.settings.DataSettings;
-import edu.ucsc.cross.hybrid.env.core.settings.ExecutionSettings;
-import edu.ucsc.cross.hybrid.env.core.settings.PrintSettings;
 
 public class SettingConfiguration
 {

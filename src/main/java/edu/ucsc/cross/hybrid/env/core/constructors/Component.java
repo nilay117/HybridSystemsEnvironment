@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.components;
+package edu.ucsc.cross.hybrid.env.core.constructors;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
-import edu.ucsc.cross.hybrid.env.core.properties.ComponentProperties;
+import edu.ucsc.cross.hybrid.env.core.accessability.Identifier;
+import edu.ucsc.cross.hybrid.env.core.elements.GlobalContent;
 
 public abstract class Component implements Initializer //implements ComponentInterface
 {
@@ -29,21 +29,13 @@ public abstract class Component implements Initializer //implements ComponentInt
 	@CoreComponent
 	private ArrayList<Component> descendantComponents; // all children of this component (all children & childrens children)
 	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Object>> childObjectMap;
-	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Object>> descendantObjectMap;
-	@CoreComponent
-	private ArrayList<Object> childObjects; // direct children of this component (no childrens children)
-	@CoreComponent
-	private ArrayList<Object> descendantObjects; // all children of this component (all children & childrens children)
-	@CoreComponent
-	private EnvironmentContent environment; // environment that the component is in
+	private GlobalContent environment; // environment that the component is in
 	@CoreComponent
 	private Boolean initialized;
 	@CoreComponent
 	private Component parentComponent; // parent component
 	@CoreComponent
-	private ComponentProperties properties; // properties of the component
+	private Identifier properties; // properties of the component
 
 	/*
 	 * Constructor that defines the name and base class of the component
@@ -54,7 +46,7 @@ public abstract class Component implements Initializer //implements ComponentInt
 	 */
 	public Component(String title, Class<?> base_class)
 	{
-		properties = new ComponentProperties(title, base_class);
+		properties = new Identifier(title, base_class);
 		setup();
 	}
 
@@ -68,7 +60,7 @@ public abstract class Component implements Initializer //implements ComponentInt
 	 */
 	public Component(String title)
 	{
-		properties = new ComponentProperties(title, Component.class);
+		properties = new Identifier(title, Component.class);
 		setup();
 	}
 
@@ -105,33 +97,7 @@ public abstract class Component implements Initializer //implements ComponentInt
 		}
 	}
 
-	public ArrayList<Component> getAllllComponents(boolean global)
-	{
-		ArrayList<Component> allComponents = new ArrayList<Component>();
-		try
-		{
-			if (global)
-			{
-				for (ArrayList<Component> components : descendantComponentMap.values())
-				{
-					allComponents.addAll(components);
-				}
-			} else
-			{
-				for (ArrayList<Component> components : childComponentMap.values())
-				{
-					allComponents.addAll(components);
-				}
-			}
-		} catch (Exception noComponents)
-		{
-
-		}
-
-		return allComponents;
-	}
-
-	public ArrayList<Component> getComponents(boolean include_children)
+	public ArrayList<Component> getAllComponents(boolean include_children)
 	{
 		if (include_children)
 		{
@@ -177,49 +143,12 @@ public abstract class Component implements Initializer //implements ComponentInt
 		return components;
 	}
 
-	//	@SuppressWarnings("unchecked")
-	//	public <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children)
-	//	{
-	//		ArrayList<T> components = new ArrayList<T>();
-	//		try
-	//		{
-	//			if (include_children)
-	//			{
-	//				components = (ArrayList<T>) descendantObjectMap.get(component_class);
-	//			} else
-	//			{
-	//				components = (ArrayList<T>) childObjectMap.get(component_class);
-	//			}
-	//		} catch (Exception noComponents)
-	//		{
-	//			components = null;
-	//		}
-	//		if (components == null)
-	//		{
-	//			ArrayList<Object> componentObjects = scanForObjects(component_class, include_children);
-	//			System.out.println(componentObjects.toString());
-	//			if (include_children)
-	//			{
-	//				descendantObjectMap.put(component_class, componentObjects);
-	//			} else
-	//			{
-	//				childObjectMap.put(component_class, componentObjects);
-	//			}
-	//			components = new ArrayList<T>();
-	//			components.addAll((ArrayList<T>) componentObjects);
-	//			//components = getComponents(component_class, include_children);
-	//		}
-	//
-	//		return components;
-	//	}
-
-	public EnvironmentContent getEnvironment()
+	public GlobalContent getEnvironment()
 	{
 		return environment;
-		//return environment;
 	}
 
-	public ComponentProperties getProperties()
+	public Identifier getProperties()
 	{
 		return properties;
 	}
@@ -228,11 +157,11 @@ public abstract class Component implements Initializer //implements ComponentInt
 	{
 		loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
-		init.addAll(getComponents(true));
+		init.addAll(getAllComponents(true));
 		for (Component component : init)
 		{
 			component.load();
-			for (Component componentChild : component.getComponents(true))
+			for (Component componentChild : component.getAllComponents(true))
 			{
 				storeComponent(componentChild, false);
 			}
@@ -259,8 +188,6 @@ public abstract class Component implements Initializer //implements ComponentInt
 	{
 		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
 		childComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
-		descendantObjectMap = new HashMap<Class<?>, ArrayList<Object>>();
-		childObjectMap = new HashMap<Class<?>, ArrayList<Object>>();
 		childComponents = new ArrayList<Component>();
 		descendantComponents = new ArrayList<Component>();
 	}
@@ -268,7 +195,7 @@ public abstract class Component implements Initializer //implements ComponentInt
 	private ArrayList<Component> loadMap(Class<?> component_class, boolean children)
 	{
 		ArrayList<Component> components = new ArrayList<Component>();
-		for (Component component : getComponents(children))
+		for (Component component : getAllComponents(children))
 		{
 			if (FieldFinder.containsSuper(component, component_class))
 			{
@@ -308,22 +235,6 @@ public abstract class Component implements Initializer //implements ComponentInt
 			break;
 		}
 	}
-
-	//	public ArrayList<Component> getData(DataCategory category, boolean global)
-	//	{
-	//		// TODO Auto-generated method stub
-	//		for (ComponentClassification type : category.subTypes)
-	//		{
-	//			if (global)
-	//			{
-	//				return descendantComponentMap.get(type);
-	//			} else
-	//			{
-	//				return childComponentMap.get(type);
-	//			}
-	//		}
-	//		return null;
-	//	}
 
 	private void processFields(Component parent, ArrayList<Object> fields)
 	{
@@ -522,9 +433,9 @@ public abstract class Component implements Initializer //implements ComponentInt
 		return component.initialized;
 	}
 
-	public static void setEnvironment(Component component, EnvironmentContent environment)
+	public static void setEnvironment(Component component, GlobalContent environment)
 	{
-		EnvironmentContent accessor = environment;
+		GlobalContent accessor = environment;
 		component.environment = accessor;
 	}
 

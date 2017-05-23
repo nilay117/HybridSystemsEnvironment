@@ -1,9 +1,9 @@
 package edu.ucsc.cross.hybrid.model.vehicle.simplebouncingball;
 
 import bs.commons.unitvars.values.Velocity;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
+import edu.ucsc.cross.hybrid.env.core.factories.DataFactory;
 
 public class EnvironmentProperties extends DataSet
 {
@@ -14,7 +14,7 @@ public class EnvironmentProperties extends DataSet
 	public EnvironmentProperties()
 	{
 		super("Prope");
-		gravity = DataFactory.dynamicState.create(Velocity.newKilometersPerSecondValue(9.81), "Gravit");
+		gravity = DataFactory.hybridState.create(Velocity.newKilometersPerSecondValue(9.81), "Gravit");
 		restitution = DataFactory.property.create(.99, "Restitution Coefficient", true);
 		initialize();
 	}

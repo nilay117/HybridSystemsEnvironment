@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.components;
+package edu.ucsc.cross.hybrid.env.core.constructors;
 
 public abstract class DataSet extends Component// implements Initializer//DataSetProperties
 {
@@ -45,7 +45,7 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 	{ "unchecked", "rawtypes" })
 	public void initializeElements()
 	{
-		for (Component component : this.getAllllComponents(true))
+		for (Component component : this.getAllComponents(true))
 		{
 			try
 			{

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import bs.commons.io.system.IO;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.access.CallerRetriever;
-import edu.ucsc.cross.hybrid.env.core.components.Component;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.DataSet;
+import edu.ucsc.cross.hybrid.env.core.constructors.Component;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
 
 public class SystemConsole extends Processor
 {
@@ -26,7 +26,7 @@ public class SystemConsole extends Processor
 	private void initialize()
 	{
 		IO.settings.printCallingClass = false;
-		//classRetriever = new CallerRetriever();
+		// classRetriever = new CallerRetriever();
 	}
 
 	public void printUpdates()
@@ -36,13 +36,13 @@ public class SystemConsole extends Processor
 
 	public void progressUpdate()
 	{
-		if (nextPrintTime < getEnvironment().environmentTime().seconds())
+		if (nextPrintTime < getEnvironment().getEnvironmentTime().getTime())
 		{
-			nextPrintTime = getEnvironment().environmentTime().seconds() + printInterval;
-			Double percentComplete = 100 * getEnvironment().environmentTime().seconds()
+			nextPrintTime = getEnvironment().getEnvironmentTime().getTime() + printInterval;
+			Double percentComplete = 100 * getEnvironment().getEnvironmentTime().getTime()
 			/ getSettings().trial().simDuration;
 			IO.out("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
-			+ getEnvironment().environmentTime().seconds() + " seconds");
+			+ getEnvironment().getEnvironmentTime().getTime() + " seconds");
 		}
 	}
 
@@ -51,7 +51,7 @@ public class SystemConsole extends Processor
 		String string = null;
 		if (getSettings().io().printDiscreteEventIndicator)
 		{
-			string = ("discrete event detected at " + getEnvironment().environmentTime().seconds() + " seconds");
+			string = ("discrete event detected at " + getEnvironment().getEnvironmentTime().getTime() + " seconds");
 		}
 		return string;
 	}
@@ -63,12 +63,13 @@ public class SystemConsole extends Processor
 		String storeString = null;
 		if (getSettings().io().printStoreDataIndicator)
 		{
-			storeString = ("data stored at " + time + " seconds");// + super.getComputationEngine().getODEValueVector().toString());
+			storeString = ("data stored at " + time + " seconds");// +
+																	// super.getComputationEngine().getODEValueVector().toString());
 
 			if (getSettings().io().printStoreDataReport)
 			{
 				HashMap<String, Component> systemNames = new HashMap<String, Component>();
-				for (Component rootSystem : super.getEnvironment().getAllComponents())
+				for (Component rootSystem : super.getEnvironment().getAllComponents(true))
 
 				{
 					String sysName = StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
@@ -85,7 +86,7 @@ public class SystemConsole extends Processor
 						storeString += sysName + " - [" + dataSetName + " ";
 						try
 						{
-							for (Component element : dataSet.getAllllComponents(true))
+							for (Component element : dataSet.getAllComponents(true))
 								try
 								{
 									Data data = (Data) element;

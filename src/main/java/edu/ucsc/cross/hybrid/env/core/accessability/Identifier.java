@@ -1,6 +1,6 @@
-package edu.ucsc.cross.hybrid.env.core.properties;
+package edu.ucsc.cross.hybrid.env.core.accessability;
 
-public class ComponentProperties
+public class Identifier
 {
 
 	// Classification
@@ -17,7 +17,7 @@ public class ComponentProperties
 	protected String title; // general description of the element -ie "Storage Device" or "Navigation Controller"
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB Internal SSD" or "Crazyflie Nano 2.0"
 
-	public ComponentProperties(String title, Class<?> classification)
+	public Identifier(String title, Class<?> classification)
 	{
 		this.title = title;
 		this.classification = (classification);
@@ -75,7 +75,7 @@ public class ComponentProperties
 		return environmentAddress;
 	}
 
-	public static void setEnvironmentAddress(ComponentProperties element, Integer environmentAddress)
+	public static void setEnvironmentAddress(Identifier element, Integer environmentAddress)
 	{
 		element.environmentAddress = environmentAddress;
 	}

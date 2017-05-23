@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 
-import edu.ucsc.cross.hybrid.env.core.components.Component;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
+import edu.ucsc.cross.hybrid.env.core.constructors.Component;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreDataGroup;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -45,7 +45,7 @@ public class DataCollector extends Processor
 		if (override_store_time)
 		{
 			storeData(t);
-		} else if (t > lastStoreTime + getSettings().getData().dataStoreIncrement)//settings.dataStoreIncrement)
+		} else if (t > lastStoreTime + getSettings().getData().dataStoreIncrement)// settings.dataStoreIncrement)
 		{
 			lastStoreTime = t;
 			storeData(t);
@@ -55,13 +55,13 @@ public class DataCollector extends Processor
 	public void loadStoreStates()
 	{
 		dataStates.clear();
-		for (Component component : super.getEnvironment().getComponents(true))
+		for (Component component : super.getEnvironment().getAllComponents(true))
 		{
 			try
 			{
 				Data element = (Data) component;
 
-				if (CoreGroup.ALL_STATES.contains(element))
+				if (CoreDataGroup.ALL_STATES.contains(element))
 				{
 					if (Data.isStored(element))
 					{
@@ -85,7 +85,7 @@ public class DataCollector extends Processor
 				stateElements.add(allStates.getProperties().getName());
 			}
 		}
-		//	System.out.println(stateElements.toString());
+		// System.out.println(stateElements.toString());
 
 		return stateElements;
 	}
@@ -96,7 +96,7 @@ public class DataCollector extends Processor
 		{
 			Data.storeValue(element, time);
 		}
-		//IO.out(getConsole().getDataElementStoreString(time, true));
+		// IO.out(getConsole().getDataElementStoreString(time, true));
 	}
 
 	public ArrayList<Data> matchingElements(String title)
@@ -114,14 +114,14 @@ public class DataCollector extends Processor
 
 	public Data matchingElementsInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().getAllComponents())
+		for (Component component : getEnvironment().getAllComponents(true))
 		{
 			try
 			{
 				DataSet set = (DataSet) component;
-				if (set.getAllllComponents(true).contains(data))
+				if (set.getAllComponents(true).contains(data))
 				{
-					for (Component subComponent : set.getAllllComponents(true))
+					for (Component subComponent : set.getAllComponents(true))
 					{
 						try
 						{
@@ -146,72 +146,78 @@ public class DataCollector extends Processor
 
 		return null;
 	}
-	//	@SuppressWarnings("unchecked")
-	//	public void storeData(Double time)
-	//	{
-	//		if (!times.contains(time))
-	//		{
-	//			times.add(time);
-	//			for (Integer systemIndex : dataStates.keySet())
-	//			{
-	//				Element.storeValue(dataStates.get(systemIndex));
-	//			}
-	//		}
-	//	}
+	// @SuppressWarnings("unchecked")
+	// public void storeData(Double time)
+	// {
+	// if (!times.contains(time))
+	// {
+	// times.add(time);
+	// for (Integer systemIndex : dataStates.keySet())
+	// {
+	// Element.storeValue(dataStates.get(systemIndex));
+	// }
+	// }
+	// }
 
-	//	public Double getValue(Integer time_index, Integer component_index, String value_name)
-	//	{
-	//		Double val = null;
-	//		try
-	//		{
-	//			//val = data.get(component_index).get(value_name).get(time_index);
-	//		} catch (Exception e)
-	//		{
+	// public Double getValue(Integer time_index, Integer component_index,
+	// String value_name)
+	// {
+	// Double val = null;
+	// try
+	// {
+	// //val = data.get(component_index).get(value_name).get(time_index);
+	// } catch (Exception e)
+	// {
 	//
-	//		}
-	//		return val;
-	//	}
+	// }
+	// return val;
+	// }
 	//
-	//	public ArrayList<Double> getTimes()
-	//	{
-	//		return times;
-	//	}
+	// public ArrayList<Double> getTimes()
+	// {
+	// return times;
+	// }
 	//
-	//	public HashMap<Integer, ArrayList<Double>> getAllDataSeries(Integer component_index, String element_name)
-	//	{
-	//		HashMap<Integer, ArrayList<Double>> series = new HashMap<Integer, ArrayList<Double>>();
-	//		for (Integer componentIndex : dataStates.keySet())
-	//		{
-	//			ArrayList<Double> ser = getDataSeries(componentIndex, element_name);
-	//			if (ser != null)
-	//			{
-	//				series.put(component_index, ser);
-	//			}
-	//		}
-	//		return series;
-	//	}
+	// public HashMap<Integer, ArrayList<Double>> getAllDataSeries(Integer
+	// component_index, String element_name)
+	// {
+	// HashMap<Integer, ArrayList<Double>> series = new HashMap<Integer,
+	// ArrayList<Double>>();
+	// for (Integer componentIndex : dataStates.keySet())
+	// {
+	// ArrayList<Double> ser = getDataSeries(componentIndex, element_name);
+	// if (ser != null)
+	// {
+	// series.put(component_index, ser);
+	// }
+	// }
+	// return series;
+	// }
 	//
-	//	public <T> ArrayList<T> getDataSeries(Integer component_index, String element_name)
-	//	{
-	//		//
-	//		if (dataStates.get(component_index).getProperties().getName().equals(element_name))
-	//		{
-	//			return dataStates.get(component_index).getPreviousValues();
-	//		}
+	// public <T> ArrayList<T> getDataSeries(Integer component_index, String
+	// element_name)
+	// {
+	// //
+	// if
+	// (dataStates.get(component_index).getProperties().getName().equals(element_name))
+	// {
+	// return dataStates.get(component_index).getPreviousValues();
+	// }
 	//
-	//		return null;
-	//	}
+	// return null;
+	// }
 	//
-	//	public ArrayList<Integer> hasData(String element_name)
-	//	{
-	//		ArrayList<Integer> series = new ArrayList<Integer>();
-	//		for (Integer component_index : dataStates.keySet())
-	//		{
-	//			if (dataStates.get(component_index).getProperties().getName().equals(element_name))
-	//			{
-	//				series.add(component_index);
-	//			}
-	//		}
-	//		return series;
-	//	}
+	// public ArrayList<Integer> hasData(String element_name)
+	// {
+	// ArrayList<Integer> series = new ArrayList<Integer>();
+	// for (Integer component_index : dataStates.keySet())
+	// {
+	// if
+	// (dataStates.get(component_index).getProperties().getName().equals(element_name))
+	// {
+	// series.add(component_index);
+	// }
+	// }
+	// return series;
+	// }
 }

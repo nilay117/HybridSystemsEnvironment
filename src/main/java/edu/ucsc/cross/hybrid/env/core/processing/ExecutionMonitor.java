@@ -15,13 +15,13 @@ public class ExecutionMonitor extends Processor
 {
 
 	private Thread thread;
-	private DomainEvaluator jumpHandler;
+	private JumpDetector jumpHandler;
 	private InterruptHandler terminator;
 
 	ExecutionMonitor(Environment processor)
 	{
 		super(processor);
-		jumpHandler = new DomainEvaluator(processor);
+		jumpHandler = new JumpDetector(processor);
 		terminator = new InterruptHandler(processor);
 	}
 
@@ -31,13 +31,13 @@ public class ExecutionMonitor extends Processor
 		if (run_threadded)
 		{
 			runSim(null);
-			//thread = new Thread(getSimTask());
-			//thread.start();
+			// thread = new Thread(getSimTask());
+			// thread.start();
 
 		} else
 		{
 			runSim(null);
-			//runSimulation();
+			// runSimulation();
 			launchEnvironment();
 		}
 
@@ -46,7 +46,7 @@ public class ExecutionMonitor extends Processor
 	public void runSim(Protected<Integer> running_processes)
 	{
 
-		thread = new Thread(getSimTask());//running_processes));
+		thread = new Thread(getSimTask());// running_processes));
 		thread.start();
 		if (printStack)
 		{
@@ -178,13 +178,13 @@ public class ExecutionMonitor extends Processor
 	{
 		try
 		{
-			Double stopTime = integrator.integrate(ode, getEnvironment().environmentTime().seconds(),
+			Double stopTime = integrator.integrate(ode, getEnvironment().getEnvironmentTime().getTime(),
 			getComputationEngine().getODEValueVector(), getSettings().trial().simDuration,
 			getComputationEngine().getODEValueVector());
 			return stopTime;
 		} catch (Exception e)
 		{
-			//e.printStackTrace();
+			// e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
@@ -195,7 +195,7 @@ public class ExecutionMonitor extends Processor
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
 			} else
 			{
-				return getEnvironment().environmentTime().seconds();
+				return getEnvironment().getEnvironmentTime().getTime();
 			}
 
 		}
@@ -251,7 +251,7 @@ public class ExecutionMonitor extends Processor
 		return thread;
 	}
 
-	// Debugger 
+	// Debugger
 
 	private Boolean printStack = false;
 	private Thread stackPrinter;

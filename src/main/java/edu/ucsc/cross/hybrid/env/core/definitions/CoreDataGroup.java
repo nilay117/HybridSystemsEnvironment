@@ -3,31 +3,31 @@ package edu.ucsc.cross.hybrid.env.core.definitions;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import edu.ucsc.cross.hybrid.env.core.classification.DataGroup;
-import edu.ucsc.cross.hybrid.env.core.classification.DataType;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.classifiers.DataGroup;
+import edu.ucsc.cross.hybrid.env.core.classifiers.DataType;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
 
-public enum CoreGroup implements DataGroup
+public enum CoreDataGroup implements DataGroup
 {
 	ALL_STATES(
 		"All Data",
 		new DataType[]
-		{ CoreData.DYNAMIC_STATE, CoreData.DISCRETE_STATE, CoreData.PARAMETER, CoreData.PROPERTY }),
+		{ CoreDataType.HYBRID_STATE, CoreDataType.DISCRETE_STATE, CoreDataType.PARAMETER, CoreDataType.PROPERTY }),
 
 	STATE_ELEMENTS(
 		"All States",
 		new DataType[]
-		{ CoreData.DISCRETE_STATE, CoreData.DYNAMIC_STATE }),
+		{ CoreDataType.DISCRETE_STATE, CoreDataType.HYBRID_STATE }),
 
 	DYNAMIC_STATE_ELEMENTS(
 		"Dynamic States",
-		new CoreData[]
-		{ CoreData.DYNAMIC_STATE });
+		new CoreDataType[]
+		{ CoreDataType.HYBRID_STATE });
 
 	public final ArrayList<DataType> subTypes;
 	private final String groupLabel;
 
-	private CoreGroup(String label, DataType[] sub_types)
+	private CoreDataGroup(String label, DataType[] sub_types)
 	{
 		groupLabel = label;
 		subTypes = new ArrayList<DataType>(Arrays.asList(sub_types));

@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
+import edu.ucsc.cross.hybrid.env.core.constructors.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataSet;
+import edu.ucsc.cross.hybrid.env.core.factories.DataFactory;
 
 public class TestState extends DataSet
 {
@@ -14,9 +14,9 @@ public class TestState extends DataSet
 	public TestState()
 	{
 		super("Test State");
-		continuous = DataFactory.dynamicState.create(1.0, "Continuous State");
+		continuous = DataFactory.hybridState.create(1.0, "Continuous State");
 		discrete = DataFactory.discreteState.create(1.0, "Discrete State");
-		hybrid = DataFactory.dynamicState.create(1.0, "Hybrid State");
+		hybrid = DataFactory.hybridState.create(1.0, "Hybrid State");
 	}
 
 	@Override

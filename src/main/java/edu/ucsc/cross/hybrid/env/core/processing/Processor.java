@@ -1,8 +1,7 @@
 package edu.ucsc.cross.hybrid.env.core.processing;
 
-import bs.commons.unitvars.values.Time;
-import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
-import edu.ucsc.cross.hybrid.env.core.containers.SettingConfiguration;
+import edu.ucsc.cross.hybrid.env.core.elements.GlobalContent;
+import edu.ucsc.cross.hybrid.env.core.settings.SettingConfiguration;
 
 public abstract class Processor
 {
@@ -14,38 +13,38 @@ public abstract class Processor
 		this.processor = processor;
 	}
 
-	//@Override
-	protected Time getEnvTime()
+	// @Override
+	protected Double getEnvTime()
 	{
-		return processor.environmentContent.environmentTime();
+		return getEnvironment().getEnvironmentTime().getTime();
 	}
 
-	//@Override
-	protected void setEnvTime(Time time)
+	// @Override
+	protected void setEnvTime(Double time)
 	{
 		// TODO Auto-generated method stub
-		processor.environmentContent.environmentTime().seconds(time.seconds());
+		processor.environmentContent.getEnvironmentTime().setTime(time);
 	}
 
-	//@Override
+	// @Override
 	protected SimulationEngine getComputationEngine()
 	{
 		return processor.simulationEngine;
 	}
 
-	//@Override
+	// @Override
 	protected ExecutionMonitor getEnvironmentMonitor()
 	{
 		return processor.executionMonitor;
 	}
 
-	//@Override
-	protected EnvironmentContent getEnvironment()
+	// @Override
+	protected GlobalContent getEnvironment()
 	{
 		return processor.environmentContent();
 	}
 
-	//@Override
+	// @Override
 	protected SystemConsole getConsole()
 	{
 		return processor.outputPrinter;
@@ -61,12 +60,12 @@ public abstract class Processor
 		return processor.data;
 	}
 
-	protected ElementManager getComponents()
+	protected ComponentManager getComponents()
 	{
 		return processor.elements;
 	}
 
-	//@Override
+	// @Override
 	protected Environment getProcessor()
 	{
 		// TODO Auto-generated method stub
@@ -78,7 +77,7 @@ public abstract class Processor
 		return processor.fileParser;
 	}
 
-	//@Override
+	// @Override
 	protected void setSettings(SettingConfiguration settings)
 	{
 		processor.setSettings(settings);
