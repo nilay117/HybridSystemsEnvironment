@@ -2,8 +2,8 @@ package edu.ucsc.cross.hybrid.env.core.data;
 
 import java.util.HashMap;
 
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.structural.BaseData;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
 public class ConditionalData<T> extends Data<T>
 {
@@ -14,7 +14,7 @@ public class ConditionalData<T> extends Data<T>
 
 	public ConditionalData(String name, Data<?> state_value, T zero_element)
 	{
-		super(zero_element, BaseData.PROPERTY, name, "", false);
+		super(zero_element, CoreData.PROPERTY, name, "", false);
 		zeroElement = zero_element;
 		dependency = state_value;
 		statusValues = new HashMap<Object, Data<T>>();
@@ -22,7 +22,7 @@ public class ConditionalData<T> extends Data<T>
 
 	public ConditionalData(Data<?> state_value, T zero_element)
 	{
-		super(zero_element, BaseData.PROPERTY, "Conditional Value", "", false);
+		super(zero_element, CoreData.PROPERTY, "Conditional Value", "", false);
 		zeroElement = zero_element;
 		dependency = state_value;
 		statusValues = new HashMap<Object, Data<T>>();

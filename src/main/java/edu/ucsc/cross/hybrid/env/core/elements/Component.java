@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.structural;
+package edu.ucsc.cross.hybrid.env.core.elements;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +13,9 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
+import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
+import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
+import edu.ucsc.cross.hybrid.env.core.data.ComponentProperties;
 
 public abstract class Component implements Initializer//implements ComponentInterface
 {
@@ -23,7 +25,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 	@CoreComponent
 	private ComponentProperties properties; // properties of the component
 	@CoreComponent
-	private EnvironmentContents environment; // environment that the component is in
+	private EnvironmentContent environment; // environment that the component is in
 	@CoreComponent
 	private Component parentComponent; // parent component
 	@CoreComponent
@@ -35,7 +37,7 @@ public abstract class Component implements Initializer//implements ComponentInte
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
 
-	public Component(String name, ComponenDefinition type)
+	public Component(String name, ComponentClass type)
 	{
 		properties = new ComponentProperties(name, type);
 		initialized = false;
@@ -307,15 +309,15 @@ public abstract class Component implements Initializer//implements ComponentInte
 	//		return null;
 	//	}
 
-	public EnvironmentContents getEnvironment()
+	public EnvironmentContent getEnvironment()
 	{
 		return environment;
 		//return environment;
 	}
 
-	public static void setEnvironment(Component component, EnvironmentContents environment)
+	public static void setEnvironment(Component component, EnvironmentContent environment)
 	{
-		EnvironmentContents accessor = environment;
+		EnvironmentContent accessor = environment;
 		component.environment = accessor;
 	}
 

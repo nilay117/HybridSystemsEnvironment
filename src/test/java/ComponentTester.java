@@ -1,5 +1,5 @@
-import edu.ucsc.cross.hybrid.env.core.components.Behavior;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.elements.Behavior;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 import edu.ucsc.cross.hybrid.env.core.processor.Environment;
 
 public class ComponentTester

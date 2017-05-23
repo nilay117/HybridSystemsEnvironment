@@ -11,9 +11,9 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.structural.BaseData;
-import edu.ucsc.cross.hybrid.env.structural.Component;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
+import edu.ucsc.cross.hybrid.env.core.elements.Component;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
@@ -46,7 +46,7 @@ public class SimulationEngine extends ProcessorComponent implements FirstOrderDi
 			try
 			{
 				Data dat = (Data) component;
-				if (dat.getProperties().getClassification().equals(BaseData.DYNAMIC_STATE))
+				if (dat.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
 				{
 					if (Data.isSimulated(dat))
 					{

@@ -1,15 +1,15 @@
-package edu.ucsc.cross.hybrid.env.core.structure;
+package edu.ucsc.cross.hybrid.env.core.containers;
 
 import java.util.ArrayList;
 
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.values.Time;
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
+import edu.ucsc.cross.hybrid.env.core.elements.Component;
+import edu.ucsc.cross.hybrid.env.core.elements.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
-import edu.ucsc.cross.hybrid.env.structural.BaseComponents;
-import edu.ucsc.cross.hybrid.env.structural.Component;
 
-public class EnvironmentContents extends Component
+public class EnvironmentContent extends Component
 {
 
 	private String environmentTitle;
@@ -20,16 +20,16 @@ public class EnvironmentContents extends Component
 	private Time envTime;
 	private SettingCollection settings;
 
-	public EnvironmentContents(String environment_title)
+	public EnvironmentContent(String environment_title)
 	{
-		super(environment_title, BaseComponents.ENVIRONMENT);
+		super(environment_title, CoreComponent.ENVIRONMENT);
 		setEnvironmentTitle(environment_title);
 		initializeDataStructures();
 	}
 
-	public EnvironmentContents()
+	public EnvironmentContent()
 	{
-		super("Hybrid Systems Environment", BaseComponents.ENVIRONMENT);
+		super("Hybrid Systems Environment", CoreComponent.ENVIRONMENT);
 		setEnvironmentTitle("Hybrid Environment");
 		initializeDataStructures();
 	}

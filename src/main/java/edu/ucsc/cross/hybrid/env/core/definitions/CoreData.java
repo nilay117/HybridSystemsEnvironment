@@ -1,8 +1,10 @@
-package edu.ucsc.cross.hybrid.env.structural;
+package edu.ucsc.cross.hybrid.env.core.definitions;
 
-import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
+import edu.ucsc.cross.hybrid.env.core.data.DataFactory;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
-public enum BaseData implements DataClassification// ComponenClassification
+public enum CoreData implements DataClass// ComponenClassification
 {
 	DYNAMIC_STATE(
 		"Dynamic State",
@@ -28,8 +30,9 @@ public enum BaseData implements DataClassification// ComponenClassification
 	public final String dataTypeName;
 	private boolean storeDefault;
 	public final boolean state;
+	private static DataFactory dataFactory = new DataFactory();
 
-	private BaseData(String name, boolean store_default, boolean state)
+	private CoreData(String name, boolean store_default, boolean state)
 	{
 		storeDefault = store_default;
 		dataTypeName = name;
@@ -60,42 +63,42 @@ public enum BaseData implements DataClassification// ComponenClassification
 	public <T> Data<T> create(T initial_value)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, this.componentLabel(), "", this, this.isStoredByDefault());
+		return dataFactory.newData(initial_value, this.componentLabel(), "", this, this.isStoredByDefault());
 	}
 
 	@Override
 	public <T> Data<T> create(T initial_value, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, this.componentLabel(), "", this, stored_by_default);
+		return dataFactory.newData(initial_value, this.componentLabel(), "", this, stored_by_default);
 	}
 
 	@Override
 	public <T> Data<T> create(T initial_value, String label)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, label, "", this, this.isStoredByDefault());
+		return dataFactory.newData(initial_value, label, "", this, this.isStoredByDefault());
 	}
 
 	@Override
 	public <T> Data<T> create(T initial_value, String label, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, label, "", this, stored_by_default);
+		return dataFactory.newData(initial_value, label, "", this, stored_by_default);
 	}
 
 	@Override
 	public <S> Data<S> create(S initial_value, String label, String name)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, label, name, this, this.isStoredByDefault());
+		return dataFactory.newData(initial_value, label, name, this, this.isStoredByDefault());
 	}
 
 	@Override
 	public <S> Data<S> create(S initial_value, String label, String name, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, label, name, this, stored_by_default);
+		return dataFactory.newData(initial_value, label, name, this, stored_by_default);
 	}
 
 	@Override

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
-import edu.ucsc.cross.hybrid.env.structural.Component;
+import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
+import edu.ucsc.cross.hybrid.env.core.elements.Component;
 
 public class IOParser extends ProcessorComponent
 {
@@ -17,7 +17,7 @@ public class IOParser extends ProcessorComponent
 		super(processor);
 	}
 
-	protected void autoStoreData(EnvironmentContents data)
+	protected void autoStoreData(EnvironmentContent data)
 	{
 		if (getSettings().getData().automaticallyStoreResults)
 		{
@@ -25,7 +25,7 @@ public class IOParser extends ProcessorComponent
 		}
 	}
 
-	public void storeEnvironmentData(EnvironmentContents data)
+	public void storeEnvironmentData(EnvironmentContent data)
 	{
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)

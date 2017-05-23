@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.structure;
+package edu.ucsc.cross.hybrid.env.core.models;
 
 /*
  * This interface defines a classical hybrid dynamical model.

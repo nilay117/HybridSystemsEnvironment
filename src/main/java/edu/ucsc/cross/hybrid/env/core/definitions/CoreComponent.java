@@ -1,8 +1,9 @@
-package edu.ucsc.cross.hybrid.env.structural;
+package edu.ucsc.cross.hybrid.env.core.definitions;
 
-import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
-public enum BaseComponents implements ComponenDefinition
+public enum CoreComponent implements ComponentClass
 {
 	DATA_ITEM(
 		"Single Data Item",
@@ -29,7 +30,7 @@ public enum BaseComponents implements ComponenDefinition
 	public final String classificationName;
 	private boolean storeDefault;
 
-	private BaseComponents(String name, boolean store_default)
+	private CoreComponent(String name, boolean store_default)
 	{
 		storeDefault = store_default;
 		this.classificationName = name;

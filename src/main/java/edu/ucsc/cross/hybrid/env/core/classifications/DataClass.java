@@ -1,8 +1,8 @@
-package edu.ucsc.cross.hybrid.env.structural;
+package edu.ucsc.cross.hybrid.env.core.classifications;
 
-import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
-public interface DataClassification extends ComponenDefinition
+public interface DataClass extends ComponentClass
 {
 
 	public String dataCategory();

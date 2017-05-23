@@ -4,13 +4,13 @@ import bs.commons.io.system.IO;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitValue;
-import edu.ucsc.cross.hybrid.env.structural.BaseData;
-import edu.ucsc.cross.hybrid.env.structural.ComponenDefinition;
+import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
 
 public class DynamicData<T> extends ProtectedData<T>
 {
 
-	protected DynamicData(T element, ComponenDefinition type, String name, String description)
+	protected DynamicData(T element, ComponentClass type, String name, String description)
 	{
 		super(element, type, name, description);
 		derivative = cloneZeroDerivative(element);
@@ -21,7 +21,7 @@ public class DynamicData<T> extends ProtectedData<T>
 
 	public T getDt()
 	{
-		if (!super.getProperties().getClassification().equals(BaseData.DYNAMIC_STATE))
+		if (!super.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
 		{
 			IO.warn("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
 		}
@@ -30,7 +30,7 @@ public class DynamicData<T> extends ProtectedData<T>
 
 	public void setDt(T derivative)
 	{
-		if (super.getProperties().getClassification().equals(BaseData.DYNAMIC_STATE))
+		if (super.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
 		{
 			this.derivative = derivative;
 		} else

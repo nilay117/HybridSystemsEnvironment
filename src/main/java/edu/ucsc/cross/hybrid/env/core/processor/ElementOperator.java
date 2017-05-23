@@ -2,12 +2,12 @@ package edu.ucsc.cross.hybrid.env.core.processor;
 
 import java.util.ArrayList;
 
-import edu.ucsc.cross.hybrid.env.core.components.Behavior;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.core.components.DataSet;
-import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
-import edu.ucsc.cross.hybrid.env.structural.BaseGroup;
-import edu.ucsc.cross.hybrid.env.structural.Component;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
+import edu.ucsc.cross.hybrid.env.core.elements.Behavior;
+import edu.ucsc.cross.hybrid.env.core.elements.Component;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
+import edu.ucsc.cross.hybrid.env.core.elements.DataSet;
+import edu.ucsc.cross.hybrid.env.core.elements.HybridSystem;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -178,7 +178,7 @@ public class ElementOperator extends ProcessorComponent
 	{
 		for (Data data : allData)
 		{
-			if (BaseGroup.STATE_ELEMENTS.contains(data))
+			if (CoreGroup.STATE_ELEMENTS.contains(data))
 			{
 				Data.storePreJumpValue(data);
 			}

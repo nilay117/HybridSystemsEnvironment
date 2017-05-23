@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hybrid.env.core.processor;
 
 import bs.commons.unitvars.values.Time;
+import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
 import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
-import edu.ucsc.cross.hybrid.env.core.structure.EnvironmentContents;
 
 public abstract class ProcessorComponent
 {
@@ -40,7 +40,7 @@ public abstract class ProcessorComponent
 	}
 
 	//@Override
-	protected EnvironmentContents getEnvironment()
+	protected EnvironmentContent getEnvironment()
 	{
 		return processor.getEnvironment();
 	}

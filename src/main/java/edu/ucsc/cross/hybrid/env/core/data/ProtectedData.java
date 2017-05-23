@@ -5,9 +5,9 @@ import java.util.Arrays;
 
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hybrid.env.core.components.Data;
-import edu.ucsc.cross.hybrid.env.structural.ComponenDefinition;
-import edu.ucsc.cross.hybrid.env.structural.Component;
+import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
+import edu.ucsc.cross.hybrid.env.core.elements.Component;
+import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -16,7 +16,7 @@ public abstract class ProtectedData<T> extends Component
 
 	protected T element;
 
-	protected ProtectedData(T element, ComponenDefinition type, String label, String name)
+	protected ProtectedData(T element, ComponentClass type, String label, String name)
 	{
 		super(label, type);
 		this.element = element;

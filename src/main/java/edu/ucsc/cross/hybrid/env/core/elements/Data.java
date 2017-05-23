@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.structural;
+package edu.ucsc.cross.hybrid.env.core.elements;
 
 import java.util.HashMap;
 
@@ -8,8 +8,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
+import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
 import edu.ucsc.cross.hybrid.env.core.data.DynamicData;
-import edu.ucsc.cross.hybrid.env.structural.DataClassification;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -167,7 +167,7 @@ public class Data<T> extends DynamicData<T>
 		}
 	}
 
-	protected static <S> Data<S> instantiateData(S obj, DataClassification type, String name, String description,
+	public static <S> Data<S> instantiateData(S obj, DataClass type, String name, String description,
 	Boolean save_default)
 	{
 		Data<S> newData = new Data<S>(obj, type, name, description, save_default);//type, name, description);
@@ -175,7 +175,7 @@ public class Data<T> extends DynamicData<T>
 		// TODO Auto-generated constructor stub
 	}
 
-	protected Data(T obj, DataClassification type, String name, String description, Boolean save_default)
+	protected Data(T obj, DataClass type, String name, String description, Boolean save_default)
 	{
 		super(obj, type, name, description);
 		preJumpValue = (T) ObjectCloner.xmlClone(obj);
@@ -211,7 +211,7 @@ public class Data<T> extends DynamicData<T>
 		// TODO Auto-generated constructor stub
 	}
 
-	protected static <S> Data<S> instantiateObj(S obj, DataClassification type, String name, String description,
+	protected static <S> Data<S> instantiateObj(S obj, DataClass type, String name, String description,
 	Boolean can_be_set, Boolean save_default)
 	{
 		Data<S> newObj = new Data<S>(obj, type, name, description, save_default);//type, name, description);
@@ -219,17 +219,17 @@ public class Data<T> extends DynamicData<T>
 		// TODO Auto-generated constructor stub
 	}
 
-	protected static <S> Data<S> newObj(S obj, DataClassification type, String name)
+	protected static <S> Data<S> newObj(S obj, DataClass type, String name)
 	{
 		return newObj(obj, type, name, type.isStoredByDefault());
 	}
 
-	protected static <S> Data<S> newObj(S obj, DataClassification type)
+	protected static <S> Data<S> newObj(S obj, DataClass type)
 	{
 		return newObj(obj, type, null, type.isStoredByDefault());
 	}
 
-	protected static <S> Data<S> newObj(S obj, DataClassification type, String name, boolean save_default)
+	protected static <S> Data<S> newObj(S obj, DataClass type, String name, boolean save_default)
 	{
 		Data<S> newState = null;
 		if (name == null)
@@ -381,7 +381,7 @@ public class Data<T> extends DynamicData<T>
 		element.storeValue(time);
 	}
 
-	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataClassification type, String name,
+	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataClass type, String name,
 	String description)
 	{
 		//System.out.println(obj + " " + can_be_set + " " + type + " " + name);

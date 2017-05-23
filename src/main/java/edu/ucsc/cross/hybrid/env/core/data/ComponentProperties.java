@@ -1,11 +1,13 @@
-package edu.ucsc.cross.hybrid.env.structural;
+package edu.ucsc.cross.hybrid.env.core.data;
+
+import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
 
 public class ComponentProperties
 {
 
 	// Classification
-	protected Class<?> baseComponentClass; // base component of this class
-	protected ComponenDefinition classification; // classification of the element
+	public Class<?> baseComponentClass; // base component of this class
+	protected ComponentClass classification; // classification of the element
 
 	// Addressing
 	protected Integer environmentAddress; // address of the environment (0 by default but may be different if running more than one environment simultaneously)
@@ -17,7 +19,7 @@ public class ComponentProperties
 	protected String label; // general description of the element -ie "Storage Device" or "Navigation Controller"
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB Internal SSD" or "Crazyflie Nano 2.0"
 
-	public ComponentProperties(String name, ComponenDefinition classification)
+	public ComponentProperties(String name, ComponentClass classification)
 	{
 		this.label = name;
 		this.classification = (classification);
@@ -60,7 +62,7 @@ public class ComponentProperties
 		return communicationAddress;
 	}
 
-	public ComponenDefinition getClassification()
+	public ComponentClass getClassification()
 	{
 		return classification;
 	}

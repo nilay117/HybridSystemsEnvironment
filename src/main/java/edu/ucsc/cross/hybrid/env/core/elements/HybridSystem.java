@@ -1,7 +1,6 @@
-package edu.ucsc.cross.hybrid.env.core.components;
+package edu.ucsc.cross.hybrid.env.core.elements;
 
-import edu.ucsc.cross.hybrid.env.structural.BaseComponents;
-import edu.ucsc.cross.hybrid.env.structural.Component;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
 
 public abstract class HybridSystem extends Component
 {
@@ -11,7 +10,7 @@ public abstract class HybridSystem extends Component
 	 */
 	public HybridSystem(String title)
 	{
-		super(title, BaseComponents.HYBRID_SYSTEM);
+		super(title, CoreComponent.HYBRID_SYSTEM);
 	}
 
 	/*
@@ -19,7 +18,7 @@ public abstract class HybridSystem extends Component
 	 */
 	public HybridSystem()
 	{
-		super("Hybrid System", BaseComponents.HYBRID_SYSTEM);
+		super("Hybrid System", CoreComponent.HYBRID_SYSTEM);
 	}
 
 	public void performTasks(boolean jump_occurred)
