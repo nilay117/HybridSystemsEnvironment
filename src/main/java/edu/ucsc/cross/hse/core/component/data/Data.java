@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import bs.commons.io.system.IO;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.expansions.InitialValue;
 import bs.commons.objects.manipulation.ObjectCloner;
@@ -15,21 +14,32 @@ import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.classification.DataType;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 
+/*
+ * This class protects and manages a data object to ensure that the correct
+ * value is always maintaned, and the pointer to it is always correct. It is
+ * common to be accessing data from multiple different locations, thus it is
+ * important for only one instance with the correct object to exist. This class
+ * is also responsible for storing previous values of the object if specified by
+ * the user
+ */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
 public class Data<T> extends Component// DynamicData<T>
 {
 
-	protected T element;
+	// Data Properties
 	private boolean simulated; // flag indicating whether object is simulated
 	private final boolean cloneToStore; // flag indicating if object needs to be
-										// cloned to store (Obj structures)
-	private HashMap<Double, T> savedValues; // mapping of saved values
 	public boolean save; // flag indicating if object should be stored
-	private InitialValue<T> initialVal; // initial value of object
-	private T preJumpValue; // stored pre-jump value
 	private Unit defaultUnit; // default unit (if object has units)
-	private DataType dataClass;
+	private DataType dataType; // classification of the data element, ie Hybrid
+								// State or Property
+
+	// Values
+	protected T element;
+	private T preJumpValue; // stored pre-jump value
+	private HashMap<Double, T> savedValues; // mapping of saved values
+	private InitialValue<T> initialVal; // initial value of object
 
 	public InitialValue<T> getInitialVal()
 	{
@@ -56,7 +66,7 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		if (defaultUnit == null)
 		{
-			IO.warn("attempted to get default unit of " + get().toString());
+			// IO.warn("attempted to get default unit of " + get().toString());
 		}
 		return defaultUnit;
 	}
@@ -79,7 +89,8 @@ public class Data<T> extends Component// DynamicData<T>
 				Data.setValueUnprotected(this, (T) initialVal.getRange().getValue());
 			} catch (Exception ee)
 			{
-				ee.printStackTrace();
+				Data.setValueUnprotected(this, (T) initialVal.getValue());
+				// ee.printStackTrace();
 			}
 		}
 		// }
@@ -189,33 +200,35 @@ public class Data<T> extends Component// DynamicData<T>
 		// super(obj, type, name, description);
 		super(name, Data.class);
 		element = obj;
-		dataClass = type;
+		dataType = type;
 		derivative = cloneZeroDerivative(element);
 		this.element = obj;
 		preJumpValue = (T) ObjectCloner.xmlClone(obj);
 		simulated = true;
 		save = save_default;
 		savedValues = new HashMap<Double, T>();
+		initialVal = new InitialValue<T>(get());
 		cloneToStore = !isChangeableElement(obj); // super.id().description().information.set(description);
 		try
 		{
 			if (obj.getClass().getSuperclass().equals(UnitValue.class))
 			{
 				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) get()).getUnit());
-				try
-				{
-					initialVal = new InitialValue<T>((T) ((UnitValue) get()).get(((UnitValue) get()).getUnit()));
-				} catch (UnitException e)
-				{
-					// TODO Auto-generated catch block
-					// initialVal = new InitialValue<T>(get());
-					e.printStackTrace();
-				}
+				initialVal = new InitialValue<T>(get());
+				// try
+				// {
+				// initialVal = new InitialValue<T>(get());
+				// } catch (UnitException e)
+				// {
+				// // TODO Auto-generated catch block
+				// // initialVal = new InitialValue<T>(get());
+				// e.printStackTrace();
+				// }
 			} else
 
 			{
 				defaultUnit = null;
-				initialVal = new InitialValue<T>(get());
+				// initialVal = new InitialValue<T>(get());
 			}
 		} catch (Exception badClass)
 		{
@@ -377,21 +390,23 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public T getDt()
 	{
-		if (!CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
+		if (!CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
 		{
-			IO.warn("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
+			// IO.warn("attempted to get derivative of " + derivative.toString()
+			// + " when it is not a dynamic variable");
 		}
 		return derivative;
 	}
 
 	public void setDt(T derivative)
 	{
-		if (CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(this))
+		if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))
 		{
 			this.derivative = derivative;
 		} else
 		{
-			IO.warn("attempted to set derivative of " + get().toString() + " when it is not a dynamic variable");
+			// IO.warn("attempted to set derivative of " + get().toString() + "
+			// when it is not a dynamic variable");
 		}
 	}
 
@@ -490,7 +505,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public DataType getDataClass()
 	{
-		return dataClass;
+		return dataType;
 	}
 
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]

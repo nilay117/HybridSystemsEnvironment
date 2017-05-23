@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
-import edu.ucsc.cross.hse.core.object.containers.GlobalEnvironmentContents;
-import edu.ucsc.cross.hse.core.object.containers.SettingConfigurations;
+import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
+import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.data.FileParser;
@@ -12,7 +12,7 @@ public class Environment//implements Environment
 {
 
 	// Execution
-	GlobalEnvironmentContents environmentContent;
+	GlobalHybridSystem environmentContent;
 	ComponentOperator elements;
 	DataCollector data;
 	SimulationEngine simulationEngine;
@@ -22,17 +22,17 @@ public class Environment//implements Environment
 
 	public Environment()
 	{
-		this.environmentContent = new GlobalEnvironmentContents();
+		this.environmentContent = new GlobalHybridSystem();
 		initializeComponents();
 	}
 
-	public Environment(GlobalEnvironmentContents environment)
+	public Environment(GlobalHybridSystem environment)
 	{
 		this.environmentContent = environment;
 		initializeComponents();
 	}
 
-	public void loadEnvironment(GlobalEnvironmentContents environment)
+	public void loadEnvironment(GlobalHybridSystem environment)
 	{
 		this.environmentContent = environment;
 	}
@@ -54,7 +54,7 @@ public class Environment//implements Environment
 		executionMonitor.runSim(true);
 	}
 
-	public GlobalEnvironmentContents environmentContent()
+	public GlobalHybridSystem environmentContent()
 	{
 		return environmentContent;
 	}

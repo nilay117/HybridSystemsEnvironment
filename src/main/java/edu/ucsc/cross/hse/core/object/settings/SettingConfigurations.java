@@ -1,15 +1,10 @@
-package edu.ucsc.cross.hse.core.object.containers;
+package edu.ucsc.cross.hse.core.object.settings;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core.object.settings.ComputationSettings;
-import edu.ucsc.cross.hse.core.object.settings.DataSettings;
-import edu.ucsc.cross.hse.core.object.settings.ExecutionSettings;
-import edu.ucsc.cross.hse.core.object.settings.PrintSettings;
 
 public class SettingConfigurations
 {
@@ -53,8 +48,9 @@ public class SettingConfigurations
 			settings = new SettingConfigurations();
 			try
 			{
-				FileSystemOperator.createOutputFile(new File(directory, file_name),
-				XMLParser.serializeObject(settings));
+				// FileSystemOperator.createOutputFile(new File(directory,
+				// file_name),
+				// XMLParser.serializeObject(settings));
 			} catch (Exception badFile)
 			{
 				badFile.printStackTrace();
@@ -70,7 +66,7 @@ public class SettingConfigurations
 
 	public ComputationSettings computation()
 	{
-		//return computation;
+		// return computation;
 		return (ComputationSettings) settings.get(ComputationSettings.class);
 	}
 
@@ -87,7 +83,7 @@ public class SettingConfigurations
 	public DataSettings getData()
 	{
 		return (DataSettings) settings.get(DataSettings.class);
-		//return data;
+		// return data;
 	}
 
 	public static void setDataSettings(SettingConfigurations settings, DataSettings data)
@@ -98,7 +94,7 @@ public class SettingConfigurations
 	public ExecutionSettings trial()
 	{
 		return (ExecutionSettings) settings.get(ExecutionSettings.class);
-		//return trial;
+		// return trial;
 	}
 
 	public static void setTrialSettings(SettingConfigurations settings, ExecutionSettings simulation)

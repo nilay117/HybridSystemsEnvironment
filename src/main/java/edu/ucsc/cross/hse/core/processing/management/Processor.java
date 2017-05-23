@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
-import edu.ucsc.cross.hse.core.object.containers.GlobalEnvironmentContents;
-import edu.ucsc.cross.hse.core.object.containers.SettingConfigurations;
+import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
+import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.data.FileParser;
@@ -44,7 +44,7 @@ public abstract class Processor
 	}
 
 	// @Override
-	protected GlobalEnvironmentContents getEnvironment()
+	protected GlobalHybridSystem getEnvironment()
 	{
 		return processor.environmentContent();
 	}

@@ -9,7 +9,7 @@ import edu.ucsc.cross.hse.core.component.data.Data;
 
 public enum CoreDataGroup implements DataGroup
 {
-	ALL_STATES(
+	ALL_DATA(
 		"All Data",
 		new DataType[]
 		{ CoreDataType.HYBRID_STATE, CoreDataType.DISCRETE_STATE, CoreDataType.PARAMETER, CoreDataType.PROPERTY }),
@@ -19,7 +19,7 @@ public enum CoreDataGroup implements DataGroup
 		new DataType[]
 		{ CoreDataType.DISCRETE_STATE, CoreDataType.HYBRID_STATE }),
 
-	DYNAMIC_STATE_ELEMENTS(
+	HYBRID_STATE_ELEMENTS(
 		"Dynamic States",
 		new CoreDataType[]
 		{ CoreDataType.HYBRID_STATE });

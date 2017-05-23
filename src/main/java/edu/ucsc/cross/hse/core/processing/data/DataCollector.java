@@ -63,7 +63,7 @@ public class DataCollector extends Processor
 			{
 				Data element = (Data) component;
 
-				if (CoreDataGroup.ALL_STATES.contains(element))
+				if (CoreDataGroup.ALL_DATA.contains(element))
 				{
 					if (Data.isStored(element))
 					{

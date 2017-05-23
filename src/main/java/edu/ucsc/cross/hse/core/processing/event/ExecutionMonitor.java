@@ -8,7 +8,6 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
-import bs.commons.io.system.IO;
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.Processor;
@@ -145,12 +144,12 @@ public class ExecutionMonitor extends Processor
 	public void launchEnvironment(Protected<Integer> running_processes)
 	{
 		long startTime = System.currentTimeMillis();
-		IO.out("Starting Environment Trial");
+		this.getConsole().print("Starting Environment Trial");
 		FirstOrderIntegrator integrator = getIntegrator();
 		double[] y = getComputationEngine().getODEValueVector();
 		FirstOrderDifferentialEquations ode = getComputationEngine();
 		runIntegrator(integrator, ode, 0.0, getSettings().trial().simDuration, y);
-		IO.out("Environment Trial Complete - Runtime = "
+		this.getConsole().print("Environment Trial Complete - Runtime = "
 		+ Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0 + " seconds");
 		getSaveUtility().autoStoreData(getEnvironment());
 		if (running_processes != null)
@@ -209,7 +208,8 @@ public class ExecutionMonitor extends Processor
 		boolean handledIssue = false;
 		if (exc.getClass().equals(NumberIsTooSmallException.class))
 		{
-			IO.warn("Integrator failure due to large step size - adjusting step size and restarting integrator");
+			this.getConsole()
+			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
 			getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep / 2;
 			getSettings().computation().odeMinStep = getSettings().computation().odeMinStep / 2;
 			handledIssue = true;
@@ -223,7 +223,7 @@ public class ExecutionMonitor extends Processor
 		boolean handledIssue = false;
 		if (exc.getClass().equals(NoBracketingException.class))
 		{
-			IO.warn(
+			this.getConsole().print(
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
 			getEnvironment().getSettings()
 			.computation().ehConvergence = getEnvironment().getSettings().computation().ehConvergence / 1.5;
@@ -238,7 +238,7 @@ public class ExecutionMonitor extends Processor
 	{
 		if (!resolved)
 		{
-			IO.warn("Integrator failure due to another cause - please see stack trace for details");
+			this.getConsole().print("Integrator failure due to another cause - please see stack trace for details");
 			exc.printStackTrace();
 		}
 	}

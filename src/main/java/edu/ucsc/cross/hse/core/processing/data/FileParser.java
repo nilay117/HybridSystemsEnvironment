@@ -3,12 +3,10 @@ package edu.ucsc.cross.hse.core.processing.data;
 import java.io.File;
 import java.util.ArrayList;
 
-import bs.commons.io.file.FileSystemOperator;
-import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
+import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
-import edu.ucsc.cross.hse.core.object.containers.GlobalEnvironmentContents;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.Processor;
 
@@ -20,7 +18,7 @@ public class FileParser extends Processor
 		super(processor);
 	}
 
-	public void autoStoreData(GlobalEnvironmentContents data)
+	public void autoStoreData(GlobalHybridSystem data)
 	{
 		if (getSettings().getData().automaticallyStoreResults)
 		{
@@ -28,7 +26,7 @@ public class FileParser extends Processor
 		}
 	}
 
-	public void storeEnvironmentData(GlobalEnvironmentContents data)
+	public void storeEnvironmentData(GlobalHybridSystem data)
 	{
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
@@ -36,10 +34,12 @@ public class FileParser extends Processor
 			directory += data.getEnvironmentTitle() + "/";
 		}
 
-		String fileName = data.getEnvironmentTitle() + "_"
-		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
-		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
-		FileSystemOperator.createOutputFile(new File(directory, fileName), XMLParser.serializeObject(data));
+		// String fileName = data.getEnvironmentTitle() + "_"
+		// + StringFormatter.getCurrentDateString(System.currentTimeMillis() /
+		// 1000, "_", false) + "@"
+		// + StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
+		// FileSystemOperator.createOutputFile(new File(directory, fileName),
+		// XMLParser.serializeObject(data));
 	}
 
 	@SuppressWarnings("unchecked")

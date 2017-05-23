@@ -1,23 +1,21 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
+import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 import edu.ucsc.cross.hse.core.object.accessors.Properties;
-import edu.ucsc.cross.hse.core.object.containers.GlobalEnvironmentContents;
 
 public abstract class Component implements Initializer // implements
 														// ComponentInterface
 {
 
 	@CoreComponent
-	private GlobalEnvironmentContents environment; // environment that the
+	private GlobalHybridSystem environment; // environment that the
 													// component is in
 	@CoreComponent
 	private Boolean initialized;
@@ -98,7 +96,7 @@ public abstract class Component implements Initializer // implements
 		return components.getComponents(component_class, include_children);
 	}
 
-	public GlobalEnvironmentContents getEnvironment()
+	public GlobalHybridSystem getEnvironment()
 	{
 		return environment;
 	}
@@ -120,8 +118,9 @@ public abstract class Component implements Initializer // implements
 		// {
 		// subComponent.clearMapsIfEmpty();
 		// }
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
-		XMLParser.serializeObject(clonedComponent));
+		// FileSystemOperator.createOutputFile(new File(directory_path,
+		// file_name),
+		// XMLParser.serializeObject(clonedComponent));
 
 	}
 
@@ -157,9 +156,9 @@ public abstract class Component implements Initializer // implements
 		return component.initialized;
 	}
 
-	public static void setEnvironment(Component component, GlobalEnvironmentContents environment)
+	public static void setEnvironment(Component component, GlobalHybridSystem environment)
 	{
-		GlobalEnvironmentContents accessor = environment;
+		GlobalHybridSystem accessor = environment;
 		component.environment = accessor;
 	}
 

@@ -2,8 +2,6 @@ package edu.ucsc.cross.hse.core.processing.data;
 
 import java.util.HashMap;
 
-import bs.commons.io.system.IO;
-import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.access.CallerRetriever;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
@@ -27,7 +25,7 @@ public class SystemConsole extends Processor
 
 	private void initialize()
 	{
-		IO.settings.printCallingClass = false;
+		// IO.settings.printCallingClass = false;
 		// classRetriever = new CallerRetriever();
 	}
 
@@ -43,7 +41,7 @@ public class SystemConsole extends Processor
 			nextPrintTime = getEnvironment().getEnvironmentTime().getTime() + printInterval;
 			Double percentComplete = 100 * getEnvironment().getEnvironmentTime().getTime()
 			/ getSettings().trial().simDuration;
-			IO.out("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
+			print("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
 			+ getEnvironment().getEnvironmentTime().getTime() + " seconds");
 		}
 	}
@@ -74,16 +72,16 @@ public class SystemConsole extends Processor
 				for (Component rootSystem : super.getEnvironment().getComponents(true))
 
 				{
-					String sysName = StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
-					systemNames.keySet());
+					String sysName = "";// StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
+					// systemNames.keySet());
 					systemNames.put(sysName, rootSystem);
 					storeString += "\n" + sysName + " - [";
 					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
 					for (Component component : rootSystem.getComponents(DataSet.class, true))
 					{
 						DataSet dataSet = (DataSet) component;
-						String dataSetName = StringFormatter.getAppendedName(dataSet.getProperties().getName(),
-						dataSetNames.keySet());
+						String dataSetName = "";// StringFormatter.getAppendedName(dataSet.getProperties().getName(),
+						// dataSetNames.keySet());
 						dataSetNames.put(dataSetName, dataSet);
 						storeString += sysName + " - [" + dataSetName + " ";
 						try
@@ -124,7 +122,10 @@ public class SystemConsole extends Processor
 
 	public void print(String message)
 	{
-		System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" + getCallingClassName(1) + "] " + message);
+		// System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" +
+		// getCallingClassName(1) + "] " + message);
+		System.out.println("[" + getCallingClassName(1) + "] " + message);
+
 	}
 
 }
