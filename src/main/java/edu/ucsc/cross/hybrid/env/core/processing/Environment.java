@@ -1,20 +1,19 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
+import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
-import edu.ucsc.cross.hybrid.env.core.elements.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
 
 public class Environment//implements Environment
 {
 
 	// Execution
 	EnvironmentContent environment;
-	ElementOperator elements;
+	ElementManager elements;
 	DataCollector data;
 	SimulationEngine simEngine;
-	ExecutionManager simThread;
-	IOParser saver;
-	OutputConsole notifier; // system notification manager ie % complet
+	ExecutionMonitor simThread;
+	FileParser saver;
+	OutputPrinter notifier; // system notification manager ie % complet
 
 	public Environment()
 	{
@@ -38,11 +37,11 @@ public class Environment//implements Environment
 
 		//queue = new ArrayList<Environment>();
 		simEngine = new SimulationEngine(this);
-		simThread = new ExecutionManager(this);
+		simThread = new ExecutionMonitor(this);
 		data = new DataCollector(this);
-		notifier = new OutputConsole(this);
-		elements = new ElementOperator(this);
-		saver = new IOParser(this);
+		notifier = new OutputPrinter(this);
+		elements = new ElementManager(this);
+		saver = new FileParser(this);
 
 		//componentMonitor = new ComponentOperator(this);
 	}
@@ -69,7 +68,7 @@ public class Environment//implements Environment
 		return environment;
 	}
 
-	public IOParser getDataFileIOUtility()
+	public FileParser getDataFileIOUtility()
 	{
 		return saver;
 	}
@@ -79,17 +78,17 @@ public class Environment//implements Environment
 		return data;
 	}
 
-	public void setSettings(SettingCollection settings)
+	public void setSettings(SettingConfigurer settings)
 	{
 		this.environment.setSettings(settings);
 	}
 
-	public SettingCollection getSettings()
+	public SettingConfigurer getSettings()
 	{
 		return this.environment.getSettings();
 	}
 
-	public ElementOperator getElementOperator()
+	public ElementManager getElementOperator()
 	{
 		return elements;
 	}

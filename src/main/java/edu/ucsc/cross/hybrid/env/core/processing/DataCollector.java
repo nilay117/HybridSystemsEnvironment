@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import java.util.ArrayList;
 
@@ -6,14 +6,14 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 
 import bs.commons.io.system.IO;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.components.DataSet;
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
-import edu.ucsc.cross.hybrid.env.core.elements.Component;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
-import edu.ucsc.cross.hybrid.env.core.elements.DataSet;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataCollector extends ProcessorComponent
+public class DataCollector extends Processor
 {
 
 	public Double getLastStoreTime()

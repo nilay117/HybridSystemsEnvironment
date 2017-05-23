@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -11,17 +11,17 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import bs.commons.io.system.IO;
 import bs.commons.objects.access.Protected;
 
-public class ExecutionManager extends ProcessorComponent
+public class ExecutionMonitor extends Processor
 {
 
 	private Thread thread;
-	private ActionEvaluator jumpHandler;
+	private DomainEvaluator jumpHandler;
 	private InterruptHandler terminator;
 
-	ExecutionManager(Environment processor)
+	ExecutionMonitor(Environment processor)
 	{
 		super(processor);
-		jumpHandler = new ActionEvaluator(processor);
+		jumpHandler = new DomainEvaluator(processor);
 		terminator = new InterruptHandler(processor);
 	}
 

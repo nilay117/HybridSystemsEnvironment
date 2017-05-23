@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
 import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
-import edu.ucsc.cross.hybrid.env.core.elements.Component;
 
-public class IOParser extends ProcessorComponent
+public class FileParser extends Processor
 {
 
-	protected IOParser(Environment processor)
+	protected FileParser(Environment processor)
 	{
 		super(processor);
 	}

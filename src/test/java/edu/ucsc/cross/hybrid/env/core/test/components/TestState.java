@@ -1,9 +1,9 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
 import bs.commons.unitvars.values.Velocity;
-import edu.ucsc.cross.hybrid.env.core.data.DataFactory;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
-import edu.ucsc.cross.hybrid.env.core.elements.DataSet;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.components.DataSet;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
 
 public class TestState extends DataSet
 {

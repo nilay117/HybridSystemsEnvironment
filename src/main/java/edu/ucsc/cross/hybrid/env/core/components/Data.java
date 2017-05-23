@@ -1,21 +1,25 @@
-package edu.ucsc.cross.hybrid.env.core.elements;
+package edu.ucsc.cross.hybrid.env.core.components;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import bs.commons.io.system.IO;
+import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.expansions.InitialValue;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
-import edu.ucsc.cross.hybrid.env.core.data.DynamicData;
+import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class Data<T> extends DynamicData<T>
+public class Data<T> extends Component//DynamicData<T>
 {
 
+	protected T element;
 	private boolean simulated; // flag indicating whether object is simulated
 	private final boolean cloneToStore; // flag indicating if object needs to be cloned to store (Obj structures)
 	private HashMap<Double, T> savedValues; // mapping of saved values
@@ -23,6 +27,7 @@ public class Data<T> extends DynamicData<T>
 	private InitialValue<T> initialVal; // initial value of object
 	private T preJumpValue; // stored pre-jump value
 	private Unit defaultUnit; // default unit (if object has units)
+	private DataClass dataClass;
 
 	public InitialValue<T> getInitialVal()
 	{
@@ -177,12 +182,17 @@ public class Data<T> extends DynamicData<T>
 
 	protected Data(T obj, DataClass type, String name, String description, Boolean save_default)
 	{
-		super(obj, type, name, description);
+		//super(obj, type, name, description);
+		super(name, type);
+		element = obj;
+		dataClass = type;
+		derivative = cloneZeroDerivative(element);
+		this.element = obj;
 		preJumpValue = (T) ObjectCloner.xmlClone(obj);
 		simulated = true;
 		save = save_default;
 		savedValues = new HashMap<Double, T>();
-		cloneToStore = !super.isChangeableElement(obj); //super.id().description().information.set(description);
+		cloneToStore = !isChangeableElement(obj); //super.id().description().information.set(description);
 		try
 		{
 			if (obj.getClass().getSuperclass().equals(UnitValue.class))
@@ -381,8 +391,7 @@ public class Data<T> extends DynamicData<T>
 		element.storeValue(time);
 	}
 
-	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataClass type, String name,
-	String description)
+	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataClass type, String name, String description)
 	{
 		//System.out.println(obj + " " + can_be_set + " " + type + " " + name);
 		return new Data<T>(obj, type, name, description, type.isStoredByDefault());
@@ -452,31 +461,122 @@ public class Data<T> extends DynamicData<T>
 		return value;
 	}
 
-	//	private void determineDefaultUnit()
-	//	{
-	//		try
-	//		{
-	//			if (obj.getClass().getSuperclass().equals(UnitValue.class))
-	//			{
-	//				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) get()).getUnit());
-	//				try
-	//				{
-	//					initialVal = new InitialValue<T>((T) ((UnitValue) get()).get(((UnitValue) get()).getUnit()));
-	//				} catch (UnitException e)
-	//				{
-	//					// TODO Auto-generated catch block
-	//					e.printStackTrace();
-	//				}
-	//			} else
-	//
-	//			{
-	//				defaultUnit = null;
-	//				initialVal = new InitialValue<T>(get());
-	//			}
-	//		} catch (Exception badClass)
-	//		{
-	//			defaultUnit = null;
-	//			initialVal = new InitialValue<T>(get());
-	//		}
-	//	}
+	private T derivative;
+
+	public T getDt()
+	{
+		if (!super.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
+		{
+			IO.warn("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
+		}
+		return derivative;
+	}
+
+	public void setDt(T derivative)
+	{
+		if (super.getProperties().getClassification().equals(CoreData.DYNAMIC_STATE))
+		{
+			this.derivative = derivative;
+		} else
+		{
+			IO.warn("attempted to set derivative of " + get().toString() + " when it is not a dynamic variable");
+		}
+	}
+
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
+	private T cloneZeroDerivative(T obj)
+	{
+		T derivative;
+		if (FieldFinder.containsSuper(obj, Number.class))
+		{
+			return (T) (Double) 0.0;
+		} else if (FieldFinder.containsSuper(obj, UnitValue.class))
+		{
+			derivative = (T) ObjectCloner.xmlClone(obj);
+			try
+			{
+				((UnitValue) derivative).set(0.0, ((UnitValue) derivative).getUnit());
+			} catch (Exception badUnit)
+			{
+				badUnit.printStackTrace();
+				System.err.println("dynamic variable creation failed : non-numeric classes not allowed");
+				System.exit(1);
+			}
+		} else
+		{
+			derivative = null;
+		}
+		return derivative;
+	}
+
+	public T get()
+	{
+		return element;
+	}
+
+	public void set(T element)
+	{
+		this.element = element;
+		if (element != null)
+		{
+			if (!(get().getClass().getSuperclass().equals(UnitValue.class)
+			&& element.getClass().getSuperclass().equals(UnitValue.class)))
+			{
+				this.element = element;
+			} else if (element != null)
+			{
+
+				if (get().getClass().getSuperclass().equals(UnitValue.class)
+				&& element.getClass().getSuperclass().equals(UnitValue.class))
+				{
+					try
+					{
+						UnitValue currentVal = (UnitValue) get();
+						UnitValue newVal = (UnitValue) element;
+						currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
+					} catch (UnitException ue)
+					{
+						ue.printStackTrace();
+					}
+				}
+
+			}
+		}
+	}
+
+	@Override
+	public void initialize()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public static <T> boolean isChangeableElement(T object)
+	{
+		if (object != null)
+		{
+			try
+			{
+				if (Data.changableClasses.contains(object.getClass()))
+				{
+					return true;
+				} else if (object.getClass().isEnum())
+				{
+					return true;
+				} else
+				{
+					return false;
+				}
+
+			} catch (Exception nullpt)
+			{
+			}
+		}
+		return true;
+	}
+
+	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
+	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
+
 }

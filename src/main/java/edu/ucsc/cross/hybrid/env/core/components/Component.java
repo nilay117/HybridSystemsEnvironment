@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.elements;
+package edu.ucsc.cross.hybrid.env.core.components;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
 import edu.ucsc.cross.hybrid.env.core.containers.EnvironmentContent;
-import edu.ucsc.cross.hybrid.env.core.data.ComponentProperties;
+import edu.ucsc.cross.hybrid.env.core.properties.ComponentProperties;
 
 public abstract class Component implements Initializer//implements ComponentInterface
 {

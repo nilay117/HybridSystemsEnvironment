@@ -1,11 +1,11 @@
 package edu.ucsc.cross.hybrid.env.core.classifications;
 
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 
 public interface DataClass extends ComponentClass
 {
 
-	public String dataCategory();
+	public boolean changesContinuously();
 
 	public boolean isStoredByDefault();
 

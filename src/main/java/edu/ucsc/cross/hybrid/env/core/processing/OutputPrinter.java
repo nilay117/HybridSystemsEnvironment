@@ -1,21 +1,21 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import java.util.HashMap;
 
 import bs.commons.io.system.IO;
 import bs.commons.io.system.StringFormatter;
-import edu.ucsc.cross.hybrid.env.core.elements.Component;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
-import edu.ucsc.cross.hybrid.env.core.elements.DataSet;
-import edu.ucsc.cross.hybrid.env.core.elements.HybridSystem;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.components.DataSet;
+import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 
-public class OutputConsole extends ProcessorComponent
+public class OutputPrinter extends Processor
 {
 
 	private Double nextPrintTime;
 	private Double printInterval;
 
-	OutputConsole(Environment processor)
+	OutputPrinter(Environment processor)
 	{
 		super(processor);
 		nextPrintTime = 0.0;

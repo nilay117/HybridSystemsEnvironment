@@ -1,17 +1,17 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import java.util.ArrayList;
 
+import edu.ucsc.cross.hybrid.env.core.components.Behavior;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.components.DataSet;
+import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreGroup;
-import edu.ucsc.cross.hybrid.env.core.elements.Behavior;
-import edu.ucsc.cross.hybrid.env.core.elements.Component;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
-import edu.ucsc.cross.hybrid.env.core.elements.DataSet;
-import edu.ucsc.cross.hybrid.env.core.elements.HybridSystem;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class ElementOperator extends ProcessorComponent
+public class ElementManager extends Processor
 {
 
 	public ArrayList<Data> getAllData()
@@ -21,7 +21,7 @@ public class ElementOperator extends ProcessorComponent
 
 	private ArrayList<Data> allData;
 
-	ElementOperator(Environment processor)
+	ElementManager(Environment processor)
 	{
 		super(processor);
 		allData = new ArrayList<Data>();
@@ -149,18 +149,6 @@ public class ElementOperator extends ProcessorComponent
 		}
 	}
 
-	//	protected void performAllJumps()
-	//	{
-	//
-	//		while (getComponents().jumpOccurring())
-	//		{
-	//			for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())
-	//			{
-	//				componen.performTasks(true);
-	//			}
-	//		}
-	//
-	//	}
 	protected void performAllJumps()
 	{
 

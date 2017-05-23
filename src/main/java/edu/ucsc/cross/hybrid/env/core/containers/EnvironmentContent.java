@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.values.Time;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
+import edu.ucsc.cross.hybrid.env.core.components.HybridSystem;
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
-import edu.ucsc.cross.hybrid.env.core.elements.Component;
-import edu.ucsc.cross.hybrid.env.core.elements.HybridSystem;
-import edu.ucsc.cross.hybrid.env.core.settings.SettingCollection;
+import edu.ucsc.cross.hybrid.env.core.processing.SettingConfigurer;
 
 public class EnvironmentContent extends Component
 {
@@ -18,7 +18,7 @@ public class EnvironmentContent extends Component
 	private ArrayList<HybridSystem> systems;
 	private ArrayList<Component> allComponents;
 	private Time envTime;
-	private SettingCollection settings;
+	private SettingConfigurer settings;
 
 	public EnvironmentContent(String environment_title)
 	{
@@ -37,7 +37,7 @@ public class EnvironmentContent extends Component
 	private void initializeDataStructures()
 	{
 		startTime = Time.newSecondsValue(0.0);
-		settings = SettingCollection.getSettings();
+		settings = SettingConfigurer.getSettings();
 		envTime = Time.newSecondsValue(0.0);
 		jumpIndex = 0;
 		systems = new ArrayList<HybridSystem>();
@@ -108,12 +108,12 @@ public class EnvironmentContent extends Component
 		return jumpIndex;
 	}
 
-	public SettingCollection getSettings()
+	public SettingConfigurer getSettings()
 	{
 		return settings;
 	}
 
-	public void setSettings(SettingCollection settings)
+	public void setSettings(SettingConfigurer settings)
 	{
 		this.settings = settings;
 	}

@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hybrid.env.core.definitions;
 
 import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
-import edu.ucsc.cross.hybrid.env.core.data.DataFactory;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
+import edu.ucsc.cross.hybrid.env.core.constructors.DataFactory;
 
 public enum CoreData implements DataClass// ComponenClassification
 {
@@ -53,7 +53,7 @@ public enum CoreData implements DataClass// ComponenClassification
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Class<T> baseComponentClass()
+	public <T> Class<T> baseClass()
 	{
 		// TODO Auto-generated method stub
 		return (Class<T>) Data.class;
@@ -63,14 +63,14 @@ public enum CoreData implements DataClass// ComponenClassification
 	public <T> Data<T> create(T initial_value)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, this.componentLabel(), "", this, this.isStoredByDefault());
+		return dataFactory.newData(initial_value, this.baseLabel(), "", this, this.isStoredByDefault());
 	}
 
 	@Override
 	public <T> Data<T> create(T initial_value, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, this.componentLabel(), "", this, stored_by_default);
+		return dataFactory.newData(initial_value, this.baseLabel(), "", this, stored_by_default);
 	}
 
 	@Override
@@ -102,17 +102,23 @@ public enum CoreData implements DataClass// ComponenClassification
 	}
 
 	@Override
-	public String componentLabel()
+	public String baseLabel()
 	{
 		// TODO Auto-generated method stub
 		return dataTypeName;
 	}
 
 	@Override
-	public String dataCategory()
+	public boolean changesContinuously()
 	{
 		// TODO Auto-generated method stub
-		return null;
+		if (this.equals(CoreData.DYNAMIC_STATE))
+		{
+			return true;
+		} else
+		{
+			return false;
+		}
 	}
 
 }

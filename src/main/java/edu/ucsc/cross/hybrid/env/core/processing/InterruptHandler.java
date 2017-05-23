@@ -1,8 +1,8 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-public class InterruptHandler extends ProcessorComponent implements EventHandler
+public class InterruptHandler extends Processor implements EventHandler
 {
 
 	private boolean killFlag;

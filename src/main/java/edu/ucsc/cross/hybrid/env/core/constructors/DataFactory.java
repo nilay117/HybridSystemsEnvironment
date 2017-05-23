@@ -1,8 +1,8 @@
-package edu.ucsc.cross.hybrid.env.core.data;
+package edu.ucsc.cross.hybrid.env.core.constructors;
 
 import edu.ucsc.cross.hybrid.env.core.classifications.DataClass;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
 public class DataFactory
 {
@@ -19,7 +19,7 @@ public class DataFactory
 
 	public <S> Data<S> newData(S obj, DataClass type)
 	{
-		return newData(obj, type.componentLabel(), "", type, type.isStoredByDefault());
+		return newData(obj, type.baseLabel(), "", type, type.isStoredByDefault());
 	}
 
 	public <S> Data<S> newData(S obj, String name, DataClass type)
@@ -37,7 +37,7 @@ public class DataFactory
 		Data<S> newState = null;
 		if (name == null)
 		{
-			newState = Data.instantiateData(obj, type, type.componentLabel(), "", save_default);
+			newState = Data.instantiateData(obj, type, type.baseLabel(), "", save_default);
 		} else
 		{
 			newState = Data.instantiateData(obj, type, name, "", save_default);

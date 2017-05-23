@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import java.util.HashMap;
 
@@ -11,13 +11,13 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
-import edu.ucsc.cross.hybrid.env.core.elements.Component;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
-public class SimulationEngine extends ProcessorComponent implements FirstOrderDifferentialEquations
+public class SimulationEngine extends Processor implements FirstOrderDifferentialEquations
 {
 
 	// mapping of all state elements used by the ode to the corresponding ode

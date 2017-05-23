@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hybrid.env.core.definitions;
 
 import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
+import edu.ucsc.cross.hybrid.env.core.components.Data;
 
 public enum CoreComponent implements ComponentClass
 {
@@ -43,14 +43,14 @@ public enum CoreComponent implements ComponentClass
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Class<T> baseComponentClass()
+	public <T> Class<T> baseClass()
 	{
 		// TODO Auto-generated method stub
 		return (Class<T>) Data.class;
 	}
 
 	@Override
-	public String componentLabel()
+	public String baseLabel()
 	{
 		// TODO Auto-generated method stub
 		return classificationName;

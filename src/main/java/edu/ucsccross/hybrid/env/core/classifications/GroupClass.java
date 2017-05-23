@@ -2,7 +2,7 @@ package edu.ucsc.cross.hybrid.env.core.classifications;
 
 import java.util.ArrayList;
 
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
+import edu.ucsc.cross.hybrid.env.core.components.Component;
 
 public interface GroupClass
 {
@@ -11,6 +11,6 @@ public interface GroupClass
 
 	public ArrayList<ComponentClass> getContents();
 
-	public boolean contains(Data type);
+	public boolean contains(Component type);
 
 }

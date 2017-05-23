@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.elements;
+package edu.ucsc.cross.hybrid.env.core.components;
 
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreComponent;
 import edu.ucsc.cross.hybrid.env.core.models.DynamicalModel;

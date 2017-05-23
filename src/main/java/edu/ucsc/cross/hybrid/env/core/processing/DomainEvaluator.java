@@ -1,16 +1,16 @@
-package edu.ucsc.cross.hybrid.env.core.processor;
+package edu.ucsc.cross.hybrid.env.core.processing;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
 import bs.commons.io.system.IO;
 
-class ActionEvaluator extends ProcessorComponent implements EventHandler
+class DomainEvaluator extends Processor implements EventHandler
 {
 
 	public Integer toggles = 0;
 	public Double flag;
 
-	ActionEvaluator(Environment processor)
+	DomainEvaluator(Environment processor)
 	{
 		super(processor);
 	}
@@ -20,7 +20,6 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 	{
 		getEnvironment().time().seconds(t);
 		getComputationEngine().updateValues(y);
-
 		if (getComponents().jumpOccurring())
 		{
 			flag = -1 * flag;

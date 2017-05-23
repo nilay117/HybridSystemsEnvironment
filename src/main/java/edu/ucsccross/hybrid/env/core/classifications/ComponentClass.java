@@ -3,7 +3,8 @@ package edu.ucsc.cross.hybrid.env.core.classifications;
 public interface ComponentClass
 {
 
-	public <T> Class<T> baseComponentClass();
+	public <T> Class<T> baseClass();
 
-	public String componentLabel();
+	public String baseLabel();
+
 }

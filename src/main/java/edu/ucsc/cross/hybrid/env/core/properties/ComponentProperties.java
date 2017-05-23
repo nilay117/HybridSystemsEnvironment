@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hybrid.env.core.data;
+package edu.ucsc.cross.hybrid.env.core.properties;
 
 import edu.ucsc.cross.hybrid.env.core.classifications.ComponentClass;
 
@@ -24,7 +24,7 @@ public class ComponentProperties
 		this.label = name;
 		this.classification = (classification);
 		this.name = name;
-		this.baseComponentClass = classification.baseComponentClass();
+		this.baseComponentClass = classification.baseClass();
 	}
 
 	public String getName()

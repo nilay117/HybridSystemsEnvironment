@@ -1,9 +1,8 @@
-package edu.ucsc.cross.hybrid.env.core.data;
+package edu.ucsc.cross.hybrid.env.core.components;
 
 import java.util.HashMap;
 
 import edu.ucsc.cross.hybrid.env.core.definitions.CoreData;
-import edu.ucsc.cross.hybrid.env.core.elements.Data;
 
 public class ConditionalData<T> extends Data<T>
 {

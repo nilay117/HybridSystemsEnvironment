@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hybrid.env.core.elements.Behavior;
+import edu.ucsc.cross.hybrid.env.core.components.Behavior;
 
 public class TestDynamics extends Behavior
 {

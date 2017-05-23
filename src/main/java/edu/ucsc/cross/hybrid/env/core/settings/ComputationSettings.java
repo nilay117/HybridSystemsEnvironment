@@ -48,10 +48,11 @@ public class ComputationSettings
 
 		public static String enumNames()
 		{
-			String availableIntegrators = "\n         Integrator Options : \n";
+			String availableIntegrators = "\n         Integrator Options :";// \n";
 			for (IntegratorType type : IntegratorType.values())
 			{
-				availableIntegrators += ("         - " + type.choice + " = " + type.name() + "\n");
+				availableIntegrators += "\n";
+				availableIntegrators += ("         - " + type.choice + " = " + type.name());
 			}
 			return availableIntegrators;
 		}
