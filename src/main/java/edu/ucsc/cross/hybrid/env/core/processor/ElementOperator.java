@@ -149,6 +149,18 @@ public class ElementOperator extends ProcessorComponent
 		}
 	}
 
+	//	protected void performAllJumps()
+	//	{
+	//
+	//		while (getComponents().jumpOccurring())
+	//		{
+	//			for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))//getEnvironment().getAllSystems())
+	//			{
+	//				componen.performTasks(true);
+	//			}
+	//		}
+	//
+	//	}
 	protected void performAllJumps()
 	{
 

@@ -58,6 +58,7 @@ public abstract class HybridSystem extends Component
 						jumpOccurred = jumpOccurred || jumpOccurring;
 					} catch (Exception outOfDomain)
 					{
+						outOfDomain.printStackTrace();
 					}
 				}
 			} catch (Exception behaviorFail)

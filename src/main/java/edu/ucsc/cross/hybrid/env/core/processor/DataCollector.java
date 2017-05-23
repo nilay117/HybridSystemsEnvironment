@@ -97,7 +97,7 @@ public class DataCollector extends ProcessorComponent
 		{
 			Data.storeValue(element, time);
 		}
-		IO.out(getConsole().getDataElementStoreString(time, true));
+		//IO.out(getConsole().getDataElementStoreString(time, true));
 	}
 
 	public ArrayList<Data> matchingElements(String title)

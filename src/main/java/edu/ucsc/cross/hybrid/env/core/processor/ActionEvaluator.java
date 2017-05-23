@@ -57,15 +57,15 @@ class ActionEvaluator extends ProcessorComponent implements EventHandler
 	@Override
 	public void resetState(double t, double[] y)
 	{
-		//getComputationEngine().updateValues(y);
-		//getEnvironment().time().seconds(t);
+		getComputationEngine().updateValues(y);
+		getEnvironment().time().seconds(t);
 		//		getData().storeData(t - getSettings().getData().dataStoreIncrement,
 		//		(true && getSettings().getData().storeAtEveryJump));
 		getComponents().performTasks(true);
 		//getData().storeData(t, (true && getSettings().getData().storeAtEveryJump));
 		getComputationEngine().setODEValueVector(y);
 		y = getComputationEngine().getODEValueVector();
-		//	System.out.println(y[0] + " " + y[1] + " " + y[2] + " " + y[3]);
+
 	}
 
 }

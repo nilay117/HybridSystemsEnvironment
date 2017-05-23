@@ -4,8 +4,7 @@ import bs.commons.io.system.IO;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitValue;
-import edu.ucsc.cross.hybrid.env.structural.BaseData;
-import edu.ucsc.cross.hybrid.env.structural.ComponenDefinition;
+import edu.ucsc.cross.hybrid.env.core.data.ProtectedData;
 
 public class DynamicData<T> extends ProtectedData<T>
 {
