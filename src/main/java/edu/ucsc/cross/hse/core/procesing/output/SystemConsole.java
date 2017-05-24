@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.processing.data;
+package edu.ucsc.cross.hse.core.procesing.output;
 
 import java.util.HashMap;
 
@@ -7,9 +7,9 @@ import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.Processor;
+import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
-public class SystemConsole extends Processor
+public class SystemConsole extends ProcessorAccess
 {
 
 	private static CallerRetriever classRetriever = new CallerRetriever();;

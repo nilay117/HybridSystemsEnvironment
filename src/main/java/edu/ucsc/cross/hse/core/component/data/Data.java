@@ -13,7 +13,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.classification.DataType;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
-import edu.ucsc.cross.hse.core.processing.data.SystemConsole;
+import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 
 /*
  * This class protects and manages a data object to ensure that the correct

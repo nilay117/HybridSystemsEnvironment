@@ -1,18 +1,18 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
+import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.data.FileParser;
-import edu.ucsc.cross.hse.core.processing.data.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 
-public class Environment extends Processor// implements Environment
+public class Environment extends ProcessorAccess// implements Environment
 {
 
 	// Execution
 	GlobalHybridSystem environmentContent;
-	ComponentOperator elements;
+	ComponentDirector elements;
 	DataCollector data;
 	SimulationEngine simulationEngine;
 	ExecutionMonitor executionMonitor;
@@ -60,7 +60,7 @@ public class Environment extends Processor// implements Environment
 		executionMonitor = new ExecutionMonitor(this);
 		data = new DataCollector(this);
 		outputPrinter = new SystemConsole(this);
-		elements = new ComponentOperator(this);
+		elements = new ComponentDirector(this);
 		fileParser = new FileParser(this);
 	}
 

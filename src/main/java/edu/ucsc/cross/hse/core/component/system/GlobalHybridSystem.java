@@ -32,10 +32,7 @@ public class GlobalHybridSystem extends HybridSystem
 		initializeComponents();
 	}
 
-	public void setSettings(SettingConfigurations settings)
-	{
-		this.settings = settings;
-	}
+	// Access Functions
 
 	public SettingConfigurations getSettings()
 	{
@@ -50,6 +47,12 @@ public class GlobalHybridSystem extends HybridSystem
 	public Time getStartTime()
 	{
 		return earthStartTime;
+	}
+
+	// Configration Functionsß
+	public void setSettings(SettingConfigurations settings)
+	{
+		this.settings = settings;
 	}
 
 	private void initializeComponents()

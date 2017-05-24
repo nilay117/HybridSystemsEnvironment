@@ -10,9 +10,9 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.Processor;
+import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
-public class ExecutionMonitor extends Processor
+public class ExecutionMonitor extends ProcessorAccess
 {
 
 	private Thread thread;
@@ -37,9 +37,9 @@ public class ExecutionMonitor extends Processor
 
 		} else
 		{
-			runSim(null);
+			// runSim(null);
 			// runSimulation();
-			// launchEnvironment();
+			launchEnvironment();
 		}
 
 	}
@@ -255,7 +255,7 @@ public class ExecutionMonitor extends Processor
 
 	// Debugger
 
-	private Boolean printStack = false;
+	private Boolean printStack = true;
 	private Thread stackPrinter;
 	long lastPrint = System.currentTimeMillis();
 
@@ -263,12 +263,15 @@ public class ExecutionMonitor extends Processor
 	{
 		if (System.nanoTime() > lastPrint)
 		{
-			lastPrint = System.nanoTime() + 1;
+			lastPrint = System.nanoTime() + 100000000;
 			StackTraceElement[] stack = thread.getStackTrace();
 			String stackString = stack[0].getClassName();
 			for (Integer ele = 1; ele < stack.length; ele++)
 			{
-				stackString += ", " + stack[ele];
+				// if (stack[ele].getClassName().contains("edu"))
+				{
+					stackString += ", " + stack[ele].getClassName();
+				}
 			}
 			if (stackString.contains("XMLParser"))
 			{

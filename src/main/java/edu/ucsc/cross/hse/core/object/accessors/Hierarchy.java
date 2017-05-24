@@ -327,7 +327,7 @@ public class Hierarchy
 	}
 
 	//
-	public static <T> ObjectType getElementType(T object)
+	private static <T> ObjectType getElementType(T object)
 	{
 		ObjectType type = ObjectType.UNKNOWN;
 		if (object != null)

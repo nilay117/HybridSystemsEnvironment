@@ -17,10 +17,10 @@ import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
  */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class ComponentOperator extends Processor
+public class ComponentDirector extends ProcessorAccess
 {
 
-	ComponentOperator(Environment processor)
+	ComponentDirector(Environment processor)
 	{
 		super(processor);
 
@@ -72,7 +72,8 @@ public class ComponentOperator extends Processor
 			{
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
-					Data.storePreJumpValue(data);
+					// System.out.println(data.get().toString());
+					// Data.storePreJumpValue(data);
 				}
 			}
 		}

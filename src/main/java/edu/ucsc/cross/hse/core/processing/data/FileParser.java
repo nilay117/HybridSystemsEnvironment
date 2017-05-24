@@ -10,9 +10,9 @@ import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.Processor;
+import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
-public class FileParser extends Processor
+public class FileParser extends ProcessorAccess
 {
 
 	public FileParser(Environment processor)
