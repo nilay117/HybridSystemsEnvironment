@@ -1,7 +1,5 @@
 package edu.ucsc.cross.hse.core.object.settings;
 
-import bs.commons.objects.manipulation.XMLParser;
-
 public class PrintSettings
 {
 
@@ -10,10 +8,15 @@ public class PrintSettings
 											// current simulation time will be
 											// printed to the console, set to
 											// null for no notifications
-	public final boolean printDiscreteEventIndicator; // = true;
-	public boolean printStoreDataIndicator;
-	public boolean printStoreDataReport;
+	public final boolean printDiscreteEventIndicator; // flag to print event
+														// indicator
+	public boolean printStoreDataIndicator; // flag to print store data
+											// indicator
+	public boolean printStoreDataReport; // flag to print store data indicator
 
+	/*
+	 * Default constructor
+	 */
 	public PrintSettings()
 	{
 		totalSimTimePrintOuts = 20;
@@ -23,11 +26,4 @@ public class PrintSettings
 		printStoreDataReport = true;
 	}
 
-	public static void main(String args[])
-	{
-		// FileSystemOperator.createOutputFile("resources/io/settings.xml",
-		// XMLParser.serializeObject(new IOSettings()));
-		PrintSettings inputted = (PrintSettings) XMLParser.getObject("resources/io/settings.xml");
-		System.out.println(inputted.printProgressUpdates);
-	}
 }

@@ -4,31 +4,41 @@ import bs.commons.objects.labeling.ChoiceName;
 
 public class ComputationSettings
 {
-	//////Simulation ODE Solver Settings
 
-	public double odeMinStep; // ode step size if using a fixed step integrator, or minimum ode step size of a
+	public double odeMinStep; // ode step size if using a fixed step integrator,
+								// or minimum ode step size of a
 	// variable step integrator
 
 	public double odeMaxStep; // maximum step size for variable step integrator
 
-	public double odeScalAbsoluteTolerance; // absolute tolerance of the ode solver
+	public double odeScalAbsoluteTolerance; // absolute tolerance of the ode
+											// solver
 
-	public double odeScalRelativeTolerance; // relative tolerance of the ode solver
+	public double odeScalRelativeTolerance; // relative tolerance of the ode
+											// solver
 
-	public double ehMaxCheckInterval; // event handler maximum interval to check for an event
+	public double ehMaxCheckInterval; // event handler maximum interval to check
+										// for an event
 
 	public double ehConvergence; // convergence threshold of an event
 
 	public int ehMaxIterationCount; // maximum number of iterations
 
-	public boolean jumpPriority;
+	public boolean jumpPriority; // flag indicating if jumps have priority over
+									// flows, ie if a state is in both domains
+									// simultaneously,one response has priority
 
-	public int maxRecursiveStackSize; // maximum recursive stack size that occurrs when  a jump (unrecoverably) interrupts the ode
+	public int maxRecursiveStackSize; // maximum recursive stack size that
+										// occurrs when a jump (unrecoverably)
+										// interrupts the ode
 
-	public IntegratorType integrator;
+	public IntegratorType integrator; // Integrator to be used
 
 	public final String integratorOptions = IntegratorType.enumNames();
+	// list of enumerator options which are printed in the output file to help
+	// with seection
 
+	// available of integrator types for use
 	public static enum IntegratorType
 	{
 		EULER(
@@ -58,18 +68,25 @@ public class ComputationSettings
 		}
 	}
 
+	/*
+	 * Default values constructor
+	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .01; // ode step size if using a fixed step integrator, or minimum ode step size of a
+		odeMinStep = .01; // ode step size if using a fixed step integrator, or
+							// minimum ode step size of a
 		// variable step integrator
 
 		odeMaxStep = .1; // maximum step size for variable step integrator
 
-		odeScalAbsoluteTolerance = 1.0e-6; // absolute tolerance of the ode solver
+		odeScalAbsoluteTolerance = 1.0e-6; // absolute tolerance of the ode
+											// solver
 
-		odeScalRelativeTolerance = 1.0e-6; // relative tolerance of the ode solver
+		odeScalRelativeTolerance = 1.0e-6; // relative tolerance of the ode
+											// solver
 
-		ehMaxCheckInterval = .001; // event handler maximum interval to check for an event
+		ehMaxCheckInterval = .001; // event handler maximum interval to check
+									// for an event
 
 		ehConvergence = .001; // convergence threshold of an event
 
@@ -77,7 +94,9 @@ public class ComputationSettings
 
 		jumpPriority = true;
 
-		maxRecursiveStackSize = 1000; // maximum recursive stack size that occurrs when  a jump (unrecoverably) interrupts the ode
+		maxRecursiveStackSize = 1000; // maximum recursive stack size that
+										// occurrs when a jump (unrecoverably)
+										// interrupts the ode
 
 		integrator = IntegratorType.DORMAND_PRINCE_853;
 

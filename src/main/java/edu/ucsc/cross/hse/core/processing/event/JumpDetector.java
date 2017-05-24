@@ -8,14 +8,23 @@ import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 class JumpDetector extends ProcessorAccess implements EventHandler
 {
 
-	public Integer toggles = 0;
-	public Double flag;
+	public Integer toggles = 0; // toggle index to eliminate the error within
+								// the apache event handler that sometimes
+								// crashes if the value is the same as before
+								// the jump
+	public Double flag; // flag indicating a jump is pending
 
+	/*
+	 * constructor to link the environment
+	 */
 	JumpDetector(Environment processor)
 	{
 		super(processor);
 	}
 
+	/*
+	 * The Threshold checking method that will trigger an interrupt
+	 */
 	@Override
 	public double g(double t, double[] y)
 	{
@@ -34,6 +43,9 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 		return flag;
 	}
 
+	/*
+	 * Response that occurs when event is detecteds
+	 */
 	@Override
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
@@ -48,13 +60,9 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 		return EventHandler.Action.RESET_STATE;
 	}
 
-	@Override
-	public void init(double t0, double[] y0, double t)
-	{
-
-		flag = 1.0;
-	}
-
+	/*
+	 * Performs actions necessary to reset the state after a jump has occurred
+	 */
 	@Override
 	public void resetState(double t, double[] y)
 	{
@@ -71,4 +79,13 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 
 	}
 
+	/*
+	 * initializes the event handler
+	 */
+	@Override
+	public void init(double t0, double[] y0, double t)
+	{
+
+		flag = 1.0;
+	}
 }

@@ -3,18 +3,21 @@ package edu.ucsc.cross.hse.core.object.settings;
 public class ExecutionSettings
 {
 
-	public String name;
+	public boolean runThreadded; // run the environment in a thread
 
-	public boolean runThreadded;
+	public Integer numberOfTrials; // number of trials to run altogether
 
-	public Integer numberOfTrials;
+	public Integer maxParallelExecutions; // number of threaded trials to run
+											// simultaneously
 
-	public Integer maxParallelExecutions;
+	public Double simDuration; // duration of the trial
 
-	public Double simDuration;
+	public Integer jumpLimit; // maximum number of jumps allowed within the
+								// trial
 
-	public Integer jumpLimit;
-
+	/*
+	 * Default values constructor
+	 */
 	public ExecutionSettings()
 	{
 		numberOfTrials = 1;
