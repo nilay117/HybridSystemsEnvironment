@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
+import java.util.ArrayList;
+
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 
 public abstract class HybridSystem extends Component
@@ -83,4 +85,34 @@ public abstract class HybridSystem extends Component
 		return jumpOccurred;
 	}
 
+	/*
+	 * Determines whether or not a jump is occurring in any component within the
+	 * hybrid system
+	 * 
+	 * @return true if a jump is occurring, false otherwise
+	 */
+	public ArrayList<Component> jumpingComponents()
+	{
+		ArrayList<Component> jumpComponents = new ArrayList<Component>();
+		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
+		// true));
+		for (Component localBehavior : getEnvironment().getMatchingComponents(DynamicalModel.class, true))
+		{
+			try
+			{
+				Boolean jumpOccurring = DynamicalModel.jumpOccurring((DynamicalModel) localBehavior, true);
+				if (jumpOccurring != null)
+				{
+					if (jumpOccurring)
+					{
+						jumpComponents.add(localBehavior);
+					}
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+		return jumpComponents;
+	}
 }

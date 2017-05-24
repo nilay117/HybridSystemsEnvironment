@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
 @SuppressWarnings(
@@ -100,73 +100,6 @@ public class ComponentOperator extends Processor
 		performTasks(false);
 	}
 
-	public void zperformTasks(boolean jump_occurred)
-	{
-		if (jump_occurred)
-		{
-			getData().storeData(getEnvironment().getEnvironmentTime().getTime() - .000001,
-			(true && getSettings().getData().storeAtEveryJump));
-			// if (getSettings().getData().storePreJumpValue)
-			{
-				storePrejumpValues();
-			}
-			performAllJumps();
-			// storePrejumpValues();
-			if (this.getEnvironment().jumpOccurring())
-			{
-				// performTasks(true);
-			}
-			// storePrejumpValues();
-			getData().storeData(getEnvironment().getEnvironmentTime().getTime(),
-			(true && getSettings().getData().storeAtEveryJump));
-		} else
-		{
-			getEnvironment().performTasks(jump_occurred);
-			// for (HybridSystem componen :
-			// getEnvironment().getComponents(HybridSystem.class,
-			// true))//getEnvironment().getAllSystems())
-			// {
-			// componen.performTasks(jump_occurred);
-			// }
-		}
-	}
-
-	public void performAllJumps()
-	{
-		while (getEnvironment().jumpOccurring())
-		// while (getComponents().jumpOccurring())
-		{
-			getEnvironment().performTasks(true);
-			storePrejumpValues();
-			// for (HybridSystem componen :
-			// getEnvironment().getComponents(HybridSystem.class, true))//
-			// getEnvironment().getAllSystems())
-			// {
-			// componen.performTasks(true);
-			// }
-		}
-
-	}
-
-	public void storePrejumpValues()
-	{
-		for (Data data : getEnvironment().getComponents().getComponents(Data.class, true))
-		{
-			if (CoreDataGroup.STATE_ELEMENTS.contains(data))
-			{
-				Data.storePreJumpValue(data);
-			}
-		}
-
-		for (DataSet data : getEnvironment().getComponents().getComponents(DataSet.class, true))
-		{
-			// if (CoreDataGroup.STATE_ELEMENTS.contains(data))
-			{
-				data.storePrejump();
-			}
-		}
-	}
-
 	public void performTasks(boolean jump_occurred)
 	{
 		if (jump_occurred)
@@ -174,42 +107,42 @@ public class ComponentOperator extends Processor
 			getData().storeData(getEnvironment().getEnvironmentTime().getTime() - .000001,
 			(true && getSettings().getData().storeAtEveryJump));
 
-			// storePrejumpStates();
-
-			getEnvironment().performTasks(true);
-			// storePrejumpValues();
-			if (jump_occurred && getEnvironment().jumpOccurring())
-			{
-				performTasks(true);
-			}
-			// storePrejumpValues();
+			executeAllJumps();
 			getData().storeData(getEnvironment().getEnvironmentTime().getTime(),
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
 		{
 			getEnvironment().performTasks(jump_occurred);
-			// for (HybridSystem componen :
-			// getEnvironment().getComponents(HybridSystem.class,
-			// true))//getEnvironment().getAllSystems())
-			// {
-			// componen.performTasks(jump_occurred);
-			// }
 		}
 	}
 
-	public void storePrejumpStates()
+	public void executeAllJumps()
 	{
-		for (Data data : getEnvironment().getComponents().getComponents(Data.class, true))
+		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
+		storeAllPreJumpData(jumpComponents);
+		for (Component component : jumpComponents)
 		{
-			if (CoreDataGroup.STATE_ELEMENTS.contains(data))
-			{
-				Data.storePreJumpValue(data);
-			}
+			DynamicalModel dynamics = ((DynamicalModel) component);
+			dynamics.jumpMap();
+			this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
 		}
-		for (DataSet data : getEnvironment().getComponents().getComponents(DataSet.class, true))
+		if (getEnvironment().jumpOccurring())
 		{
+			executeAllJumps();
+		}
+	}
+
+	public void storeAllPreJumpData(ArrayList<Component> jump_components)
+	{
+
+		for (Component component : jump_components)
+		{
+			for (Data data : component.getComponents(Data.class, true))
 			{
-				data.storePrejump();
+				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
+				{
+					Data.storePreJumpValue(data);
+				}
 			}
 		}
 	}

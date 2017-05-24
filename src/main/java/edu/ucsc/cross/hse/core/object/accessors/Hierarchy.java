@@ -126,6 +126,45 @@ public class Hierarchy
 		return components;
 	}
 
+	public <T> ArrayList<Component> getMatchingComponents(Class<T> component_class, boolean include_children)
+	{
+		ArrayList<Component> components = new ArrayList<Component>();
+		if ((include_children && !descendantComponentMap.containsKey(component_class))
+		|| ((!include_children && !childComponentMap.containsKey(component_class))))
+		{
+			getComponents(component_class, include_children);
+		}
+		try
+		{
+			if (include_children)
+			{
+				components = descendantComponentMap.get(component_class);
+			} else
+			{
+				components = childComponentMap.get(component_class);
+			}
+		} catch (Exception noComponents)
+		{
+			// components = (ArrayList<Component>)
+			// getComponents(component_class, include_children);
+			// try
+			// {
+			// if (include_children)
+			// {
+			// components = descendantComponentMap.get(component_class);
+			// } else
+			// {
+			// components = childComponentMap.get(component_class);
+			// }
+			// } catch (Exception noComponentsAgain)
+			// {
+			// noComponentsAgain.printStackTrace();
+			// }
+		}
+
+		return components;
+	}
+
 	private void initializeContainers()
 	{
 		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();

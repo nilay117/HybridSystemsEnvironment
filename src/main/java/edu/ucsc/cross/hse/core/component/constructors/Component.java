@@ -58,35 +58,6 @@ public abstract class Component implements Initializer // implements
 		setup(title, Component.class);
 	}
 
-	// /*
-	// * Adds a single sub-component to this component. This is used to add
-	// * components that are not explicitly defined in the main class, which
-	// * allows for variations without modifying the main component code itself
-	// *
-	// * @param component - component to be added
-	// */
-	// public <T extends Component> void addComponent(T component)
-	// {
-	// addComponent(component, 1);
-	// }
-	//
-	// /*
-	// * Adds a number of sub-components to this component. This is used to add
-	// * components that are not explicitly defined in the main class, which
-	// * allows for variations without modifying the main component code itself.
-	// * This method allows any number of duplicate components to be added
-	// *
-	// * @param component - component to be added
-	// *
-	// * @param quantity - number of components to be added
-	// */
-	// @SuppressWarnings("unchecked")
-	// public <T extends Component> void addComponent(T component, Integer
-	// quantity)
-	// {
-	// components.addComponent(component, quantity);
-	// }
-
 	public ArrayList<Component> getComponents(boolean include_children)
 	{
 		return components.getComponents(include_children);
@@ -96,6 +67,12 @@ public abstract class Component implements Initializer // implements
 	public <T> ArrayList<T> getComponents(Class<T> component_class, boolean include_children)
 	{
 		return components.getComponents(component_class, include_children);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> ArrayList<Component> getMatchingComponents(Class<T> component_class, boolean include_children)
+	{
+		return components.getMatchingComponents(component_class, include_children);
 	}
 
 	public GlobalHybridSystem getEnvironment()
