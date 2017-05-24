@@ -16,6 +16,7 @@ public class GlobalHybridSystem extends HybridSystem
 
 	private HybridTime environmentTime; // time relative to when the environment
 										// was launched and jump index
+	private Double startTime;
 	private SettingConfigurations settings; // settings configuration
 
 	public GlobalHybridSystem()
@@ -56,6 +57,16 @@ public class GlobalHybridSystem extends HybridSystem
 		environmentTime = new HybridTime();
 		settings = SettingConfigurations.loadSettings();
 		Component.setEnvironment(this, this);
+	}
+
+	public Double getStartTime()
+	{
+		return startTime;
+	}
+
+	public void setStartTime(Double startTime)
+	{
+		this.startTime = startTime;
 	}
 
 }

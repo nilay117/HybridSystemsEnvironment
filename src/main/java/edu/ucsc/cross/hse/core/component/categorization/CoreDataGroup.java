@@ -20,7 +20,7 @@ public enum CoreDataGroup implements DataGroup
 		{ CoreDataType.DISCRETE_STATE, CoreDataType.HYBRID_STATE }),
 
 	HYBRID_STATE_ELEMENTS(
-		"Dynamic States",
+		"Hybrid States",
 		new CoreDataType[]
 		{ CoreDataType.HYBRID_STATE });
 

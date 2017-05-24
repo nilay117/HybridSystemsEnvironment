@@ -8,7 +8,7 @@ import edu.ucsc.cross.hse.core.processing.data.FileParser;
 import edu.ucsc.cross.hse.core.processing.data.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 
-public class Environment//implements Environment
+public class Environment// implements Environment
 {
 
 	// Execution
@@ -50,7 +50,7 @@ public class Environment//implements Environment
 	public void start()
 	{
 		prepareEnvironment();
-		environmentContent.getStartTime().seconds(Double.valueOf(System.currentTimeMillis()) / 1000);//Time.newSecondValue(0.0);
+		environmentContent.setStartTime(Double.valueOf(System.nanoTime()) / 1000000000);// Time.newSecondValue(0.0);
 		executionMonitor.runSim(true);
 	}
 
@@ -86,7 +86,7 @@ public class Environment//implements Environment
 
 	public void prepareEnvironment()
 	{
-		//environment.scanAllSystems();
+		// environment.scanAllSystems();
 		elements.initialize();
 		simulationEngine.initialize();
 		data.loadStoreStates();

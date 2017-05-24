@@ -31,7 +31,7 @@ public class FileParser extends Processor
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
 		{
-			directory += data.getEnvironmentTitle() + "/";
+			directory += data.getProperties().getName() + "/";
 		}
 
 		// String fileName = data.getEnvironmentTitle() + "_"

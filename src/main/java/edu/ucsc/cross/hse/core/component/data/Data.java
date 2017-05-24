@@ -13,6 +13,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.classification.DataType;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
+import edu.ucsc.cross.hse.core.processing.data.SystemConsole;
 
 /*
  * This class protects and manages a data object to ensure that the correct
@@ -20,41 +21,83 @@ import edu.ucsc.cross.hse.core.component.constructors.Component;
  * common to be accessing data from multiple different locations, thus it is
  * important for only one instance with the correct object to exist. This class
  * is also responsible for storing previous values of the object if specified by
- * the user
+ * the user.
  */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
 public class Data<T> extends Component// DynamicData<T>
 {
 
-	// Data Properties
-	private boolean simulated; // flag indicating whether object is simulated
-	private final boolean cloneToStore; // flag indicating if object needs to be
 	public boolean save; // flag indicating if object should be stored
-	private Unit defaultUnit; // default unit (if object has units)
+	private final boolean cloneToStore; // flag indicating if object needs to be
 	private DataType dataType; // classification of the data element, ie Hybrid
 								// State or Property
+	private Unit defaultUnit; // default unit (if object has units)
+	private T derivative;
 
-	// Values
-	protected T element;
+	private InitialValue<T> initialVal; // initial value of object
 	private T preJumpValue; // stored pre-jump value
 	private HashMap<Double, T> savedValues; // mapping of saved values
-	private InitialValue<T> initialVal; // initial value of object
+	// Data Properties
+	protected boolean simulated; // flag indicating whether object is simulated
+	protected T element;
 
-	public InitialValue<T> getInitialVal()
+	// Access Functions
+
+	public T get()
 	{
-		return initialVal;
+		return element;
 	}
 
-	public void updateInitialVal(InitialValue<T> initial_val)
+	public void set(T element)
 	{
-		initialVal = initial_val;
-		set(initialVal.getValue());
+		if (element != null)
+		{
+			if (FieldFinder.containsSuper(get(), UnitValue.class) && FieldFinder.containsSuper(get(), UnitValue.class))
+			{
+				try
+				{
+					UnitValue currentVal = (UnitValue) get();
+					UnitValue newVal = (UnitValue) element;
+					currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
+				} catch (UnitException ue)
+				{
+					ue.printStackTrace();
+				}
+
+			} else
+			{
+				if (this.element.getClass().equals(element.getClass()))
+				{
+					this.element = element;
+				}
+			}
+		} else
+		{
+			this.element = element;
+		}
 	}
 
-	public boolean nullElement()
+	public T getDt()
 	{
-		return (get() == null);
+		if (!CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
+		{
+			SystemConsole
+			.print("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
+		}
+		return derivative;
+	}
+
+	public void setDt(T derivative)
+	{
+		if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))
+		{
+			this.derivative = derivative;
+		} else
+		{
+			// IO.warn("attempted to set derivative of " + get().toString() + "
+			// when it is not a dynamic variable");
+		}
 	}
 
 	public T getPrejumpValue()
@@ -71,49 +114,19 @@ public class Data<T> extends Component// DynamicData<T>
 		return defaultUnit;
 	}
 
-	public void initializeValue()
+	public DataType getDataClass()
 	{
-		if (get().getClass().getSuperclass().equals(UnitValue.class))
-		{
-			try
-			{
-				((UnitValue) get()).set((Double) initialVal.getValue(), ((UnitValue) get()).getUnit());
-			} catch (UnitException e)
-			{
-				e.printStackTrace();
-			}
-		} else
-		{
-			try
-			{
-				Data.setValueUnprotected(this, (T) initialVal.getRange().getValue());
-			} catch (Exception ee)
-			{
-				Data.setValueUnprotected(this, (T) initialVal.getValue());
-				// ee.printStackTrace();
-			}
-		}
-		// }
+		return dataType;
 	}
 
-	private void storePreJumpValue()
+	public boolean isElementNull()
 	{
-		preJumpValue = getStoreValue();
+		return (get() == null);
 	}
 
-	private void restorePreJumpValue()
+	public InitialValue<T> getInitialVal()
 	{
-		element = preJumpValue;
-	}
-
-	public static <S> void restorePreJumpValue(Data<S> state)
-	{
-		state.restorePreJumpValue();
-	}
-
-	public static <S> void storePreJumpValue(Data<S> state)
-	{
-		state.storePreJumpValue();
+		return initialVal;
 	}
 
 	public static Double getNumberValue(Data element)
@@ -154,217 +167,6 @@ public class Data<T> extends Component// DynamicData<T>
 		}
 	}
 
-	public static Double getDt(Data element)
-	{
-		return getDt(element, null);
-	}
-
-	public static Double getDt(Data element, Unit unit)
-	{
-		if (element.get().getClass().getSuperclass().equals(UnitValue.class))
-		{
-			if (unit == null)
-			{
-				unit = ((UnitValue) element.get()).getUnit();
-			}
-			try
-			{
-				return (Double) ((UnitValue) element.getDt()).get(unit);
-			} catch (UnitException e)
-			{
-				e.printStackTrace();
-				return null;
-
-			}
-		} else if (element.getDt().getClass().equals(Double.class))
-		{
-			return (Double) element.getDt();
-		} else
-		{
-			return null;
-		}
-	}
-
-	public static <S> Data<S> instantiateData(S obj, DataType type, String name, String description,
-	Boolean save_default)
-	{
-		Data<S> newData = new Data<S>(obj, type, name, description, save_default);// type,
-																					// name,
-																					// description);
-		return newData;
-		// TODO Auto-generated constructor stub
-	}
-
-	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
-	{
-		// super(obj, type, name, description);
-		super(name, Data.class);
-		element = obj;
-		dataType = type;
-		derivative = cloneZeroDerivative(element);
-		this.element = obj;
-		preJumpValue = (T) ObjectCloner.xmlClone(obj);
-		simulated = true;
-		save = save_default;
-		savedValues = new HashMap<Double, T>();
-		initialVal = new InitialValue<T>(get());
-		cloneToStore = !isChangeableElement(obj); // super.id().description().information.set(description);
-		try
-		{
-			if (obj.getClass().getSuperclass().equals(UnitValue.class))
-			{
-				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) get()).getUnit());
-				initialVal = new InitialValue<T>(get());
-				// try
-				// {
-				// initialVal = new InitialValue<T>(get());
-				// } catch (UnitException e)
-				// {
-				// // TODO Auto-generated catch block
-				// // initialVal = new InitialValue<T>(get());
-				// e.printStackTrace();
-				// }
-			} else
-
-			{
-				defaultUnit = null;
-				// initialVal = new InitialValue<T>(get());
-			}
-		} catch (Exception badClass)
-		{
-			badClass.printStackTrace();
-			defaultUnit = null;
-			initialVal = new InitialValue<T>(get());
-		}
-		// TODO Auto-generated constructor stub
-	}
-
-	protected static <S> Data<S> instantiateObj(S obj, DataType type, String name, String description,
-	Boolean can_be_set, Boolean save_default)
-	{
-		Data<S> newObj = new Data<S>(obj, type, name, description, save_default);// type,
-																					// name,
-																					// description);
-		return newObj;
-		// TODO Auto-generated constructor stub
-	}
-
-	protected static <S> Data<S> newObj(S obj, DataType type, String name)
-	{
-		return newObj(obj, type, name, type.storePreviousDataByDefault());
-	}
-
-	protected static <S> Data<S> newObj(S obj, DataType type)
-	{
-		return newObj(obj, type, null, type.storePreviousDataByDefault());
-	}
-
-	protected static <S> Data<S> newObj(S obj, DataType type, String name, boolean save_default)
-	{
-		Data<S> newState = null;
-		if (name == null)
-		{
-			newState = new Data<S>(obj, type, "Object", "", save_default);
-		} else
-		{
-			newState = new Data<S>(obj, type, name, "", save_default);
-		}
-
-		return newState;
-
-	}
-
-	private void storeValue(Double time)
-	{
-		if (save)
-		{
-			T storeValue = getStoreValue();
-			savedValues.put(time, storeValue);
-		}
-	}
-
-	private void storeValue(Double time, boolean override_save)
-	{
-		if (save || override_save)
-		{
-			T storeValue = getStoreValue();
-			savedValues.put(time, storeValue);
-		}
-	}
-
-	private T getStoreValue()
-	{
-		{
-			if (cloneToStore)
-			{
-				return (T) ObjectCloner.xmlClone(get());
-			} else
-			{
-				return get();
-			}
-		}
-
-	}
-
-	public static <S> void storeValue(Data<S> element, Double time, boolean override_save)
-	{
-		element.storeValue(time, override_save);
-	}
-
-	public static <S> void storeValue(Data<S> element, Double time)
-	{
-		element.storeValue(time);
-	}
-
-	protected static <T> Data<T> getElement(T obj, boolean can_be_set, DataType type, String name, String description)
-	{
-		// System.out.println(obj + " " + can_be_set + " " + type + " " + name);
-		return new Data<T>(obj, type, name, description, type.storePreviousDataByDefault());
-	}
-
-	protected static <T> void setValueUnprotected(Data<T> obj, T new_val)
-	{
-		obj.element = new_val;
-	}
-
-	public static <S> void setStoreValues(Data<S> element, boolean store)
-	{
-		element.save = store;
-	}
-
-	public static <S> boolean isSimulated(Data<S> element)
-	{
-		return element.simulated;
-	}
-
-	public static <S> void isSimulated(Data<S> element, boolean simulated)
-	{
-		element.simulated = simulated;
-	}
-
-	public static <S> boolean isStored(Data<S> element)
-	{
-		return element.save;
-	}
-
-	public static <S> HashMap<Double, S> getStoredValues(Data<S> element)
-	{
-		return element.savedValues;
-	}
-
-	public static <S> S getStoredValue(Data<S> element, Double time)
-	{
-		S value = null;
-		try
-		{
-			value = element.savedValues.get(time);
-		} catch (Exception noValue)
-		{
-
-		}
-		return value;
-	}
-
 	public static <S> Number getStoredNumberValue(Data<S> element, Double time)
 	{
 		Number value = null;
@@ -386,28 +188,137 @@ public class Data<T> extends Component// DynamicData<T>
 		return value;
 	}
 
-	private T derivative;
-
-	public T getDt()
+	public static <S> S getStoredValue(Data<S> element, Double time)
 	{
-		if (!CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
+		S value = null;
+		try
 		{
-			// IO.warn("attempted to get derivative of " + derivative.toString()
-			// + " when it is not a dynamic variable");
+			value = element.savedValues.get(time);
+		} catch (Exception noValue)
+		{
+
 		}
-		return derivative;
+		return value;
 	}
 
-	public void setDt(T derivative)
+	public static <S> HashMap<Double, S> getStoredValues(Data<S> element)
 	{
-		if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))
+		return element.savedValues;
+	}
+
+	// Configuration Functions
+
+	public static <S> void setInitialVal(Data<S> data, InitialValue<S> initial_val)
+	{
+		data.initialVal = initial_val;
+		data.set(data.initialVal.getValue());
+	}
+
+	public static <S> void setStorePreviousValues(Data<S> element, boolean store)
+	{
+		element.save = store;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	// Internal Operation Functions : everything below for the processing system
+	// only, it is not recommended to call these elsewhere unless trying to
+	// alter the standard behavior
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
+	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
+
+	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
+	{
+		// super(obj, type, name, description);
+		super(name, Data.class);
+		defaultUnit = null;
+		element = obj;
+		dataType = type;
+		derivative = cloneZeroDerivative(element);
+		this.element = obj;
+		preJumpValue = (T) ObjectCloner.xmlClone(obj);
+		simulated = true;
+		save = save_default;
+		savedValues = new HashMap<Double, T>();
+		initialVal = new InitialValue<T>(get());
+		cloneToStore = !isCopyRequiredOnSave(obj); // super.id().description().information.set(description);
+		try
 		{
-			this.derivative = derivative;
-		} else
+			if (obj.getClass().getSuperclass().equals(UnitValue.class))
+			{
+				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) get()).getUnit());
+				initialVal = new InitialValue<T>(get());
+
+			}
+		} catch (Exception badClass)
 		{
-			// IO.warn("attempted to set derivative of " + get().toString() + "
-			// when it is not a dynamic variable");
+			badClass.printStackTrace();
 		}
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public void initialize()
+	{
+		if (!Component.isInitialized(this))
+		{
+			if (FieldFinder.containsSuper(get(), UnitValue.class))
+			{
+				try
+				{
+					((UnitValue) get()).set(((UnitValue) initialVal.getValue()).get(defaultUnit), defaultUnit);
+				} catch (UnitException badUnitOrValue)
+				{
+					set((T) initialVal.getValue());
+					badUnitOrValue.printStackTrace();
+				}
+			} else
+			{
+				try
+				{
+					set((T) initialVal.getRange().getValue());
+				} catch (Exception ee)
+				{
+					set((T) initialVal.getValue());
+				}
+			}
+			Component.setInitialized(this, true);
+		}
+	}
+
+	public static <T> boolean isCopyRequiredOnSave(T object)
+	{
+		if (object != null)
+		{
+			return changableClasses.contains(object);
+		}
+		return true;
+	}
+
+	public static <S> void restorePreJumpValue(Data<S> state)
+	{
+		state.restorePreJumpValue();
+	}
+
+	public static <S> void storePreJumpValue(Data<S> state)
+	{
+		state.storePreJumpValue();
+	}
+
+	public static <S> void storeValue(Data<S> element, Double time)
+	{
+		element.storeValue(time);
+	}
+
+	public static <S> Data<S> instantiateData(S obj, DataType type, String name, String description,
+	Boolean save_default)
+	{
+		Data<S> newData = new Data<S>(obj, type, name, description, save_default);// type,
+																					// name,
+																					// description);
+		return newData;
+		// TODO Auto-generated constructor stub
 	}
 
 	@SuppressWarnings(
@@ -437,78 +348,66 @@ public class Data<T> extends Component// DynamicData<T>
 		return derivative;
 	}
 
-	public T get()
+	private T getStoreValue()
 	{
-		return element;
+		{
+			if (cloneToStore)
+			{
+				return (T) ObjectCloner.xmlClone(get());
+			} else
+			{
+				return get();
+			}
+		}
+
 	}
 
-	public void set(T element)
+	private void restorePreJumpValue()
 	{
-		this.element = element;
-		if (element != null)
+		element = preJumpValue;
+	}
+
+	private void storePreJumpValue()
+	{
+		preJumpValue = getStoreValue();
+	}
+
+	private void storeValue(Double time)
+	{
+		if (save)
 		{
-			if (!(get().getClass().getSuperclass().equals(UnitValue.class)
-			&& element.getClass().getSuperclass().equals(UnitValue.class)))
-			{
-				this.element = element;
-			} else if (element != null)
-			{
-
-				if (get().getClass().getSuperclass().equals(UnitValue.class)
-				&& element.getClass().getSuperclass().equals(UnitValue.class))
-				{
-					try
-					{
-						UnitValue currentVal = (UnitValue) get();
-						UnitValue newVal = (UnitValue) element;
-						currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
-					} catch (UnitException ue)
-					{
-						ue.printStackTrace();
-					}
-				}
-
-			}
+			T storeValue = getStoreValue();
+			savedValues.put(time, storeValue);
 		}
 	}
 
-	@Override
-	public void initialize()
+	protected void storeValue(Double time, boolean override_save)
 	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public static <T> boolean isChangeableElement(T object)
-	{
-		if (object != null)
+		if (save || override_save)
 		{
-			try
-			{
-				if (Data.changableClasses.contains(object.getClass()))
-				{
-					return true;
-				} else if (object.getClass().isEnum())
-				{
-					return true;
-				} else
-				{
-					return false;
-				}
-
-			} catch (Exception nullpt)
-			{
-			}
+			T storeValue = getStoreValue();
+			savedValues.put(time, storeValue);
 		}
-		return true;
 	}
 
-	public DataType getDataClass()
+	public static <S> void storeValue(Data<S> element, Double time, boolean override_save)
 	{
-		return dataType;
+		element.storeValue(time, override_save);
 	}
 
-	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
-	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
+	public static <S> boolean isSimulated(Data<S> element)
+	{
+		return element.simulated;
+	}
+
+	public static <S> void setSimulated(Data<S> element, boolean simulated)
+	{
+		element.simulated = simulated;
+	}
+
+	public static <S> boolean isPreviousDataStored(Data<S> element)
+	{
+		return element.save;
+	}
 
 }

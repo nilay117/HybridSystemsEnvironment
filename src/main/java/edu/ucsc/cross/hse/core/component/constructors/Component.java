@@ -16,7 +16,7 @@ public abstract class Component implements Initializer // implements
 
 	@CoreComponent
 	private GlobalHybridSystem environment; // environment that the
-													// component is in
+											// component is in
 	@CoreComponent
 	private Boolean initialized;
 
@@ -129,6 +129,15 @@ public abstract class Component implements Initializer // implements
 		initialized = false;
 		properties = new Properties(title, base_class);
 		components = new Hierarchy(this);
+	}
+
+	public void protectedInitialize()
+	{
+		if (!initialized)
+		{
+			initialize();
+			Component.setInitialized(this, true);
+		}
 	}
 
 	public static Component getComponentFromFile(String file_path)

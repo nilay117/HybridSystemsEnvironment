@@ -65,7 +65,7 @@ public class DataCollector extends Processor
 
 				if (CoreDataGroup.ALL_DATA.contains(element))
 				{
-					if (Data.isStored(element))
+					if (Data.isPreviousDataStored(element))
 					{
 						dataStates.add(element);
 					}

@@ -51,7 +51,7 @@ public class SimulationEngine extends Processor implements FirstOrderDifferentia
 				{
 					if (Data.isSimulated(dat))
 					{
-						if (CoreDataGroup.DYNAMIC_STATE_ELEMENTS.contains(dat))
+						if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
 						{
 							if (FieldFinder.containsSuper(dat.get(), UnitValue.class)
 							|| FieldFinder.containsSuper(dat.get(), Number.class))

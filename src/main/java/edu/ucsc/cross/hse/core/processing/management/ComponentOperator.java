@@ -50,8 +50,8 @@ public class ComponentOperator extends Processor
 			try
 			{
 				Data data = (Data) component;
-				data.initializeValue();
-				data.setInitialized(data, true);
+				data.initialize();
+				Component.setInitialized(data, true);
 				allData.add(data);
 			} catch (Exception notData)
 			{
