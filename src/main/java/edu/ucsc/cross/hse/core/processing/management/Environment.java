@@ -1,14 +1,13 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
-import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.data.FileParser;
 import edu.ucsc.cross.hse.core.processing.data.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 
-public class Environment// implements Environment
+public class Environment extends Processor// implements Environment
 {
 
 	// Execution
@@ -22,23 +21,41 @@ public class Environment// implements Environment
 
 	public Environment()
 	{
+		super(null);
 		this.environmentContent = new GlobalHybridSystem();
 		initializeComponents();
 	}
 
 	public Environment(GlobalHybridSystem environment)
 	{
+		super(null);
 		this.environmentContent = environment;
 		initializeComponents();
 	}
 
-	public void loadEnvironment(GlobalHybridSystem environment)
+	public GlobalHybridSystem getEnvironmentContent()
 	{
-		this.environmentContent = environment;
+		return environmentContent;
+	}
+
+	public DataCollector getData()
+	{
+		return data;
+	}
+
+	public FileParser getFileParser()
+	{
+		return fileParser;
+	}
+
+	public void setEnvironmentContent(GlobalHybridSystem environmentContent)
+	{
+		this.environmentContent = environmentContent;
 	}
 
 	private void initializeComponents()
 	{
+		super.processor = this;
 		simulationEngine = new SimulationEngine(this);
 		executionMonitor = new ExecutionMonitor(this);
 		data = new DataCollector(this);
@@ -50,44 +67,13 @@ public class Environment// implements Environment
 	public void start()
 	{
 		prepareEnvironment();
-		environmentContent.setStartTime(Double.valueOf(System.nanoTime()) / 1000000000);// Time.newSecondValue(0.0);
 		executionMonitor.runSim(false);
-	}
-
-	public GlobalHybridSystem environmentContent()
-	{
-		return environmentContent;
-	}
-
-	public FileParser fileParser()
-	{
-		return fileParser;
-	}
-
-	public DataCollector dataCollector()
-	{
-		return data;
-	}
-
-	public void setSettings(SettingConfigurations settings)
-	{
-		this.environmentContent.setSettings(settings);
-	}
-
-	public SettingConfigurations getSettings()
-	{
-		return this.environmentContent.getSettings();
-	}
-
-	public ComponentOperator getElementOperator()
-	{
-		return elements;
 	}
 
 	public void prepareEnvironment()
 	{
 		// environment.scanAllSystems();
-		elements.initialize();
+		elements.prepareComponents();
 		simulationEngine.initialize();
 		data.loadStoreStates();
 	}

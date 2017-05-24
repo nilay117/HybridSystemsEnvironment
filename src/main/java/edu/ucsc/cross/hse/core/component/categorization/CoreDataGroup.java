@@ -9,17 +9,17 @@ import edu.ucsc.cross.hse.core.component.data.Data;
 
 public enum CoreDataGroup implements DataGroup
 {
-	ALL_DATA(
+	ALL_DATA( // All data types defined thus far
 		"All Data",
 		new DataType[]
 		{ CoreDataType.HYBRID_STATE, CoreDataType.DISCRETE_STATE, CoreDataType.PARAMETER, CoreDataType.PROPERTY }),
 
-	STATE_ELEMENTS(
+	STATE_ELEMENTS( // Only state element data types
 		"All States",
 		new DataType[]
 		{ CoreDataType.DISCRETE_STATE, CoreDataType.HYBRID_STATE }),
 
-	HYBRID_STATE_ELEMENTS(
+	HYBRID_STATE_ELEMENTS( // Only hybrid state element
 		"Hybrid States",
 		new CoreDataType[]
 		{ CoreDataType.HYBRID_STATE });

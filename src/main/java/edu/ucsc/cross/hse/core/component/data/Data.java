@@ -51,6 +51,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void set(T element)
 	{
+		this.element = element;
 		if (element != null)
 		{
 			if (FieldFinder.containsSuper(get(), UnitValue.class) && FieldFinder.containsSuper(get(), UnitValue.class))
@@ -67,14 +68,17 @@ public class Data<T> extends Component// DynamicData<T>
 
 			} else
 			{
-				if (this.element.getClass().equals(element.getClass()))
+				try
 				{
-					this.element = element;
+					if (this.element.getClass().equals(element.getClass()))
+					{
+						this.element = element;
+					}
+				} catch (Exception ue)
+				{
+					ue.printStackTrace();
 				}
 			}
-		} else
-		{
-			this.element = element;
 		}
 	}
 

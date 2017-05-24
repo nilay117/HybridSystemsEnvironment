@@ -145,21 +145,7 @@ public class Hierarchy
 			}
 		} catch (Exception noComponents)
 		{
-			// components = (ArrayList<Component>)
-			// getComponents(component_class, include_children);
-			// try
-			// {
-			// if (include_children)
-			// {
-			// components = descendantComponentMap.get(component_class);
-			// } else
-			// {
-			// components = childComponentMap.get(component_class);
-			// }
-			// } catch (Exception noComponentsAgain)
-			// {
-			// noComponentsAgain.printStackTrace();
-			// }
+
 		}
 
 		return components;
@@ -175,9 +161,9 @@ public class Hierarchy
 
 	private void processComponent(Component parent, Component field)
 	{
-		field.getComponents().parentComponent = parent;
-		field.getComponents().loadHierarchyComponents();
-		parent.getComponents().storeComponent(field, true);
+		field.getHierarchy().parentComponent = parent;
+		field.getHierarchy().loadHierarchyComponents();
+		parent.getHierarchy().storeComponent(field, true);
 	}
 
 	private void processContainer(Component parent, Object container)
@@ -378,14 +364,14 @@ public class Hierarchy
 		return values;
 	}
 
-	public static void load(Hierarchy hierarchy)
+	public static void constructTree(Hierarchy hierarchy)
 	{
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
-			Hierarchy.load(component.getComponents());
+			Hierarchy.constructTree(component.getHierarchy());
 			for (Component componentChild : component.getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);

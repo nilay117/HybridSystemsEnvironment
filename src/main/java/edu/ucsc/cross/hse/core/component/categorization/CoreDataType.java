@@ -6,26 +6,28 @@ import edu.ucsc.cross.hse.core.component.data.DataFactory;
 
 public enum CoreDataType implements DataType// ComponenClassification
 {
-	HYBRID_STATE(
+	HYBRID_STATE( // State data element that changes continuously and can change
+					// discretely as well
 		"Hybrid State",
-		true,
-		true),
-	DISCRETE_STATE(
+		true, // is stored by default
+		true), // is a state
+	DISCRETE_STATE( // State data element that only changes discretely
 		"Discrete State",
-		true,
-		true),
-	PARAMETER(
+		true, // is stored by default
+		true), // is a state
+	PARAMETER( // Value that is not a state but still influences the system and
+				// is variable
 		"Parameter",
-		false,
-		false),
-	PROPERTY(
+		false, // is not stored by default
+		false), // is not a state
+	PROPERTY( // Constant that describes a component
 		"Property",
-		false,
-		false),
+		false, // is not stored by default
+		false), // is not a state
 	DATA(
-		"Data",
-		false,
-		false);
+		"Data", // Contains some type of data used within the environment
+		false, // is not stored by default
+		false); // is not a state
 
 	public final String dataTypeTitle; // title
 	private boolean storePreviousByDefault; // storage flag

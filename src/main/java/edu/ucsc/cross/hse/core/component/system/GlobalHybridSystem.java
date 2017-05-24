@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.component.system;
 
+import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
 import edu.ucsc.cross.hse.core.object.domains.HybridTime;
@@ -16,7 +17,7 @@ public class GlobalHybridSystem extends HybridSystem
 
 	private HybridTime environmentTime; // time relative to when the environment
 										// was launched and jump index
-	private Double startTime;
+	private Time earthStartTime;
 	private SettingConfigurations settings; // settings configuration
 
 	public GlobalHybridSystem()
@@ -31,9 +32,9 @@ public class GlobalHybridSystem extends HybridSystem
 		initializeComponents();
 	}
 
-	public HybridTime getEnvironmentTime()
+	public void setSettings(SettingConfigurations settings)
 	{
-		return environmentTime;
+		this.settings = settings;
 	}
 
 	public SettingConfigurations getSettings()
@@ -41,15 +42,14 @@ public class GlobalHybridSystem extends HybridSystem
 		return settings;
 	}
 
-	public void setSettings(SettingConfigurations settings)
+	public HybridTime getEnvironmentTime()
 	{
-		this.settings = settings;
+		return environmentTime;
 	}
 
-	@Override
-	public void initialize()
+	public Time getStartTime()
 	{
-		// TODO Auto-generated method stub
+		return earthStartTime;
 	}
 
 	private void initializeComponents()
@@ -59,14 +59,9 @@ public class GlobalHybridSystem extends HybridSystem
 		Component.setEnvironment(this, this);
 	}
 
-	public Double getStartTime()
+	@Override
+	public void initialize()
 	{
-		return startTime;
+		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
 	}
-
-	public void setStartTime(Double startTime)
-	{
-		this.startTime = startTime;
-	}
-
 }

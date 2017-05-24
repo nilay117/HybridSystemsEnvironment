@@ -1,10 +1,16 @@
 package edu.ucsc.cross.hse.core.component.models;
 
 /*
- * This interface defines a classical hybrid dynamical model.
+ * This interface declares the functions needed to define a hybrid dynamical
+ * model based on the framework used by Dr. Sanfelice and other members of
+ * Hybrid Systems Lab at the University of California. More details can be found
+ * at https://hybrid.soe.ucsc.edu/
  */
 public interface DynamicalModel
 {
+	////////////////////////////////////////
+	// Required User Function Definitions //
+	////////////////////////////////////////
 
 	/*
 	 * The jump set is the set of states that define the discrete domain, which
@@ -33,6 +39,10 @@ public interface DynamicalModel
 	 * discretely
 	 */
 	public void jumpMap();
+
+	////////////////////////////////////////
+	// Static Utility Functions //
+	////////////////////////////////////////
 
 	/*
 	 * Determine if a jump is occurring for some dynamical model

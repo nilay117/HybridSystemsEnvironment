@@ -11,7 +11,7 @@ import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 public abstract class Processor
 {
 
-	private Environment processor;
+	protected Environment processor;
 
 	protected Processor(Environment processor)
 	{
@@ -46,7 +46,7 @@ public abstract class Processor
 	// @Override
 	protected GlobalHybridSystem getEnvironment()
 	{
-		return processor.environmentContent();
+		return processor.environmentContent;
 	}
 
 	// @Override
@@ -57,7 +57,7 @@ public abstract class Processor
 
 	protected SettingConfigurations getSettings()
 	{
-		return processor.getSettings();
+		return processor.getEnvironmentContent().getSettings();
 	}
 
 	protected DataCollector getData()

@@ -1,113 +1,44 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
+/*
+ * This class controls all of the components so that they are setup correctly
+ * and functional.
+ */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
 public class ComponentOperator extends Processor
 {
 
-	public ArrayList<Data> getAllData()
-	{
-		return allData;
-	}
-
-	private ArrayList<Data> allData;
-
 	ComponentOperator(Environment processor)
 	{
 		super(processor);
-		allData = new ArrayList<Data>();
-		// this.environment = environment;
+
 	}
 
-	void initialize()
+	public void performAllTasks()
 	{
-		Hierarchy.load(getEnvironment().getComponents());
-		for (Component component : getEnvironment().getComponents(true))
-		{
-			Component.setEnvironment(component, getEnvironment());
-		}
-		initializeData();
-		initializeComponents();
-		// initializeSimulated(false);
-		// initializeSimulated(true);
-		clearEmptyMaps();
+		performAllTasks(false);
 	}
 
-	private void initializeData()
-	{
-		allData.clear();
-		for (Component component : getEnvironment().getComponents(true))
-		{
-			try
-			{
-
-				Data data = (Data) component;
-				if (Data.isInitialized(data))
-				{
-					data.initialize();
-					Component.setInitialized(data, true);
-					allData.add(data);
-				}
-			} catch (Exception notData)
-			{
-
-			}
-		}
-	}
-
-	protected void clearEmptyMaps()
-	{
-		clearEmptyMaps(getEnvironment().getComponents(true));
-	}
-
-	public void clearEmptyMaps(ArrayList<Component> allComponents)
-	{
-		for (Component component : allComponents)
-		{
-			// component.clearMapsIfEmpty();
-			Component.setEnvironment(component, getEnvironment());
-		}
-	}
-
-	public void initializeComponents()
-	{
-		for (Component component : getEnvironment().getComponents().getComponents(true))
-		{
-
-			if (!Component.isInitialized(component))
-			{
-				// if (!Data.getInitialized(component))
-				{
-					component.initialize();
-					Component.setInitialized(component, true);
-				}
-			}
-
-		}
-
-	}
-
-	public void performTasks()
-	{
-		performTasks(false);
-	}
-
-	public void performTasks(boolean jump_occurred)
+	public void performAllTasks(boolean jump_occurred)
 	{
 		if (jump_occurred)
 		{
 			getData().storeData(getEnvironment().getEnvironmentTime().getTime() - .000001,
 			(true && getSettings().getData().storeAtEveryJump));
 
-			executeAllJumps();
+			executeAllOccurringJumps();
 			getData().storeData(getEnvironment().getEnvironmentTime().getTime(),
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
@@ -116,10 +47,10 @@ public class ComponentOperator extends Processor
 		}
 	}
 
-	public void executeAllJumps()
+	public void executeAllOccurringJumps()
 	{
 		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
-		storeAllPreJumpData(jumpComponents);
+		storeRelavantPreJumpData(jumpComponents);
 		for (Component component : jumpComponents)
 		{
 			DynamicalModel dynamics = ((DynamicalModel) component);
@@ -128,11 +59,11 @@ public class ComponentOperator extends Processor
 		}
 		if (getEnvironment().jumpOccurring())
 		{
-			executeAllJumps();
+			executeAllOccurringJumps();
 		}
 	}
 
-	public void storeAllPreJumpData(ArrayList<Component> jump_components)
+	public void storeRelavantPreJumpData(ArrayList<Component> jump_components)
 	{
 
 		for (Component component : jump_components)
@@ -144,6 +75,50 @@ public class ComponentOperator extends Processor
 					Data.storePreJumpValue(data);
 				}
 			}
+		}
+	}
+
+	void prepareComponents()
+	{
+		Hierarchy.constructTree(getEnvironment().getHierarchy());
+		initializeComponents(Data.class);
+		initializeComponents();
+		linkEnvironment();
+	}
+
+	public void initializeComponents(Class<?>... components_to_initialize)
+	{
+		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
+		for (Component component : getEnvironment().getComponents(true))
+		{
+			boolean initialize = initializeList.size() == 0;
+			for (Class<?> checkClass : initializeList)
+			{
+				initialize = initialize || FieldFinder.containsSuper(component, checkClass);
+			}
+			if (initialize)
+			{
+				if (!Component.isInitialized(component))
+				{
+					component.initialize();
+					Component.setInitialized(component, true);
+
+				}
+			}
+		}
+
+	}
+
+	protected void linkEnvironment()
+	{
+		linkEnvironment(getEnvironment().getComponents(true));
+	}
+
+	public void linkEnvironment(ArrayList<Component> allComponents)
+	{
+		for (Component component : allComponents)
+		{
+			Component.setEnvironment(component, getEnvironment());
 		}
 	}
 

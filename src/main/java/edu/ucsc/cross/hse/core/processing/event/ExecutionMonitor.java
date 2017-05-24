@@ -37,9 +37,9 @@ public class ExecutionMonitor extends Processor
 
 		} else
 		{
-			// runSim(null);
+			runSim(null);
 			// runSimulation();
-			launchEnvironment();
+			// launchEnvironment();
 		}
 
 	}
@@ -165,7 +165,7 @@ public class ExecutionMonitor extends Processor
 	Double start_time, Double duration, double[] ode_vector)
 	{
 		Double endTime = 0.0;
-		getComponents().performTasks(true);
+		getComponents().performAllTasks(true);
 		while (endTime < duration)
 		{
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
@@ -190,7 +190,7 @@ public class ExecutionMonitor extends Processor
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
-			getComponents().performTasks(true);
+			getComponents().performAllTasks(true);
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

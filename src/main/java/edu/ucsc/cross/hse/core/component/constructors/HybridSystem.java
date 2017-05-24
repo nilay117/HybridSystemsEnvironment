@@ -4,6 +4,15 @@ import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 
+/*
+ * This constructor is basically a container that can hold any number of other
+ * components and modules. A hybrid system could contain a single state,
+ * controller, and dynamical model, or hundreds nested in any configuration. It
+ * can also contain hybrid systems, allowing for very large scale systems such
+ * as networks. Since each component operates independently (in terms of
+ * software, systems can communicate) functionality is not effected by the
+ * overall scale.
+ */
 public abstract class HybridSystem extends Component
 {
 

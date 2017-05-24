@@ -63,7 +63,7 @@ class JumpDetector extends Processor implements EventHandler
 
 		// getData().storeData(t - getSettings().getData().dataStoreIncrement,
 		// (true && getSettings().getData().storeAtEveryJump));
-		getComponents().performTasks(true);
+		getComponents().performAllTasks(true);
 		// getData().storeData(t, (true &&
 		// getSettings().getData().storeAtEveryJump));
 		getComputationEngine().setODEValueVector(y);

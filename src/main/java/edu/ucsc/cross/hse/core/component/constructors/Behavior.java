@@ -2,10 +2,13 @@ package edu.ucsc.cross.hse.core.component.constructors;
 
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 
+/*
+ * This class is a foundation for describing any dynamical model, action, or
+ * behavior. An extension of this class can be used to create a new component or
+ * a different base constructor class.
+ */
 public abstract class Behavior extends Component implements DynamicalModel
 {
-
-	public boolean jumpPending;
 
 	/*
 	 * Constructor that allows the user to name the behavior

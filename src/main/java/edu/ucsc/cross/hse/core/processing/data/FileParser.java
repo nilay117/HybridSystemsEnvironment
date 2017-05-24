@@ -70,7 +70,7 @@ public class FileParser extends Processor
 	private <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		Hierarchy.load(component.getComponents());
+		Hierarchy.constructTree(component.getHierarchy());
 		// allComponents.add(component);
 		for (Component subComponent : component.getComponents(true))
 		{

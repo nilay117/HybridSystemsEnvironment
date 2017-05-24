@@ -20,7 +20,7 @@ public class TestSimulation
 
 		// environment.start();
 		// Launch Viewer (Optional)
-		environment.environmentContent().getComponents().addComponent(ss, 12);
+		environment.environmentContent().getHierarchy().addComponent(ss, 12);
 		environment.start();
 	}
 
