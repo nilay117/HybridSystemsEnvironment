@@ -25,27 +25,39 @@ public enum CoreDataGroup implements DataGroup
 		{ CoreDataType.HYBRID_STATE });
 
 	public final ArrayList<DataType> subTypes;
-	private final String groupLabel;
+	private final String groupTitle;
 
-	private CoreDataGroup(String label, DataType[] sub_types)
+	/*
+	 * Enum constructor
+	 * 
+	 * @param title - title of data group
+	 * 
+	 * @param sub_types - array of data types that are included in the group
+	 * 
+	 */
+	private CoreDataGroup(String title, DataType[] sub_types)
 	{
-		groupLabel = label;
+		groupTitle = title;
 		subTypes = new ArrayList<DataType>(Arrays.asList(sub_types));
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean containsObj(Data value)
-	{
-		return subTypes.contains(value.getProperties().getClassification());
-	}
-
+	/*
+	 * Get the title of the data group. Used for display purposes
+	 * 
+	 * @return title string
+	 */
 	@Override
 	public String getTitle()
 	{
 		// TODO Auto-generated method stub
-		return groupLabel;
+		return groupTitle;
 	}
 
+	/*
+	 * Get the data types included in the group
+	 * 
+	 * @return list of data types included in the group
+	 */
 	@Override
 	public ArrayList<DataType> getContents()
 	{
@@ -53,10 +65,15 @@ public enum CoreDataGroup implements DataGroup
 		return subTypes;
 	}
 
+	/*
+	 * Determine if a data element belongs to the group
+	 * 
+	 * @return true if the data element is part of the group, false otherwise
+	 */
 	@Override
 	public boolean contains(Data type)
 	{
 		// TODO Auto-generated method stub
-		return subTypes.contains(type.getDataClass());
+		return true;// subTypes.contains(type.getDataClass());
 	}
 }

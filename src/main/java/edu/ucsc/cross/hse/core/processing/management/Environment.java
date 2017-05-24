@@ -51,7 +51,7 @@ public class Environment// implements Environment
 	{
 		prepareEnvironment();
 		environmentContent.setStartTime(Double.valueOf(System.nanoTime()) / 1000000000);// Time.newSecondValue(0.0);
-		executionMonitor.runSim(true);
+		executionMonitor.runSim(false);
 	}
 
 	public GlobalHybridSystem environmentContent()

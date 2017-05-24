@@ -36,10 +36,7 @@ public abstract class HybridSystem extends Component
 	{
 
 		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
-		// for (Behavior localBehavior : getObjects(Behavior.class, true))
 		{
-			// DynamicalModel localBehavior = (DynamicalModel)
-			// behaviorComponent;
 			try
 			{
 				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
@@ -51,12 +48,6 @@ public abstract class HybridSystem extends Component
 			{
 				behaviorFail.printStackTrace();
 			}
-		}
-		// if (jump_occurring && jumpOccurring())
-		if (jumpOccurring())
-		{
-			performTasks(true);
-			// System.exit(1);
 		}
 	}
 
@@ -70,9 +61,7 @@ public abstract class HybridSystem extends Component
 	{
 		Boolean jumpOccurred = false;
 		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
-		// for (Behavior localBehavior : getObjects(Behavior.class, true))
 		{
-			// Behavior localBehavior = (Behavior) behaviorComponent;
 			try
 			{
 				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);

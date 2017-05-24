@@ -37,7 +37,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	private InitialValue<T> initialVal; // initial value of object
 	private T preJumpValue; // stored pre-jump value
-	private HashMap<Double, T> savedValues; // mapping of saved values
+	public HashMap<Double, T> savedValues; // mapping of saved values
 	// Data Properties
 	protected boolean simulated; // flag indicating whether object is simulated
 	protected T element;

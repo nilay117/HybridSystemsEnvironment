@@ -1,9 +1,18 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
-public abstract class DataSet extends Component// implements Initializer//DataSetProperties
+import bs.commons.objects.manipulation.ObjectCloner;
+
+public abstract class DataSet extends Component// implements
+												// Initializer//DataSetProperties
 {
 
 	private boolean simulated;
+	private DataSet prejump;
+
+	public void storePrejump()
+	{
+		setPrejump((DataSet) ObjectCloner.xmlClone(this));
+	}
 
 	/*
 	 * Constructor that gives the set the generic name "Data Set"
@@ -49,15 +58,15 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 		{
 			try
 			{
-				//	Data element = (Data) component;
-				//Data.isSimulated(element, this.simulate());
+				// Data element = (Data) component;
+				// Data.isSimulated(element, this.simulate());
 			} catch (Exception nonElement)
 			{
 				try
 				{
 					DataSet elements = (DataSet) component;
-					//elements.setSimulated(this.isSimulated());
-					//elements.initializeElements();
+					// elements.setSimulated(this.isSimulated());
+					// elements.initializeElements();
 				} catch (Exception nonElements)
 				{
 
@@ -84,6 +93,16 @@ public abstract class DataSet extends Component// implements Initializer//DataSe
 		{
 
 		}
+	}
+
+	public DataSet getPrejump()
+	{
+		return prejump;
+	}
+
+	public void setPrejump(DataSet prejump)
+	{
+		this.prejump = prejump;
 	}
 
 }

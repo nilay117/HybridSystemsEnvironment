@@ -1,7 +1,9 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
@@ -109,7 +111,8 @@ public abstract class Component implements Initializer // implements
 	public void saveComponentToFile(String directory_path, String file_name)
 	{
 		Object clonedComponent = ObjectCloner.xmlClone(this);
-		Hierarchy.load(((Component) clonedComponent).getComponents());// .loadAllComponents();
+		// Hierarchy.load(((Component) clonedComponent).getComponents());//
+		// .loadAllComponents();
 		// ((Component) clonedComponent).storeSubComponents(((Component)
 		// clonedComponent));
 		// ((Component) clonedComponent).clearMapsIfEmpty();
@@ -118,9 +121,7 @@ public abstract class Component implements Initializer // implements
 		// {
 		// subComponent.clearMapsIfEmpty();
 		// }
-		// FileSystemOperator.createOutputFile(new File(directory_path,
-		// file_name),
-		// XMLParser.serializeObject(clonedComponent));
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name), XMLParser.serializeObject(this));// clonedComponent));
 
 	}
 

@@ -3,9 +3,8 @@ package edu.ucsc.cross.hse.core.processing.management;
 import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
-import edu.ucsc.cross.hse.core.component.constructors.Behavior;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
-import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
+import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
@@ -49,10 +48,14 @@ public class ComponentOperator extends Processor
 		{
 			try
 			{
+
 				Data data = (Data) component;
-				data.initialize();
-				Component.setInitialized(data, true);
-				allData.add(data);
+				if (Data.isInitialized(data))
+				{
+					data.initialize();
+					Component.setInitialized(data, true);
+					allData.add(data);
+				}
 			} catch (Exception notData)
 			{
 
@@ -72,53 +75,6 @@ public class ComponentOperator extends Processor
 			// component.clearMapsIfEmpty();
 			Component.setEnvironment(component, getEnvironment());
 		}
-	}
-
-	public void initializeSimulated(boolean initialize_behavior)
-	{
-		initializeSimulated(initialize_behavior, getEnvironment().getComponents(true));
-	}
-
-	public void initializeSimulated(boolean initialize_behavior, ArrayList<Component> allComponents)
-	{
-		for (Component component : allComponents)
-		{
-
-			if (initialize_behavior)
-			{
-				// if
-				// (component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
-				if (component.getProperties().getBaseComponentClass().equals(Behavior.class))
-				{
-					if (!Component.isInitialized(component))
-					{
-						// if (!Data.getInitialized(component))
-						{
-							component.initialize();
-							Component.setInitialized(component, true);
-						}
-					}
-				}
-			} else
-			{
-
-				// if
-				// (!component.getProperties().getClassification().equals(ComponentClassification.BEHAVIOR))
-				if (!component.getProperties().getBaseComponentClass().equals(Behavior.class))
-				{
-					if (!Component.isInitialized(component))
-					{
-						// if (!Data.getInitialized(component))
-						{
-							component.initialize();
-							Component.setInitialized(component, true);
-						}
-					}
-				}
-			}
-
-		}
-
 	}
 
 	public void initializeComponents()
@@ -144,17 +100,23 @@ public class ComponentOperator extends Processor
 		performTasks(false);
 	}
 
-	public void performTasks(boolean jump_occurred)
+	public void zperformTasks(boolean jump_occurred)
 	{
 		if (jump_occurred)
 		{
 			getData().storeData(getEnvironment().getEnvironmentTime().getTime() - .000001,
 			(true && getSettings().getData().storeAtEveryJump));
-			if (getSettings().getData().storePreJumpValue)
+			// if (getSettings().getData().storePreJumpValue)
 			{
 				storePrejumpValues();
 			}
 			performAllJumps();
+			// storePrejumpValues();
+			if (this.getEnvironment().jumpOccurring())
+			{
+				// performTasks(true);
+			}
+			// storePrejumpValues();
 			getData().storeData(getEnvironment().getEnvironmentTime().getTime(),
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
@@ -175,21 +137,79 @@ public class ComponentOperator extends Processor
 		// while (getComponents().jumpOccurring())
 		{
 			getEnvironment().performTasks(true);
-			for (HybridSystem componen : getEnvironment().getComponents(HybridSystem.class, true))// getEnvironment().getAllSystems())
-			{
-				componen.performTasks(true);
-			}
+			storePrejumpValues();
+			// for (HybridSystem componen :
+			// getEnvironment().getComponents(HybridSystem.class, true))//
+			// getEnvironment().getAllSystems())
+			// {
+			// componen.performTasks(true);
+			// }
 		}
 
 	}
 
 	public void storePrejumpValues()
 	{
-		for (Data data : allData)
+		for (Data data : getEnvironment().getComponents().getComponents(Data.class, true))
 		{
 			if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 			{
 				Data.storePreJumpValue(data);
+			}
+		}
+
+		for (DataSet data : getEnvironment().getComponents().getComponents(DataSet.class, true))
+		{
+			// if (CoreDataGroup.STATE_ELEMENTS.contains(data))
+			{
+				data.storePrejump();
+			}
+		}
+	}
+
+	public void performTasks(boolean jump_occurred)
+	{
+		if (jump_occurred)
+		{
+			getData().storeData(getEnvironment().getEnvironmentTime().getTime() - .000001,
+			(true && getSettings().getData().storeAtEveryJump));
+
+			// storePrejumpStates();
+
+			getEnvironment().performTasks(true);
+			// storePrejumpValues();
+			if (jump_occurred && getEnvironment().jumpOccurring())
+			{
+				performTasks(true);
+			}
+			// storePrejumpValues();
+			getData().storeData(getEnvironment().getEnvironmentTime().getTime(),
+			(true && getSettings().getData().storeAtEveryJump));
+		} else
+		{
+			getEnvironment().performTasks(jump_occurred);
+			// for (HybridSystem componen :
+			// getEnvironment().getComponents(HybridSystem.class,
+			// true))//getEnvironment().getAllSystems())
+			// {
+			// componen.performTasks(jump_occurred);
+			// }
+		}
+	}
+
+	public void storePrejumpStates()
+	{
+		for (Data data : getEnvironment().getComponents().getComponents(Data.class, true))
+		{
+			if (CoreDataGroup.STATE_ELEMENTS.contains(data))
+			{
+				Data.storePreJumpValue(data);
+			}
+		}
+		for (DataSet data : getEnvironment().getComponents().getComponents(DataSet.class, true))
+		{
+			{
+				data.storePrejump();
 			}
 		}
 	}

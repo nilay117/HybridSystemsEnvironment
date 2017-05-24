@@ -3,6 +3,8 @@ package edu.ucsc.cross.hse.core.processing.data;
 import java.io.File;
 import java.util.ArrayList;
 
+import bs.commons.io.file.FileSystemOperator;
+import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
@@ -34,12 +36,10 @@ public class FileParser extends Processor
 			directory += data.getProperties().getName() + "/";
 		}
 
-		// String fileName = data.getEnvironmentTitle() + "_"
-		// + StringFormatter.getCurrentDateString(System.currentTimeMillis() /
-		// 1000, "_", false) + "@"
-		// + StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
-		// FileSystemOperator.createOutputFile(new File(directory, fileName),
-		// XMLParser.serializeObject(data));
+		String fileName = data.getProperties().getDescription() + "_"
+		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
+		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
+		FileSystemOperator.createOutputFile(new File(directory, fileName), XMLParser.serializeObject(data));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -87,9 +87,9 @@ public class FileParser extends Processor
 			}
 		}
 		// System.out.println("hello");
-		super.getComponents().initializeSimulated(true, allComponents);
-		super.getComponents().initializeSimulated(false, allComponents);
-		super.getComponents().clearEmptyMaps(allComponents);
+		// super.getComponents().initializeSimulated(true, allComponents);
+		// super.getComponents().initializeSimulated(false, allComponents);
+		// super.getComponents().clearEmptyMaps(allComponents);
 		// getElements().initializeSimulated(false);
 		// initializeSimulated(true);
 		// component.clearMapsIfEmpty();

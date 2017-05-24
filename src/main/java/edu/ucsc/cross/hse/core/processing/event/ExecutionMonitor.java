@@ -37,7 +37,7 @@ public class ExecutionMonitor extends Processor
 
 		} else
 		{
-			runSim(null);
+			// runSim(null);
 			// runSimulation();
 			launchEnvironment();
 		}

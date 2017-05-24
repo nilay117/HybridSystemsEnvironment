@@ -5,6 +5,8 @@ import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 public abstract class Behavior extends Component implements DynamicalModel
 {
 
+	public boolean jumpPending;
+
 	/*
 	 * Constructor that allows the user to name the behavior
 	 */
