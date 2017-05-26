@@ -46,7 +46,6 @@ public abstract class HybridSystem extends Component
 	 */
 	public void performTasks(boolean jump_occurring)
 	{
-
 		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
 		{
 			try

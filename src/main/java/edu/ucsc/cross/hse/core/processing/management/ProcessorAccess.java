@@ -1,5 +1,9 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
+import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.data.DataOperator;
+import edu.ucsc.cross.hse.core.component.foundation.Component;
+import edu.ucsc.cross.hse.core.component.foundation.Ops;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
@@ -80,6 +84,16 @@ public abstract class ProcessorAccess
 	protected FileParser getSaveUtility()
 	{
 		return processor.fileParser;
+	}
+
+	protected Ops compOps(Component component)
+	{
+		return Ops.getConfigurer(component);
+	}
+
+	protected DataOperator dataOps(Data component)
+	{
+		return DataOperator.operator(component);
 	}
 
 	// @Override

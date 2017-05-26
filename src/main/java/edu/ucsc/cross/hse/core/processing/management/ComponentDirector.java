@@ -8,6 +8,7 @@ import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.component.foundation.Component;
+import edu.ucsc.cross.hse.core.component.foundation.Ops;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
@@ -91,7 +92,8 @@ public class ComponentDirector extends ProcessorAccess
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
 					// System.out.println(data.get().toString());
-					Data.storePreJumpValue(data);
+					dataOps(data).storePreJumpValue();
+					;
 				}
 			}
 		}
@@ -121,10 +123,10 @@ public class ComponentDirector extends ProcessorAccess
 			}
 			if (initialize)
 			{
-				if (!Component.isInitialized(component))
+				if (!compOps(component).isInitialized())
 				{
 					component.initialize();
-					Component.setInitialized(component, true);
+					compOps(component).setInitialized(true);
 
 				}
 			}
@@ -141,8 +143,12 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : allComponents)
 		{
-			component.getConfigurer().setEnvironment(getEnvironment().getConfigurer().getEnvironmentKey());
+			compOps(component).setEnvironment(compOps(getEnvironment()).getEnvironmentKey());
 		}
 	}
 
+	private Ops operate(Component component)
+	{
+		return Ops.getConfigurer(component);
+	}
 }

@@ -36,13 +36,23 @@ public class DataFactory
 		Data<S> newState = null;
 		if (name == null)
 		{
-			newState = Data.instantiateData(obj, type, type.getTitle(), "", save_default);
+			newState = DataFactory.instantiateData(obj, type, type.getTitle(), "", save_default);
 		} else
 		{
-			newState = Data.instantiateData(obj, type, name, "", save_default);
+			newState = DataFactory.instantiateData(obj, type, name, "", save_default);
 		}
 
 		return newState;
 
+	}
+
+	public static <S> Data<S> instantiateData(S obj, DataType type, String name, String description,
+	Boolean save_default)
+	{
+		Data<S> newData = new Data<S>(obj, type, name, description, save_default);// type,
+																					// name,
+																					// description);
+		return newData;
+		// TODO Auto-generated constructor stub
 	}
 }

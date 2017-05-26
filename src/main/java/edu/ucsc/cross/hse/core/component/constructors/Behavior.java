@@ -17,6 +17,7 @@ public abstract class Behavior extends Component implements DynamicalModel
 	public Behavior(String name)
 	{
 		super(name, Behavior.class);
+
 	}
 
 	/*

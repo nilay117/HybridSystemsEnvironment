@@ -9,18 +9,23 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
+import edu.ucsc.cross.hse.core.component.constructors.DataSet;
+import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
-public class ComponentConfigurer
+public class Ops
 {
 
-	private static HashMap<Component, ComponentConfigurer> components = new HashMap<Component, ComponentConfigurer>();
+	protected static HashMap<Component, Ops> components = new HashMap<Component, Ops>();
 
 	public Component component;
 
-	public ComponentConfigurer(Component component)
+	public Ops(Component component)
 	{
 		this.component = component;
+		addToMap();
+		// getConfigurer(component);
+		// component.hierarchy.
 	}
 
 	@CoreComponent
@@ -54,7 +59,7 @@ public class ComponentConfigurer
 
 	}
 
-	public static ComponentConfigurer getConfigurer(Component component)
+	public static Ops getConfigurer(Component component)
 	{
 		if (components.containsKey(component))
 		{
@@ -63,7 +68,7 @@ public class ComponentConfigurer
 		} else
 		{
 
-			ComponentConfigurer config = new ComponentConfigurer(component);
+			Ops config = new Ops(component);
 			components.put(component, config);
 			return config;
 
@@ -80,7 +85,7 @@ public class ComponentConfigurer
 		component.initialized = initialized;
 	}
 
-	public void resetHierarchy()
+	protected void resetHierarchy()
 	{
 		component.hierarchy = new Hierarchy(component);
 	}
@@ -98,8 +103,50 @@ public class ComponentConfigurer
 			component.initialized = (true);
 		}
 	}
+
 	// public GlobalHybridSystem getEnvironment()
 	// {
 	// return environment;
 	// }
+	public boolean getIfData()
+	{
+		try
+		{
+			Data d = Data.class.cast(component);
+			return true;
+		} catch (Exception e)
+		{
+			return false;
+		}
+	}
+
+	/*
+	 * Toggles whether the data contained in the data set is simulated or not
+	 */
+	public void setSimulated(boolean simulate)
+	{
+		try
+		{
+			DataSet data_set = (DataSet) component;
+
+			boolean uninitialized = true;
+			if (isInitialized() != null)
+			{
+				uninitialized = uninitialized && !isInitialized();
+
+			}
+			if (uninitialized)
+			{
+				// component.properties.se
+			}
+		} catch (Exception e)
+		{
+
+		}
+	}
+
+	private void addToMap()
+	{
+		components.put(component, this);
+	}
 }

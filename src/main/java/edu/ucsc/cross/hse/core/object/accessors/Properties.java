@@ -13,6 +13,10 @@ public class Properties
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB
 							// Internal SSD" or "Crazyflie Nano 2.0"
 
+	protected boolean simulated; // flag indicating if contained data is
+	// simulated
+	// or not
+
 	public Properties(String title, Class<?> classification)
 	{
 		this.title = title;
@@ -49,6 +53,19 @@ public class Properties
 	public Class<?> getBaseComponentClass()
 	{
 		return baseComponentClass;
+	}
+
+	/*
+	 * Flag indicating whether the data should be simulated or not
+	 */
+	public boolean isSimulated()
+	{
+		return simulated;
+	}
+
+	protected void setSimulated(boolean sim)
+	{
+		simulated = sim;
 	}
 
 }

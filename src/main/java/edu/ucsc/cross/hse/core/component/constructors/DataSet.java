@@ -19,9 +19,6 @@ public abstract class DataSet extends Component// implements
 												// Initializer//DataSetProperties
 {
 
-	private boolean simulated; // flag indicating if contained data is simulated
-								// or not
-
 	/*
 	 * Constructor that gives the set the generic name "Data Set"
 	 */
@@ -48,31 +45,6 @@ public abstract class DataSet extends Component// implements
 	{
 		super(title, DataSet.class);
 		this.simulated = simulated;
-	}
-
-	/*
-	 * Flag indicating whether the data should be simulated or not
-	 */
-	public boolean isSimulated()
-	{
-		return simulated;
-	}
-
-	/*
-	 * Toggles whether the data contained in the data set is simulated or not
-	 */
-	public static void setSimulated(DataSet data_set, boolean simulate)
-	{
-		boolean uninitialized = true;
-		if (Component.isInitialized(data_set) != null)
-		{
-			uninitialized = uninitialized && !Component.isInitialized(data_set);
-
-		}
-		if (uninitialized)
-		{
-			data_set.simulated = (simulate);
-		}
 	}
 
 }

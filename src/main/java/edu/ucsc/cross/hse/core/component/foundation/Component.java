@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import bs.commons.objects.access.CoreComponent;
+import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.data.DataOperator;
 import edu.ucsc.cross.hse.core.component.system.GlobalAccessor;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
@@ -22,13 +24,17 @@ public abstract class Component implements Initializer
 {
 
 	@CoreComponent
-	protected String environmentKey;
+	String environmentKey;
 	// @CoreComponent
 	// protected GlobalHybridSystem environment; // environment where the
 	// component is located
 	@CoreComponent
 	protected Boolean initialized; // flag indicating if component has been
 									// initialized or not
+
+	protected boolean simulated; // flag indicating if contained data is
+	// simulated
+	// or not
 
 	@CoreComponent
 	protected Properties properties; // properties of the component
@@ -60,25 +66,39 @@ public abstract class Component implements Initializer
 	public Component(String title)
 	{
 		setup(title, Component.class);
+
 	}
 
-	public ArrayList<Component> getComponents(boolean include_children)
+	/*
+	 * Adds a number of sub-components to this component. This is used to add
+	 * components that are not explicitly defined in the main class, which
+	 * allows for variations without modifying the main component code itself.
+	 * This method allows any number of duplicate components to be added
+	 * 
+	 * @param component - component to be added
+	 * 
+	 * @param quantity - number of components to be added
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Component> void addComponent(T component, Integer... quantity)
 	{
-		return hierarchy.getComponents(include_children);
+		Integer num = 1;
+		if (quantity.length > 0)
+		{
+			num = quantity[0];
+		}
+		hierarchy.addComponent(component);
+	}
+
+	public ArrayList<Component> getComponents(boolean include_children, Class<?>... matching_classes)
+	{
+		return hierarchy.getComponents(include_children, matching_classes);
 	}
 
 	public <T> ArrayList<T> getComponents(Class<T> output_class, boolean include_children, Class<?>... matching_classes)
 	{
 		return hierarchy.getComponents(output_class, include_children, matching_classes);
 	}
-
-	// @SuppressWarnings("unchecked")
-	// public <T> ArrayList<Component> getMatchingComponents(Class<T>
-	// component_class, boolean include_children)
-	// {
-	// return hierarchy.getMatchingComponents(component_class,
-	// include_children);
-	// }
 
 	public GlobalHybridSystem getEnvironment()
 	{
@@ -95,31 +115,10 @@ public abstract class Component implements Initializer
 		return hierarchy;
 	}
 
-	public static Boolean isInitialized(Component component)
-	{
-		return component.initialized;
-	}
-
-	public static void setInitialized(Component component, Boolean initialized)
-	{
-		component.initialized = initialized;
-	}
-
-	public void protectedInitialize()
-	{
-		if (!initialized)
-		{
-			initialize();
-			Component.setInitialized(this, true);
-		}
-	}
-
-	private void setup(String title, Class<?> base_class)
-	{
-		initialized = false;
-		properties = new Properties(title, base_class);
-		hierarchy = new Hierarchy(this);
-	}
+	// protected BackgroundOperations getConfigurer()
+	// {
+	// return BackgroundOperations.getConfigurer(this);
+	// }
 
 	public <T extends Component> T copy()
 	{
@@ -129,31 +128,31 @@ public abstract class Component implements Initializer
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		Hierarchy h = this.getHierarchy();
+		Hierarchy h = getHierarchy();
 
 		if (!include_data)
 		{
-			for (Data data : hierarchy.getSpecificComponents(Data.class, true))
+			for (Data data : hierarchy.getComponents(Data.class, true))
 			{
-				tempValues.put(data, Data.getStoredValues(data));
-				Data.setStoredValues(data, new HashMap<Double, T>());
+				tempValues.put(data, data.getStoredValues());
+				data.dataOps().setStoredValues(new HashMap<Double, T>());
 			}
 		}
 		if (!include_hierarchy)
 		{
 			hierarchy = null;
 		} // environment = null;
-		T copy = (T) ComponentConfigurer.cloner.deepClone(this);
+		T copy = (T) Ops.cloner.deepClone(this);
 		if (!include_hierarchy)
 		{
-			this.hierarchy = h;
+			hierarchy = h;
 		}
 		if (!include_data)
 		{
-			for (Data data : hierarchy.getSpecificComponents(Data.class, true))
+			for (Data data : getComponents(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
-				Data.setStoredValues(data, tempValues.get(data));
+				data.dataOps().setStoredValues(tempValues.get(data));
 			}
 		}
 
@@ -161,9 +160,27 @@ public abstract class Component implements Initializer
 
 	}
 
-	public ComponentConfigurer getConfigurer()
+	private void setup(String title, Class<?> base_class)
 	{
-		return ComponentConfigurer.getConfigurer(this);
+		initialized = false;
+		Ops.getConfigurer(this);
+		properties = new Properties(title, base_class);
+		hierarchy = new Hierarchy(this);
 	}
 
+	protected Ops compOps()
+	{
+		return Ops.getConfigurer(this);
+	}
+
+	protected DataOperator dataOps()
+	{
+		if (FieldFinder.containsSuper(this, Data.class))
+		{
+			return DataOperator.operator((Data) this);
+		} else
+		{
+			return null;
+		}
+	}
 }

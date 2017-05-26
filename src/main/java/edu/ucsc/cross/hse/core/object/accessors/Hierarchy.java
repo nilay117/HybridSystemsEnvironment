@@ -85,185 +85,6 @@ public class Hierarchy
 		}
 	}
 
-	public ArrayList<Component> getComponents(boolean include_children)
-	{
-		if (include_children)
-		{
-			return descendantComponents;
-
-		} else
-		{
-			return childComponents;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> ArrayList<T> getComponents(boolean include_children, Class<T> component_class)
-	{
-		ArrayList<T> components = new ArrayList<T>();
-		try
-		{
-			if (include_children)
-			{
-				components = (ArrayList<T>) descendantComponentMap.get(component_class);
-			} else
-			{
-				components = (ArrayList<T>) childComponentMap.get(component_class);
-			}
-		} catch (Exception noComponents)
-		{
-			components = null;
-		}
-		if (components == null)
-		{
-			ArrayList<Component> componentz = scanForComponents(component_class, include_children);
-			if (include_children)
-			{
-				descendantComponentMap.put(component_class, componentz);
-			} else
-			{
-				childComponentMap.put(component_class, componentz);
-			}
-			components = (ArrayList<T>) componentz;
-			// components = getComponents(component_class, include_children);
-		}
-
-		return components;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> ArrayList<T> getSpecificComponents(Class<T> component_class, boolean include_children,
-	Class<?>... matching_classes)
-	{
-		Class[] matchingClasses = matching_classes;
-		if (matchingClasses.length == 0)
-		{
-			matchingClasses = new Class[]
-			{ component_class };
-		}
-		ArrayList<T> componentMatches = new ArrayList<T>();
-		ArrayList<T> components = new ArrayList<T>();
-		for (Class<?> matchingClass : matching_classes)
-		{
-			try
-			{
-				if (include_children)
-				{
-					components = (ArrayList<T>) descendantComponentMap.get(matchingClass);
-				} else
-				{
-					components = (ArrayList<T>) childComponentMap.get(matchingClass);
-				}
-			} catch (Exception noComponents)
-			{
-				components = null;
-			}
-			if (components == null)
-			{
-
-				ArrayList<Component> componentz = scanForComponents(matchingClass, include_children);
-				if (include_children)
-				{
-					descendantComponentMap.put(matchingClass, componentz);
-				} else
-				{
-					childComponentMap.put(matchingClass, componentz);
-				}
-
-				componentMatches.addAll((ArrayList<T>) componentz);
-			}
-			// components = getComponents(component_class, include_children);
-		}
-		System.out.println(componentMatches.toString());
-
-		return componentMatches;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T> ArrayList<T> getSpecificComponents(Class<T> component_class, boolean include_children)
-	{
-		ArrayList<T> components = new ArrayList<T>();
-		try
-		{
-			if (include_children)
-			{
-				components = (ArrayList<T>) descendantComponentMap.get(component_class);
-			} else
-			{
-				components = (ArrayList<T>) childComponentMap.get(component_class);
-			}
-		} catch (Exception noComponents)
-		{
-			components = null;
-		}
-		if (components == null)
-		{
-			ArrayList<Component> componentz = scanForComponents(component_class, include_children);
-			if (include_children)
-			{
-				descendantComponentMap.put(component_class, componentz);
-			} else
-			{
-				childComponentMap.put(component_class, componentz);
-			}
-			components = (ArrayList<T>) componentz;
-			// components = getComponents(component_class, include_children);
-		}
-
-		return components;
-	}
-
-	public <T> ArrayList<Component> getMatchingComponents(Class<T> component_class, boolean include_children)
-	{
-		ArrayList<Component> components = new ArrayList<Component>();
-		if ((include_children && !descendantComponentMap.containsKey(component_class))
-		|| ((!include_children && !childComponentMap.containsKey(component_class))))
-		{
-			getSpecificComponents(component_class, include_children);
-		}
-		try
-		{
-			if (include_children)
-			{
-				components = descendantComponentMap.get(component_class);
-			} else
-			{
-				components = childComponentMap.get(component_class);
-			}
-		} catch (Exception noComponents)
-		{
-
-		}
-
-		return components;
-	}
-
-	public <T> ArrayList<Component> getMatchingComponentsz(Class<T> component_class, boolean include_children,
-	Class<?> filter_classes)
-	{
-		ArrayList<Component> components = new ArrayList<Component>();
-		if ((include_children && !descendantComponentMap.containsKey(component_class))
-		|| ((!include_children && !childComponentMap.containsKey(component_class))))
-		{
-			getSpecificComponents(component_class, include_children);
-		}
-		try
-		{
-			if (include_children)
-			{
-				components = descendantComponentMap.get(component_class);
-			} else
-			{
-				components = childComponentMap.get(component_class);
-			}
-		} catch (Exception noComponents)
-		{
-
-		}
-
-		return components;
-	}
-
 	private HashMap<Class<?>, ArrayList<Component>> getScopeMap(boolean global)
 	{
 		if (global)
@@ -275,7 +96,7 @@ public class Hierarchy
 		}
 	}
 
-	private void initializeContainers()
+	protected void initializeContainers()
 	{
 		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
 		childComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
@@ -512,6 +333,23 @@ public class Hierarchy
 		JAVA,
 		UNKNOWN;
 
+	}
+
+	public ArrayList<Component> getComponents(boolean include_children)
+	{
+		if (include_children)
+		{
+			return descendantComponents;
+
+		} else
+		{
+			return childComponents;
+		}
+	}
+
+	public ArrayList<Component> getComponents(boolean include_children, Class... classes)
+	{
+		return getComponents(Component.class, include_children, classes);
 	}
 
 	@SuppressWarnings("unchecked")

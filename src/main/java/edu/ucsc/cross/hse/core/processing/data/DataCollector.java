@@ -106,7 +106,10 @@ public class DataCollector extends ProcessorAccess
 	{
 		for (Data element : dataElementsToStore)
 		{
-			Data.storeValue(element, time);
+			if (element.save)
+			{
+				dataOps(element).storeValue(time);
+			}
 		}
 		// IO.out(getConsole().getDataElementStoreString(time, true));
 	}
@@ -135,7 +138,7 @@ public class DataCollector extends ProcessorAccess
 
 				if (CoreDataGroup.ALL_DATA.contains(element))
 				{
-					if (Data.isPreviousDataStored(element))
+					if (element.save)
 					{
 						dataElementsToStore.add(element);
 					}

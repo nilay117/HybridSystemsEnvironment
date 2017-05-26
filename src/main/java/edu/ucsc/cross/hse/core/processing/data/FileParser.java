@@ -25,8 +25,8 @@ public class FileParser extends ProcessorAccess
 	{
 		for (Component comp : getEnvironment().getComponents(true))
 		{
-			comp.getConfigurer().setEnvironment(null);
-			comp.getConfigurer().resetHierarchy();
+			// comp.getConfigurer().setEnvironment(null);
+			// comp.getConfigurer().resetHierarchy();
 		}
 		if (getSettings().getData().automaticallyStoreResults)
 		{
@@ -80,7 +80,7 @@ public class FileParser extends ProcessorAccess
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
 		for (Component componen : component.getComponents(true))
 		{
-			Component.setInitialized(componen, null);
+			componen.operations().setInitialized(null);
 			// try
 			// {
 			// Data<T> data = (Data) componen;
@@ -96,7 +96,7 @@ public class FileParser extends ProcessorAccess
 	public <T extends Component> void saveComponent(T component, String file_directory, String file_name)
 	{
 		prepareComponent(component);
-		component.getConfigurer().saveComponentToFile(file_directory, file_name);
+		component.operations().saveComponentToFile(file_directory, file_name);
 	}
 
 	private <T extends Component> void prepareComponent(T component)

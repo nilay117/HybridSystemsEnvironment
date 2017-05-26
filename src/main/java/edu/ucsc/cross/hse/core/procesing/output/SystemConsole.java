@@ -78,7 +78,7 @@ public class SystemConsole extends ProcessorAccess
 					systemNames.put(sysName, rootSystem);
 					storeString += "\n" + sysName + " - [";
 					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
-					for (Component component : rootSystem.getHierarchy().getSpecificComponents(DataSet.class, true))
+					for (Component component : rootSystem.getHierarchy().getComponents(DataSet.class, true))
 					{
 						DataSet dataSet = (DataSet) component;
 						String dataSetName = "";// StringFormatter.getAppendedName(dataSet.getProperties().getName(),
