@@ -38,6 +38,8 @@ public class ComputationSettings
 	// list of enumerator options which are printed in the output file to help
 	// with seection
 
+	public double handlingThresholdReductionFactor = 10.0;
+
 	// available of integrator types for use
 	public static enum IntegratorType
 	{
@@ -79,16 +81,16 @@ public class ComputationSettings
 
 		odeMaxStep = .1; // maximum step size for variable step integrator
 
-		odeScalAbsoluteTolerance = 1.0e-6; // absolute tolerance of the ode
+		odeScalAbsoluteTolerance = 1.0e-4; // absolute tolerance of the ode
 											// solver
 
-		odeScalRelativeTolerance = 1.0e-6; // relative tolerance of the ode
+		odeScalRelativeTolerance = 1.0e-4; // relative tolerance of the ode
 											// solver
 
-		ehMaxCheckInterval = .001; // event handler maximum interval to check
+		ehMaxCheckInterval = .0001; // event handler maximum interval to check
 									// for an event
 
-		ehConvergence = .001; // convergence threshold of an event
+		ehConvergence = .01; // convergence threshold of an event
 
 		ehMaxIterationCount = 10; // maximum number of iterations
 
@@ -98,7 +100,8 @@ public class ComputationSettings
 										// occurrs when a jump (unrecoverably)
 										// interrupts the ode
 
-		integrator = IntegratorType.DORMAND_PRINCE_853;
+		integrator = IntegratorType.DORMAND_PRINCE_54;// .EULER;//
+														// .DORMAND_PRINCE_853;
 
 	}
 

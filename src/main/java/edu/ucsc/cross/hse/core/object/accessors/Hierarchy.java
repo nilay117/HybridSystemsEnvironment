@@ -15,6 +15,11 @@ import edu.ucsc.cross.hse.core.component.constructors.Component;
 public class Hierarchy
 {
 
+	public Component getParentComponent()
+	{
+		return parentComponent;
+	}
+
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
 	@CoreComponent

@@ -10,6 +10,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
+import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.classification.DataType;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
@@ -41,45 +42,92 @@ public class Data<T> extends Component// DynamicData<T>
 	// Data Properties
 	protected boolean simulated; // flag indicating whether object is simulated
 	protected T element;
-
+	private UnitValue prejump;
 	// Access Functions
 
 	public T get()
 	{
-		return element;
+
+		try
+		{
+
+			if (getEnvironment().isJumpOccurring())
+			{
+
+				if (defaultUnit.equals(NoUnit.NONE))
+				{
+					if (element.equals(prejump.get(NoUnit.NONE)))
+					{
+						return (T) prejump.get(NoUnit.NONE);
+					} else
+					{
+						return element;
+					}
+				} else
+				{
+					UnitValue val = (UnitValue) element;
+					if (val.get(val.getUnit()).equals(((UnitValue) element).get(val.getUnit())))
+					{
+						return element;
+					} else
+					{
+						T oldValue = (T) ObjectCloner.xmlClone(element);
+						UnitValue oldVal = (UnitValue) oldValue;
+						oldVal.set(prejump.get(prejump.getUnit()), prejump.getUnit());
+						return oldValue;
+					}
+				}
+
+			} else
+			{
+				// if (1 > 0)
+				// {
+				return element;
+			}
+		} catch (Exception e)
+		{
+			// System.out.println(this.getHierarchy().getParentComponent().toString());
+			// e.printStackTrace();
+			return element;
+		}
+		// } else
+		// {
+		// return element;
+		// }
 	}
 
 	public void set(T element)
 	{
 		this.element = element;
-		if (element != null)
-		{
-			if (FieldFinder.containsSuper(get(), UnitValue.class) && FieldFinder.containsSuper(get(), UnitValue.class))
-			{
-				try
-				{
-					UnitValue currentVal = (UnitValue) get();
-					UnitValue newVal = (UnitValue) element;
-					currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
-				} catch (UnitException ue)
-				{
-					ue.printStackTrace();
-				}
-
-			} else
-			{
-				try
-				{
-					if (this.element.getClass().equals(element.getClass()))
-					{
-						this.element = element;
-					}
-				} catch (Exception ue)
-				{
-					ue.printStackTrace();
-				}
-			}
-		}
+		// if (element != null)
+		// {
+		// if (FieldFinder.containsSuper(get(), UnitValue.class) &&
+		// FieldFinder.containsSuper(get(), UnitValue.class))
+		// {
+		// try
+		// {
+		// UnitValue currentVal = (UnitValue) get();
+		// UnitValue newVal = (UnitValue) element;
+		// currentVal.set(newVal.get(newVal.getUnit()), newVal.getUnit());
+		// } catch (UnitException ue)
+		// {
+		// ue.printStackTrace();
+		// }
+		//
+		// } else
+		// {
+		// try
+		// {
+		// if (this.element.getClass().equals(element.getClass()))
+		// {
+		// this.element = element;
+		// }
+		// } catch (Exception ue)
+		// {
+		// ue.printStackTrace();
+		// }
+		// }
+		// }
 	}
 
 	public T getDt()
@@ -236,7 +284,8 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		// super(obj, type, name, description);
 		super(name, Data.class);
-		defaultUnit = null;
+		defaultUnit = NoUnit.NONE;
+
 		element = obj;
 		dataType = type;
 		derivative = cloneZeroDerivative(element);
@@ -245,19 +294,35 @@ public class Data<T> extends Component// DynamicData<T>
 		simulated = true;
 		save = save_default;
 		savedValues = new HashMap<Double, T>();
-		initialVal = new InitialValue<T>(get());
+		initialVal = new InitialValue<T>(obj);
 		cloneToStore = !isCopyRequiredOnSave(obj); // super.id().description().information.set(description);
 		try
 		{
 			if (obj.getClass().getSuperclass().equals(UnitValue.class))
 			{
-				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) get()).getUnit());
-				initialVal = new InitialValue<T>(get());
+				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) obj).getUnit());
+				// initialVal = new InitialValue<T>(get());
 
+				initialVal = new InitialValue<T>((T) ((UnitValue) obj).get(((UnitValue) obj).getUnit()));
+			} else
+
+			{
+				// defaultUnit = null;
+				initialVal = new InitialValue<T>(obj);
 			}
 		} catch (Exception badClass)
 		{
 			badClass.printStackTrace();
+			// defaultUnit = null;
+			initialVal = new InitialValue<T>(obj);
+		}
+		try
+		{
+			prejump = new UnitValue(obj, defaultUnit);
+		} catch (UnitException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		// TODO Auto-generated constructor stub
 	}
@@ -271,10 +336,16 @@ public class Data<T> extends Component// DynamicData<T>
 			{
 				try
 				{
-					((UnitValue) get()).set(((UnitValue) initialVal.getValue()).get(defaultUnit), defaultUnit);
+					if (initialVal.getValue().getClass().equals(UnitValue.class))
+					{
+						((UnitValue) get()).set(((UnitValue) initialVal.getValue()).get(defaultUnit), defaultUnit);
+					} else
+					{
+						((UnitValue) get()).set(initialVal.getValue(), defaultUnit);
+					}
 				} catch (UnitException badUnitOrValue)
 				{
-					set((T) initialVal.getValue());
+					set(initialVal.getValue());
 					badUnitOrValue.printStackTrace();
 				}
 			} else
@@ -284,7 +355,7 @@ public class Data<T> extends Component// DynamicData<T>
 					set((T) initialVal.getRange().getValue());
 				} catch (Exception ee)
 				{
-					set((T) initialVal.getValue());
+					initialVal = new InitialValue<T>(get());
 				}
 			}
 			Component.setInitialized(this, true);
@@ -373,6 +444,22 @@ public class Data<T> extends Component// DynamicData<T>
 
 	private void storePreJumpValue()
 	{
+		try
+		{
+			if (defaultUnit != NoUnit.NONE)
+			{
+				UnitValue val = (UnitValue) element;
+				Unit units = val.getUnit();
+
+				prejump.set(val.get(units), units);
+			} else
+			{
+				prejump.set(get(), NoUnit.NONE);
+			}
+		} catch (Exception e)
+		{
+
+		}
 		preJumpValue = getStoreValue();
 	}
 
@@ -414,4 +501,8 @@ public class Data<T> extends Component// DynamicData<T>
 		return element.save;
 	}
 
+	public static <S> void setStoredValues(Data<S> data, HashMap<Double, S> vals)
+	{
+		data.savedValues = vals;
+	}
 }

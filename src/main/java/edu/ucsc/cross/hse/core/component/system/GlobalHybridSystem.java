@@ -19,6 +19,9 @@ public class GlobalHybridSystem extends HybridSystem
 										// was launched and jump index
 	private Time earthStartTime;
 	private SettingConfigurations settings; // settings configuration
+	private boolean jumpOccurring; // flag indicating if a jump is
+									// currently
+	// occurring
 
 	public GlobalHybridSystem()
 	{
@@ -57,6 +60,7 @@ public class GlobalHybridSystem extends HybridSystem
 
 	private void initializeComponents()
 	{
+		jumpOccurring = false;
 		environmentTime = new HybridTime();
 		settings = SettingConfigurations.loadSettings();
 		Component.setEnvironment(this, this);
@@ -65,6 +69,17 @@ public class GlobalHybridSystem extends HybridSystem
 	@Override
 	public void initialize()
 	{
+		jumpOccurring = false;
 		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
+	}
+
+	public boolean isJumpOccurring()
+	{
+		return jumpOccurring;
+	}
+
+	public void setJumpOccurring(boolean jumpOccurring)
+	{
+		this.jumpOccurring = jumpOccurring;
 	}
 }

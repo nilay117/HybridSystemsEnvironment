@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.procesing.output;
 
 import java.util.HashMap;
 
+import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.access.CallerRetriever;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
@@ -124,7 +125,8 @@ public class SystemConsole extends ProcessorAccess
 	{
 		// System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" +
 		// getCallingClassName(1) + "] " + message);
-		System.out.println("[" + getCallingClassName(1) + "] " + message);
+		System.out.println(
+		"[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" + getCallingClassName(1) + "] " + message);
 
 	}
 

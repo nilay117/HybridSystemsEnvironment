@@ -225,10 +225,11 @@ public class ExecutionMonitor extends ProcessorAccess
 		{
 			this.getConsole().print(
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
+			getEnvironment().getSettings().computation().ehConvergence = getSettings().computation().ehConvergence
+			/ getSettings().computation().handlingThresholdReductionFactor;
 			getEnvironment().getSettings()
-			.computation().ehConvergence = getEnvironment().getSettings().computation().ehConvergence / 1.5;
-			getEnvironment().getSettings()
-			.computation().ehMaxCheckInterval = getEnvironment().getSettings().computation().ehMaxCheckInterval / 1.5;
+			.computation().ehMaxCheckInterval = getSettings().computation().ehMaxCheckInterval
+			/ getSettings().computation().handlingThresholdReductionFactor;
 			handledIssue = true;
 		}
 		return handledIssue;

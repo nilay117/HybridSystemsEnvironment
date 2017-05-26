@@ -16,13 +16,13 @@ public class ExecutionSettings
 								// trial
 
 	/*
-	 * Default values constructor
+	 * Default values constructorc
 	 */
 	public ExecutionSettings()
 	{
 		numberOfTrials = 1;
 		maxParallelExecutions = 1;
-		simDuration = 10.0;
+		simDuration = 25.0;
 		jumpLimit = 20;
 		runThreadded = true;
 	}

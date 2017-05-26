@@ -26,6 +26,13 @@ public class Environment extends ProcessorAccess// implements Environment
 		initializeComponents();
 	}
 
+	public Environment(String name)
+	{
+		super(null);
+		this.environmentContent = new GlobalHybridSystem(name);
+		initializeComponents();
+	}
+
 	public Environment(GlobalHybridSystem environment)
 	{
 		super(null);

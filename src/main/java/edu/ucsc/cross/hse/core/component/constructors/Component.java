@@ -2,12 +2,16 @@ package edu.ucsc.cross.hse.core.component.constructors;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.rits.cloning.Cloner;
 
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
+import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 import edu.ucsc.cross.hse.core.object.accessors.Properties;
@@ -22,9 +26,10 @@ import edu.ucsc.cross.hse.core.object.accessors.Properties;
 public abstract class Component implements Initializer
 {
 
+	public static Cloner cloner = new Cloner();
 	@CoreComponent
-	private GlobalHybridSystem environment; // environment where the
-											// component is located
+	protected GlobalHybridSystem environment; // environment where the
+												// component is located
 	@CoreComponent
 	private Boolean initialized; // flag indicating if component has been
 									// initialized or not
@@ -33,7 +38,7 @@ public abstract class Component implements Initializer
 	private Properties properties; // properties of the component
 
 	@CoreComponent
-	private Hierarchy hierarchy; // properties of the component
+	protected Hierarchy hierarchy; // properties of the component
 
 	/*
 	 * Constructor that defines the name and base class of the component
@@ -128,8 +133,8 @@ public abstract class Component implements Initializer
 
 	public static void setEnvironment(Component component, GlobalHybridSystem environment)
 	{
-		GlobalHybridSystem accessor = environment;
-		component.environment = accessor;
+		// GlobalHybridSystem accessor = environment;
+		component.environment = environment;// accessor;
 	}
 
 	public void protectedInitialize()
@@ -146,5 +151,60 @@ public abstract class Component implements Initializer
 		initialized = false;
 		properties = new Properties(title, base_class);
 		hierarchy = new Hierarchy(this);
+	}
+
+	public static <T extends Component> T duplicateComponentStates(T original)
+	{
+		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
+		Hierarchy h = original.getHierarchy();
+		GlobalHybridSystem s = original.getEnvironment();
+		for (Data data : original.getComponents(Data.class, true))
+		{
+			tempValues.put(data, Data.getStoredValues(data));
+			Data.setStoredValues(data, null);
+		}
+		// original.hierarchy = null;
+		// original.environment = null;
+		T copy = (T) ObjectCloner.xmlClone(original);
+
+		copy.hierarchy = h;
+		copy.environment = s;
+		// original.hierarchy = h;
+		// original.environment = s;
+		for (Data data : original.getComponents(Data.class, true))
+		{
+			// tempValues.put(data, Data.getStoredValues(data));
+			Data.setStoredValues(data, tempValues.get(data));
+		}
+		return copy;
+
+	}
+
+	public <T extends Component> T copy()
+	{
+		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
+		Hierarchy h = getHierarchy();
+		GlobalHybridSystem s = getEnvironment();
+		for (Data data : getComponents(Data.class, true))
+		{
+			tempValues.put(data, Data.getStoredValues(data));
+			Data.setStoredValues(data, new HashMap<Double, T>());
+		}
+		// original.hierarchy = null;
+		// original.environment = null;
+		T copy = (T) cloner.deepClone(this);
+
+		// copy.hierarchy = h;
+		// copy.environment = s;
+		// original.hierarchy = h;
+		// original.environment = s;
+		for (Data data : this.getComponents(Data.class, true))
+		{
+			// tempValues.put(data, Data.getStoredValues(data));
+			Data.setStoredValues(data, tempValues.get(data));
+		}
+
+		return copy;
+
 	}
 }

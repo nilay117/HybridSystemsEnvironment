@@ -47,7 +47,7 @@ public class ComponentDirector extends ProcessorAccess
 		}
 	}
 
-	public void executeAllOccurringJumps()
+	public void executeAllOccurringJumpsUnprotected()
 	{
 		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
@@ -59,8 +59,26 @@ public class ComponentDirector extends ProcessorAccess
 		}
 		if (getEnvironment().jumpOccurring())
 		{
-			executeAllOccurringJumps();
+			// executeAllOccurringJumps();
 		}
+	}
+
+	public void executeAllOccurringJumps()
+	{
+		getEnvironment().setJumpOccurring(true);
+		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
+		storeRelavantPreJumpData(jumpComponents);
+		for (Component component : jumpComponents)
+		{
+			DynamicalModel dynamics = ((DynamicalModel) component);
+			dynamics.jumpMap();
+			this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
+		}
+		if (getEnvironment().jumpOccurring())
+		{
+			// executeAllOccurringJumps();
+		}
+		getEnvironment().setJumpOccurring(false);
 	}
 
 	public void storeRelavantPreJumpData(ArrayList<Component> jump_components)
@@ -73,7 +91,7 @@ public class ComponentDirector extends ProcessorAccess
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
 					// System.out.println(data.get().toString());
-					// Data.storePreJumpValue(data);
+					Data.storePreJumpValue(data);
 				}
 			}
 		}
@@ -82,8 +100,10 @@ public class ComponentDirector extends ProcessorAccess
 	void prepareComponents()
 	{
 		Hierarchy.constructTree(getEnvironment().getHierarchy());
-		initializeComponents(Data.class);
+		linkEnvironment();
 		initializeComponents();
+		// initializeComponents(Data.class);
+		// initializeComponents();
 		linkEnvironment();
 	}
 
