@@ -165,7 +165,7 @@ public class ExecutionMonitor extends ProcessorAccess
 	Double start_time, Double duration, double[] ode_vector)
 	{
 		Double endTime = 0.0;
-		getComponents().performAllTasks(true);
+		// getComponents().performAllTasks(true);
 		while (endTime < duration)
 		{
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
@@ -190,7 +190,7 @@ public class ExecutionMonitor extends ProcessorAccess
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
-			getComponents().performAllTasks(true);
+			getEnvironment().performTasks(getEnvironment().jumpOccurring());// getComponents().performAllTasks(true);
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
@@ -210,8 +210,10 @@ public class ExecutionMonitor extends ProcessorAccess
 		{
 			this.getConsole()
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
-			getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep / 2;
-			getSettings().computation().odeMinStep = getSettings().computation().odeMinStep / 2;
+			getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep
+			/ getSettings().computation().stepSizeReductionFactor;
+			getSettings().computation().odeMinStep = getSettings().computation().odeMinStep
+			/ getSettings().computation().stepSizeReductionFactor;
 			handledIssue = true;
 		}
 		return handledIssue;
@@ -256,7 +258,7 @@ public class ExecutionMonitor extends ProcessorAccess
 
 	// Debugger
 
-	private Boolean printStack = true;
+	private Boolean printStack = false;
 	private Thread stackPrinter;
 	long lastPrint = System.currentTimeMillis();
 

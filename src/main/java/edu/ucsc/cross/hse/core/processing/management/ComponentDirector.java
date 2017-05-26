@@ -6,9 +6,10 @@ import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
+import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.foundation.Ops;
+import edu.ucsc.cross.hse.core.component.foundation.ComponentOperator;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
@@ -66,19 +67,21 @@ public class ComponentDirector extends ProcessorAccess
 
 	public void executeAllOccurringJumps()
 	{
-		getEnvironment().setJumpOccurring(true);
+
 		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
+		getEnvironment().setJumpOccurring(true);
 		for (Component component : jumpComponents)
 		{
 			DynamicalModel dynamics = ((DynamicalModel) component);
 			dynamics.jumpMap();
 			this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
 		}
-		if (getEnvironment().jumpOccurring())
-		{
-			// executeAllOccurringJumps();
-		}
+		// if (getEnvironment().jumpOccurring())
+		// {
+		// getEnvironment().setJumpOccurring(false);
+		// executeAllOccurringJumps();
+		// }
 		getEnvironment().setJumpOccurring(false);
 	}
 
@@ -93,7 +96,7 @@ public class ComponentDirector extends ProcessorAccess
 				{
 					// System.out.println(data.get().toString());
 					dataOps(data).storePreJumpValue();
-					;
+
 				}
 			}
 		}
@@ -106,6 +109,7 @@ public class ComponentDirector extends ProcessorAccess
 		linkEnvironment();
 		// initializeComponents();
 		initializeComponents(Data.class);
+		initializeComponents(DataSet.class);
 		initializeComponents();
 		linkEnvironment();
 		// getEnvironment().sy
@@ -143,12 +147,12 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : allComponents)
 		{
-			compOps(component).setEnvironment(compOps(getEnvironment()).getEnvironmentKey());
+			compOps(component).setEnvironment(getEnvironment().toString());
 		}
 	}
 
-	private Ops operate(Component component)
+	private ComponentOperator operate(Component component)
 	{
-		return Ops.getConfigurer(component);
+		return ComponentOperator.getConfigurer(component);
 	}
 }

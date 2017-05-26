@@ -5,14 +5,21 @@ import edu.ucsc.cross.hse.core.component.foundation.Component;
 public class TestSystem extends Component// HybridSystem
 {
 
-	public final TestState state;
-	public final TestDynamics dynamics;
+	public TestState stsate;
+	public TestDynamics testdynamics;
 
 	public TestSystem()
 	{
 		super("Test System");
-		state = new TestState();
-		dynamics = new TestDynamics(state);
+		stsate = new TestState();
+		testdynamics = new TestDynamics(stsate);
+	}
+
+	public TestSystem(String name)
+	{
+		super(name);
+		stsate = new TestState();
+		testdynamics = new TestDynamics(stsate);
 	}
 
 	@Override

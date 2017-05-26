@@ -2,9 +2,9 @@ package edu.ucsc.cross.hse.core.component.data;
 
 import java.util.HashMap;
 
-import edu.ucsc.cross.hse.core.component.foundation.Ops;
+import edu.ucsc.cross.hse.core.component.foundation.ComponentOperator;
 
-public class DataOperator extends Ops
+public class DataOperator extends ComponentOperator
 {
 
 	private static HashMap<Data, DataOperator> dataOperators = new HashMap<Data, DataOperator>();
@@ -48,16 +48,6 @@ public class DataOperator extends Ops
 	public <S> void storeValue(Double time, boolean override_save)
 	{
 		element.storeValue(time, override_save);
-	}
-
-	public boolean isSimulated()
-	{
-		return element.simulated;
-	}
-
-	public void setSimulated(boolean simulated)
-	{
-		element.simulated = simulated;
 	}
 
 	public boolean isPreviousDataStored()

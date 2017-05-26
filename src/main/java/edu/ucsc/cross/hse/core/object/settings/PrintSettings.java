@@ -23,7 +23,7 @@ public class PrintSettings
 		printStoreDataIndicator = true;
 		printProgressUpdates = true;
 		printDiscreteEventIndicator = true;
-		printStoreDataReport = true;
+		printStoreDataReport = false;
 	}
 
 }

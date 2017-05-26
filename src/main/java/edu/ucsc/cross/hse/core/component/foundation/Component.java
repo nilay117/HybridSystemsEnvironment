@@ -24,7 +24,7 @@ public abstract class Component implements Initializer
 {
 
 	@CoreComponent
-	String environmentKey;
+	protected String environmentKey;
 	// @CoreComponent
 	// protected GlobalHybridSystem environment; // environment where the
 	// component is located
@@ -65,7 +65,7 @@ public abstract class Component implements Initializer
 	 */
 	public Component(String title)
 	{
-		setup(title, Component.class);
+		setup(title, this.getClass());
 
 	}
 
@@ -87,7 +87,7 @@ public abstract class Component implements Initializer
 		{
 			num = quantity[0];
 		}
-		hierarchy.addComponent(component);
+		hierarchy.addComponent(component, num);
 	}
 
 	public ArrayList<Component> getComponents(boolean include_children, Class<?>... matching_classes)
@@ -142,7 +142,7 @@ public abstract class Component implements Initializer
 		{
 			hierarchy = null;
 		} // environment = null;
-		T copy = (T) Ops.cloner.deepClone(this);
+		T copy = (T) ComponentOperator.cloner.deepClone(this);
 		if (!include_hierarchy)
 		{
 			hierarchy = h;
@@ -163,14 +163,14 @@ public abstract class Component implements Initializer
 	private void setup(String title, Class<?> base_class)
 	{
 		initialized = false;
-		Ops.getConfigurer(this);
+		ComponentOperator.getConfigurer(this);
 		properties = new Properties(title, base_class);
 		hierarchy = new Hierarchy(this);
 	}
 
-	protected Ops compOps()
+	protected ComponentOperator compOps()
 	{
-		return Ops.getConfigurer(this);
+		return ComponentOperator.getConfigurer(this);
 	}
 
 	protected DataOperator dataOps()

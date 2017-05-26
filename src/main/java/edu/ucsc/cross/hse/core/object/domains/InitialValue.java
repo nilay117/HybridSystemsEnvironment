@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hse.core.object.domains;
 
-import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
@@ -24,12 +23,16 @@ public class InitialValue<T>
 	private void assignInitialValue(T val)
 	{
 		value = val;
-		if (FieldFinder.containsSuper(val, UnitValue.class))
+
+		if (val.getClass().getSuperclass().equals(UnitValue.class))
 		{
 			unit = (Unit) ((UnitValue) val).getUnit();
 			try
 			{
-				min = max = (Double) ((UnitValue) val).get(unit);
+
+				Double minmax = (Double) ((UnitValue) val).get(unit);
+				min = minmax;
+				max = minmax;
 			} catch (UnitException e)
 			{
 				// TODO Auto-generated catch block
@@ -82,7 +85,11 @@ public class InitialValue<T>
 	@SuppressWarnings("unchecked")
 	public T getValue()
 	{
-		Double generatedValue = Double.class.cast(((max - min) * Math.random()) + min);
+		Double generatedValue = 0.0;
+		if (min != null && max != null)
+		{
+			generatedValue = Double.class.cast(((max - min) * Math.random()) + min);
+		}
 		if (value.getClass().equals(Double.class))
 		{
 

@@ -22,7 +22,7 @@ public class TestDynamics extends Behavior
 	public boolean jumpSet()
 	{
 		boolean jumpOccurring = false;
-		if (state.hybrid.get() >= 10.0)
+		if (state.hybrid.get().kilometersPerSecond() >= 10.0)
 		{
 			jumpOccurring = true;
 		}
@@ -45,7 +45,7 @@ public class TestDynamics extends Behavior
 	@Override
 	public void jumpMap()
 	{
-		state.hybrid.set(Math.random() * 3 + Math.random() + 1);
+		state.hybrid.get().kilometersPerSecond(Math.random() * 3 + Math.random() + 1);
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package edu.ucsc.cross.hse.core.component.system;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
-import edu.ucsc.cross.hse.core.component.foundation.Ops;
 import edu.ucsc.cross.hse.core.object.domains.HybridTime;
 import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 
@@ -67,8 +66,9 @@ public class GlobalHybridSystem extends HybridSystem
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
 		settings = SettingConfigurations.loadSettings();
-		Ops.getConfigurer(this).setEnvironment(this.toString());
+		// ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 		GlobalAccessor.addGlobalHybridSystem(this);
+		this.compOps().setEnvironment(this.toString());
 	}
 
 	@Override

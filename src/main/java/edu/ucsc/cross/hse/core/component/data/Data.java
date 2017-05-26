@@ -15,6 +15,7 @@ import edu.ucsc.cross.hse.core.component.classification.DataType;
 import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.object.domains.InitialValue;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
+import edu.ucsc.cross.hse.core.procesing.utils.CloneUtil;
 
 /*
  * This class protects and manages a data object to ensure that the correct
@@ -40,7 +41,7 @@ public class Data<T> extends Component// DynamicData<T>
 	private T preJumpValue; // stored pre-jump value
 	public HashMap<Double, T> savedValues; // mapping of saved values
 	// Data Properties
-	protected boolean simulated; // flag indicating whether object is simulated
+
 	protected T element;
 	private UnitValue prejump;
 	// Access Functions
@@ -316,7 +317,6 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		// super(obj, type, name, description);
 		super(name, Data.class);
-		defaultUnit = NoUnit.NONE;
 
 		element = obj;
 		dataType = type;
@@ -325,17 +325,22 @@ public class Data<T> extends Component// DynamicData<T>
 		preJumpValue = (T) ObjectCloner.xmlClone(obj);
 		simulated = true;
 		save = save_default;
+		defaultUnit = NoUnit.NONE;
 		savedValues = new HashMap<Double, T>();
 		initialVal = new InitialValue<T>(obj);
 		cloneToStore = !isCopyRequiredOnSave(obj); // super.id().description().information.set(description);
 		try
 		{
+			System.out.println(obj.getClass().getSuperclass());
 			if (obj.getClass().getSuperclass().equals(UnitValue.class))
 			{
-				defaultUnit = (Unit) ObjectCloner.xmlClone(((UnitValue) obj).getUnit());
-				// initialVal = new InitialValue<T>(get());
+				UnitValue val = ((UnitValue) obj);
+				defaultUnit = (Unit) ((UnitValue) obj).getUnit();
+				initialVal = new InitialValue<T>(obj);
+				initialVal.setFixedValue((Double) val.get(defaultUnit), defaultUnit);
 
-				initialVal = new InitialValue<T>((T) ((UnitValue) obj).get(((UnitValue) obj).getUnit()));
+				// initialVal = new InitialValue<T>((T) ((UnitValue)
+				// obj).get(((UnitValue) obj).getUnit()));
 			} else
 
 			{
@@ -345,6 +350,7 @@ public class Data<T> extends Component// DynamicData<T>
 		} catch (Exception badClass)
 		{
 			badClass.printStackTrace();
+			defaultUnit = NoUnit.NONE;
 			// defaultUnit = null;
 			initialVal = new InitialValue<T>(obj);
 		}
@@ -362,33 +368,32 @@ public class Data<T> extends Component// DynamicData<T>
 	@Override
 	public void initialize()
 	{
-
-		if (FieldFinder.containsSuper(get(), UnitValue.class))
-		{
-			try
-			{
-				if (initialVal.getValue().getClass().equals(UnitValue.class))
-				{
-					((UnitValue) get()).set(((UnitValue) initialVal.getValue()).get(defaultUnit), defaultUnit);
-				} else
-				{
-					((UnitValue) get()).set(initialVal.getValue(), defaultUnit);
-				}
-			} catch (UnitException badUnitOrValue)
-			{
-				set(initialVal.getValue());
-				badUnitOrValue.printStackTrace();
-			}
-		} else
-		{
-			try
-			{
-				set(initialVal.getValue());
-			} catch (Exception ee)
-			{
-				initialVal = new InitialValue<T>(get());
-			}
-		}
+		set(initialVal.getValue());
+		// try
+		// {
+		// if (initialVal.getValue().getClass().equals(UnitValue.class))
+		// {
+		// ((UnitValue) get()).set(((UnitValue)
+		// initialVal.getValue()).get(defaultUnit), defaultUnit);
+		// } else
+		// {
+		// ((UnitValue) get()).set(initialVal.getValue(), defaultUnit);
+		// }
+		// } catch (UnitException badUnitOrValue)
+		// {
+		// set(initialVal.getValue());
+		// badUnitOrValue.printStackTrace();
+		// }
+		// // else
+		// {
+		// try
+		// {
+		// set(initialVal.getValue());
+		// } catch (Exception ee)
+		// {
+		// initialVal = new InitialValue<T>(get());
+		// }
+		// }
 	}
 
 	private static <T> boolean isCopyRequiredOnSave(T object)
@@ -432,7 +437,8 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return (T) ObjectCloner.xmlClone(get());
+				return CloneUtil.cloner.deepClone(get());
+				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{
 				return get();
@@ -464,7 +470,7 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 
 		}
-		preJumpValue = getStoreValue();
+		// preJumpValue = getStoreValue();
 	}
 
 	protected void storeValue(Double time)

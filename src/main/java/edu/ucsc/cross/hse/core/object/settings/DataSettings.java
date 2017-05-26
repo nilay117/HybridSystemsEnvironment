@@ -45,11 +45,12 @@ public class DataSettings
 	{
 
 		storePreJumpValue = true;
-		automaticallyStoreResults = true; // flag to store results automatically
-		storeAtEveryJump = false;
+		automaticallyStoreResults = false; // flag to store results
+											// automatically
+		storeAtEveryJump = true;
 		storeDataAtIncrements = true; // flag to determine whether data is
 										// stored at a specified increment,
-		dataStoreIncrement = 0.01;// .01; // time interval between data
+		dataStoreIncrement = 0.1;// .01; // time interval between data
 									// points
 									// stored
 		autoStoreDirectory = "./results"; // location where new directories will

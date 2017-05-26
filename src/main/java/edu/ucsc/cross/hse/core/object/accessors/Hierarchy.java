@@ -82,6 +82,7 @@ public class Hierarchy
 		{
 			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
 			storeComponent(clonedComponent, true);
+			initialClone = clonedComponent;
 		}
 	}
 
@@ -136,7 +137,7 @@ public class Hierarchy
 			processComponent(parent, (Component) field);
 			break;
 		case CONTAINER:
-			System.out.println(field.toString());
+			// System.out.println(field.toString());
 			processContainer(parent, field);
 			break;
 		default:
@@ -157,8 +158,9 @@ public class Hierarchy
 		}
 		for (Component component : allComponents)
 		{
-			System.out
-			.println(component.getClass().getSimpleName() + " " + component.getClass().getInterfaces().length);
+			// System.out
+			// .println(component.getClass().getSimpleName() + " " +
+			// component.getClass().getInterfaces().length);
 			if (FieldFinder.containsSuper(component, scan_class))
 			{
 				foundObjects.add(component);
@@ -178,7 +180,8 @@ public class Hierarchy
 	private void loadHierarchyComponents()
 	{
 		Object sysObj = self;
-		Class<? extends Object> superClass = sysObj.getClass();
+		Class superClass = sysObj.getClass();
+		// System.out.println(self.getClass());
 		ArrayList<Object> allFields = new ArrayList<Object>();
 		{
 			while (superClass != Object.class)
@@ -281,7 +284,8 @@ public class Hierarchy
 			if (FieldFinder.containsSuper(object, HashMap.class) || FieldFinder.containsSuper(object, ArrayList.class))
 			{
 				type = ObjectType.CONTAINER;
-			} else if (FieldFinder.containsSuper(object, Component.class))
+			} else if (FieldFinder.containsSuper(object, Component.class)
+			|| object.getClass().getSuperclass().equals(Component.class))
 			{
 				type = ObjectType.COMPONENT;
 			}

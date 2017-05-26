@@ -172,7 +172,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			UnitValue uv = (UnitValue) element.get();
 			try
 			{
-				return (Double) uv.get(uv.getUnit());
+				return (Double.class.cast(uv.get(uv.getUnit())));
 			} catch (UnitException e)
 			{
 				// TODO Auto-generated catch block

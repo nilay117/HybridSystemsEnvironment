@@ -74,7 +74,7 @@ public class Environment extends ProcessorAccess// implements Environment
 	public void start()
 	{
 		prepareEnvironment();
-		executionMonitor.runSim(false);
+		executionMonitor.runSim(true);
 	}
 
 	public void prepareEnvironment()

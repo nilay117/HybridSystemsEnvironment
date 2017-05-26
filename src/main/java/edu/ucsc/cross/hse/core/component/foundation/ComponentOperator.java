@@ -9,18 +9,17 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
-public class Ops
+public class ComponentOperator
 {
 
-	protected static HashMap<Component, Ops> components = new HashMap<Component, Ops>();
+	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
 
 	public Component component;
 
-	public Ops(Component component)
+	public ComponentOperator(Component component)
 	{
 		this.component = component;
 		addToMap();
@@ -59,7 +58,7 @@ public class Ops
 
 	}
 
-	public static Ops getConfigurer(Component component)
+	public static ComponentOperator getConfigurer(Component component)
 	{
 		if (components.containsKey(component))
 		{
@@ -68,7 +67,7 @@ public class Ops
 		} else
 		{
 
-			Ops config = new Ops(component);
+			ComponentOperator config = new ComponentOperator(component);
 			components.put(component, config);
 			return config;
 
@@ -104,10 +103,6 @@ public class Ops
 		}
 	}
 
-	// public GlobalHybridSystem getEnvironment()
-	// {
-	// return environment;
-	// }
 	public boolean getIfData()
 	{
 		try
@@ -120,29 +115,14 @@ public class Ops
 		}
 	}
 
-	/*
-	 * Toggles whether the data contained in the data set is simulated or not
-	 */
-	public void setSimulated(boolean simulate)
+	public boolean isSimulated()
 	{
-		try
-		{
-			DataSet data_set = (DataSet) component;
+		return component.simulated;
+	}
 
-			boolean uninitialized = true;
-			if (isInitialized() != null)
-			{
-				uninitialized = uninitialized && !isInitialized();
-
-			}
-			if (uninitialized)
-			{
-				// component.properties.se
-			}
-		} catch (Exception e)
-		{
-
-		}
+	public void setSimulated(boolean simulated)
+	{
+		component.simulated = simulated;
 	}
 
 	private void addToMap()
