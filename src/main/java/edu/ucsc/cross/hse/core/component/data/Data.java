@@ -13,7 +13,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.classification.DataType;
-import edu.ucsc.cross.hse.core.component.constructors.Component;
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 
 /*

@@ -6,8 +6,8 @@ import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
-import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
@@ -141,7 +141,7 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : allComponents)
 		{
-			component.getConfigurer().setEnvironment(getEnvironment().environmentKey);
+			component.getConfigurer().setEnvironment(getEnvironment().getConfigurer().getEnvironmentKey());
 		}
 	}
 

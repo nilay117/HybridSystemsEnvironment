@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.component.constructors;
 
 import java.util.ArrayList;
 
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 
 /*
@@ -105,7 +106,8 @@ public abstract class HybridSystem extends Component
 		ArrayList<Component> jumpComponents = new ArrayList<Component>();
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
-		for (Component localBehavior : getEnvironment().getMatchingComponents(DynamicalModel.class, true))
+		for (Component localBehavior : getHierarchy().getComponents(Component.class, true, DynamicalModel.class))// ,
+		// DynamicalModel.class))
 		{
 			try
 			{

@@ -9,7 +9,7 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core.component.constructors.Component;
+import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
 public class ComponentConfigurer
 {
@@ -67,6 +67,35 @@ public class ComponentConfigurer
 			components.put(component, config);
 			return config;
 
+		}
+	}
+
+	public Boolean isInitialized()
+	{
+		return component.initialized;
+	}
+
+	public void setInitialized(Boolean initialized)
+	{
+		component.initialized = initialized;
+	}
+
+	public void resetHierarchy()
+	{
+		component.hierarchy = new Hierarchy(component);
+	}
+
+	public String getEnvironmentKey()
+	{
+		return component.environmentKey;
+	}
+
+	public void protectedInitialize()
+	{
+		if (!component.initialized)
+		{
+			component.initialize();
+			component.initialized = (true);
 		}
 	}
 	// public GlobalHybridSystem getEnvironment()

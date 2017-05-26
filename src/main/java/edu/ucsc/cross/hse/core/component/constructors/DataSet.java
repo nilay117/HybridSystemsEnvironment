@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
+import edu.ucsc.cross.hse.core.component.foundation.Component;
+
 /*
  * This DataSet constructor is for defining a collection of data elements
  * similar to a complete state. It is mainly for organization, expandibility,

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core.component.constructors.Component;
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
@@ -25,8 +25,8 @@ public class FileParser extends ProcessorAccess
 	{
 		for (Component comp : getEnvironment().getComponents(true))
 		{
-			// Component.setEnvironment(comp, null);
-			// comp.hierarchy = null;
+			comp.getConfigurer().setEnvironment(null);
+			comp.getConfigurer().resetHierarchy();
 		}
 		if (getSettings().getData().automaticallyStoreResults)
 		{

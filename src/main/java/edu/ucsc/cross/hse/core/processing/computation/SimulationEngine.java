@@ -10,8 +10,8 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
-import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 

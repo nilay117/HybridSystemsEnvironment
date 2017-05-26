@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.access.CallerRetriever;
-import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
@@ -78,7 +78,7 @@ public class SystemConsole extends ProcessorAccess
 					systemNames.put(sysName, rootSystem);
 					storeString += "\n" + sysName + " - [";
 					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
-					for (Component component : rootSystem.getComponents(DataSet.class, true))
+					for (Component component : rootSystem.getHierarchy().getSpecificComponents(DataSet.class, true))
 					{
 						DataSet dataSet = (DataSet) component;
 						String dataSetName = "";// StringFormatter.getAppendedName(dataSet.getProperties().getName(),

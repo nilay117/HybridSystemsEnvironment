@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.component.constructors;
+package edu.ucsc.cross.hse.core.component.foundation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +6,6 @@ import java.util.HashMap;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
 import edu.ucsc.cross.hse.core.component.data.Data;
-import edu.ucsc.cross.hse.core.component.foundation.ComponentConfigurer;
 import edu.ucsc.cross.hse.core.component.system.GlobalAccessor;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
@@ -23,19 +22,19 @@ public abstract class Component implements Initializer
 {
 
 	@CoreComponent
-	public String environmentKey;
+	protected String environmentKey;
 	// @CoreComponent
 	// protected GlobalHybridSystem environment; // environment where the
 	// component is located
 	@CoreComponent
-	private Boolean initialized; // flag indicating if component has been
+	protected Boolean initialized; // flag indicating if component has been
 									// initialized or not
 
 	@CoreComponent
-	private Properties properties; // properties of the component
+	protected Properties properties; // properties of the component
 
 	@CoreComponent
-	public Hierarchy hierarchy; // properties of the component
+	protected Hierarchy hierarchy; // properties of the component
 
 	/*
 	 * Constructor that defines the name and base class of the component
@@ -68,17 +67,18 @@ public abstract class Component implements Initializer
 		return hierarchy.getComponents(include_children);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> ArrayList<T> getComponents(Class<T> component_class, boolean include_children)
+	public <T> ArrayList<T> getComponents(Class<T> output_class, boolean include_children, Class<?>... matching_classes)
 	{
-		return hierarchy.getComponents(component_class, include_children);
+		return hierarchy.getComponents(output_class, include_children, matching_classes);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <T> ArrayList<Component> getMatchingComponents(Class<T> component_class, boolean include_children)
-	{
-		return hierarchy.getMatchingComponents(component_class, include_children);
-	}
+	// @SuppressWarnings("unchecked")
+	// public <T> ArrayList<Component> getMatchingComponents(Class<T>
+	// component_class, boolean include_children)
+	// {
+	// return hierarchy.getMatchingComponents(component_class,
+	// include_children);
+	// }
 
 	public GlobalHybridSystem getEnvironment()
 	{
@@ -133,7 +133,7 @@ public abstract class Component implements Initializer
 
 		if (!include_data)
 		{
-			for (Data data : getComponents(Data.class, true))
+			for (Data data : hierarchy.getSpecificComponents(Data.class, true))
 			{
 				tempValues.put(data, Data.getStoredValues(data));
 				Data.setStoredValues(data, new HashMap<Double, T>());
@@ -150,7 +150,7 @@ public abstract class Component implements Initializer
 		}
 		if (!include_data)
 		{
-			for (Data data : this.getComponents(Data.class, true))
+			for (Data data : hierarchy.getSpecificComponents(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
 				Data.setStoredValues(data, tempValues.get(data));

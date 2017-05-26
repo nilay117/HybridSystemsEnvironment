@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
+import edu.ucsc.cross.hse.core.component.foundation.Component;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 
 /*
