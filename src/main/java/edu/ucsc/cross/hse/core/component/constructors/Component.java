@@ -1,17 +1,12 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.rits.cloning.Cloner;
-
-import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
-import bs.commons.objects.manipulation.ObjectCloner;
-import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.component.data.Data;
+import edu.ucsc.cross.hse.core.component.foundation.ComponentConfigurer;
 import edu.ucsc.cross.hse.core.component.system.GlobalAccessor;
 import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
@@ -27,8 +22,6 @@ import edu.ucsc.cross.hse.core.object.accessors.Properties;
 public abstract class Component implements Initializer
 {
 
-	@CoreComponent
-	public static Cloner cloner = new Cloner();
 	@CoreComponent
 	public String environmentKey;
 	// @CoreComponent
@@ -87,33 +80,6 @@ public abstract class Component implements Initializer
 		return hierarchy.getMatchingComponents(component_class, include_children);
 	}
 
-	public static Component getComponentFromFile(String file_path)
-	{
-		Component component = null;
-		try
-		{
-
-			component = (Component) XMLParser.getObject(file_path);
-		} catch (Exception badComponent)
-		{
-			badComponent.printStackTrace();
-		}
-		return component;
-
-	}
-
-	public void saveComponentToFile(String directory_path, String file_name)
-	{
-		Object clonedComponent = ObjectCloner.xmlClone(this);
-
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name), XMLParser.serializeObject(this));// clonedComponent));
-
-	}
-
-	// public GlobalHybridSystem getEnvironment()
-	// {
-	// return environment;
-	// }
 	public GlobalHybridSystem getEnvironment()
 	{
 		return GlobalAccessor.getGlobalSystem(environmentKey);
@@ -139,18 +105,6 @@ public abstract class Component implements Initializer
 		component.initialized = initialized;
 	}
 
-	public static void setEnvironmentLink(Component component, GlobalHybridSystem environment)
-	{
-		// GlobalHybridSystem accessor = environment;
-		// component.environment = environment;// accessor;
-	}
-
-	public static void setEnvironment(Component component, String environment_id)
-	{
-		// GlobalHybridSystem accessor = environment;
-		component.environmentKey = environment_id;// accessor;
-	}
-
 	public void protectedInitialize()
 	{
 		if (!initialized)
@@ -167,33 +121,6 @@ public abstract class Component implements Initializer
 		hierarchy = new Hierarchy(this);
 	}
 
-	public static <T extends Component> T duplicateComponentStates(T original)
-	{
-		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		Hierarchy h = original.getHierarchy();
-		GlobalHybridSystem s = original.getEnvironment();
-		for (Data data : original.getComponents(Data.class, true))
-		{
-			tempValues.put(data, Data.getStoredValues(data));
-			Data.setStoredValues(data, null);
-		}
-		original.hierarchy = null;
-		// original.environment = null;
-		T copy = (T) ObjectCloner.xmlClone(original);
-
-		// copy.hierarchy = h;
-		// copy.environment = s;
-		original.hierarchy = h;
-		// original.environment = s;
-		for (Data data : original.getComponents(Data.class, true))
-		{
-			// tempValues.put(data, Data.getStoredValues(data));
-			Data.setStoredValues(data, tempValues.get(data));
-		}
-		return copy;
-
-	}
-
 	public <T extends Component> T copy()
 	{
 		return copy(false, false);
@@ -202,8 +129,7 @@ public abstract class Component implements Initializer
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		Hierarchy h = getHierarchy();
-		GlobalHybridSystem s = getEnvironment();
+		Hierarchy h = this.getHierarchy();
 
 		if (!include_data)
 		{
@@ -217,8 +143,12 @@ public abstract class Component implements Initializer
 		{
 			hierarchy = null;
 		} // environment = null;
-		T copy = (T) cloner.deepClone(this);
-		if (include_data)
+		T copy = (T) ComponentConfigurer.cloner.deepClone(this);
+		if (!include_hierarchy)
+		{
+			this.hierarchy = h;
+		}
+		if (!include_data)
 		{
 			for (Data data : this.getComponents(Data.class, true))
 			{
@@ -227,21 +157,13 @@ public abstract class Component implements Initializer
 			}
 		}
 
-		if (!include_hierarchy)
-		{
-			hierarchy = h;
-		} // environment = null;
-			// copy.hierarchy = h;
-			// copy.environment = s;
-			// hierarchy = h;
-			// environment = s;
-			// for (Data data : this.getComponents(Data.class, true))
-			// {
-			// // tempValues.put(data, Data.getStoredValues(data));
-			// Data.setStoredValues(data, tempValues.get(data));
-			// }
-
 		return copy;
 
 	}
+
+	public ComponentConfigurer getConfigurer()
+	{
+		return ComponentConfigurer.getConfigurer(this);
+	}
+
 }

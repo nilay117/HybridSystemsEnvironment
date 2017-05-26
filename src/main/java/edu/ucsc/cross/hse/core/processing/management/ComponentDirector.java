@@ -103,9 +103,9 @@ public class ComponentDirector extends ProcessorAccess
 
 		linkEnvironment();
 		// initializeComponents();
-		// initializeComponents(Data.class);
+		initializeComponents(Data.class);
 		initializeComponents();
-		// linkEnvironment();
+		linkEnvironment();
 		// getEnvironment().sy
 	}
 
@@ -141,7 +141,7 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : allComponents)
 		{
-			Component.setEnvironment(component, getEnvironment().environmentKey);
+			component.getConfigurer().setEnvironment(getEnvironment().environmentKey);
 		}
 	}
 

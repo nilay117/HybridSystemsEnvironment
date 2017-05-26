@@ -96,7 +96,7 @@ public class FileParser extends ProcessorAccess
 	public <T extends Component> void saveComponent(T component, String file_directory, String file_name)
 	{
 		prepareComponent(component);
-		component.saveComponentToFile(file_directory, file_name);
+		component.getConfigurer().saveComponentToFile(file_directory, file_name);
 	}
 
 	private <T extends Component> void prepareComponent(T component)
