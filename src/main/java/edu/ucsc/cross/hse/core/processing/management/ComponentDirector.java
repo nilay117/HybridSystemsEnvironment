@@ -100,11 +100,13 @@ public class ComponentDirector extends ProcessorAccess
 	void prepareComponents()
 	{
 		Hierarchy.constructTree(getEnvironment().getHierarchy());
+
 		linkEnvironment();
-		initializeComponents();
-		// initializeComponents(Data.class);
 		// initializeComponents();
-		linkEnvironment();
+		// initializeComponents(Data.class);
+		initializeComponents();
+		// linkEnvironment();
+		// getEnvironment().sy
 	}
 
 	public void initializeComponents(Class<?>... components_to_initialize)
@@ -139,7 +141,7 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : allComponents)
 		{
-			Component.setEnvironment(component, getEnvironment());
+			Component.setEnvironment(component, getEnvironment().environmentKey);
 		}
 	}
 

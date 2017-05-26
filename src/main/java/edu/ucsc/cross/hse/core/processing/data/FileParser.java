@@ -1,6 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.data;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import bs.commons.io.file.FileSystemOperator;
@@ -22,6 +23,11 @@ public class FileParser extends ProcessorAccess
 
 	public void autoStoreData(GlobalHybridSystem data)
 	{
+		for (Component comp : getEnvironment().getComponents(true))
+		{
+			// Component.setEnvironment(comp, null);
+			// comp.hierarchy = null;
+		}
 		if (getSettings().getData().automaticallyStoreResults)
 		{
 			storeEnvironmentData(data);
@@ -39,7 +45,33 @@ public class FileParser extends ProcessorAccess
 		String fileName = data.getProperties().getDescription() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
-		FileSystemOperator.createOutputFile(new File(directory, fileName), XMLParser.serializeObject(data));
+		String out = XMLParser.serializeObject(processor);
+		FileSystemOperator.createOutputFile(new File(directory, fileName), out);
+		// FileSystemOperator.createOutputFile(new File(directory, "zipped_" +
+		// fileName), Zipper.compress(out).toString());
+		FileOutputStream fileStream = null;
+		try
+		{
+
+			try
+			{
+				fileStream = new FileOutputStream(new File(directory, "zipped.xml.gz"));
+				fileStream.write(Zipper.compressData(out));
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} finally
+		{
+			try
+			{
+				fileStream.close();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				/* We should probably delete the file now? */ }
+		}
 	}
 
 	@SuppressWarnings("unchecked")

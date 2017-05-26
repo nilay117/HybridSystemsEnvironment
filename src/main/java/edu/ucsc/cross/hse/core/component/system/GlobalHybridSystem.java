@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.component.system;
 
+import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.component.constructors.Component;
 import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
@@ -15,10 +16,13 @@ import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 public class GlobalHybridSystem extends HybridSystem
 {
 
+	@CoreComponent
 	private HybridTime environmentTime; // time relative to when the environment
-										// was launched and jump index
+	@CoreComponent // was launched and jump index
 	private Time earthStartTime;
+	@CoreComponent
 	private SettingConfigurations settings; // settings configuration
+	@CoreComponent
 	private boolean jumpOccurring; // flag indicating if a jump is
 									// currently
 	// occurring
@@ -63,12 +67,16 @@ public class GlobalHybridSystem extends HybridSystem
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
 		settings = SettingConfigurations.loadSettings();
-		Component.setEnvironment(this, this);
+		Component.setEnvironment(this, this.toString());
+		GlobalAccessor.addGlobalHybridSystem(this);
 	}
 
 	@Override
 	public void initialize()
 	{
+		// systems = new HashMap<String, GlobalHybridSystem>();
+		// this.environmentKey = this.toString();
+		// systems.put(environmentKey, this);
 		jumpOccurring = false;
 		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
 	}

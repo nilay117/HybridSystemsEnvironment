@@ -196,6 +196,7 @@ public class Hierarchy
 			processComponent(parent, (Component) field);
 			break;
 		case CONTAINER:
+			System.out.println(field.toString());
 			processContainer(parent, field);
 			break;
 		default:
@@ -302,7 +303,7 @@ public class Hierarchy
 	{
 		ArrayList<Object> components = new ArrayList<Object>();
 
-		if (!FieldFinder.containsInterface(container, CoreComponent.class))
+		if (!FieldFinder.containsSuper(container, CoreComponent.class))
 		{
 			try
 			{

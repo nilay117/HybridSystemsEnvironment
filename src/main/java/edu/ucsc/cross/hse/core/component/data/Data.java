@@ -45,7 +45,7 @@ public class Data<T> extends Component// DynamicData<T>
 	private UnitValue prejump;
 	// Access Functions
 
-	public T get()
+	public T getz()
 	{
 
 		try
@@ -90,6 +90,19 @@ public class Data<T> extends Component// DynamicData<T>
 			// e.printStackTrace();
 			return element;
 		}
+		// } else
+		// {
+		// return element;
+		// }
+	}
+
+	public T get()
+	{
+
+		// System.out.println(this.getHierarchy().getParentComponent().toString());
+		// e.printStackTrace();
+		return element;
+
 		// } else
 		// {
 		// return element;
