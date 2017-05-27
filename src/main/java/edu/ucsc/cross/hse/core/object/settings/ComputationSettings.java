@@ -38,8 +38,8 @@ public class ComputationSettings
 	// list of enumerator options which are printed in the output file to help
 	// with seection
 
-	public double handlingThresholdReductionFactor = 2.0;
-	public double stepSizeReductionFactor = 1.3;
+	public double handlingThresholdReductionFactor = 1.0;// 2.0;
+	public double stepSizeReductionFactor = 1.1;// .3;
 
 	// available of integrator types for use
 	public static enum IntegratorType
@@ -76,7 +76,7 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .001; // ode step size if using a fixed step integrator, or
+		odeMinStep = .1; // ode step size if using a fixed step integrator, or
 							// minimum ode step size of a
 		// variable step integrator
 
@@ -88,10 +88,10 @@ public class ComputationSettings
 		odeScalRelativeTolerance = 1.0e-6; // relative tolerance of the ode
 											// solver
 
-		ehMaxCheckInterval = .001; // event handler maximum interval to check
+		ehMaxCheckInterval = .01; // event handler maximum interval to check
 									// for an event
 
-		ehConvergence = .001; // convergence threshold of an event
+		ehConvergence = .01; // convergence threshold of an event
 
 		ehMaxIterationCount = 10; // maximum number of iterations
 

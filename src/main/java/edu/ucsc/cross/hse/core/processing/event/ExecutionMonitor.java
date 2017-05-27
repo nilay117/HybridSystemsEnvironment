@@ -190,7 +190,9 @@ public class ExecutionMonitor extends ProcessorAccess
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
-			getEnvironment().performTasks(getEnvironment().jumpOccurring());// getComponents().performAllTasks(true);
+			// getEnvironment().performTasks(true);//
+			// getComponents().performAllTasks(true);
+			this.getComponents().performAllTasks(this.getEnvironment().jumpOccurring());
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

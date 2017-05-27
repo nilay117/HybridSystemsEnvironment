@@ -177,7 +177,7 @@ public abstract class Component implements Initializer
 	{
 		if (FieldFinder.containsSuper(this, Data.class))
 		{
-			return DataOperator.operator((Data) this);
+			return DataOperator.dataOp((Data) this);
 		} else
 		{
 			return null;

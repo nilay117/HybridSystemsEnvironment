@@ -93,7 +93,7 @@ public class SystemConsole extends ProcessorAccess
 									Data data = (Data) element;
 
 									storeString = storeString + ("{" + data.getProperties().getName() + " = "
-									+ Data.getStoredNumberValue(data, time) + "} ");
+									+ data.getStoredDoubleValue(time) + "} ");
 
 								} catch (Exception notElement)
 								{

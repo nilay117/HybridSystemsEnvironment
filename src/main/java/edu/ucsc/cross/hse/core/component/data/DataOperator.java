@@ -24,7 +24,7 @@ public class DataOperator extends ComponentOperator
 
 	}
 
-	public static DataOperator operator(Data data)
+	public static DataOperator dataOp(Data data)
 	{
 		if (dataOperators.containsKey(data))
 		{
@@ -70,25 +70,4 @@ public class DataOperator extends ComponentOperator
 		element.storePreJumpValue();
 	}
 
-	// /*
-	// * Toggles whether the data contained in the data set is simulated or not
-	// */
-	// public void simulated(boolean simulate)
-	// {
-	// boolean uninitialized = true;
-	// if (isInitialized() != null)
-	// {
-	// uninitialized = uninitialized && !isInitialized();
-	//
-	// }
-	// if (uninitialized)
-	// {
-	// set.s
-	// }
-	// }catch(
-	//
-	// Exception e)
-	// {
-	//
-	// }
 }

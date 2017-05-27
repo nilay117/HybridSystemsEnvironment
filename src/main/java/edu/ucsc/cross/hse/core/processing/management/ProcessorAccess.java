@@ -93,7 +93,7 @@ public abstract class ProcessorAccess
 
 	protected DataOperator dataOps(Data component)
 	{
-		return DataOperator.operator(component);
+		return DataOperator.dataOp(component);
 	}
 
 	// @Override

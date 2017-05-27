@@ -51,7 +51,7 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 	{
 		getComputationEngine().updateValues(y);
 		getEnvironment().getEnvironmentTime().setTime(t);
-		// this.getConsole().print(getConsole().getDiscreteEventIndication());
+		this.getConsole().print(getConsole().getDiscreteEventIndication());
 		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
 		{
 			flag = -1.0 * flag;
@@ -68,12 +68,7 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 	{
 		getComputationEngine().updateValues(y);
 		getEnvironment().getEnvironmentTime().setTime(t);
-
-		// getData().storeData(t - getSettings().getData().dataStoreIncrement,
-		// (true && getSettings().getData().storeAtEveryJump));
 		getComponents().performAllTasks(true);
-		// getData().storeData(t, (true &&
-		// getSettings().getData().storeAtEveryJump));
 		getComputationEngine().setODEValueVector(y);
 		y = getComputationEngine().getODEValueVector();
 

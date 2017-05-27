@@ -256,6 +256,6 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				// e.printStackTrace();
 			}
 		}
-
+		System.out.println("ODE Vector Length: " + odeIndex);
 	}
 }

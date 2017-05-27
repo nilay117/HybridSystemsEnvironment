@@ -22,7 +22,7 @@ public class ComponentOperator
 	public ComponentOperator(Component component)
 	{
 		this.component = component;
-		addToMap();
+		components.put(component, this);
 		// getConfigurer(component);
 		// component.hierarchy.
 	}
@@ -125,8 +125,4 @@ public class ComponentOperator
 		component.simulated = simulated;
 	}
 
-	private void addToMap()
-	{
-		components.put(component, this);
-	}
 }

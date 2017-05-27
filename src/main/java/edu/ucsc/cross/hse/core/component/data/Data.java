@@ -195,6 +195,23 @@ public class Data<T> extends Component// DynamicData<T>
 		return initialVal;
 	}
 
+	// Stored Data Access Functions
+	// ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+	// Stored Data Access Functions: these functions are protected instead of
+	// public because they access previosly stored data, which may or may not be
+	// allowed depending on the situation. If a vehicle is traveling around
+	// without a storage device or any means to record data, it would not have
+	// access to past states and information. If it were to have a storage
+	// device recording the states then a connector model can be implemented
+	// ß to allow the system to access the data
+	// ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	// Internal Operation Functions : everything below for the processing system
+	// only, it is not recommended to call these elsewhere unless trying to
+	// alter the standard behavior
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public Double getDoubleValue()
 	{
 		return getDoubleValue(null);
@@ -303,19 +320,26 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		save = store;
 	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	// Internal Operation Functions : everything below for the processing system
+	// Internal Operation Functions
+	// ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+	// The functions below are designed to be used by the processor in the
+	// background, there is no need to use any of these functions for normal
+	// operation. Using these is not recommended, any changes could disrupt the
+	// whole flow, but I'm guessing you are curious / adventerous like me so be
+	// my gues't if you'd like to work on some modifications or new features.
 	// only, it is not recommended to call these elsewhere unless trying to
 	// alter the standard behavior
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
 
-	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
-	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
-
+	/*
+	 * Constructor with almost all inputs possible. The important ones are obj,
+	 * type, and name, which are the default/initial value, dataType, and the
+	 * element name, respectively. description is optional and can be added
+	 * whenever more detail is required, the save_default flag can be specified
+	 * if desired, otherwise it will assume the default defined by the unit type
+	 */
 	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
 	{
-		// super(obj, type, name, description);
 		super(name, Data.class);
 
 		element = obj;
@@ -396,8 +420,29 @@ public class Data<T> extends Component// DynamicData<T>
 		// }
 	}
 
-	private static <T> boolean isCopyRequiredOnSave(T object)
+	/*
+	 * This list and changeable classes function determine what elements will
+	 * need to be cloned before being saved to ensure the right values are
+	 * stored. For example, a list would need to be copied because a list of
+	 * some sort that was saved without being copied will reflect any changes
+	 * made in the future unless the list is reinitialized. A value such as a
+	 * double can be saved without being copied because the stored pointer
+	 * points to the correct saved value even when a new value is stored. This
+	 * list below contains general classes that not need to be cloned to save
+	 */
+	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
+	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
+
+	/*
+	 * Determine if a copy is required to save a given object
+	 * 
+	 * @param object - object to be evaluated
+	 * 
+	 * @return true if a copy needs to be made, false otherwise
+	 */
+	public static <T> boolean isCopyRequiredOnSave(T object)
 	{
+
 		if (object != null)
 		{
 			return changableClasses.contains(object);
@@ -452,6 +497,10 @@ public class Data<T> extends Component// DynamicData<T>
 		element = preJumpValue;
 	}
 
+	/*
+	 * Store a copy of a value immediately before a jump occurs allowing
+	 * pre=jump value access even if the value is changed by another component
+	 */
 	protected void storePreJumpValue()
 	{
 		try

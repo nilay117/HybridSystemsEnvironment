@@ -9,7 +9,6 @@ import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.component.data.Data;
 import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.foundation.ComponentOperator;
 import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
 import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
 
@@ -28,11 +27,6 @@ public class ComponentDirector extends ProcessorAccess
 
 	}
 
-	public void performAllTasks()
-	{
-		performAllTasks(false);
-	}
-
 	public void performAllTasks(boolean jump_occurred)
 	{
 		if (jump_occurred)
@@ -49,22 +43,6 @@ public class ComponentDirector extends ProcessorAccess
 		}
 	}
 
-	public void executeAllOccurringJumpsUnprotected()
-	{
-		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
-		storeRelavantPreJumpData(jumpComponents);
-		for (Component component : jumpComponents)
-		{
-			DynamicalModel dynamics = ((DynamicalModel) component);
-			dynamics.jumpMap();
-			this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
-		}
-		if (getEnvironment().jumpOccurring())
-		{
-			// executeAllOccurringJumps();
-		}
-	}
-
 	public void executeAllOccurringJumps()
 	{
 
@@ -77,11 +55,6 @@ public class ComponentDirector extends ProcessorAccess
 			dynamics.jumpMap();
 			this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
 		}
-		// if (getEnvironment().jumpOccurring())
-		// {
-		// getEnvironment().setJumpOccurring(false);
-		// executeAllOccurringJumps();
-		// }
 		getEnvironment().setJumpOccurring(false);
 	}
 
@@ -94,7 +67,6 @@ public class ComponentDirector extends ProcessorAccess
 			{
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
-					// System.out.println(data.get().toString());
 					dataOps(data).storePreJumpValue();
 
 				}
@@ -105,14 +77,11 @@ public class ComponentDirector extends ProcessorAccess
 	void prepareComponents()
 	{
 		Hierarchy.constructTree(getEnvironment().getHierarchy());
-
 		linkEnvironment();
-		// initializeComponents();
 		initializeComponents(Data.class);
 		initializeComponents(DataSet.class);
 		initializeComponents();
 		linkEnvironment();
-		// getEnvironment().sy
 	}
 
 	public void initializeComponents(Class<?>... components_to_initialize)
@@ -127,32 +96,18 @@ public class ComponentDirector extends ProcessorAccess
 			}
 			if (initialize)
 			{
-				if (!compOps(component).isInitialized())
-				{
-					component.initialize();
-					compOps(component).setInitialized(true);
-
-				}
+				compOps(component).protectedInitialize();
 			}
 		}
 
 	}
 
-	protected void linkEnvironment()
+	public void linkEnvironment()
 	{
-		linkEnvironment(getEnvironment().getComponents(true));
-	}
-
-	public void linkEnvironment(ArrayList<Component> allComponents)
-	{
-		for (Component component : allComponents)
+		for (Component component : getEnvironment().getComponents(true))
 		{
 			compOps(component).setEnvironment(getEnvironment().toString());
 		}
 	}
 
-	private ComponentOperator operate(Component component)
-	{
-		return ComponentOperator.getConfigurer(component);
-	}
 }
