@@ -1,9 +1,8 @@
-package edu.ucsc.cross.hse.core.component.system;
+package edu.ucsc.cross.hse.core.framework.environment;
 
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
-import edu.ucsc.cross.hse.core.object.domains.HybridTime;
 import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 
 /*
@@ -12,7 +11,7 @@ import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class GlobalHybridSystem extends HybridSystem
+public class GlobalSystem extends HybridSystem
 {
 
 	@CoreComponent
@@ -20,30 +19,23 @@ public class GlobalHybridSystem extends HybridSystem
 	@CoreComponent // was launched and jump index
 	private Time earthStartTime;
 	@CoreComponent
-	private SettingConfigurations settings; // settings configuration
-	@CoreComponent
 	private boolean jumpOccurring; // flag indicating if a jump is
 									// currently
-	// occurring
+									// occurring
 
-	public GlobalHybridSystem()
+	public GlobalSystem()
 	{
 		super("Global Environment Hybrid Systems");
 		initializeComponents();
 	}
 
-	public GlobalHybridSystem(String environment_title)
+	public GlobalSystem(String environment_title)
 	{
 		super(environment_title);
 		initializeComponents();
 	}
 
 	// Access Functions
-
-	public SettingConfigurations getSettings()
-	{
-		return settings;
-	}
 
 	public HybridTime getEnvironmentTime()
 	{
@@ -55,17 +47,10 @@ public class GlobalHybridSystem extends HybridSystem
 		return earthStartTime;
 	}
 
-	// Configration Functionsß
-	public void setSettings(SettingConfigurations settings)
-	{
-		this.settings = settings;
-	}
-
 	private void initializeComponents()
 	{
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
-		settings = SettingConfigurations.loadSettings();
 		// ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 		GlobalAccessor.addGlobalHybridSystem(this);
 		this.compOps().setEnvironment(this.toString());

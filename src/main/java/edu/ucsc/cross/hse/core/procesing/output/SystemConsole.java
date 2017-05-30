@@ -5,8 +5,8 @@ import java.util.HashMap;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.access.CallerRetriever;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
-import edu.ucsc.cross.hse.core.component.data.Data;
-import edu.ucsc.cross.hse.core.component.foundation.Component;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 

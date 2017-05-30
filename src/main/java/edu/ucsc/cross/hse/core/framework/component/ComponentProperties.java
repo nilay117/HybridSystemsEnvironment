@@ -1,6 +1,6 @@
-package edu.ucsc.cross.hse.core.object.accessors;
+package edu.ucsc.cross.hse.core.framework.component;
 
-public class Properties
+public class ComponentProperties
 {
 
 	// Classification
@@ -17,7 +17,7 @@ public class Properties
 	// simulated
 	// or not
 
-	public Properties(String title, Class<?> classification)
+	public ComponentProperties(String title, Class<?> classification)
 	{
 		this.title = title;
 		this.classification = (classification);

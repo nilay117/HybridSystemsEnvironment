@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.object.domains;
+package edu.ucsc.cross.hse.core.framework.environment;
 
 public class HybridTime
 {

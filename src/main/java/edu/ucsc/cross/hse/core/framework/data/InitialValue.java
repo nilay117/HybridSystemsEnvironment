@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.object.domains;
+package edu.ucsc.cross.hse.core.framework.data;
 
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;

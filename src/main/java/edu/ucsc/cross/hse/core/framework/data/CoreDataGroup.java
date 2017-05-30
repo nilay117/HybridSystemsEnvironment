@@ -1,11 +1,7 @@
-package edu.ucsc.cross.hse.core.component.categorization;
+package edu.ucsc.cross.hse.core.framework.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import edu.ucsc.cross.hse.core.component.classification.DataGroup;
-import edu.ucsc.cross.hse.core.component.classification.DataType;
-import edu.ucsc.cross.hse.core.component.data.Data;
 
 public enum CoreDataGroup implements DataGroup
 {

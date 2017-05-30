@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.component.models;
+package edu.ucsc.cross.hse.core.framework.models;
 
 /*
  * This interface declares the functions needed to define a hybrid dynamical

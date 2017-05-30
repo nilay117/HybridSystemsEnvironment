@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
@@ -31,7 +32,7 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 		getEnvironment().getEnvironmentTime().setTime(t);
 
 		getComputationEngine().updateValues(y);
-		if (getEnvironment().jumpOccurring())
+		if (ComponentOperator.getConfigurer(getEnvironment()).jumpOccurring())
 		{
 			flag = -1 * flag;
 			toggles = toggles + 1;

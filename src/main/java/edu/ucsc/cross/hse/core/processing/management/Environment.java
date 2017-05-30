@@ -1,6 +1,11 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
-import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
+import bs.commons.objects.access.CoreComponent;
+import bs.commons.unitvars.values.Time;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalAccessor;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
+import edu.ucsc.cross.hse.core.framework.environment.HybridTime;
+import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataCollector;
@@ -11,36 +16,38 @@ public class Environment extends ProcessorAccess// implements Environment
 {
 
 	// Execution
-	GlobalHybridSystem environmentContent;
+	GlobalSystem environmentContent;
 	ComponentDirector elements;
 	DataCollector data;
 	SimulationEngine simulationEngine;
 	ExecutionMonitor executionMonitor;
 	FileParser fileParser;
 	SystemConsole outputPrinter; // system notification manager ie % complet
+	@CoreComponent
+	private SettingConfigurations settings; // settings configuration
 
 	public Environment()
 	{
 		super(null);
-		this.environmentContent = new GlobalHybridSystem();
+		this.environmentContent = new GlobalSystem();
 		initializeComponents();
 	}
 
 	public Environment(String name)
 	{
 		super(null);
-		this.environmentContent = new GlobalHybridSystem(name);
+		this.environmentContent = new GlobalSystem(name);
 		initializeComponents();
 	}
 
-	public Environment(GlobalHybridSystem environment)
+	public Environment(GlobalSystem environment)
 	{
 		super(null);
 		this.environmentContent = environment;
 		initializeComponents();
 	}
 
-	public GlobalHybridSystem getEnvironmentContent()
+	public GlobalSystem getEnvironmentContent()
 	{
 		return environmentContent;
 	}
@@ -55,7 +62,7 @@ public class Environment extends ProcessorAccess// implements Environment
 		return fileParser;
 	}
 
-	public void setEnvironmentContent(GlobalHybridSystem environmentContent)
+	public void setEnvironmentContent(GlobalSystem environmentContent)
 	{
 		this.environmentContent = environmentContent;
 	}
@@ -63,6 +70,7 @@ public class Environment extends ProcessorAccess// implements Environment
 	private void initializeComponents()
 	{
 		super.processor = this;
+		settings = SettingConfigurations.loadSettings();
 		simulationEngine = new SimulationEngine(this);
 		executionMonitor = new ExecutionMonitor(this);
 		data = new DataCollector(this);
@@ -83,6 +91,17 @@ public class Environment extends ProcessorAccess// implements Environment
 		elements.prepareComponents();
 		simulationEngine.initialize();
 		data.loadStoreStates();
+	}
+
+	public SettingConfigurations getSettings()
+	{
+		return settings;
+	}
+
+	// Configration Functionsß
+	public void setSettings(SettingConfigurations settings)
+	{
+		this.settings = settings;
 	}
 
 }

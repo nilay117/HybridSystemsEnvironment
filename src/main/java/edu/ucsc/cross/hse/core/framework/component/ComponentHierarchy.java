@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.object.accessors;
+package edu.ucsc.cross.hse.core.framework.component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,9 +10,8 @@ import java.util.Map;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
-import edu.ucsc.cross.hse.core.component.foundation.Component;
 
-public class Hierarchy
+public class ComponentHierarchy
 {
 
 	public Component getParentComponent()
@@ -46,7 +45,7 @@ public class Hierarchy
 	 * 
 	 * @param base_class - base class of the component
 	 */
-	public Hierarchy(Component self)
+	public ComponentHierarchy(Component self)
 	{
 		this.self = self;
 		setup();
@@ -314,14 +313,14 @@ public class Hierarchy
 		return values;
 	}
 
-	public static void constructTree(Hierarchy hierarchy)
+	public static void constructTree(ComponentHierarchy hierarchy)
 	{
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
-			Hierarchy.constructTree(component.getHierarchy());
+			ComponentHierarchy.constructTree(component.getHierarchy());
 			for (Component componentChild : component.getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);

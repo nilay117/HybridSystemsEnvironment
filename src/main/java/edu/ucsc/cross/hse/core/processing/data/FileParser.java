@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
-import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
@@ -21,7 +22,7 @@ public class FileParser extends ProcessorAccess
 		super(processor);
 	}
 
-	public void autoStoreData(GlobalHybridSystem data)
+	public void autoStoreData(GlobalSystem data)
 	{
 		for (Component comp : getEnvironment().getComponents(true))
 		{
@@ -34,7 +35,7 @@ public class FileParser extends ProcessorAccess
 		}
 	}
 
-	public void storeEnvironmentData(GlobalHybridSystem data)
+	public void storeEnvironmentData(GlobalSystem data)
 	{
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
@@ -80,7 +81,7 @@ public class FileParser extends ProcessorAccess
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
 		for (Component componen : component.getComponents(true))
 		{
-			componen.operations().setInitialized(null);
+			ComponentOperator.getConfigurer(componen).setInitialized(null);
 			// try
 			// {
 			// Data<T> data = (Data) componen;
@@ -96,13 +97,13 @@ public class FileParser extends ProcessorAccess
 	public <T extends Component> void saveComponent(T component, String file_directory, String file_name)
 	{
 		prepareComponent(component);
-		component.operations().saveComponentToFile(file_directory, file_name);
+		ComponentOperator.getConfigurer(component).saveComponentToFile(file_directory, file_name);
 	}
 
 	private <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		Hierarchy.constructTree(component.getHierarchy());
+		ComponentHierarchy.constructTree(component.getHierarchy());
 		// allComponents.add(component);
 		for (Component subComponent : component.getComponents(true))
 		{

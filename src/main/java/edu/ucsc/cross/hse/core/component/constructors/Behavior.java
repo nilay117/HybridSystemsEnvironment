@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
-import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
 /*
  * This class is a foundation for describing any dynamical model, action, or

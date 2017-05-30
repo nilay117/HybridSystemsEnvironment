@@ -1,10 +1,10 @@
 package edu.ucsc.cross.hse.core.processing.management;
 
-import edu.ucsc.cross.hse.core.component.data.Data;
-import edu.ucsc.cross.hse.core.component.data.DataOperator;
-import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.foundation.ComponentOperator;
-import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
@@ -48,7 +48,7 @@ public abstract class ProcessorAccess
 	}
 
 	// @Override
-	protected GlobalHybridSystem getEnvironment()
+	protected GlobalSystem getEnvironment()
 	{
 		return processor.environmentContent;
 	}
@@ -61,7 +61,7 @@ public abstract class ProcessorAccess
 
 	protected SettingConfigurations getSettings()
 	{
-		return processor.getEnvironmentContent().getSettings();
+		return processor.getSettings();
 	}
 
 	protected DataCollector getData()

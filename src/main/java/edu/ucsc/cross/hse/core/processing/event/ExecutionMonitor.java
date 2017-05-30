@@ -9,6 +9,7 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
 import bs.commons.objects.access.Protected;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.processing.management.Environment;
 import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
 
@@ -192,7 +193,7 @@ public class ExecutionMonitor extends ProcessorAccess
 			printOutUnresolvedIssues(e, problemResolved);
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(this.getEnvironment().jumpOccurring());
+			this.getComponents().performAllTasks(ComponentOperator.getConfigurer(getEnvironment()).jumpOccurring());
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
@@ -229,10 +230,9 @@ public class ExecutionMonitor extends ProcessorAccess
 		{
 			this.getConsole().print(
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
-			getEnvironment().getSettings().computation().ehConvergence = getSettings().computation().ehConvergence
+			getSettings().computation().ehConvergence = getSettings().computation().ehConvergence
 			/ getSettings().computation().handlingThresholdReductionFactor;
-			getEnvironment().getSettings()
-			.computation().ehMaxCheckInterval = getSettings().computation().ehMaxCheckInterval
+			getSettings().computation().ehMaxCheckInterval = getSettings().computation().ehMaxCheckInterval
 			/ getSettings().computation().handlingThresholdReductionFactor;
 			handledIssue = true;
 		}

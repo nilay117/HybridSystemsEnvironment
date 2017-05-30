@@ -1,8 +1,4 @@
-package edu.ucsc.cross.hse.core.component.categorization;
-
-import edu.ucsc.cross.hse.core.component.classification.DataType;
-import edu.ucsc.cross.hse.core.component.data.Data;
-import edu.ucsc.cross.hse.core.component.data.DataFactory;
+package edu.ucsc.cross.hse.core.framework.data;
 
 public enum CoreDataType implements DataType// ComponenClassification
 {

@@ -1,13 +1,13 @@
-package edu.ucsc.cross.hse.core.component.data;
+package edu.ucsc.cross.hse.core.framework.data;
 
 import java.util.HashMap;
 
-import edu.ucsc.cross.hse.core.component.foundation.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
 public class DataOperator extends ComponentOperator
 {
 
-	private static HashMap<Data, DataOperator> dataOperators = new HashMap<Data, DataOperator>();
+	protected static HashMap<Data, DataOperator> dataOperators = new HashMap<Data, DataOperator>();
 	Data element;
 
 	protected DataOperator(Data component)

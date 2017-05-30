@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.component.foundation;
+package edu.ucsc.cross.hse.core.framework.component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,12 +6,10 @@ import java.util.HashMap;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
-import edu.ucsc.cross.hse.core.component.data.Data;
-import edu.ucsc.cross.hse.core.component.data.DataOperator;
-import edu.ucsc.cross.hse.core.component.system.GlobalAccessor;
-import edu.ucsc.cross.hse.core.component.system.GlobalHybridSystem;
-import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
-import edu.ucsc.cross.hse.core.object.accessors.Properties;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalAccessor;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 
 /*
  * This class is the foundation of all components that handles the
@@ -37,10 +35,10 @@ public abstract class Component implements Initializer
 	// or not
 
 	@CoreComponent
-	protected Properties properties; // properties of the component
+	protected ComponentProperties properties; // properties of the component
 
 	@CoreComponent
-	protected Hierarchy hierarchy; // properties of the component
+	protected ComponentHierarchy hierarchy; // properties of the component
 
 	/*
 	 * Constructor that defines the name and base class of the component
@@ -100,17 +98,17 @@ public abstract class Component implements Initializer
 		return hierarchy.getComponents(output_class, include_children, matching_classes);
 	}
 
-	public GlobalHybridSystem getEnvironment()
+	public GlobalSystem getEnvironment()
 	{
 		return GlobalAccessor.getGlobalSystem(environmentKey);
 	}
 
-	public Properties getProperties()
+	public ComponentProperties getProperties()
 	{
 		return properties;
 	}
 
-	public Hierarchy getHierarchy()
+	public ComponentHierarchy getHierarchy()
 	{
 		return hierarchy;
 	}
@@ -128,7 +126,7 @@ public abstract class Component implements Initializer
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		Hierarchy h = getHierarchy();
+		ComponentHierarchy h = getHierarchy();
 
 		if (!include_data)
 		{
@@ -164,8 +162,8 @@ public abstract class Component implements Initializer
 	{
 		initialized = false;
 		ComponentOperator.getConfigurer(this);
-		properties = new Properties(title, base_class);
-		hierarchy = new Hierarchy(this);
+		properties = new ComponentProperties(title, base_class);
+		hierarchy = new ComponentHierarchy(this);
 	}
 
 	protected ComponentOperator compOps()

@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.component.constructors;
 
-import edu.ucsc.cross.hse.core.component.foundation.Component;
+import edu.ucsc.cross.hse.core.framework.component.Component;
 
 /*
  * This DataSet constructor is for defining a collection of data elements

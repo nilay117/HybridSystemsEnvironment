@@ -2,8 +2,8 @@ package edu.ucsc.cross.hse.core.component.constructors;
 
 import java.util.ArrayList;
 
-import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
 /*
  * This constructor is basically a container that can hold any number of other
@@ -38,91 +38,91 @@ public abstract class HybridSystem extends Component
 		super(title, HybridSystem.class);
 	}
 
-	/*
-	 * Performs all sub component tasks according to the current domain (jump,
-	 * flow, or neither)
-	 * 
-	 * @param jump_occurring
-	 */
-	public void performTasks(boolean jump_occurring)
-	{
-		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
-		{
-			try
-			{
-				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				if (jumpOccurred)
-				{
-					this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-	}
-
-	/*
-	 * Determines whether or not a jump is occurring in any component within the
-	 * hybrid system
-	 * 
-	 * @return true if a jump is occurring, false otherwise
-	 */
-	public Boolean jumpOccurring()
-	{
-		Boolean jumpOccurred = false;
-		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
-		{
-			try
-			{
-				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);
-				if (jumpOccurring != null)
-				{
-					try
-					{
-						jumpOccurred = jumpOccurred || jumpOccurring;
-					} catch (Exception outOfDomain)
-					{
-						outOfDomain.printStackTrace();
-					}
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-		return jumpOccurred;
-	}
-
-	/*
-	 * Determines whether or not a jump is occurring in any component within the
-	 * hybrid system
-	 * 
-	 * @return true if a jump is occurring, false otherwise
-	 */
-	public ArrayList<Component> jumpingComponents()
-	{
-		ArrayList<Component> jumpComponents = new ArrayList<Component>();
-		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
-		// true));
-		for (Component localBehavior : getHierarchy().getComponents(Component.class, true, DynamicalModel.class))// ,
-		// DynamicalModel.class))
-		{
-			try
-			{
-				Boolean jumpOccurring = DynamicalModel.jumpOccurring((DynamicalModel) localBehavior, true);
-				if (jumpOccurring != null)
-				{
-					if (jumpOccurring)
-					{
-						jumpComponents.add(localBehavior);
-					}
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-		return jumpComponents;
-	}
+	//	/*
+	//	 * Performs all sub component tasks according to the current domain (jump,
+	//	 * flow, or neither)
+	//	 * 
+	//	 * @param jump_occurring
+	//	 */
+	//	public void performTasks(boolean jump_occurring)
+	//	{
+	//		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
+	//		{
+	//			try
+	//			{
+	//				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+	//				if (jumpOccurred)
+	//				{
+	//					this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
+	//				}
+	//			} catch (Exception behaviorFail)
+	//			{
+	//				behaviorFail.printStackTrace();
+	//			}
+	//		}
+	//	}
+	//
+	//	/*
+	//	 * Determines whether or not a jump is occurring in any component within the
+	//	 * hybrid system
+	//	 * 
+	//	 * @return true if a jump is occurring, false otherwise
+	//	 */
+	//	public Boolean jumpOccurring()
+	//	{
+	//		Boolean jumpOccurred = false;
+	//		for (DynamicalModel localBehavior : getComponents(DynamicalModel.class, true))
+	//		{
+	//			try
+	//			{
+	//				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);
+	//				if (jumpOccurring != null)
+	//				{
+	//					try
+	//					{
+	//						jumpOccurred = jumpOccurred || jumpOccurring;
+	//					} catch (Exception outOfDomain)
+	//					{
+	//						outOfDomain.printStackTrace();
+	//					}
+	//				}
+	//			} catch (Exception behaviorFail)
+	//			{
+	//				behaviorFail.printStackTrace();
+	//			}
+	//		}
+	//		return jumpOccurred;
+	//	}
+	//
+	//	/*
+	//	 * Determines whether or not a jump is occurring in any component within the
+	//	 * hybrid system
+	//	 * 
+	//	 * @return true if a jump is occurring, false otherwise
+	//	 */
+	//	public ArrayList<Component> jumpingComponents()
+	//	{
+	//		ArrayList<Component> jumpComponents = new ArrayList<Component>();
+	//		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
+	//		// true));
+	//		for (Component localBehavior : getHierarchy().getComponents(Component.class, true, DynamicalModel.class))// ,
+	//		// DynamicalModel.class))
+	//		{
+	//			try
+	//			{
+	//				Boolean jumpOccurring = DynamicalModel.jumpOccurring((DynamicalModel) localBehavior, true);
+	//				if (jumpOccurring != null)
+	//				{
+	//					if (jumpOccurring)
+	//					{
+	//						jumpComponents.add(localBehavior);
+	//					}
+	//				}
+	//			} catch (Exception behaviorFail)
+	//			{
+	//				behaviorFail.printStackTrace();
+	//			}
+	//		}
+	//		return jumpComponents;
+	//	}
 }

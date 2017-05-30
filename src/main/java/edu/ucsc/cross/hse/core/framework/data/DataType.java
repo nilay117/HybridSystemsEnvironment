@@ -1,6 +1,4 @@
-package edu.ucsc.cross.hse.core.component.classification;
-
-import edu.ucsc.cross.hse.core.component.data.Data;
+package edu.ucsc.cross.hse.core.framework.data;
 
 public interface DataType
 {

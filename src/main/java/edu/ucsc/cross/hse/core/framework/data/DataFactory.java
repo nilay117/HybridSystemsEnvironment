@@ -1,7 +1,4 @@
-package edu.ucsc.cross.hse.core.component.data;
-
-import edu.ucsc.cross.hse.core.component.categorization.CoreDataType;
-import edu.ucsc.cross.hse.core.component.classification.DataType;
+package edu.ucsc.cross.hse.core.framework.data;
 
 public class DataFactory
 {

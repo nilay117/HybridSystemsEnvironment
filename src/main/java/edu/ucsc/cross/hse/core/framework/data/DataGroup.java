@@ -1,8 +1,6 @@
-package edu.ucsc.cross.hse.core.component.classification;
+package edu.ucsc.cross.hse.core.framework.data;
 
 import java.util.ArrayList;
-
-import edu.ucsc.cross.hse.core.component.data.Data;
 
 /*
  * This interface is used to define a group of data types for organizational

@@ -5,12 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
-import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
-import edu.ucsc.cross.hse.core.component.data.Data;
-import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.component.models.DynamicalModel;
-import edu.ucsc.cross.hse.core.object.accessors.Hierarchy;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
 /*
  * This class controls all of the components so that they are setup correctly
@@ -39,14 +40,14 @@ public class ComponentDirector extends ProcessorAccess
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
 		{
-			getEnvironment().performTasks(jump_occurred);
+			ComponentOperator.getConfigurer(getEnvironment()).performTasks(jump_occurred);
 		}
 	}
 
 	public void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = getEnvironment().jumpingComponents();
+		ArrayList<Component> jumpComponents = ComponentOperator.getConfigurer(getEnvironment()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironment().setJumpOccurring(true);
 		for (Component component : jumpComponents)
@@ -76,7 +77,7 @@ public class ComponentDirector extends ProcessorAccess
 
 	void prepareComponents()
 	{
-		Hierarchy.constructTree(getEnvironment().getHierarchy());
+		ComponentHierarchy.constructTree(getEnvironment().getHierarchy());
 		linkEnvironment();
 		initializeComponents(Data.class);
 		initializeComponents(DataSet.class);

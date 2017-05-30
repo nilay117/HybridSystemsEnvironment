@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.component.data;
+package edu.ucsc.cross.hse.core.framework.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,10 +10,7 @@ import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
-import edu.ucsc.cross.hse.core.component.categorization.CoreDataGroup;
-import edu.ucsc.cross.hse.core.component.classification.DataType;
-import edu.ucsc.cross.hse.core.component.foundation.Component;
-import edu.ucsc.cross.hse.core.object.domains.InitialValue;
+import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 import edu.ucsc.cross.hse.core.procesing.utils.CloneUtil;
 
