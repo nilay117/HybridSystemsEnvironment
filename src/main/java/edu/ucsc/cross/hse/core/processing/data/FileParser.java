@@ -11,7 +11,6 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
-import edu.ucsc.cross.hse.core.processing.execution.Environment;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
@@ -25,7 +24,7 @@ public class FileParser extends ProcessorAccess
 
 	public void autoStoreData(GlobalSystem data)
 	{
-		for (Component comp : getEnvironment().getComponents(true))
+		for (Component comp : getEnvironment().getHierarchy().getComponents(true))
 		{
 			// comp.getConfigurer().setEnvironment(null);
 			// comp.getConfigurer().resetHierarchy();
@@ -80,7 +79,7 @@ public class FileParser extends ProcessorAccess
 	public <T extends Component> T loadComponent(String file_directory, String file_name)
 	{
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.getComponents(true))
+		for (Component componen : component.getHierarchy().getComponents(true))
 		{
 			ComponentOperator.getConfigurer(componen).setInitialized(null);
 			// try
@@ -106,7 +105,7 @@ public class FileParser extends ProcessorAccess
 		ArrayList<Component> allComponents = new ArrayList<Component>();
 		ComponentHierarchy.constructTree(component.getHierarchy());
 		// allComponents.add(component);
-		for (Component subComponent : component.getComponents(true))
+		for (Component subComponent : component.getHierarchy().getComponents(true))
 		{
 			if (!allComponents.contains(subComponent))
 			{

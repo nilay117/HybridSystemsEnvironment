@@ -9,13 +9,12 @@ import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.execution.Environment;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataCollector extends ProcessorAccess
+public class DataManager extends ProcessorAccess
 {
 
 	private Double lastStoreTime = -10.0; // time since last data was stored,
@@ -24,7 +23,7 @@ public class DataCollector extends ProcessorAccess
 	private ArrayList<Data> dataElementsToStore; // list of all data elements
 													// that are to be stored
 
-	public DataCollector(Processor processor)
+	public DataManager(Processor processor)
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();
@@ -70,14 +69,14 @@ public class DataCollector extends ProcessorAccess
 
 	public Data checkIfMatchingElementInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().getComponents(true))
+		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{
 			try
 			{
 				DataSet set = (DataSet) component;
-				if (set.getComponents(true).contains(data))
+				if (set.getHierarchy().getComponents(true).contains(data))
 				{
-					for (Component subComponent : set.getComponents(true))
+					for (Component subComponent : set.getHierarchy().getComponents(true))
 					{
 						try
 						{
@@ -131,7 +130,7 @@ public class DataCollector extends ProcessorAccess
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Component component : super.getEnvironment().getComponents(true))
+		for (Component component : super.getEnvironment().getHierarchy().getComponents(true))
 		{
 			try
 			{

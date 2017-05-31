@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.framework.environment;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
-import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
 /*
  * This is the main root system of the environment that contains all of the
@@ -51,9 +51,10 @@ public class GlobalSystem extends HybridSystem
 	{
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
+		earthStartTime = Time.newSecondsValue(-1.0);
 		// ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 		GlobalAccessor.addGlobalHybridSystem(this);
-		this.compOps().setEnvironment(this.toString());
+		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 	}
 
 	@Override

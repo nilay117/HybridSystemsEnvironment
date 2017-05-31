@@ -17,6 +17,11 @@ public class ComponentProperties
 	// simulated
 	// or not
 
+	protected String environmentKey;
+	// @CoreComponent
+	// protected GlobalHybridSystem environment; // environment where the
+	// component is located
+
 	public ComponentProperties(String title, Class<?> classification)
 	{
 		this.title = title;
@@ -53,19 +58,6 @@ public class ComponentProperties
 	public Class<?> getBaseComponentClass()
 	{
 		return baseComponentClass;
-	}
-
-	/*
-	 * Flag indicating whether the data should be simulated or not
-	 */
-	public boolean isSimulated()
-	{
-		return simulated;
-	}
-
-	protected void setSimulated(boolean sim)
-	{
-		simulated = sim;
 	}
 
 }

@@ -21,6 +21,7 @@ public class ComponentHierarchy
 
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
+
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 	@CoreComponent
@@ -171,7 +172,7 @@ public class ComponentHierarchy
 		return foundObjects;
 	}
 
-	private void setup()
+	void setup()
 	{
 		initializeContainers();
 	}
@@ -321,7 +322,7 @@ public class ComponentHierarchy
 		for (Component component : init)
 		{
 			ComponentHierarchy.constructTree(component.getHierarchy());
-			for (Component componentChild : component.getComponents(true))
+			for (Component componentChild : component.getHierarchy().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
 			}

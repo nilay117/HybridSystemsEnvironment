@@ -12,7 +12,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
-import edu.ucsc.cross.hse.core.procesing.utils.CloneUtil;
+import edu.ucsc.cross.hse.core.processing.data.CloneUtility;
 
 /*
  * This class protects and manages a data object to ensure that the correct
@@ -344,7 +344,6 @@ public class Data<T> extends Component// DynamicData<T>
 		derivative = cloneZeroDerivative(element);
 		this.element = obj;
 		preJumpValue = (T) ObjectCloner.xmlClone(obj);
-		simulated = true;
 		save = save_default;
 		defaultUnit = NoUnit.NONE;
 		savedValues = new HashMap<Double, T>();
@@ -479,7 +478,7 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return CloneUtil.cloner.deepClone(get());
+				return CloneUtility.cloner.deepClone(get());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{

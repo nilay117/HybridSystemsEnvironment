@@ -4,7 +4,7 @@ import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
-import edu.ucsc.cross.hse.core.procesing.utils.CloneUtil;
+import edu.ucsc.cross.hse.core.processing.data.CloneUtility;
 
 public class InitialValue<T>
 {
@@ -86,33 +86,30 @@ public class InitialValue<T>
 	public T getValue()
 	{
 		Double generatedValue = 0.0;
+		T newVal = value;
 		if (min != null && max != null)
 		{
 			generatedValue = Double.class.cast(((max - min) * Math.random()) + min);
-		}
-		if (value.getClass().equals(Double.class))
-		{
 
-			return (T) generatedValue;
-		} else if (!unit.equals(NoUnit.NONE))
-		{
-			T newVal = CloneUtil.cloner.deepClone(value);
-			UnitValue unitVal = (UnitValue) newVal;
-			try
+			if (value.getClass().equals(Double.class))
 			{
-				unitVal.set(generatedValue, unit);
-			} catch (UnitException e)
+
+				newVal = (T) generatedValue;
+			} else if (!unit.equals(NoUnit.NONE))
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				newVal = CloneUtility.cloner.deepClone(value);
+				UnitValue unitVal = (UnitValue) newVal;
+				try
+				{
+					unitVal.set(generatedValue, unit);
+				} catch (UnitException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			return newVal;
-
-		} else
-
-		{
-			return value;
 		}
+		return newVal;
 
 	}
 

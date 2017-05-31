@@ -25,7 +25,7 @@ public abstract class DataSet extends Component// implements
 	public DataSet()
 	{
 		super("Data Set", DataSet.class);
-		simulated = true;
+
 	}
 
 	/*
@@ -34,7 +34,7 @@ public abstract class DataSet extends Component// implements
 	public DataSet(String title)
 	{
 		super(title, DataSet.class);
-		simulated = true;
+
 	}
 
 	/*
@@ -44,7 +44,7 @@ public abstract class DataSet extends Component// implements
 	public DataSet(String title, boolean simulated)
 	{
 		super(title, DataSet.class);
-		this.simulated = simulated;
+
 	}
 
 }

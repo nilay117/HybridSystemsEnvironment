@@ -7,7 +7,6 @@ import bs.commons.objects.access.CallerRetriever;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.execution.Environment;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
@@ -71,7 +70,7 @@ public class SystemConsole extends ProcessorAccess
 			if (getSettings().io().printStoreDataReport)
 			{
 				HashMap<String, Component> systemNames = new HashMap<String, Component>();
-				for (Component rootSystem : super.getEnvironment().getComponents(true))
+				for (Component rootSystem : super.getEnvironment().getHierarchy().getComponents(true))
 
 				{
 					String sysName = "";// StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
@@ -88,7 +87,7 @@ public class SystemConsole extends ProcessorAccess
 						storeString += sysName + " - [" + dataSetName + " ";
 						try
 						{
-							for (Component element : dataSet.getComponents(true))
+							for (Component element : dataSet.getHierarchy().getComponents(true))
 								try
 								{
 									Data data = (Data) element;

@@ -10,7 +10,7 @@ import edu.ucsc.cross.hse.core.framework.environment.HybridTime;
 import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
 import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
-import edu.ucsc.cross.hse.core.processing.data.DataCollector;
+import edu.ucsc.cross.hse.core.processing.data.DataManager;
 import edu.ucsc.cross.hse.core.processing.data.FileParser;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
 
@@ -56,7 +56,7 @@ public class Environment //extends ProcessorAccess// implements Environment
 		return content.getHierarchy();
 	}
 
-	public DataCollector data()
+	public DataManager data()
 	{
 		return processor.data;//;.getData();
 	}

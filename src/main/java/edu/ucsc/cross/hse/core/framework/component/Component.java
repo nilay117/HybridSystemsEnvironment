@@ -1,13 +1,7 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import bs.commons.objects.access.CoreComponent;
-import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.execution.Initializer;
-import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalAccessor;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 
@@ -22,23 +16,20 @@ public abstract class Component implements Initializer
 {
 
 	@CoreComponent
-	protected String environmentKey;
-	// @CoreComponent
-	// protected GlobalHybridSystem environment; // environment where the
-	// component is located
+	private ComponentAddress address; // address information about this
+										// component
 	@CoreComponent
-	protected Boolean initialized; // flag indicating if component has been
-									// initialized or not
-
-	protected boolean simulated; // flag indicating if contained data is
-	// simulated
-	// or not
+	private ComponentConfiguration configuration; // configuration status of
+													// this instance of the
+													// component
 
 	@CoreComponent
-	protected ComponentProperties properties; // properties of the component
+	private ComponentProperties properties; // specific properties of this
+											// component
 
 	@CoreComponent
-	protected ComponentHierarchy hierarchy; // properties of the component
+	private ComponentHierarchy components; // component access hierarchy of this
+											// component
 
 	/*
 	 * Constructor that defines the name and base class of the component
@@ -68,39 +59,57 @@ public abstract class Component implements Initializer
 	}
 
 	/*
-	 * Adds a number of sub-components to this component. This is used to add
-	 * components that are not explicitly defined in the main class, which
-	 * allows for variations without modifying the main component code itself.
-	 * This method allows any number of duplicate components to be added
+	 * Constructor that defines the name of the component with this class
+	 * (Component) as the base class. This constructor is used to create
+	 * components that are not based off any of the core components:
+	 * Behavior,Data,DataSet, and HybridSystem.
 	 * 
-	 * @param component - component to be added
-	 * 
-	 * @param quantity - number of components to be added
+	 * @param title - title of the component
 	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Component> void addComponent(T component, Integer... quantity)
+	public Component()
 	{
-		Integer num = 1;
-		if (quantity.length > 0)
-		{
-			num = quantity[0];
-		}
-		hierarchy.addComponent(component, num);
+		setup(this.getClass().getSimpleName(), this.getClass());
+
 	}
 
-	public ArrayList<Component> getComponents(boolean include_children, Class<?>... matching_classes)
-	{
-		return hierarchy.getComponents(include_children, matching_classes);
-	}
+	// /*
+	// * Adds a number of sub-components to this component. This is used to add
+	// * components that are not explicitly defined in the main class, which
+	// * allows for variations without modifying the main component code itself.
+	// * This method allows any number of duplicate components to be added
+	// *
+	// * @param component - component to be added
+	// *
+	// * @param quantity - number of components to be added
+	// */
+	// @SuppressWarnings("unchecked")
+	// public <T extends Component> void addComponent(T component, Integer...
+	// quantity)
+	// {
+	// Integer num = 1;
+	// if (quantity.length > 0)
+	// {
+	// num = quantity[0];
+	// }
+	// components.addComponent(component, num);
+	// }
 
-	public <T> ArrayList<T> getComponents(Class<T> output_class, boolean include_children, Class<?>... matching_classes)
-	{
-		return hierarchy.getComponents(output_class, include_children, matching_classes);
-	}
+	// public ArrayList<Component> getComponents(boolean include_children,
+	// Class<?>... matching_classes)
+	// {
+	// return components.getComponents(include_children, matching_classes);
+	// }
+	//
+	// public <T> ArrayList<T> getComponents(Class<T> output_class, boolean
+	// include_children, Class<?>... matching_classes)
+	// {
+	// return components.getComponents(output_class, include_children,
+	// matching_classes);
+	// }
 
 	public GlobalSystem getEnvironment()
 	{
-		return GlobalAccessor.getGlobalSystem(environmentKey);
+		return GlobalAccessor.getGlobalSystem(address.getEnvironmentKey());
 	}
 
 	public ComponentProperties getProperties()
@@ -110,7 +119,7 @@ public abstract class Component implements Initializer
 
 	public ComponentHierarchy getHierarchy()
 	{
-		return hierarchy;
+		return components;
 	}
 
 	// protected BackgroundOperations getConfigurer()
@@ -118,67 +127,73 @@ public abstract class Component implements Initializer
 	// return BackgroundOperations.getConfigurer(this);
 	// }
 
-	public <T extends Component> T copy()
-	{
-		return copy(false, false);
-	}
-
-	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
-	{
-		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		ComponentHierarchy h = getHierarchy();
-
-		if (!include_data)
-		{
-			for (Data data : hierarchy.getComponents(Data.class, true))
-			{
-				tempValues.put(data, data.getStoredValues());
-				data.dataOps().setStoredValues(new HashMap<Double, T>());
-			}
-		}
-		if (!include_hierarchy)
-		{
-			hierarchy = null;
-		} // environment = null;
-		T copy = (T) ComponentOperator.cloner.deepClone(this);
-		if (!include_hierarchy)
-		{
-			hierarchy = h;
-		}
-		if (!include_data)
-		{
-			for (Data data : getComponents(Data.class, true))
-			{
-				// tempValues.put(data, Data.getStoredValues(data));
-				data.dataOps().setStoredValues(tempValues.get(data));
-			}
-		}
-
-		return copy;
-
-	}
-
-	private void setup(String title, Class<?> base_class)
-	{
-		initialized = false;
-		ComponentOperator.getConfigurer(this);
-		properties = new ComponentProperties(title, base_class);
-		hierarchy = new ComponentHierarchy(this);
-	}
-
-	protected ComponentOperator compOps()
+	public ComponentActions actions()
 	{
 		return ComponentOperator.getConfigurer(this);
 	}
+	// public <T extends Component> T copy()
+	// {
+	// return copy(false, false);
+	// }
+	//
+	// public <T extends Component> T copy(boolean include_data, boolean
+	// include_hierarchy)
+	// {
+	// HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
+	// ComponentHierarchy h = getHierarchy();
+	//
+	// if (!include_data)
+	// {
+	// for (Data data : components.getComponents(Data.class, true))
+	// {
+	// tempValues.put(data, data.getStoredValues());
+	// DataOperator.dataOp(data).setStoredValues(new HashMap<Double, T>());
+	// }
+	// }
+	// if (!include_hierarchy)
+	// {
+	// components = null;
+	// } // environment = null;
+	// T copy = (T) ComponentOperator.cloner.deepClone(this);
+	// if (!include_hierarchy)
+	// {
+	// components = h;
+	// }
+	// if (!include_data)
+	// {
+	// for (Data data : getComponents(Data.class, true))
+	// {
+	// // tempValues.put(data, Data.getStoredValues(data));
+	// DataOperator.dataOp(data).setStoredValues(tempValues.get(data));
+	// }
+	// }
+	//
+	// return copy;
+	//
+	// }
 
-	protected DataOperator dataOps()
+	private void setup(String title, Class<?> base_class)
 	{
-		if (FieldFinder.containsSuper(this, Data.class))
-		{
-			return DataOperator.dataOp((Data) this);
-		} else
-		{
-			return null;
-		}
+
+		ComponentOperator.getConfigurer(this);
+		configuration = new ComponentConfiguration();
+		address = new ComponentAddress();
+		properties = new ComponentProperties(title, base_class);
+		components = new ComponentHierarchy(this);
+	}
+
+	ComponentConfiguration configuration()
+	{
+		return configuration;
+	}
+
+	public ComponentAddress address()
+	{
+		return address;
+	}
+
+	void loadHierarchy(ComponentHierarchy hierarchy)
+	{
+		components = hierarchy;
 	}
 }

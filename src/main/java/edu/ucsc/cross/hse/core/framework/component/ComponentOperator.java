@@ -13,16 +13,17 @@ import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
-public class ComponentOperator
+public class ComponentOperator extends ComponentActions
 {
 
 	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
 
-	public Component component;
+	// public Component component;
 
 	public ComponentOperator(Component component)
 	{
-		this.component = component;
+		super(component);
+		// this.component = component;
 		components.put(component, this);
 		// getConfigurer(component);
 		// component.hierarchy.
@@ -33,7 +34,7 @@ public class ComponentOperator
 
 	public void setEnvironment(String environment_id)
 	{
-		component.environmentKey = environment_id;
+		component.address().setEnvironmentKey(environment_id);
 	}
 
 	public Component addComponentFromFile(String file_path)
@@ -77,30 +78,30 @@ public class ComponentOperator
 
 	public Boolean isInitialized()
 	{
-		return component.initialized;
+		return component.configuration().getInitialized();
 	}
 
 	public void setInitialized(Boolean initialized)
 	{
-		component.initialized = initialized;
+		component.configuration().setInitialized(initialized);
 	}
 
 	protected void resetHierarchy()
 	{
-		component.hierarchy = new ComponentHierarchy(component);
+		component.getHierarchy().setup();
 	}
 
 	public String getEnvironmentKey()
 	{
-		return component.environmentKey;
+		return component.address().getEnvironmentKey();
 	}
 
 	public void protectedInitialize()
 	{
-		if (!component.initialized)
+		if (!component.configuration().getInitialized())
 		{
 			component.initialize();
-			component.initialized = (true);
+			component.configuration().setInitialized(true);
 		}
 	}
 
@@ -118,12 +119,12 @@ public class ComponentOperator
 
 	public boolean isSimulated()
 	{
-		return component.simulated;
+		return component.configuration().isSimulated();
 	}
 
 	public void setSimulated(boolean simulated)
 	{
-		component.simulated = simulated;
+		component.configuration().setSimulated(simulated);
 	}
 
 	/*
@@ -134,7 +135,7 @@ public class ComponentOperator
 	 */
 	public void performTasks(boolean jump_occurring)
 	{
-		for (DynamicalModel localBehavior : component.getComponents(DynamicalModel.class, true))
+		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
 			{
@@ -159,7 +160,7 @@ public class ComponentOperator
 	public Boolean jumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (DynamicalModel localBehavior : component.getComponents(DynamicalModel.class, true))
+		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
 			{
