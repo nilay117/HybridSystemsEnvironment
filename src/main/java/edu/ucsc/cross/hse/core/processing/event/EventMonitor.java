@@ -10,21 +10,22 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.Environment;
+import edu.ucsc.cross.hse.core.processing.execution.Processor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
-public class ExecutionMonitor extends ProcessorAccess
+public class EventMonitor extends ProcessorAccess
 {
 
 	private Thread thread;
-	private JumpDetector jumpHandler;
-	private InterruptHandler terminator;
+	private JumpEvaluator jumpHandler;
+	private EarlyTerminator terminator;
 
-	public ExecutionMonitor(Environment processor)
+	public EventMonitor(Processor processor)
 	{
 		super(processor);
-		jumpHandler = new JumpDetector(processor);
-		terminator = new InterruptHandler(processor);
+		jumpHandler = new JumpEvaluator(processor);
+		terminator = new EarlyTerminator(processor);
 	}
 
 	public void runSim(boolean run_threadded)
@@ -248,7 +249,7 @@ public class ExecutionMonitor extends ProcessorAccess
 		}
 	}
 
-	public InterruptHandler getTerminator()
+	public EarlyTerminator getTerminator()
 	{
 		return terminator;
 	}

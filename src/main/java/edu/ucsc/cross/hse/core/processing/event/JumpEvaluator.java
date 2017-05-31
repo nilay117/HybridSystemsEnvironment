@@ -3,10 +3,11 @@ package edu.ucsc.cross.hse.core.processing.event;
 import org.apache.commons.math3.ode.events.EventHandler;
 
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.Environment;
+import edu.ucsc.cross.hse.core.processing.execution.Processor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
-class JumpDetector extends ProcessorAccess implements EventHandler
+class JumpEvaluator extends ProcessorAccess implements EventHandler
 {
 
 	public Integer toggles = 0; // toggle index to eliminate the error within
@@ -18,7 +19,7 @@ class JumpDetector extends ProcessorAccess implements EventHandler
 	/*
 	 * constructor to link the environment
 	 */
-	JumpDetector(Environment processor)
+	JumpEvaluator(Processor processor)
 	{
 		super(processor);
 	}

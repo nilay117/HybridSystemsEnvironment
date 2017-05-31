@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hse.core.processing.management.Environment;
+import edu.ucsc.cross.hse.core.processing.execution.Environment;
 
 public class TestSimulation
 {

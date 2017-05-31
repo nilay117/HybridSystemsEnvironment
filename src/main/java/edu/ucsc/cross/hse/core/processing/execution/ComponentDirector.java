@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.processing.management;
+package edu.ucsc.cross.hse.core.processing.execution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 public class ComponentDirector extends ProcessorAccess
 {
 
-	ComponentDirector(Environment processor)
+	ComponentDirector(Processor processor)
 	{
 		super(processor);
 

@@ -11,13 +11,14 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
-import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.Environment;
+import edu.ucsc.cross.hse.core.processing.execution.Processor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 public class FileParser extends ProcessorAccess
 {
 
-	public FileParser(Environment processor)
+	public FileParser(Processor processor)
 	{
 		super(processor);
 	}

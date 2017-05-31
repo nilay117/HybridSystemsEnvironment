@@ -9,8 +9,9 @@ import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.Environment;
+import edu.ucsc.cross.hse.core.processing.execution.Processor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
@@ -23,7 +24,7 @@ public class DataCollector extends ProcessorAccess
 	private ArrayList<Data> dataElementsToStore; // list of all data elements
 													// that are to be stored
 
-	public DataCollector(Environment processor)
+	public DataCollector(Processor processor)
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();

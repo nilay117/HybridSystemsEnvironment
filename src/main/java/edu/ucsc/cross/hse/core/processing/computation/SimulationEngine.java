@@ -13,8 +13,9 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.management.Environment;
-import edu.ucsc.cross.hse.core.processing.management.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.Environment;
+import edu.ucsc.cross.hse.core.processing.execution.Processor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 /*
  * his class provides the computations and organization necessary to run a
@@ -37,7 +38,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	 * 
 	 * @param processor - main environment processor
 	 */
-	public SimulationEngine(Environment processor)
+	public SimulationEngine(Processor processor)
 	{
 		super(processor);
 		odeVectorMap = new HashMap<Integer, Data>();
