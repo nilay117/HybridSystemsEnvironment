@@ -11,6 +11,7 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
 public class ComponentOperator extends ComponentActions
@@ -88,7 +89,7 @@ public class ComponentOperator extends ComponentActions
 
 	protected void resetHierarchy()
 	{
-		component.getHierarchy().setup();
+		component.hierarchy().setup();
 	}
 
 	public String getEnvironmentKey()
@@ -135,14 +136,14 @@ public class ComponentOperator extends ComponentActions
 	 */
 	public void performTasks(boolean jump_occurring)
 	{
-		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
+		for (DynamicalModel localBehavior : component.hierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
 			{
 				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
 				if (jumpOccurred)
 				{
-					component.getEnvironment().getEnvironmentTime().incrementJumpIndex();
+					((GlobalSystem) component.environment()).getEnvironmentTime().incrementJumpIndex();
 				}
 			} catch (Exception behaviorFail)
 			{
@@ -160,7 +161,7 @@ public class ComponentOperator extends ComponentActions
 	public Boolean jumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
+		for (DynamicalModel localBehavior : component.hierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
 			{
@@ -194,7 +195,7 @@ public class ComponentOperator extends ComponentActions
 		ArrayList<Component> jumpComponents = new ArrayList<Component>();
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
-		for (Component localBehavior : component.getHierarchy().getComponents(Component.class, true,
+		for (Component localBehavior : component.hierarchy().getComponents(Component.class, true,
 		DynamicalModel.class))// ,
 		// DynamicalModel.class))
 		{

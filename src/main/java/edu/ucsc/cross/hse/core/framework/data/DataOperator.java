@@ -4,13 +4,13 @@ import java.util.HashMap;
 
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
-public class DataOperator extends ComponentOperator
+public class DataOperator<T> extends ComponentOperator
 {
 
 	protected static HashMap<Data, DataOperator> dataOperators = new HashMap<Data, DataOperator>();
-	Data element;
+	Data<T> element;
 
-	protected DataOperator(Data component)
+	protected DataOperator(Data<T> component)
 	{
 		super(component);
 		try
@@ -19,7 +19,7 @@ public class DataOperator extends ComponentOperator
 		} catch (Exception e)
 		{
 
-			element = DataFactory.property.create("Not Data");
+			element = (Data<T>) DataFactory.property.create("Not Data");
 		}
 
 	}
@@ -40,12 +40,12 @@ public class DataOperator extends ComponentOperator
 		}
 	}
 
-	public <S> void storeValue(Double time)
+	public void storeValue(Double time)
 	{
 		element.storeValue(time, true);
 	}
 
-	public <S> void storeValue(Double time, boolean override_save)
+	public void storeValue(Double time, boolean override_save)
 	{
 		element.storeValue(time, override_save);
 	}
@@ -55,14 +55,9 @@ public class DataOperator extends ComponentOperator
 		return element.save;
 	}
 
-	public void setStoredValues(HashMap<Double, ?> vals)
+	public void setStoredValues(HashMap<Double, T> vals)
 	{
 		element.savedValues = vals;
-	}
-
-	public void restorePreJumpValue()
-	{
-		element.restorePreJumpValue();
 	}
 
 	public void storePreJumpValue()

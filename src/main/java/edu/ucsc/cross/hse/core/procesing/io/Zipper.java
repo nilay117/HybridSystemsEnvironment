@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.processing.data;
+package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;

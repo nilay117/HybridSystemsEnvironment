@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.processing.data;
+package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,7 +24,7 @@ public class FileParser extends ProcessorAccess
 
 	public void autoStoreData(GlobalSystem data)
 	{
-		for (Component comp : getEnvironment().getHierarchy().getComponents(true))
+		for (Component comp : getEnvironment().hierarchy().getComponents(true))
 		{
 			// comp.getConfigurer().setEnvironment(null);
 			// comp.getConfigurer().resetHierarchy();
@@ -40,10 +40,10 @@ public class FileParser extends ProcessorAccess
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
 		{
-			directory += data.getProperties().getName() + "/";
+			directory += data.properties().getName() + "/";
 		}
 
-		String fileName = data.getProperties().getDescription() + "_"
+		String fileName = data.properties().getDescription() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
 		String out = XMLParser.serializeObject(processor);
@@ -79,7 +79,7 @@ public class FileParser extends ProcessorAccess
 	public <T extends Component> T loadComponent(String file_directory, String file_name)
 	{
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.getHierarchy().getComponents(true))
+		for (Component componen : component.hierarchy().getComponents(true))
 		{
 			ComponentOperator.getConfigurer(componen).setInitialized(null);
 			// try
@@ -103,9 +103,9 @@ public class FileParser extends ProcessorAccess
 	private <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		ComponentHierarchy.constructTree(component.getHierarchy());
+		ComponentHierarchy.constructTree(component.hierarchy());
 		// allComponents.add(component);
-		for (Component subComponent : component.getHierarchy().getComponents(true))
+		for (Component subComponent : component.hierarchy().getComponents(true))
 		{
 			if (!allComponents.contains(subComponent))
 			{

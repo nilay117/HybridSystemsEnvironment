@@ -4,15 +4,15 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalAccessor;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemLibrary;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.framework.environment.HybridTime;
-import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
-import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
+import edu.ucsc.cross.hse.core.procesing.io.FileParser;
+import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataManager;
-import edu.ucsc.cross.hse.core.processing.data.FileParser;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
+import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public class Environment //extends ProcessorAccess// implements Environment
 {
@@ -53,7 +53,7 @@ public class Environment //extends ProcessorAccess// implements Environment
 
 	public ComponentHierarchy content()
 	{
-		return content.getHierarchy();
+		return content.hierarchy();
 	}
 
 	public DataManager data()

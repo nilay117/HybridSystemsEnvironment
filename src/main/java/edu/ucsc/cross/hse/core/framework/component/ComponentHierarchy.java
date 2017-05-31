@@ -107,9 +107,9 @@ public class ComponentHierarchy
 
 	private void processComponent(Component parent, Component field)
 	{
-		field.getHierarchy().parentComponent = parent;
-		field.getHierarchy().loadHierarchyComponents();
-		parent.getHierarchy().storeComponent(field, true);
+		field.hierarchy().parentComponent = parent;
+		field.hierarchy().loadHierarchyComponents();
+		parent.hierarchy().storeComponent(field, true);
 	}
 
 	private void processContainer(Component parent, Object container)
@@ -216,28 +216,28 @@ public class ComponentHierarchy
 				{
 					childComponents.add(component);
 				}
-				if (!childComponentMap.containsKey(component.getProperties().getBaseComponentClass()))
+				if (!childComponentMap.containsKey(component.properties().getBaseComponentClass()))
 				{
-					childComponentMap.put(component.getProperties().getBaseComponentClass(),
+					childComponentMap.put(component.properties().getBaseComponentClass(),
 					new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 				}
-				if (!childComponentMap.get(component.getProperties().getBaseComponentClass()).contains(component))
+				if (!childComponentMap.get(component.properties().getBaseComponentClass()).contains(component))
 				{
-					childComponentMap.get(component.getProperties().getBaseComponentClass()).add(component);
+					childComponentMap.get(component.properties().getBaseComponentClass()).add(component);
 				}
 			}
 			if (!descendantComponents.contains(component))
 			{
 				descendantComponents.add(component);
 			}
-			if (!descendantComponentMap.containsKey(component.getProperties().getBaseComponentClass()))
+			if (!descendantComponentMap.containsKey(component.properties().getBaseComponentClass()))
 			{
-				descendantComponentMap.put(component.getProperties().getBaseComponentClass(),
+				descendantComponentMap.put(component.properties().getBaseComponentClass(),
 				new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!descendantComponentMap.get(component.getProperties().getBaseComponentClass()).contains(component))
+			if (!descendantComponentMap.get(component.properties().getBaseComponentClass()).contains(component))
 			{
-				descendantComponentMap.get(component.getProperties().getBaseComponentClass()).add(component);
+				descendantComponentMap.get(component.properties().getBaseComponentClass()).add(component);
 			}
 		}
 	}
@@ -321,8 +321,8 @@ public class ComponentHierarchy
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
-			ComponentHierarchy.constructTree(component.getHierarchy());
-			for (Component componentChild : component.getHierarchy().getComponents(true))
+			ComponentHierarchy.constructTree(component.hierarchy());
+			for (Component componentChild : component.hierarchy().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
 			}

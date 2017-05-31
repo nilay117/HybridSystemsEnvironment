@@ -2,8 +2,8 @@ package edu.ucsc.cross.hse.core.framework.component;
 
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalAccessor;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemLibrary;
 
 /*
  * This class is the foundation of all components that handles the
@@ -107,17 +107,17 @@ public abstract class Component implements Initializer
 	// matching_classes);
 	// }
 
-	public GlobalSystem getEnvironment()
+	public GlobalSystemInterface environment()
 	{
-		return GlobalAccessor.getGlobalSystem(address.getEnvironmentKey());
+		return GlobalSystemLibrary.getGlobalSystem(address.getEnvironmentKey());
 	}
 
-	public ComponentProperties getProperties()
+	public ComponentProperties properties()
 	{
 		return properties;
 	}
 
-	public ComponentHierarchy getHierarchy()
+	public ComponentHierarchy hierarchy()
 	{
 		return components;
 	}

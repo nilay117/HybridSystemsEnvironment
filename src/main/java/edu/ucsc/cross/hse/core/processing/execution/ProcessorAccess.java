@@ -5,12 +5,12 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
-import edu.ucsc.cross.hse.core.object.settings.SettingConfigurations;
-import edu.ucsc.cross.hse.core.procesing.output.SystemConsole;
+import edu.ucsc.cross.hse.core.procesing.io.FileParser;
+import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataManager;
-import edu.ucsc.cross.hse.core.processing.data.FileParser;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
+import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public abstract class ProcessorAccess
 {

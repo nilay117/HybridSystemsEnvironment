@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.procesing.output;
+package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.util.HashMap;
 
@@ -70,7 +70,7 @@ public class SystemConsole extends ProcessorAccess
 			if (getSettings().io().printStoreDataReport)
 			{
 				HashMap<String, Component> systemNames = new HashMap<String, Component>();
-				for (Component rootSystem : super.getEnvironment().getHierarchy().getComponents(true))
+				for (Component rootSystem : super.getEnvironment().hierarchy().getComponents(true))
 
 				{
 					String sysName = "";// StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
@@ -78,7 +78,7 @@ public class SystemConsole extends ProcessorAccess
 					systemNames.put(sysName, rootSystem);
 					storeString += "\n" + sysName + " - [";
 					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
-					for (Component component : rootSystem.getHierarchy().getComponents(DataSet.class, true))
+					for (Component component : rootSystem.hierarchy().getComponents(DataSet.class, true))
 					{
 						DataSet dataSet = (DataSet) component;
 						String dataSetName = "";// StringFormatter.getAppendedName(dataSet.getProperties().getName(),
@@ -87,13 +87,13 @@ public class SystemConsole extends ProcessorAccess
 						storeString += sysName + " - [" + dataSetName + " ";
 						try
 						{
-							for (Component element : dataSet.getHierarchy().getComponents(true))
+							for (Component element : dataSet.hierarchy().getComponents(true))
 								try
 								{
 									Data data = (Data) element;
 
-									storeString = storeString + ("{" + data.getProperties().getName() + " = "
-									+ data.getStoredDoubleValue(time) + "} ");
+									storeString = storeString + ("{" + data.properties().getName() + " = "
+									+ data.actions().getStoredDoubleValue(time) + "} ");
 
 								} catch (Exception notElement)
 								{

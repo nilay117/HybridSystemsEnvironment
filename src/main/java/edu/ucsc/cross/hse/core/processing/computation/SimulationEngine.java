@@ -54,9 +54,9 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
 			Data element = odeVectorMap.get(odeIndex);
-			if (element.get().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.value().getClass().getSuperclass().equals(UnitValue.class))
 			{
-				UnitValue uv = (UnitValue) element.get();
+				UnitValue uv = (UnitValue) element.value();
 				try
 				{
 					uv.set(y[odeIndex], uv.getUnit());
@@ -68,7 +68,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				}
 			} else
 			{
-				element.set(y[odeIndex]);
+				element.value(y[odeIndex]);
 			}
 		}
 		// IO.dev(XMLParser.serializeObject(odeVectorMap, MessageCategory.DEV));
@@ -110,11 +110,11 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		{
 			Data element = odeVectorMap.get(odeIndex);
 			Double derivative = 0.0;
-			if (element.get().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.value().getClass().getSuperclass().equals(UnitValue.class))
 			{
 				try
 				{
-					derivative = (Double) ((UnitValue) element.getDt()).get(((UnitValue) element.get()).getUnit());
+					derivative = (Double) ((UnitValue) element.derivative()).get(((UnitValue) element.value()).getUnit());
 				} catch (UnitException e)
 				{
 					// TODO Auto-generated catch block
@@ -122,7 +122,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				}
 			} else
 			{
-				derivative = (Double) element.getDt();
+				derivative = (Double) element.derivative();
 			}
 			y[odeIndex] = derivative;// .getDerivative();
 		}
@@ -139,9 +139,9 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
 			Data element = odeVectorMap.get(odeIndex);
-			if (element.get().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.value().getClass().getSuperclass().equals(UnitValue.class))
 			{
-				UnitValue uv = (UnitValue) element.get();
+				UnitValue uv = (UnitValue) element.value();
 				try
 				{
 					yValues[odeIndex] = (Double) uv.get(uv.getUnit());
@@ -152,7 +152,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				}
 			} else
 			{
-				yValues[odeIndex] = (Double) element.get();
+				yValues[odeIndex] = (Double) element.value();
 			}
 			// System.out.println(XMLParser.serializeObject(odeVectorMap));
 		}
@@ -168,9 +168,9 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	private Double getODEStateElementValue(Integer index)
 	{
 		Data element = odeVectorMap.get(index);
-		if (element.get().getClass().getSuperclass().equals(UnitValue.class))
+		if (element.value().getClass().getSuperclass().equals(UnitValue.class))
 		{
-			UnitValue uv = (UnitValue) element.get();
+			UnitValue uv = (UnitValue) element.value();
 			try
 			{
 				return (Double.class.cast(uv.get(uv.getUnit())));
@@ -181,7 +181,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			}
 		} else
 		{
-			return (Double) element.get();
+			return (Double) element.value();
 		}
 		return null;
 
@@ -232,20 +232,20 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (Component component : getEnvironment().getHierarchy().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
+		for (Component component : getEnvironment().hierarchy().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
 		// null))
 		{
 			try
 			{
 				Data dat = (Data) component;
-				if (dat.getProperties().getClassification().equals(Data.class))
+				if (dat.properties().getClassification().equals(Data.class))
 				{
 					if (dataOps(dat).isSimulated())// .isSimulated())
 					{
 						if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
 						{
-							if (FieldFinder.containsSuper(dat.get(), UnitValue.class)
-							|| FieldFinder.containsSuper(dat.get(), Number.class))
+							if (FieldFinder.containsSuper(dat.value(), UnitValue.class)
+							|| FieldFinder.containsSuper(dat.value(), Number.class))
 							{
 								odeVectorMap.put(odeIndex++, dat);
 							}

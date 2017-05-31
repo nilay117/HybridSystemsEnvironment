@@ -2,7 +2,8 @@ package edu.ucsc.cross.hse.core.framework.environment;
 
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
-import edu.ucsc.cross.hse.core.component.constructors.HybridSystem;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
 /*
@@ -11,7 +12,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class GlobalSystem extends HybridSystem
+public class GlobalSystem extends Component implements GlobalSystemInterface
 {
 
 	@CoreComponent
@@ -20,8 +21,6 @@ public class GlobalSystem extends HybridSystem
 	private Time earthStartTime;
 	@CoreComponent
 	private boolean jumpOccurring; // flag indicating if a jump is
-									// currently
-									// occurring
 
 	public GlobalSystem()
 	{
@@ -53,7 +52,7 @@ public class GlobalSystem extends HybridSystem
 		environmentTime = new HybridTime();
 		earthStartTime = Time.newSecondsValue(-1.0);
 		// ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
-		GlobalAccessor.addGlobalHybridSystem(this);
+		GlobalSystemLibrary.addGlobalHybridSystem(this);
 		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 	}
 
@@ -67,6 +66,7 @@ public class GlobalSystem extends HybridSystem
 		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
 	}
 
+	@Override
 	public boolean isJumpOccurring()
 	{
 		return jumpOccurring;
@@ -75,5 +75,26 @@ public class GlobalSystem extends HybridSystem
 	public void setJumpOccurring(boolean jumpOccurring)
 	{
 		this.jumpOccurring = jumpOccurring;
+	}
+
+	@Override
+	public ComponentHierarchy components()
+	{
+		// TODO Auto-generated method stub
+		return super.hierarchy();
+	}
+
+	@Override
+	public Time environmentTime()
+	{
+		// TODO Auto-generated method stub
+		return Time.newSecondsValue(this.getEnvironmentTime().getTime());
+	}
+
+	@Override
+	public Integer jumpIndex()
+	{
+		// TODO Auto-generated method stub
+		return this.getEnvironmentTime().getJumpIndex();
 	}
 }

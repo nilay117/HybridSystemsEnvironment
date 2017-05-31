@@ -44,9 +44,9 @@ public class DataManager extends ProcessorAccess
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.getProperties().getName()))
+			if (!stateElements.contains(allStates.properties().getName()))
 			{
-				stateElements.add(allStates.getProperties().getName());
+				stateElements.add(allStates.properties().getName());
 			}
 		}
 		// System.out.println(stateElements.toString());
@@ -59,7 +59,7 @@ public class DataManager extends ProcessorAccess
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.getProperties().getName().equals(title))
+			if (element.properties().getName().equals(title))
 			{
 				datas.add(element);
 			}
@@ -69,19 +69,19 @@ public class DataManager extends ProcessorAccess
 
 	public Data checkIfMatchingElementInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().getHierarchy().getComponents(true))
+		for (Component component : getEnvironment().hierarchy().getComponents(true))
 		{
 			try
 			{
 				DataSet set = (DataSet) component;
-				if (set.getHierarchy().getComponents(true).contains(data))
+				if (set.hierarchy().getComponents(true).contains(data))
 				{
-					for (Component subComponent : set.getHierarchy().getComponents(true))
+					for (Component subComponent : set.hierarchy().getComponents(true))
 					{
 						try
 						{
 							Data dat = (Data) subComponent;
-							if (dat.getProperties().getName().equals(title))
+							if (dat.properties().getName().equals(title))
 							{
 								return dat;
 							}
@@ -106,7 +106,7 @@ public class DataManager extends ProcessorAccess
 	{
 		for (Data element : dataElementsToStore)
 		{
-			if (element.save)
+			if (dataOps(element).isPreviousDataStored())
 			{
 				dataOps(element).storeValue(time);
 			}
@@ -130,7 +130,7 @@ public class DataManager extends ProcessorAccess
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Component component : super.getEnvironment().getHierarchy().getComponents(true))
+		for (Component component : super.getEnvironment().hierarchy().getComponents(true))
 		{
 			try
 			{
@@ -138,7 +138,7 @@ public class DataManager extends ProcessorAccess
 
 				if (CoreDataGroup.ALL_DATA.contains(element))
 				{
-					if (element.save)
+					if (dataOps(element).isPreviousDataStored())
 					{
 						dataElementsToStore.add(element);
 					}

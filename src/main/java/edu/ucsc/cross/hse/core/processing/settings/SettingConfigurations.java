@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.object.settings;
+package edu.ucsc.cross.hse.core.processing.settings;
 
 import java.io.File;
 import java.io.IOException;
