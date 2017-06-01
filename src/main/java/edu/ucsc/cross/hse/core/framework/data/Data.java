@@ -411,7 +411,7 @@ public class Data<T> extends Component// DynamicData<T>
 	 * points to the correct saved value even when a new value is stored. This
 	 * list below contains general classes that not need to be cloned to save
 	 */
-	static private final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
+	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
 
 	/*

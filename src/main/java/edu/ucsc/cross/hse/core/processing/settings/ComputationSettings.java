@@ -76,11 +76,11 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .005; // ode step size if using a fixed step integrator, or
+		odeMinStep = .03; // ode step size if using a fixed step integrator, or
 							// minimum ode step size of a
 		// variable step integrator
 
-		odeMaxStep = .01; // maximum step size for variable step integrator
+		odeMaxStep = .1; // maximum step size for variable step integrator
 
 		odeScalAbsoluteTolerance = 1.0e-6; // absolute tolerance of the ode
 											// solver

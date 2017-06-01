@@ -55,9 +55,10 @@ public class ComponentOperator extends ComponentActions
 
 	public void saveComponentToFile(String directory_path, String file_name)
 	{
-		Object clonedComponent = ObjectCloner.xmlClone(this);
+		Object clonedComponent = ObjectCloner.xmlClone(this.component);
 
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name), XMLParser.serializeObject(this));// clonedComponent));
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(this.component));// clonedComponent));
 
 	}
 
@@ -87,7 +88,7 @@ public class ComponentOperator extends ComponentActions
 		component.configuration().setInitialized(initialized);
 	}
 
-	protected void resetHierarchy()
+	public void resetHierarchy()
 	{
 		component.hierarchy().setup();
 	}
@@ -195,8 +196,7 @@ public class ComponentOperator extends ComponentActions
 		ArrayList<Component> jumpComponents = new ArrayList<Component>();
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
-		for (Component localBehavior : component.hierarchy().getComponents(Component.class, true,
-		DynamicalModel.class))// ,
+		for (Component localBehavior : component.hierarchy().getComponents(Component.class, true, DynamicalModel.class))// ,
 		// DynamicalModel.class))
 		{
 			try
@@ -215,5 +215,14 @@ public class ComponentOperator extends ComponentActions
 			}
 		}
 		return jumpComponents;
+	}
+
+	public void uninitializeComponent()
+	{
+		ComponentHierarchy.constructTree(component.hierarchy());
+		for (Component comp : component.hierarchy().getComponents(true))
+		{
+			ComponentOperator.getConfigurer(comp).setInitialized(false);
+		}
 	}
 }

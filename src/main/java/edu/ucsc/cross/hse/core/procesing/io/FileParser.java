@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import bs.commons.io.file.FileSystemOperator;
-import bs.commons.io.system.StringFormatter;
+import bs.commons.objects.labeling.StringFormatter;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
@@ -94,13 +94,12 @@ public class FileParser extends ProcessorAccess
 		return component;
 	}
 
-	public <T extends Component> void saveComponent(T component, String file_directory, String file_name)
+	public static <T extends Component> void saveComponent(T component, String file_directory, String file_name)
 	{
-		prepareComponent(component);
 		ComponentOperator.getConfigurer(component).saveComponentToFile(file_directory, file_name);
 	}
 
-	private <T extends Component> void prepareComponent(T component)
+	private static <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
 		ComponentHierarchy.constructTree(component.hierarchy());

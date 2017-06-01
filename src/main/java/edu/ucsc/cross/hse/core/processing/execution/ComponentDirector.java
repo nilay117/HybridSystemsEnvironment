@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
@@ -80,7 +79,7 @@ public class ComponentDirector extends ProcessorAccess
 		ComponentHierarchy.constructTree(getEnvironment().hierarchy());
 		linkEnvironment();
 		initializeComponents(Data.class);
-		initializeComponents(DataSet.class);
+		// initializeComponents(DataSet.class);
 		initializeComponents();
 		linkEnvironment();
 	}

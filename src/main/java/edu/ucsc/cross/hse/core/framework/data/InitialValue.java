@@ -4,7 +4,6 @@ import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
-import edu.ucsc.cross.hse.core.processing.data.CloneUtility;
 
 public class InitialValue<T>
 {
@@ -97,7 +96,7 @@ public class InitialValue<T>
 				newVal = (T) generatedValue;
 			} else if (!unit.equals(NoUnit.NONE))
 			{
-				newVal = CloneUtility.cloner.deepClone(value);
+				// newVal = ObjectCloner.cloner.deepClone(value);
 				UnitValue unitVal = (UnitValue) newVal;
 				try
 				{

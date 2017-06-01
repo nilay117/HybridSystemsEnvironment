@@ -25,6 +25,7 @@ public class ComponentHierarchy
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 	@CoreComponent
+
 	private ArrayList<Component> childComponents; // direct children of this
 													// component (no childrens
 													// children)
@@ -59,9 +60,9 @@ public class ComponentHierarchy
 	 *
 	 * @param component - component to be added
 	 */
-	public <T extends Component> void addComponent(T component)
+	public <T extends Component> ArrayList<Component> addComponent(T component)
 	{
-		addComponent(component, 1);
+		return addComponent(component, 1);
 	}
 
 	/*
@@ -75,15 +76,20 @@ public class ComponentHierarchy
 	 * @param quantity - number of components to be added
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends Component> void addComponent(T component, Integer quantity)
+	public <T extends Component> ArrayList<Component> addComponent(T component, Integer quantity)
 	{
+		ArrayList<Component> ret = new ArrayList<Component>();
 		T initialClone = (T) ObjectCloner.xmlClone(component);
+
 		for (Integer ind = 0; ind < quantity; ind++)
 		{
 			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
 			storeComponent(clonedComponent, true);
+			ret.add(clonedComponent);
 			initialClone = clonedComponent;
 		}
+		// ComponentHierarchy.constructTree(this);
+		return ret;
 	}
 
 	private HashMap<Class<?>, ArrayList<Component>> getScopeMap(boolean global)
@@ -218,8 +224,7 @@ public class ComponentHierarchy
 				}
 				if (!childComponentMap.containsKey(component.properties().getBaseComponentClass()))
 				{
-					childComponentMap.put(component.properties().getBaseComponentClass(),
-					new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+					childComponentMap.put(component.properties().getBaseComponentClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 				}
 				if (!childComponentMap.get(component.properties().getBaseComponentClass()).contains(component))
 				{
@@ -232,8 +237,7 @@ public class ComponentHierarchy
 			}
 			if (!descendantComponentMap.containsKey(component.properties().getBaseComponentClass()))
 			{
-				descendantComponentMap.put(component.properties().getBaseComponentClass(),
-				new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.properties().getBaseComponentClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
 			if (!descendantComponentMap.get(component.properties().getBaseComponentClass()).contains(component))
 			{
@@ -321,6 +325,7 @@ public class ComponentHierarchy
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
+			hierarchy.storeComponent(component, false);
 			ComponentHierarchy.constructTree(component.hierarchy());
 			for (Component componentChild : component.hierarchy().getComponents(true))
 			{

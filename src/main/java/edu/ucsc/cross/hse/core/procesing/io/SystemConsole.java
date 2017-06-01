@@ -2,8 +2,8 @@ package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.util.HashMap;
 
-import bs.commons.io.system.StringFormatter;
 import bs.commons.objects.access.CallerRetriever;
+import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
@@ -37,13 +37,16 @@ public class SystemConsole extends ProcessorAccess
 
 	public void progressUpdate()
 	{
-		if (nextPrintTime < getEnvironment().getEnvironmentTime().getTime())
+		if (getSettings().io().printProgressUpdates)
 		{
-			nextPrintTime = getEnvironment().getEnvironmentTime().getTime() + printInterval;
-			Double percentComplete = 100 * getEnvironment().getEnvironmentTime().getTime()
-			/ getSettings().trial().simDuration;
-			print("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
-			+ getEnvironment().getEnvironmentTime().getTime() + " seconds");
+			if (nextPrintTime < getEnvironment().getEnvironmentTime().getTime())
+			{
+				nextPrintTime = getEnvironment().getEnvironmentTime().getTime() + printInterval;
+				Double percentComplete = 100 * getEnvironment().getEnvironmentTime().getTime()
+				/ getSettings().trial().simDuration;
+				print("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
+				+ getEnvironment().getEnvironmentTime().getTime() + " seconds");
+			}
 		}
 	}
 
@@ -125,9 +128,11 @@ public class SystemConsole extends ProcessorAccess
 	{
 		// System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" +
 		// getCallingClassName(1) + "] " + message);
-		System.out.println(
-		"[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" + getCallingClassName(1) + "] " + message);
-
+		if (message != null)
+		{
+			System.out.println(
+			"[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" + getCallingClassName(1) + "] " + message);
+		}
 	}
 
 }

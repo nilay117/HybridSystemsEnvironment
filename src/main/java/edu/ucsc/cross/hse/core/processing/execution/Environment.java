@@ -1,25 +1,21 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
-import bs.commons.objects.access.CoreComponent;
-import bs.commons.unitvars.values.Time;
-import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemLibrary;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
-import edu.ucsc.cross.hse.core.framework.environment.HybridTime;
-import edu.ucsc.cross.hse.core.procesing.io.FileParser;
-import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
-import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataManager;
-import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
 import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
-public class Environment //extends ProcessorAccess// implements Environment
+public class Environment // extends ProcessorAccess// implements Environment
 {
 
-	private GlobalSystem content; // all elements that make up the environment itself such as data, components, systems etc
-	private Processor processor; // environment processor that handles events, computations, maintenance, etc 
-	private SettingConfigurations settings; // collection of settings that configure the performance of the environment
+	private GlobalSystem content; // all elements that make up the environment
+									// itself such as data, components, systems
+									// etc
+	private Processor processor; // environment processor that handles events,
+									// computations, maintenance, etc
+	private SettingConfigurations settings; // collection of settings that
+											// configure the performance of the
+											// environment
 
 	/*
 	 * Generic environment constructor that initializes an empty system with a
@@ -58,7 +54,7 @@ public class Environment //extends ProcessorAccess// implements Environment
 
 	public DataManager data()
 	{
-		return processor.data;//;.getData();
+		return processor.data;// ;.getData();
 	}
 
 	public SettingConfigurations settings()
@@ -70,15 +66,15 @@ public class Environment //extends ProcessorAccess// implements Environment
 	{
 		return processor;
 	}
-	//	public FileParser getFileParser()
-	//	{
-	//		return fileParser;
-	//	}
+	// public FileParser getFileParser()
+	// {
+	// return fileParser;
+	// }
 
-	//	public void setEnvironmentContent(GlobalSystem environmentContent)
-	//	{
-	//		this.environmentContent = environmentContent;
-	//	}
+	// public void setEnvironmentContent(GlobalSystem environmentContent)
+	// {
+	// this.environmentContent = environmentContent;
+	// }
 
 	private void initializeComponents()
 	{
@@ -106,5 +102,10 @@ public class Environment //extends ProcessorAccess// implements Environment
 	protected GlobalSystem getEnvironmentContent()
 	{
 		return content;
+	}
+
+	public static GlobalSystem getEnvironmentSystem(Environment env)
+	{
+		return env.content;
 	}
 }

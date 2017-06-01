@@ -20,9 +20,9 @@ public class PrintSettings
 	public PrintSettings()
 	{
 		totalSimTimePrintOuts = 20;
-		printStoreDataIndicator = true;
-		printProgressUpdates = true;
-		printDiscreteEventIndicator = true;
+		printStoreDataIndicator = false;
+		printProgressUpdates = false;
+		printDiscreteEventIndicator = false;
 		printStoreDataReport = false;
 	}
 
