@@ -94,19 +94,19 @@ public abstract class ProcessorAccess
 		return proc.environment;
 	}
 
-	protected FileParser getSaveUtility()
+	protected FileParser getFileParser()
 	{
 		return proc.fileParser;
 	}
 
-	protected ComponentOperator compOps(Component component)
+	protected ComponentOperator getComponentOperator(Component component)
 	{
 		return ComponentOperator.getConfigurer(component);
 	}
 
-	protected DataOperator dataOps(Data component)
+	protected DataOperator getDataOperator(Data component)
 	{
-		return DataOperator.dataOp(component);
+		return DataOperator.getOperator(component);
 	}
 
 	// @Override

@@ -70,6 +70,6 @@ public enum CoreDataGroup implements DataGroup
 	public boolean contains(Data type)
 	{
 		// TODO Auto-generated method stub
-		return subTypes.contains(type.actions().getDataClass());// subTypes.contains(type.getDataClass());
+		return subTypes.contains(type.getActions().getDataClass());// subTypes.contains(type.getDataClass());
 	}
 }

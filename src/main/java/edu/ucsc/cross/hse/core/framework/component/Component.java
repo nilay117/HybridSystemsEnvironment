@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
+import edu.ucsc.cross.hse.core.framework.annotations.CoreComponent;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
 
@@ -72,6 +72,14 @@ public abstract class Component implements Initializer
 
 	}
 
+	/*
+	 * User Access Functions
+	 */
+	public ComponentAddress getAddress()
+	{
+		return address;
+	}
+
 	public GlobalSystemInterface getEnvironment()
 	{
 		return GlobalSystemOperator.getGlobalSystem(address.getEnvironmentKey());
@@ -87,55 +95,18 @@ public abstract class Component implements Initializer
 		return hierarchy;
 	}
 
-	// protected BackgroundOperations getConfigurer()
-	// {
-	// return BackgroundOperations.getConfigurer(this);
-	// }
-
-	public ComponentActions actions()
+	public ComponentActions getActions()
 	{
 		return ComponentOperator.getConfigurer(this);
 	}
-	// public <T extends Component> T copy()
-	// {
-	// return copy(false, false);
-	// }
-	//
-	// public <T extends Component> T copy(boolean include_data, boolean
-	// include_hierarchy)
-	// {
-	// HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-	// ComponentHierarchy h = getHierarchy();
-	//
-	// if (!include_data)
-	// {
-	// for (Data data : components.getComponents(Data.class, true))
-	// {
-	// tempValues.put(data, data.getStoredValues());
-	// DataOperator.dataOp(data).setStoredValues(new HashMap<Double, T>());
-	// }
-	// }
-	// if (!include_hierarchy)
-	// {
-	// components = null;
-	// } // environment = null;
-	// T copy = (T) ComponentOperator.cloner.deepClone(this);
-	// if (!include_hierarchy)
-	// {
-	// components = h;
-	// }
-	// if (!include_data)
-	// {
-	// for (Data data : getComponents(Data.class, true))
-	// {
-	// // tempValues.put(data, Data.getStoredValues(data));
-	// DataOperator.dataOp(data).setStoredValues(tempValues.get(data));
-	// }
-	// }
-	//
-	// return copy;
-	//
-	// }
+
+	/*
+	 * Operation Access Functions
+	 */
+	ComponentStatus getStatus()
+	{
+		return status;
+	}
 
 	private void setup(String title, Class<?> base_class)
 	{
@@ -145,16 +116,6 @@ public abstract class Component implements Initializer
 		address = new ComponentAddress();
 		classification = new ComponentClassification(title, base_class);
 		hierarchy = new ComponentHierarchy(this);
-	}
-
-	ComponentStatus configuration()
-	{
-		return status;
-	}
-
-	public ComponentAddress address()
-	{
-		return address;
 	}
 
 	void loadHierarchy(ComponentHierarchy hierarchy)

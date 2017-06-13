@@ -29,8 +29,8 @@ public class ComponentActions
 		{
 			for (Data data : component.getHierarchy().getComponents(Data.class, true))
 			{
-				tempValues.put(data, data.actions().getStoredValues());
-				DataOperator.dataOp(data).setStoredValues(new HashMap<Double, T>());
+				tempValues.put(data, data.getActions().getStoredValues());
+				DataOperator.getOperator(data).setStoredValues(new HashMap<Double, T>());
 			}
 		}
 		if (!include_hierarchy)
@@ -47,7 +47,7 @@ public class ComponentActions
 			for (Data data : component.getHierarchy().getComponents(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
-				DataOperator.dataOp(data).setStoredValues(tempValues.get(data));
+				DataOperator.getOperator(data).setStoredValues(tempValues.get(data));
 			}
 		}
 

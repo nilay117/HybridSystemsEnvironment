@@ -47,12 +47,12 @@ public class Environment // extends ProcessorAccess// implements Environment
 		initializeComponents();
 	}
 
-	public ComponentHierarchy content()
+	public ComponentHierarchy getContent()
 	{
 		return content.getHierarchy();
 	}
 
-	public DataManager data()
+	public DataManager getDataCollector()
 	{
 		return processor.data;// ;.getData();
 	}

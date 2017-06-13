@@ -67,7 +67,7 @@ public class ComponentDirector extends ProcessorAccess
 			{
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
-					dataOps(data).storePreJumpValue();
+					getDataOperator(data).storePreJumpValue();
 
 				}
 			}
@@ -96,7 +96,7 @@ public class ComponentDirector extends ProcessorAccess
 			}
 			if (initialize)
 			{
-				compOps(component).protectedInitialize();
+				getComponentOperator(component).protectedInitialize();
 			}
 		}
 
@@ -106,7 +106,7 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{
-			compOps(component).setEnvironment(getEnvironment().toString());
+			getComponentOperator(component).setEnvironment(getEnvironment().toString());
 		}
 	}
 

@@ -153,7 +153,7 @@ public class EventMonitor extends ProcessorAccess
 		runIntegrator(integrator, ode, 0.0, getSettings().trial().simDuration, y);
 		this.getConsole().print("Environment Trial Complete - Runtime = "
 		+ Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0 + " seconds");
-		getSaveUtility().autoStoreData(getEnvironment());
+		getFileParser().autoStoreData(getEnvironment());
 		if (running_processes != null)
 		{
 			System.out.println(running_processes.get());

@@ -24,7 +24,7 @@ public class DataOperator<T> extends ComponentOperator
 
 	}
 
-	public static DataOperator dataOp(Data data)
+	public static <S> DataOperator<S> getOperator(Data<S> data)
 	{
 		if (dataOperators.containsKey(data))
 		{

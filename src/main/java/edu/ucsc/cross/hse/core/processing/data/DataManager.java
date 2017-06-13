@@ -106,9 +106,9 @@ public class DataManager extends ProcessorAccess
 	{
 		for (Data element : dataElementsToStore)
 		{
-			if (dataOps(element).isPreviousDataStored())
+			if (getDataOperator(element).isPreviousDataStored())
 			{
-				dataOps(element).storeValue(time);
+				getDataOperator(element).storeValue(time);
 			}
 		}
 		// IO.out(getConsole().getDataElementStoreString(time, true));
@@ -138,7 +138,7 @@ public class DataManager extends ProcessorAccess
 
 				if (CoreDataGroup.ALL_DATA.contains(element))
 				{
-					if (dataOps(element).isPreviousDataStored())
+					if (getDataOperator(element).isPreviousDataStored())
 					{
 						dataElementsToStore.add(element);
 					}

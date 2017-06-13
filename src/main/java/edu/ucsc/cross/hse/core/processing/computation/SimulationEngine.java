@@ -240,7 +240,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				Data dat = (Data) component;
 				if (dat.getClassification().getClassification().equals(Data.class))
 				{
-					if (dataOps(dat).isSimulated())// .isSimulated())
+					if (getDataOperator(dat).isSimulated())// .isSimulated())
 					{
 						if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
 						{

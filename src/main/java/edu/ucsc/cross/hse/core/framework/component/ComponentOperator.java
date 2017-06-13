@@ -36,7 +36,7 @@ public class ComponentOperator extends ComponentActions
 
 	public void setEnvironment(String environment_id)
 	{
-		component.address().setEnvironmentKey(environment_id);
+		component.getAddress().setEnvironmentKey(environment_id);
 	}
 
 	public Component addComponentFromFile(String file_path)
@@ -81,12 +81,12 @@ public class ComponentOperator extends ComponentActions
 
 	public Boolean isInitialized()
 	{
-		return component.configuration().getInitialized();
+		return component.getStatus().getInitialized();
 	}
 
 	public void setInitialized(Boolean initialized)
 	{
-		component.configuration().setInitialized(initialized);
+		component.getStatus().setInitialized(initialized);
 	}
 
 	public void resetHierarchy()
@@ -96,10 +96,10 @@ public class ComponentOperator extends ComponentActions
 
 	public void protectedInitialize()
 	{
-		if (!component.configuration().getInitialized())
+		if (!component.getStatus().getInitialized())
 		{
 			component.initialize();
-			component.configuration().setInitialized(true);
+			component.getStatus().setInitialized(true);
 		}
 	}
 
@@ -117,12 +117,12 @@ public class ComponentOperator extends ComponentActions
 
 	public boolean isSimulated()
 	{
-		return component.configuration().isSimulated();
+		return component.getStatus().isSimulated();
 	}
 
 	public void setSimulated(boolean simulated)
 	{
-		component.configuration().setSimulated(simulated);
+		component.getStatus().setSimulated(simulated);
 	}
 
 	/*

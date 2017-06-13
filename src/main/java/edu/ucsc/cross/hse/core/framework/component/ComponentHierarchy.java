@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
+import edu.ucsc.cross.hse.core.framework.annotations.CoreComponent;
 
 public class ComponentHierarchy
 {
