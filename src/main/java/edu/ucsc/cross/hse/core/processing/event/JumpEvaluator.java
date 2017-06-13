@@ -30,7 +30,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
-		getEnvironment().getEnvironmentTime().setTime(t);
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 
 		getComputationEngine().updateValues(y);
 		if (ComponentOperator.getConfigurer(getEnvironment()).jumpOccurring())
@@ -52,7 +52,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
 		getComputationEngine().updateValues(y);
-		getEnvironment().getEnvironmentTime().setTime(t);
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		this.getConsole().print(getConsole().getDiscreteEventIndication());
 		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
 		{
@@ -69,7 +69,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 	public void resetState(double t, double[] y)
 	{
 		getComputationEngine().updateValues(y);
-		getEnvironment().getEnvironmentTime().setTime(t);
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		getComponents().performAllTasks(true);
 		getComputationEngine().setODEValueVector(y);
 		y = getComputationEngine().getODEValueVector();

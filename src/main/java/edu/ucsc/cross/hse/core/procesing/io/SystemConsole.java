@@ -39,13 +39,13 @@ public class SystemConsole extends ProcessorAccess
 	{
 		if (getSettings().io().printProgressUpdates)
 		{
-			if (nextPrintTime < getEnvironment().getEnvironmentTime().getTime())
+			if (nextPrintTime < getEnvironmentOperator().getEnvironmentHybridTime().getTime())
 			{
-				nextPrintTime = getEnvironment().getEnvironmentTime().getTime() + printInterval;
-				Double percentComplete = 100 * getEnvironment().getEnvironmentTime().getTime()
+				nextPrintTime = getEnvironmentOperator().getEnvironmentHybridTime().getTime() + printInterval;
+				Double percentComplete = 100 * getEnvironmentOperator().getEnvironmentHybridTime().getTime()
 				/ getSettings().trial().simDuration;
 				print("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
-				+ getEnvironment().getEnvironmentTime().getTime() + " seconds");
+				+ getEnvironmentOperator().getEnvironmentHybridTime().getTime() + " seconds");
 			}
 		}
 	}
@@ -55,7 +55,8 @@ public class SystemConsole extends ProcessorAccess
 		String string = null;
 		if (getSettings().io().printDiscreteEventIndicator)
 		{
-			string = ("discrete event detected at " + getEnvironment().getEnvironmentTime().getTime() + " seconds");
+			string = ("discrete event detected at " + getEnvironmentOperator().getEnvironmentHybridTime().getTime()
+			+ " seconds");
 		}
 		return string;
 	}

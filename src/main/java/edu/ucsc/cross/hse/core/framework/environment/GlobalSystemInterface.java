@@ -8,10 +8,12 @@ public interface GlobalSystemInterface
 
 	public boolean isJumpOccurring();
 
-	public ComponentHierarchy components();
+	public ComponentHierarchy getContents();
 
-	public Time environmentTime();
+	public Double getEnvironmentTime();
 
-	public Integer jumpIndex();
+	public Double getEarthStartTime();
+
+	public Integer getJumpIndex();
 
 }

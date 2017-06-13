@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.framework.component;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.execution.Initializer;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemLibrary;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
 
 /*
  * This class is the foundation of all components that handles the
@@ -20,12 +20,12 @@ public abstract class Component implements Initializer
 										// component
 	@CoreComponent
 	private ComponentStatus status; // configuration status of
-													// this instance of the
-													// component
+									// this instance of the
+									// component
 
 	@CoreComponent
 	private ComponentClassification classification; // specific properties of this
-											// component
+	// component
 
 	@CoreComponent
 	private ComponentHierarchy hierarchy; // component access hierarchy of this
@@ -72,44 +72,9 @@ public abstract class Component implements Initializer
 
 	}
 
-	// /*
-	// * Adds a number of sub-components to this component. This is used to add
-	// * components that are not explicitly defined in the main class, which
-	// * allows for variations without modifying the main component code itself.
-	// * This method allows any number of duplicate components to be added
-	// *
-	// * @param component - component to be added
-	// *
-	// * @param quantity - number of components to be added
-	// */
-	// @SuppressWarnings("unchecked")
-	// public <T extends Component> void addComponent(T component, Integer...
-	// quantity)
-	// {
-	// Integer num = 1;
-	// if (quantity.length > 0)
-	// {
-	// num = quantity[0];
-	// }
-	// components.addComponent(component, num);
-	// }
-
-	// public ArrayList<Component> getComponents(boolean include_children,
-	// Class<?>... matching_classes)
-	// {
-	// return components.getComponents(include_children, matching_classes);
-	// }
-	//
-	// public <T> ArrayList<T> getComponents(Class<T> output_class, boolean
-	// include_children, Class<?>... matching_classes)
-	// {
-	// return components.getComponents(output_class, include_children,
-	// matching_classes);
-	// }
-
 	public GlobalSystemInterface getEnvironment()
 	{
-		return GlobalSystemLibrary.getGlobalSystem(address.getEnvironmentKey());
+		return GlobalSystemOperator.getGlobalSystem(address.getEnvironmentKey());
 	}
 
 	public ComponentClassification getClassification()

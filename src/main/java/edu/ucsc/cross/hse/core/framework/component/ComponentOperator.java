@@ -12,6 +12,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
 import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
 public class ComponentOperator extends ComponentActions
@@ -139,7 +140,8 @@ public class ComponentOperator extends ComponentActions
 				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
 				if (jumpOccurred)
 				{
-					((GlobalSystem) component.getEnvironment()).getEnvironmentTime().incrementJumpIndex();
+					GlobalSystemOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
+					.incrementJumpIndex();
 				}
 			} catch (Exception behaviorFail)
 			{

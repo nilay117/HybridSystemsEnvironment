@@ -31,11 +31,11 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		if (jump_occurred)
 		{
-			getData().storeData(getEnvironment().getEnvironmentTime().getTime() - .000001,
+			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() - .000001,
 			(true && getSettings().getData().storeAtEveryJump));
 
 			executeAllOccurringJumps();
-			getData().storeData(getEnvironment().getEnvironmentTime().getTime(),
+			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
 		{
@@ -48,14 +48,14 @@ public class ComponentDirector extends ProcessorAccess
 
 		ArrayList<Component> jumpComponents = ComponentOperator.getConfigurer(getEnvironment()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
-		getEnvironment().setJumpOccurring(true);
+		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
 		{
 			DynamicalModel dynamics = ((DynamicalModel) component);
 			dynamics.jumpMap();
-			this.getEnvironment().getEnvironmentTime().incrementJumpIndex();
+			this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		}
-		getEnvironment().setJumpOccurring(false);
+		getEnvironmentOperator().setJumpOccurring(false);
 	}
 
 	public void storeRelavantPreJumpData(ArrayList<Component> jump_components)

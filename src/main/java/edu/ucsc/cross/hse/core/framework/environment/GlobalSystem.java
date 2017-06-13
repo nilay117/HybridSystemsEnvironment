@@ -22,6 +22,8 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 	@CoreComponent
 	private boolean jumpOccurring; // flag indicating if a jump is
 
+	// Constructors
+
 	public GlobalSystem()
 	{
 		super("Global Environment Hybrid Systems");
@@ -34,17 +36,41 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 		initializeComponents();
 	}
 
-	// Access Functions
-
-	public HybridTime getEnvironmentTime()
+	// User accessibility functions
+	@Override
+	public boolean isJumpOccurring()
 	{
-		return environmentTime;
+		return jumpOccurring;
 	}
 
-	public Time getStartTime()
+	@Override
+	public ComponentHierarchy getContents()
 	{
-		return earthStartTime;
+		// TODO Auto-generated method stub
+		return super.getHierarchy();
 	}
+
+	@Override
+	public Double getEnvironmentTime()
+	{
+		// TODO Auto-generated method stub
+		return this.getEnvironmentHybridTime().getTime();
+	}
+
+	@Override
+	public Double getEarthStartTime()
+	{
+		return earthStartTime.seconds();
+	}
+
+	@Override
+	public Integer getJumpIndex()
+	{
+		// TODO Auto-generated method stub
+		return this.getEnvironmentHybridTime().getJumpIndex();
+	}
+
+	// Private Operational Functions
 
 	private void initializeComponents()
 	{
@@ -52,7 +78,7 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 		environmentTime = new HybridTime();
 		earthStartTime = Time.newSecondsValue(-1.0);
 		// ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
-		GlobalSystemLibrary.addGlobalHybridSystem(this);
+		GlobalSystemOperator.addGlobalHybridSystem(this);
 		// ComponentHierarchy.loadParent(this.hierarchy(), this);
 		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 	}
@@ -67,35 +93,13 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
 	}
 
-	@Override
-	public boolean isJumpOccurring()
+	HybridTime getEnvironmentHybridTime()
 	{
-		return jumpOccurring;
+		return environmentTime;
 	}
 
-	public void setJumpOccurring(boolean jumpOccurring)
+	void setJumpOccurring(boolean jumpOccurring)
 	{
 		this.jumpOccurring = jumpOccurring;
-	}
-
-	@Override
-	public ComponentHierarchy components()
-	{
-		// TODO Auto-generated method stub
-		return super.getHierarchy();
-	}
-
-	@Override
-	public Time environmentTime()
-	{
-		// TODO Auto-generated method stub
-		return Time.newSecondsValue(this.getEnvironmentTime().getTime());
-	}
-
-	@Override
-	public Integer jumpIndex()
-	{
-		// TODO Auto-generated method stub
-		return this.getEnvironmentTime().getJumpIndex();
 	}
 }

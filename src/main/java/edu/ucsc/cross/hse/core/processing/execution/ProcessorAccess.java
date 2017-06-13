@@ -5,6 +5,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
@@ -31,14 +32,14 @@ public abstract class ProcessorAccess
 	// @Override
 	protected Double getEnvTime()
 	{
-		return proc.environment.getEnvironmentContent().getEnvironmentTime().getTime();
+		return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
 	}
 
 	// @Override
 	protected void setEnvTime(Double time)
 	{
 		// TODO Auto-generated method stub
-		proc.environment.getEnvironmentContent().getEnvironmentTime().setTime(time);
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(time);
 	}
 
 	// @Override
@@ -57,6 +58,12 @@ public abstract class ProcessorAccess
 	protected GlobalSystem getEnvironment()
 	{
 		return proc.environment.getEnvironmentContent();
+	}
+
+	// @Override
+	protected GlobalSystemOperator getEnvironmentOperator()
+	{
+		return GlobalSystemOperator.getGlobalSystemOperator(getEnvironment().toString());
 	}
 
 	// @Override

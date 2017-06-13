@@ -181,7 +181,7 @@ public class EventMonitor extends ProcessorAccess
 	{
 		try
 		{
-			Double stopTime = integrator.integrate(ode, getEnvironment().getEnvironmentTime().getTime(),
+			Double stopTime = integrator.integrate(ode, getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
 			getComputationEngine().getODEValueVector(), getSettings().trial().simDuration,
 			getComputationEngine().getODEValueVector());
 			return stopTime;
@@ -200,7 +200,7 @@ public class EventMonitor extends ProcessorAccess
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
 			} else
 			{
-				return getEnvironment().getEnvironmentTime().getTime();
+				return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
 			}
 
 		}
