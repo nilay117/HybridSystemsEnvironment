@@ -23,11 +23,11 @@ public class ComponentActions
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		ComponentHierarchy h = component.hierarchy();
+		ComponentHierarchy h = component.getHierarchy();
 
 		if (!include_data)
 		{
-			for (Data data : component.hierarchy().getComponents(Data.class, true))
+			for (Data data : component.getHierarchy().getComponents(Data.class, true))
 			{
 				tempValues.put(data, data.actions().getStoredValues());
 				DataOperator.dataOp(data).setStoredValues(new HashMap<Double, T>());
@@ -44,7 +44,7 @@ public class ComponentActions
 		}
 		if (!include_data)
 		{
-			for (Data data : component.hierarchy().getComponents(Data.class, true))
+			for (Data data : component.getHierarchy().getComponents(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
 				DataOperator.dataOp(data).setStoredValues(tempValues.get(data));
@@ -54,4 +54,5 @@ public class ComponentActions
 		return copy;
 
 	}
+
 }

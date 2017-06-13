@@ -50,13 +50,13 @@ public class Data<T> extends Component// DynamicData<T>
 	private UnitValue prejump; // pre-jump value stored immediately before jump
 								// occurs
 
-	public T value()
+	public T getObject()
 	{
 
 		try
 		{
 
-			if (environment().isJumpOccurring())
+			if (getEnvironment().isJumpOccurring())
 			{
 
 				if (defaultUnit.equals(NoUnit.NONE))
@@ -101,7 +101,7 @@ public class Data<T> extends Component// DynamicData<T>
 		// }
 	}
 
-	public void value(T element)
+	public void setObject(T element)
 	{
 		this.element = element;
 		// if (element != null)
@@ -173,7 +173,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public boolean isElementNull()
 	{
-		return (value() == null);
+		return (getObject() == null);
 	}
 
 	public InitialValue<T> initialValue()
@@ -396,7 +396,7 @@ public class Data<T> extends Component// DynamicData<T>
 		}
 		if (initialize)
 		{
-			value(initialVal.getValue());
+			setObject(initialVal.getValue());
 		}
 
 	}
@@ -463,11 +463,11 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return CloneUtility.cloner.deepClone(value());
+				return CloneUtility.cloner.deepClone(getObject());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{
-				return value();
+				return getObject();
 			}
 		}
 
@@ -489,7 +489,7 @@ public class Data<T> extends Component// DynamicData<T>
 				prejump.set(val.get(units), units);
 			} else
 			{
-				prejump.set(value(), NoUnit.NONE);
+				prejump.set(getObject(), NoUnit.NONE);
 			}
 		} catch (Exception e)
 		{

@@ -44,9 +44,9 @@ public class DataManager extends ProcessorAccess
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.properties().getName()))
+			if (!stateElements.contains(allStates.getClassification().getName()))
 			{
-				stateElements.add(allStates.properties().getName());
+				stateElements.add(allStates.getClassification().getName());
 			}
 		}
 		// System.out.println(stateElements.toString());
@@ -59,7 +59,7 @@ public class DataManager extends ProcessorAccess
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.properties().getName().equals(title))
+			if (element.getClassification().getName().equals(title))
 			{
 				datas.add(element);
 			}
@@ -69,19 +69,19 @@ public class DataManager extends ProcessorAccess
 
 	public Data checkIfMatchingElementInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().hierarchy().getComponents(true))
+		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{
 			try
 			{
 				DataSet set = (DataSet) component;
-				if (set.hierarchy().getComponents(true).contains(data))
+				if (set.getHierarchy().getComponents(true).contains(data))
 				{
-					for (Component subComponent : set.hierarchy().getComponents(true))
+					for (Component subComponent : set.getHierarchy().getComponents(true))
 					{
 						try
 						{
 							Data dat = (Data) subComponent;
-							if (dat.properties().getName().equals(title))
+							if (dat.getClassification().getName().equals(title))
 							{
 								return dat;
 							}
@@ -130,7 +130,7 @@ public class DataManager extends ProcessorAccess
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Component component : super.getEnvironment().hierarchy().getComponents(true))
+		for (Component component : super.getEnvironment().getHierarchy().getComponents(true))
 		{
 			try
 			{

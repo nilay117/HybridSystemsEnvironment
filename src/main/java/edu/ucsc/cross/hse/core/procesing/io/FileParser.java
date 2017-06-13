@@ -24,7 +24,7 @@ public class FileParser extends ProcessorAccess
 
 	public void autoStoreData(GlobalSystem data)
 	{
-		for (Component comp : getEnvironment().hierarchy().getComponents(true))
+		for (Component comp : getEnvironment().getHierarchy().getComponents(true))
 		{
 			// comp.getConfigurer().setEnvironment(null);
 			// comp.getConfigurer().resetHierarchy();
@@ -40,10 +40,10 @@ public class FileParser extends ProcessorAccess
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
 		{
-			directory += data.properties().getName() + "/";
+			directory += data.getClassification().getName() + "/";
 		}
 
-		String fileName = data.properties().getDescription() + "_"
+		String fileName = data.getClassification().getDescription() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
 		String out = XMLParser.serializeObject(processor);
@@ -79,7 +79,7 @@ public class FileParser extends ProcessorAccess
 	public <T extends Component> T loadComponent(String file_directory, String file_name)
 	{
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.hierarchy().getComponents(true))
+		for (Component componen : component.getHierarchy().getComponents(true))
 		{
 			ComponentOperator.getConfigurer(componen).setInitialized(null);
 			// try
@@ -102,9 +102,9 @@ public class FileParser extends ProcessorAccess
 	private static <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		ComponentHierarchy.constructTree(component.hierarchy());
+		ComponentHierarchy.constructTree(component.getHierarchy());
 		// allComponents.add(component);
-		for (Component subComponent : component.hierarchy().getComponents(true))
+		for (Component subComponent : component.getHierarchy().getComponents(true))
 		{
 			if (!allComponents.contains(subComponent))
 			{

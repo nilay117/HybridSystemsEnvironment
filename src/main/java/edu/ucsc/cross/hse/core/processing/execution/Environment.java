@@ -49,7 +49,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	public ComponentHierarchy content()
 	{
-		return content.hierarchy();
+		return content.getHierarchy();
 	}
 
 	public DataManager data()

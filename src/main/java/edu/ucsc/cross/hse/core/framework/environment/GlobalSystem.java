@@ -82,7 +82,7 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 	public ComponentHierarchy components()
 	{
 		// TODO Auto-generated method stub
-		return super.hierarchy();
+		return super.getHierarchy();
 	}
 
 	@Override

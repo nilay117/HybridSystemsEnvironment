@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.framework.component;
 public class ComponentAddress
 {
 
-	private String environmentKey;
+	private String environmentKey; // key that links the component to the global environment that it is contained in.  This keeps the component size smaller when being copied or saved, and allows for multiple environments to be running simultaneously
 
 	public ComponentAddress()
 	{

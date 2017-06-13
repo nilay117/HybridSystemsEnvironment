@@ -34,6 +34,8 @@ public class ComponentHierarchy
 														// component (all
 														// children & childrens
 														// children)
+	@CoreComponent
+	private String environmentKey; // key that links the component to the global environment that it is contained in.  This keeps the component size smaller when being copied or saved, and allows for multiple environments to be running simultaneously
 
 	@CoreComponent
 	private Component parentComponent; // parent component
@@ -113,9 +115,9 @@ public class ComponentHierarchy
 
 	private void processComponent(Component parent, Component field)
 	{
-		field.hierarchy().parentComponent = parent;
-		field.hierarchy().loadHierarchyComponents();
-		parent.hierarchy().storeComponent(field, true);
+		field.getHierarchy().parentComponent = parent;
+		field.getHierarchy().loadHierarchyComponents();
+		parent.getHierarchy().storeComponent(field, true);
 	}
 
 	private void processContainer(Component parent, Object container)
@@ -222,26 +224,28 @@ public class ComponentHierarchy
 				{
 					childComponents.add(component);
 				}
-				if (!childComponentMap.containsKey(component.properties().getBaseComponentClass()))
+				if (!childComponentMap.containsKey(component.getClassification().getBaseComponentClass()))
 				{
-					childComponentMap.put(component.properties().getBaseComponentClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+					childComponentMap.put(component.getClassification().getBaseComponentClass(),
+					new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 				}
-				if (!childComponentMap.get(component.properties().getBaseComponentClass()).contains(component))
+				if (!childComponentMap.get(component.getClassification().getBaseComponentClass()).contains(component))
 				{
-					childComponentMap.get(component.properties().getBaseComponentClass()).add(component);
+					childComponentMap.get(component.getClassification().getBaseComponentClass()).add(component);
 				}
 			}
 			if (!descendantComponents.contains(component))
 			{
 				descendantComponents.add(component);
 			}
-			if (!descendantComponentMap.containsKey(component.properties().getBaseComponentClass()))
+			if (!descendantComponentMap.containsKey(component.getClassification().getBaseComponentClass()))
 			{
-				descendantComponentMap.put(component.properties().getBaseComponentClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.getClassification().getBaseComponentClass(),
+				new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!descendantComponentMap.get(component.properties().getBaseComponentClass()).contains(component))
+			if (!descendantComponentMap.get(component.getClassification().getBaseComponentClass()).contains(component))
 			{
-				descendantComponentMap.get(component.properties().getBaseComponentClass()).add(component);
+				descendantComponentMap.get(component.getClassification().getBaseComponentClass()).add(component);
 			}
 		}
 	}
@@ -326,8 +330,8 @@ public class ComponentHierarchy
 		for (Component component : init)
 		{
 			hierarchy.storeComponent(component, false);
-			ComponentHierarchy.constructTree(component.hierarchy());
-			for (Component componentChild : component.hierarchy().getComponents(true))
+			ComponentHierarchy.constructTree(component.getHierarchy());
+			for (Component componentChild : component.getHierarchy().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
 			}
@@ -436,4 +440,13 @@ public class ComponentHierarchy
 		return components;
 	}
 
+	String getEnvironmentKey()
+	{
+		return environmentKey;
+	}
+
+	void setEnvironmentKey(String environmentKey)
+	{
+		this.environmentKey = environmentKey;
+	}
 }

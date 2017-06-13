@@ -24,9 +24,9 @@ public class TestState extends DataSet
 	@Override
 	public void initialize()
 	{
-		hybrid.value(Velocity.newKilometersPerSecondValue(Math.random() * 3 + Math.random() + 1));
+		hybrid.setObject(Velocity.newKilometersPerSecondValue(Math.random() * 3 + Math.random() + 1));
 		// TODO Auto-generated method stub
-		discrete.value(20.0);
-		continuous.value(4.0);
+		discrete.setObject(20.0);
+		continuous.setObject(4.0);
 	}
 }

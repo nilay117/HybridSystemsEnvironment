@@ -90,12 +90,7 @@ public class ComponentOperator extends ComponentActions
 
 	public void resetHierarchy()
 	{
-		component.hierarchy().setup();
-	}
-
-	public String getEnvironmentKey()
-	{
-		return component.address().getEnvironmentKey();
+		component.getHierarchy().setup();
 	}
 
 	public void protectedInitialize()
@@ -137,14 +132,14 @@ public class ComponentOperator extends ComponentActions
 	 */
 	public void performTasks(boolean jump_occurring)
 	{
-		for (DynamicalModel localBehavior : component.hierarchy().getComponents(DynamicalModel.class, true))
+		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
 			{
 				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
 				if (jumpOccurred)
 				{
-					((GlobalSystem) component.environment()).getEnvironmentTime().incrementJumpIndex();
+					((GlobalSystem) component.getEnvironment()).getEnvironmentTime().incrementJumpIndex();
 				}
 			} catch (Exception behaviorFail)
 			{
@@ -162,7 +157,7 @@ public class ComponentOperator extends ComponentActions
 	public Boolean jumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (DynamicalModel localBehavior : component.hierarchy().getComponents(DynamicalModel.class, true))
+		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
 			{
@@ -196,7 +191,8 @@ public class ComponentOperator extends ComponentActions
 		ArrayList<Component> jumpComponents = new ArrayList<Component>();
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
-		for (Component localBehavior : component.hierarchy().getComponents(Component.class, true, DynamicalModel.class))// ,
+		for (Component localBehavior : component.getHierarchy().getComponents(Component.class, true,
+		DynamicalModel.class))// ,
 		// DynamicalModel.class))
 		{
 			try
@@ -219,10 +215,20 @@ public class ComponentOperator extends ComponentActions
 
 	public void uninitializeComponent()
 	{
-		ComponentHierarchy.constructTree(component.hierarchy());
-		for (Component comp : component.hierarchy().getComponents(true))
+		ComponentHierarchy.constructTree(component.getHierarchy());
+		for (Component comp : component.getHierarchy().getComponents(true))
 		{
 			ComponentOperator.getConfigurer(comp).setInitialized(false);
 		}
+	}
+
+	public String getEnvironmentKey()
+	{
+		return component.getHierarchy().getEnvironmentKey();
+	}
+
+	void setEnvironmentKey(String environment_key)
+	{
+		component.getHierarchy().setEnvironmentKey(environment_key);
 	}
 }

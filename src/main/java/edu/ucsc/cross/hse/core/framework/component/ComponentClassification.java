@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-public class ComponentProperties
+public class ComponentClassification
 {
 
 	// Classification
@@ -13,16 +13,12 @@ public class ComponentProperties
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB
 							// Internal SSD" or "Crazyflie Nano 2.0"
 
-	protected boolean simulated; // flag indicating if contained data is
-	// simulated
-	// or not
-
 	protected String environmentKey;
 	// @CoreComponent
 	// protected GlobalHybridSystem environment; // environment where the
 	// component is located
 
-	public ComponentProperties(String title, Class<?> classification)
+	public ComponentClassification(String title, Class<?> classification)
 	{
 		this.title = title;
 		this.classification = (classification);

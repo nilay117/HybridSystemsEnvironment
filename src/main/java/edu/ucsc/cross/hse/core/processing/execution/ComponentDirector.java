@@ -63,7 +63,7 @@ public class ComponentDirector extends ProcessorAccess
 
 		for (Component component : jump_components)
 		{
-			for (Data data : component.hierarchy().getComponents(Data.class, true))
+			for (Data data : component.getHierarchy().getComponents(Data.class, true))
 			{
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
@@ -76,7 +76,7 @@ public class ComponentDirector extends ProcessorAccess
 
 	void prepareComponents()
 	{
-		ComponentHierarchy.constructTree(getEnvironment().hierarchy());
+		ComponentHierarchy.constructTree(getEnvironment().getHierarchy());
 		linkEnvironment();
 		initializeComponents(Data.class);
 		// initializeComponents(DataSet.class);
@@ -87,7 +87,7 @@ public class ComponentDirector extends ProcessorAccess
 	public void initializeComponents(Class<?>... components_to_initialize)
 	{
 		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
-		for (Component component : getEnvironment().hierarchy().getComponents(true))
+		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{
 			boolean initialize = initializeList.size() == 0;
 			for (Class<?> checkClass : initializeList)
@@ -104,7 +104,7 @@ public class ComponentDirector extends ProcessorAccess
 
 	public void linkEnvironment()
 	{
-		for (Component component : getEnvironment().hierarchy().getComponents(true))
+		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{
 			compOps(component).setEnvironment(getEnvironment().toString());
 		}

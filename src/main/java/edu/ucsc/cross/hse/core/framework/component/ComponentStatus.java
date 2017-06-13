@@ -1,16 +1,16 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-public class ComponentConfiguration
+public class ComponentStatus
 {
 
 	private Boolean initialized; // flag indicating if component has been
 	// initialized or not
 
-	private boolean simulated; // flag indicating if contained data is
+	protected boolean simulated; // flag indicating if contained data is
 	// simulated
 	// or not
 
-	public ComponentConfiguration()
+	public ComponentStatus()
 	{
 		simulated = true;
 		initialized = false;

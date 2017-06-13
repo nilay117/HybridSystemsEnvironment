@@ -19,16 +19,16 @@ public abstract class Component implements Initializer
 	private ComponentAddress address; // address information about this
 										// component
 	@CoreComponent
-	private ComponentConfiguration configuration; // configuration status of
+	private ComponentStatus status; // configuration status of
 													// this instance of the
 													// component
 
 	@CoreComponent
-	private ComponentProperties properties; // specific properties of this
+	private ComponentClassification classification; // specific properties of this
 											// component
 
 	@CoreComponent
-	private ComponentHierarchy components; // component access hierarchy of this
+	private ComponentHierarchy hierarchy; // component access hierarchy of this
 											// component
 
 	/*
@@ -107,19 +107,19 @@ public abstract class Component implements Initializer
 	// matching_classes);
 	// }
 
-	public GlobalSystemInterface environment()
+	public GlobalSystemInterface getEnvironment()
 	{
 		return GlobalSystemLibrary.getGlobalSystem(address.getEnvironmentKey());
 	}
 
-	public ComponentProperties properties()
+	public ComponentClassification getClassification()
 	{
-		return properties;
+		return classification;
 	}
 
-	public ComponentHierarchy hierarchy()
+	public ComponentHierarchy getHierarchy()
 	{
-		return components;
+		return hierarchy;
 	}
 
 	// protected BackgroundOperations getConfigurer()
@@ -176,15 +176,15 @@ public abstract class Component implements Initializer
 	{
 
 		ComponentOperator.getConfigurer(this);
-		configuration = new ComponentConfiguration();
+		status = new ComponentStatus();
 		address = new ComponentAddress();
-		properties = new ComponentProperties(title, base_class);
-		components = new ComponentHierarchy(this);
+		classification = new ComponentClassification(title, base_class);
+		hierarchy = new ComponentHierarchy(this);
 	}
 
-	ComponentConfiguration configuration()
+	ComponentStatus configuration()
 	{
-		return configuration;
+		return status;
 	}
 
 	public ComponentAddress address()
@@ -194,6 +194,6 @@ public abstract class Component implements Initializer
 
 	void loadHierarchy(ComponentHierarchy hierarchy)
 	{
-		components = hierarchy;
+		this.hierarchy = hierarchy;
 	}
 }

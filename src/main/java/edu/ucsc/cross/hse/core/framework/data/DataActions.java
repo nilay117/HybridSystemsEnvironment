@@ -59,15 +59,15 @@ public class DataActions<T> extends ComponentActions
 	{
 		try
 		{
-			if (data.value().getClass().getSuperclass().equals(UnitValue.class))
+			if (data.getObject().getClass().getSuperclass().equals(UnitValue.class))
 			{
 				if (unit == null)
 				{
-					unit = ((UnitValue) data.value()).getUnit();
+					unit = ((UnitValue) data.getObject()).getUnit();
 				}
 				try
 				{
-					return (Double) ((UnitValue) data.value()).get(unit);
+					return (Double) ((UnitValue) data.getObject()).get(unit);
 				} catch (UnitException e)
 				{
 					e.printStackTrace();
@@ -75,9 +75,9 @@ public class DataActions<T> extends ComponentActions
 					// TODO Auto-generated catch block
 
 				}
-			} else if (data.value().getClass().equals(Double.class))
+			} else if (data.getObject().getClass().equals(Double.class))
 			{
-				return (Double) data.value();
+				return (Double) data.getObject();
 			} else
 			{
 				return null;
