@@ -9,43 +9,48 @@ import java.util.Map;
 
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
-import edu.ucsc.cross.hse.core.framework.annotations.CoreComponent;
 
+/*
+ * This class contains structures that define the hierarchy of additional
+ * components that are related to a particular component. The purpose of this
+ * class is to make it easy to access components with search specifications, ie
+ * find all instances of a specific class in any descendant.
+ * 
+ * The lists and mappings contain sub-components of this component, which are
+ * the components defined within a particular component or any of its
+ * sub-components. The parent and the environment of this particular are also
+ * available within this structure.
+ */
 public class ComponentHierarchy
 {
+
+	// Mapping of all declared components indexed by class
+	public HashMap<Class<?>, ArrayList<Component>> declaredComponentMap;
+
+	// Mapping of all components from all descendants indexed by class
+	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
+
+	// List of all declared components
+	private ArrayList<Component> declaredComponentList;
+
+	// List of all components from all descendants
+	private ArrayList<Component> descendantComponentList;
+
+	// key that links the component to the global environment that it is
+	// contained in. This keeps the component size smaller when being copied or
+	// saved, and allows for multiple environments to be running simultaneously
+	private String environmentKey;
+
+	// The parent that declared this component
+	private Component parentComponent;
+
+	// Pointer to this component
+	private Component self;
 
 	public Component getParentComponent()
 	{
 		return parentComponent;
 	}
-
-	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Component>> childComponentMap;
-
-	@CoreComponent
-	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
-
-	@CoreComponent
-	private ArrayList<Component> childComponents; // direct children of this
-													// component (no childrens
-													// children)
-	@CoreComponent
-	private ArrayList<Component> descendantComponents; // all children of this
-														// component (all
-														// children & childrens
-														// children)
-	@CoreComponent
-	private String environmentKey; // key that links the component to the global
-									// environment that it is contained in. This
-									// keeps the component size smaller when
-									// being copied or saved, and allows for
-									// multiple environments to be running
-									// simultaneously
-
-	@CoreComponent
-	private Component parentComponent; // parent component
-	@CoreComponent
-	private Component self; // parent component
 
 	/*
 	 * Constructor that defines the name and base class of the component
@@ -106,16 +111,16 @@ public class ComponentHierarchy
 			return descendantComponentMap;
 		} else
 		{
-			return childComponentMap;
+			return declaredComponentMap;
 		}
 	}
 
 	protected void initializeContainers()
 	{
 		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
-		childComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
-		childComponents = new ArrayList<Component>();
-		descendantComponents = new ArrayList<Component>();
+		declaredComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
+		declaredComponentList = new ArrayList<Component>();
+		descendantComponentList = new ArrayList<Component>();
 	}
 
 	private void processComponent(Component parent, Component field)
@@ -164,10 +169,10 @@ public class ComponentHierarchy
 		ArrayList<Component> allComponents = new ArrayList<Component>();
 		if (global)
 		{
-			allComponents = descendantComponents;
+			allComponents = descendantComponentList;
 		} else
 		{
-			allComponents = childComponents;
+			allComponents = declaredComponentList;
 		}
 		for (Component component : allComponents)
 		{
@@ -225,32 +230,30 @@ public class ComponentHierarchy
 		{
 			if (local)
 			{
-				if (!childComponents.contains(component))
+				if (!declaredComponentList.contains(component))
 				{
-					childComponents.add(component);
+					declaredComponentList.add(component);
 				}
-				if (!childComponentMap.containsKey(component.getClassification().getBaseComponentClass()))
+				if (!declaredComponentMap.containsKey(component.getClass()))
 				{
-					childComponentMap.put(component.getClassification().getBaseComponentClass(),
-					new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+					declaredComponentMap.put(component.getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 				}
-				if (!childComponentMap.get(component.getClassification().getBaseComponentClass()).contains(component))
+				if (!declaredComponentMap.get(component.getClass()).contains(component))
 				{
-					childComponentMap.get(component.getClassification().getBaseComponentClass()).add(component);
+					declaredComponentMap.get(component.getClass()).add(component);
 				}
 			}
-			if (!descendantComponents.contains(component))
+			if (!descendantComponentList.contains(component))
 			{
-				descendantComponents.add(component);
+				descendantComponentList.add(component);
 			}
-			if (!descendantComponentMap.containsKey(component.getClassification().getBaseComponentClass()))
+			if (!descendantComponentMap.containsKey(component.getDescription().getClass()))
 			{
-				descendantComponentMap.put(component.getClassification().getBaseComponentClass(),
-				new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.getDescription().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!descendantComponentMap.get(component.getClassification().getBaseComponentClass()).contains(component))
+			if (!descendantComponentMap.get(component.getDescription().getClass()).contains(component))
 			{
-				descendantComponentMap.get(component.getClassification().getBaseComponentClass()).add(component);
+				descendantComponentMap.get(component.getDescription().getClass()).add(component);
 			}
 		}
 	}
@@ -259,7 +262,7 @@ public class ComponentHierarchy
 	{
 		ArrayList<Object> components = new ArrayList<Object>();
 
-		if (!FieldFinder.containsSuper(container, CoreComponent.class))
+		// if (!FieldFinder.containsSuper(container, CoreComponent.class))
 		{
 			try
 			{
@@ -357,11 +360,11 @@ public class ComponentHierarchy
 	{
 		if (include_children)
 		{
-			return descendantComponents;
+			return descendantComponentList;
 
 		} else
 		{
-			return childComponents;
+			return declaredComponentList;
 		}
 	}
 
@@ -401,7 +404,7 @@ public class ComponentHierarchy
 					descendantComponentMap.put(clas, componente);
 				} else
 				{
-					childComponentMap.put(clas, componente);
+					declaredComponentMap.put(clas, componente);
 				}
 				allComponents.addAll((ArrayList<T>) componente);
 				// components = getComponents(component_class,
@@ -422,7 +425,7 @@ public class ComponentHierarchy
 				components = (ArrayList<T>) descendantComponentMap.get(search_class);
 			} else
 			{
-				components = (ArrayList<T>) childComponentMap.get(search_class);
+				components = (ArrayList<T>) declaredComponentMap.get(search_class);
 			}
 		} catch (Exception noComponents)
 		{
@@ -436,7 +439,7 @@ public class ComponentHierarchy
 				descendantComponentMap.put(search_class, componentz);
 			} else
 			{
-				childComponentMap.put(search_class, componentz);
+				declaredComponentMap.put(search_class, componentz);
 			}
 			components = (ArrayList<T>) componentz;
 			// components = getComponents(component_class, include_children);
@@ -462,7 +465,7 @@ public class ComponentHierarchy
 		HashMap<String, S> componentMap = new HashMap<String, S>();
 		for (S component : components)
 		{
-			componentMap.put(component.getClassification().name, component);
+			componentMap.put(component.getDescription().name, component);
 		}
 		return componentMap;
 	}

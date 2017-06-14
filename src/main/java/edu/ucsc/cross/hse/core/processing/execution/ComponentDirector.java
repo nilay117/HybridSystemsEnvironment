@@ -106,7 +106,7 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{
-			getComponentOperator(component).setEnvironment(getEnvironment().toString());
+			getComponentOperator(component).setEnvironmentKey(getEnvironment().toString());
 		}
 	}
 

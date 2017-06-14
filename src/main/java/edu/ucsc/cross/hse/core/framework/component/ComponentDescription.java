@@ -1,11 +1,11 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-public class ComponentClassification
+/*
+ * This class contains information that describes the component, which is used
+ * in graphical displays and for filtering.
+ */
+public class ComponentDescription
 {
-
-	// Classification
-	public Class<?> baseComponentClass; // base component of this class
-	protected Class<?> classification; // classification of the element
 
 	// Naming
 	protected String title; // general description of the element -ie "Storage
@@ -13,17 +13,10 @@ public class ComponentClassification
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB
 							// Internal SSD" or "Crazyflie Nano 2.0"
 
-	protected String environmentKey;
-	// @CoreComponent
-	// protected GlobalHybridSystem environment; // environment where the
-	// component is located
-
-	public ComponentClassification(String title, Class<?> classification)
+	public ComponentDescription(String title)
 	{
 		this.title = title;
-		this.classification = (classification);
 		this.name = title;
-		this.baseComponentClass = classification;
 	}
 
 	public String getName()
@@ -54,16 +47,6 @@ public class ComponentClassification
 	public void setDescription(String description)
 	{
 		this.name = description;
-	}
-
-	public Class<?> getClassification()
-	{
-		return classification;
-	}
-
-	public Class<?> getBaseComponentClass()
-	{
-		return baseComponentClass;
 	}
 
 }

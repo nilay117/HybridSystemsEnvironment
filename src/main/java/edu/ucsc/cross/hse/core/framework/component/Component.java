@@ -1,50 +1,33 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
 import bs.commons.objects.execution.Initializer;
-import edu.ucsc.cross.hse.core.framework.annotations.CoreComponent;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
+import edu.ucsc.cross.hse.core2.framework.component.ComponentAddress;
 
 /*
- * This class is the foundation of all components that handles the
- * compatibility. Component is the constructor that is used to build other
- * constructors such as all of the ones above. It can be used to create new
- * constructors, or a whole new custom component with the same built in
- * compatibility and functionality
+ * This class is the foundation of all components to ensures proper
+ * compatibility. Anything that is an extension of this class can be used with
+ * the hybrid systems environment as standalone components or pieces of another
+ * component. The hierarchical structure allows these extensions to be accessed
+ * regardless of location, ie in a HashMap within a sub component. This class
+ * also provides some additional functionality and access to the environment and
+ * components within its hierarchy.
  */
 public abstract class Component implements Initializer
 {
 
-	@CoreComponent
-	private ComponentAddress address; // address information about this
-										// component
-	@CoreComponent
-	private ComponentStatus status; // configuration status of
+	private ProtectedComponentData status; // configuration status of
 									// this instance of the
 									// component
 
-	@CoreComponent
-	private ComponentClassification classification; // specific properties of
-													// this
-	// component
+	private ComponentDescription description; // specific information describing
+												// the component
 
-	@CoreComponent
 	private ComponentHierarchy hierarchy; // component access hierarchy of this
 											// component
-
-	/*
-	 * Constructor that defines the name and base class of the component
-	 * 
-	 * @param title - title of the component
-	 * 
-	 * @param base_class - base class of the component
-	 */
-	public Component(String title, Class<?> base_class)
-	{
-
-		setup(title, base_class);
-	}
 
 	/*
 	 * Constructor that defines the name of the component with this class
@@ -77,19 +60,14 @@ public abstract class Component implements Initializer
 	/*
 	 * User Access Functions
 	 */
-	public ComponentAddress getAddress()
+	public GlobalSystem getEnvironment()
 	{
-		return address;
+		return GlobalSystemOperator.getGlobalSystem(getHierarchy().getEnvironmentKey());
 	}
 
-	public GlobalSystemInterface getEnvironment()
+	public ComponentDescription getDescription()
 	{
-		return GlobalSystemOperator.getGlobalSystem(address.getEnvironmentKey());
-	}
-
-	public ComponentClassification getClassification()
-	{
-		return classification;
+		return description;
 	}
 
 	public ComponentHierarchy getHierarchy()
@@ -103,25 +81,28 @@ public abstract class Component implements Initializer
 	}
 
 	/*
-	 * Operation Access Functions
+	 * External Operation Functions
 	 */
-	ComponentStatus getStatus()
+	ProtectedComponentData getStatus()
 	{
 		return status;
-	}
-
-	private void setup(String title, Class<?> base_class)
-	{
-		ComponentOperator.getConfigurer(this);
-		status = new ComponentStatus();
-		address = new ComponentAddress();
-
-		classification = new ComponentClassification(title, base_class);
-		hierarchy = new ComponentHierarchy(this);
 	}
 
 	void loadHierarchy(ComponentHierarchy hierarchy)
 	{
 		this.hierarchy = hierarchy;
 	}
+
+	/*
+	 * Internal Operation Functions
+	 */
+	private void setup(String title, Class<?> base_class)
+	{
+		ComponentOperator.getConfigurer(this);
+		status = new ProtectedComponentData();
+
+		description = new ComponentDescription(title);
+		hierarchy = new ComponentHierarchy(this);
+	}
+
 }

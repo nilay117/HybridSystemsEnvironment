@@ -11,16 +11,25 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
 import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
+/*
+ * This class contains the methods that are used by processing modules to
+ * operate the component. These methods are not intended for use outside of
+ * processing, which is why they are not directly accessable from the component
+ * itself. Any additional methods that should not be accessible by users should
+ * be defined here. Use caution when using them as they can disrupt
+ * functionality of the environment.
+ */
 public class ComponentOperator extends ComponentActions
 {
 
-	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
+	public static Cloner cloner = new Cloner();
 
 	// public Component component;
+
+	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
 
 	public ComponentOperator(Component component)
 	{
@@ -29,14 +38,6 @@ public class ComponentOperator extends ComponentActions
 		components.put(component, this);
 		// getConfigurer(component);
 		// component.hierarchy.
-	}
-
-	@CoreComponent
-	public static Cloner cloner = new Cloner();
-
-	public void setEnvironment(String environment_id)
-	{
-		component.getAddress().setEnvironmentKey(environment_id);
 	}
 
 	public Component addComponentFromFile(String file_path)
@@ -51,61 +52,11 @@ public class ComponentOperator extends ComponentActions
 			badComponent.printStackTrace();
 		}
 		return component;
-
 	}
 
-	public void saveComponentToFile(String directory_path, String file_name)
+	public String getEnvironmentKey()
 	{
-		Object clonedComponent = ObjectCloner.xmlClone(this.component);
-
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
-		XMLParser.serializeObject(this.component));// clonedComponent));
-
-	}
-
-	public static ComponentOperator getConfigurer(Component component)
-	{
-		if (components.containsKey(component))
-		{
-			return components.get(component);
-
-		} else
-		{
-
-			ComponentOperator config = new ComponentOperator(component);
-			components.put(component, config);
-			return config;
-
-		}
-	}
-
-	public ComponentStatus getStatus()
-	{
-		return component.getStatus();
-	}
-
-	public Boolean isInitialized()
-	{
-		return component.getStatus().getInitialized();
-	}
-
-	public void setInitialized(Boolean initialized)
-	{
-		component.getStatus().setInitialized(initialized);
-	}
-
-	public void resetHierarchy()
-	{
-		component.getHierarchy().setup();
-	}
-
-	public void protectedInitialize()
-	{
-		if (!component.getStatus().getInitialized())
-		{
-			component.initialize();
-			component.getStatus().setInitialized(true);
-		}
+		return component.getHierarchy().getEnvironmentKey();
 	}
 
 	public boolean getIfData()
@@ -120,83 +71,19 @@ public class ComponentOperator extends ComponentActions
 		}
 	}
 
+	public ProtectedComponentData getStatus()
+	{
+		return component.getStatus();
+	}
+
+	public Boolean isInitialized()
+	{
+		return component.getStatus().getInitialized();
+	}
+
 	public boolean isSimulated()
 	{
 		return component.getStatus().isSimulated();
-	}
-
-	public void setSimulated(boolean simulated)
-	{
-		component.getStatus().setSimulated(simulated);
-	}
-
-	/*
-	 * Performs all sub component tasks according to the current domain (jump,
-	 * flow, or neither)
-	 * 
-	 * @param jump_occurring
-	 */
-	public void performTasks(boolean jump_occurring)
-	{
-
-		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
-		{
-			try
-			{
-
-				boolean jumpOccurred = false;
-				if (DynamicalModel.jumpOccurring(localBehavior, true))
-				{
-					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				} else if (DynamicalModel.flowOccurring(localBehavior, true))
-				{
-					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				} else
-				{
-
-				}
-				if (jumpOccurred)
-				{
-					GlobalSystemOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
-					.incrementJumpIndex();
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-	}
-
-	/*
-	 * Determines whether or not a jump is occurring in any component within the
-	 * hybrid system
-	 * 
-	 * @return true if a jump is occurring, false otherwise
-	 */
-	public Boolean jumpOccurring()
-	{
-		Boolean jumpOccurred = false;
-		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
-		{
-			try
-			{
-				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);
-				if (jumpOccurring != null)
-				{
-					try
-					{
-						jumpOccurred = jumpOccurred || jumpOccurring;
-					} catch (Exception outOfDomain)
-					{
-						outOfDomain.printStackTrace();
-					}
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-		return jumpOccurred;
 	}
 
 	/*
@@ -245,6 +132,113 @@ public class ComponentOperator extends ComponentActions
 		return jumpComponents;
 	}
 
+	/*
+	 * Determines whether or not a jump is occurring in any component within the
+	 * hybrid system
+	 * 
+	 * @return true if a jump is occurring, false otherwise
+	 */
+	public Boolean jumpOccurring()
+	{
+		Boolean jumpOccurred = false;
+		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
+		{
+			try
+			{
+				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);
+				if (jumpOccurring != null)
+				{
+					try
+					{
+						jumpOccurred = jumpOccurred || jumpOccurring;
+					} catch (Exception outOfDomain)
+					{
+						outOfDomain.printStackTrace();
+					}
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+		return jumpOccurred;
+	}
+
+	/*
+	 * Performs all sub component tasks according to the current domain (jump,
+	 * flow, or neither)
+	 * 
+	 * @param jump_occurring
+	 */
+	public void performTasks(boolean jump_occurring)
+	{
+
+		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
+		{
+			try
+			{
+
+				boolean jumpOccurred = false;
+				if (DynamicalModel.jumpOccurring(localBehavior, true))
+				{
+					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				} else if (DynamicalModel.flowOccurring(localBehavior, true))
+				{
+					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				} else
+				{
+
+				}
+				if (jumpOccurred)
+				{
+					GlobalSystemOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
+					.incrementJumpIndex();
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+	}
+
+	public void protectedInitialize()
+	{
+		if (!component.getStatus().getInitialized())
+		{
+			component.initialize();
+			component.getStatus().setInitialized(true);
+		}
+	}
+
+	public void resetHierarchy()
+	{
+		component.getHierarchy().setup();
+	}
+
+	public void saveComponentToFile(String directory_path, String file_name)
+	{
+		Object clonedComponent = ObjectCloner.xmlClone(this.component);
+
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(this.component));// clonedComponent));
+
+	}
+
+	public void setEnvironmentKey(String environment_key)
+	{
+		component.getHierarchy().setEnvironmentKey(environment_key);
+	}
+
+	public void setInitialized(Boolean initialized)
+	{
+		component.getStatus().setInitialized(initialized);
+	}
+
+	public void setSimulated(boolean simulated)
+	{
+		component.getStatus().setSimulated(simulated);
+	}
+
 	public void uninitializeComponent()
 	{
 		ComponentHierarchy.constructTree(component.getHierarchy());
@@ -254,13 +248,19 @@ public class ComponentOperator extends ComponentActions
 		}
 	}
 
-	public String getEnvironmentKey()
+	public static ComponentOperator getConfigurer(Component component)
 	{
-		return component.getHierarchy().getEnvironmentKey();
-	}
+		if (components.containsKey(component))
+		{
+			return components.get(component);
 
-	void setEnvironmentKey(String environment_key)
-	{
-		component.getHierarchy().setEnvironmentKey(environment_key);
+		} else
+		{
+
+			ComponentOperator config = new ComponentOperator(component);
+			components.put(component, config);
+			return config;
+
+		}
 	}
 }

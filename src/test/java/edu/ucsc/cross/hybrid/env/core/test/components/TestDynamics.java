@@ -1,8 +1,9 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
-import edu.ucsc.cross.hse.core.component.constructors.Behavior;
+import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
-public class TestDynamics extends Behavior
+public class TestDynamics extends Component implements DynamicalModel
 {
 
 	public TestState state; // bouncing ball state

@@ -103,6 +103,10 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void setValue(T element)
 	{
+		if (savedValues.size() == 0)
+		{
+			initialValue().setValue(element);
+		}
 		this.element = element;
 		// if (element != null)
 		// {

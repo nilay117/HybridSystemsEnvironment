@@ -5,6 +5,11 @@ import java.util.HashMap;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 
+/*
+ * This class contains the methods available to users that perform a variety of
+ * tasks. These methods are safe to use whenever needed as they do not interfere
+ * with the processor.
+ */
 public class ComponentActions
 {
 

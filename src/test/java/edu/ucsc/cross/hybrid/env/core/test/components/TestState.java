@@ -1,11 +1,12 @@
 package edu.ucsc.cross.hybrid.env.core.test.components;
 
 import bs.commons.unitvars.values.Velocity;
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
+import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataFactory;
+import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
 
-public class TestState extends DataSet
+public class TestState extends Component
 {
 
 	public Data<Double> continuous; // state that will only change continuously

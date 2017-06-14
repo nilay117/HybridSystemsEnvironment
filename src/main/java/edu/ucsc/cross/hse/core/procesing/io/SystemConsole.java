@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import bs.commons.objects.access.CallerRetriever;
 import bs.commons.objects.labeling.StringFormatter;
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
@@ -13,7 +12,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class SystemConsole extends ProcessorAccess
 {
 
-	private static CallerRetriever classRetriever = new CallerRetriever();;
+	private static CallerRetriever classRetriever = new CallerRetriever();
 	private Double nextPrintTime;
 	private Double printInterval;
 
@@ -59,60 +58,6 @@ public class SystemConsole extends ProcessorAccess
 			+ " seconds");
 		}
 		return string;
-	}
-
-	@SuppressWarnings(
-	{ "rawtypes", "unchecked" })
-	public String getDataElementStoreString(Double time, boolean simulated_only)
-	{
-		String storeString = null;
-		if (getSettings().io().printStoreDataIndicator)
-		{
-			storeString = ("data stored at " + time + " seconds");// +
-																	// super.getComputationEngine().getODEValueVector().toString());
-
-			if (getSettings().io().printStoreDataReport)
-			{
-				HashMap<String, Component> systemNames = new HashMap<String, Component>();
-				for (Component rootSystem : super.getEnvironment().getHierarchy().getComponents(true))
-
-				{
-					String sysName = "";// StringFormatter.getAppendedName(rootSystem.getProperties().getName(),
-					// systemNames.keySet());
-					systemNames.put(sysName, rootSystem);
-					storeString += "\n" + sysName + " - [";
-					HashMap<String, DataSet> dataSetNames = new HashMap<String, DataSet>();
-					for (Component component : rootSystem.getHierarchy().getComponents(DataSet.class, true))
-					{
-						DataSet dataSet = (DataSet) component;
-						String dataSetName = "";// StringFormatter.getAppendedName(dataSet.getProperties().getName(),
-						// dataSetNames.keySet());
-						dataSetNames.put(dataSetName, dataSet);
-						storeString += sysName + " - [" + dataSetName + " ";
-						try
-						{
-							for (Component element : dataSet.getHierarchy().getComponents(true))
-								try
-								{
-									Data data = (Data) element;
-
-									storeString = storeString + ("{" + data.getClassification().getName() + " = "
-									+ data.getActions().getStoredDoubleValue(time) + "} ");
-
-								} catch (Exception notElement)
-								{
-
-								}
-						} catch (Exception notElement)
-						{
-
-						}
-						storeString += " ]\n";
-					}
-				}
-			}
-		}
-		return storeString;
 	}
 
 	public static String getCallingClassName()

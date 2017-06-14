@@ -114,7 +114,8 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			{
 				try
 				{
-					derivative = (Double) ((UnitValue) element.getDerivative()).get(((UnitValue) element.getValue()).getUnit());
+					derivative = (Double) ((UnitValue) element.getDerivative())
+					.get(((UnitValue) element.getValue()).getUnit());
 				} catch (UnitException e)
 				{
 					// TODO Auto-generated catch block
@@ -238,7 +239,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			try
 			{
 				Data dat = (Data) component;
-				if (dat.getClassification().getClassification().equals(Data.class))
+				if (dat.getClass().equals(Data.class))
 				{
 					if (getDataOperator(dat).isSimulated())// .isSimulated())
 					{

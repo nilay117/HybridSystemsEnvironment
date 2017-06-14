@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.framework.component;
+package edu.ucsc.cross.hse.core2.framework.component;
 
 public class ComponentAddress
 {

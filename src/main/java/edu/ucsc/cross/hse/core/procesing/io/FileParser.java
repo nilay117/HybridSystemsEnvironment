@@ -40,10 +40,10 @@ public class FileParser extends ProcessorAccess
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
 		{
-			directory += data.getClassification().getName() + "/";
+			directory += data.getDescription().getName() + "/";
 		}
 
-		String fileName = data.getClassification().getDescription() + "_"
+		String fileName = data.getDescription().getDescription() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
 		String out = XMLParser.serializeObject(processor);

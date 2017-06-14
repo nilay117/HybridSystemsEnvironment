@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 
-import edu.ucsc.cross.hse.core.component.constructors.DataSet;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
@@ -44,9 +43,9 @@ public class DataManager extends ProcessorAccess
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.getClassification().getName()))
+			if (!stateElements.contains(allStates.getDescription().getName()))
 			{
-				stateElements.add(allStates.getClassification().getName());
+				stateElements.add(allStates.getDescription().getName());
 			}
 		}
 		// System.out.println(stateElements.toString());
@@ -59,7 +58,7 @@ public class DataManager extends ProcessorAccess
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.getClassification().getName().equals(title))
+			if (element.getDescription().getName().equals(title))
 			{
 				datas.add(element);
 			}
@@ -73,23 +72,16 @@ public class DataManager extends ProcessorAccess
 		{
 			try
 			{
-				DataSet set = (DataSet) component;
-				if (set.getHierarchy().getComponents(true).contains(data))
+				if (component.getHierarchy().getComponents(true).contains(data))
 				{
-					for (Component subComponent : set.getHierarchy().getComponents(true))
+					for (Data dat : component.getHierarchy().getComponents(Data.class, true))
 					{
-						try
-						{
-							Data dat = (Data) subComponent;
-							if (dat.getClassification().getName().equals(title))
-							{
-								return dat;
-							}
 
-						} catch (Exception notData)
+						if (dat.getDescription().getName().equals(title))
 						{
-
+							return dat;
 						}
+
 					}
 				}
 
@@ -136,7 +128,7 @@ public class DataManager extends ProcessorAccess
 			{
 				Data element = (Data) component;
 
-				if (CoreDataGroup.ALL_DATA.contains(element))
+				if (CoreDataGroup.STATE_ELEMENTS.contains(element))
 				{
 					if (getDataOperator(element).isPreviousDataStored())
 					{

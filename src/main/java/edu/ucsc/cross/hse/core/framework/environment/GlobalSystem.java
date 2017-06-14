@@ -12,7 +12,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class GlobalSystem extends Component implements GlobalSystemInterface
+public class GlobalSystem extends Component
 {
 
 	@CoreComponent
@@ -37,33 +37,23 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 	}
 
 	// User accessibility functions
-	@Override
+
 	public boolean isJumpOccurring()
 	{
 		return jumpOccurring;
 	}
 
-	@Override
-	public ComponentHierarchy getContents()
-	{
-		// TODO Auto-generated method stub
-		return super.getHierarchy();
-	}
-
-	@Override
 	public Double getEnvironmentTime()
 	{
 		// TODO Auto-generated method stub
 		return this.getEnvironmentHybridTime().getTime();
 	}
 
-	@Override
 	public Double getEarthStartTime()
 	{
 		return earthStartTime.seconds();
 	}
 
-	@Override
 	public Integer getJumpIndex()
 	{
 		// TODO Auto-generated method stub
@@ -77,9 +67,9 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
 		earthStartTime = Time.newSecondsValue(-1.0);
-		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
+		ComponentOperator.getConfigurer(this).setEnvironmentKey(this.toString());
 		GlobalSystemOperator.addGlobalHybridSystem(this);
-		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
+		ComponentOperator.getConfigurer(this).setEnvironmentKey(this.toString());
 	}
 
 	@Override
