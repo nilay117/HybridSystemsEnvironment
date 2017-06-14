@@ -13,7 +13,7 @@ import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class GlobalSystem extends Component
+public class EnvironmentContent extends Component
 {
 
 	private HybridTime environmentTime; // time relative to when the environment
@@ -25,13 +25,13 @@ public class GlobalSystem extends Component
 
 	// Constructors
 
-	public GlobalSystem()
+	public EnvironmentContent()
 	{
 		super("Global Environment Hybrid Systems");
 		initializeComponents();
 	}
 
-	public GlobalSystem(String environment_title)
+	public EnvironmentContent(String environment_title)
 	{
 		super(environment_title);
 		initializeComponents();
@@ -69,7 +69,7 @@ public class GlobalSystem extends Component
 		environmentTime = new HybridTime();
 		earthStartTime = Time.newSecondsValue(-1.0);
 		ComponentOperator.getConfigurer(this).setEnvironmentKey(this.toString());
-		GlobalSystemOperator.addGlobalHybridSystem(this);
+		EnvironmentContentOperator.addGlobalHybridSystem(this);
 		ComponentOperator.getConfigurer(this).setEnvironmentKey(this.toString());
 	}
 
@@ -79,8 +79,11 @@ public class GlobalSystem extends Component
 		// systems = new HashMap<String, GlobalHybridSystem>();
 		// this.environmentKey = this.toString();
 		// systems.put(environmentKey, this);
-		jumpOccurring = false;
-		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
+		if (earthStartTime.seconds() <= 0)
+		{
+			jumpOccurring = false;
+			earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
+		}
 	}
 
 	protected HybridTime getEnvironmentHybridTime()

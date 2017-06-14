@@ -41,9 +41,9 @@ public class EventMonitor extends ProcessorAccess
 		{
 			// runSim(null);
 			// runSimulation();
-			thread = new Thread(getSimTask());
-			thread.start();
-			// launchEnvironment();
+			// thread = new Thread(getSimTask());
+			// thread.start();
+			launchEnvironment();
 		}
 
 	}

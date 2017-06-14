@@ -1,14 +1,14 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.processing.data.DataManager;
 import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public class Environment // extends ProcessorAccess// implements Environment
 {
 
-	private GlobalSystem content; // all elements that make up the environment
+	private EnvironmentContent content; // all elements that make up the environment
 									// itself such as data, components, systems
 									// etc
 	private Processor processor; // environment processor that handles events,
@@ -23,7 +23,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 */
 	public Environment()
 	{
-		content = new GlobalSystem();
+		content = new EnvironmentContent();
 		initializeComponents();
 	}
 
@@ -33,7 +33,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 */
 	public Environment(String name)
 	{
-		content = new GlobalSystem(name);
+		content = new EnvironmentContent(name);
 		initializeComponents();
 	}
 
@@ -41,7 +41,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 * Predefined environment constructor that loads a specified environment and
 	 * default settings
 	 */
-	public Environment(GlobalSystem environment)
+	public Environment(EnvironmentContent environment)
 	{
 		content = environment;
 		initializeComponents();
@@ -99,12 +99,12 @@ public class Environment // extends ProcessorAccess// implements Environment
 		this.settings = settings;
 	}
 
-	protected GlobalSystem getEnvironmentContent()
+	protected EnvironmentContent getEnvironmentContent()
 	{
 		return content;
 	}
 
-	public static GlobalSystem getEnvironmentSystem(Environment env)
+	public static EnvironmentContent getEnvironmentSystem(Environment env)
 	{
 		return env.content;
 	}

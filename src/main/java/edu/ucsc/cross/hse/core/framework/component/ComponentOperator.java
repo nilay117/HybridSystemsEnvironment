@@ -11,7 +11,7 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
 /*
@@ -133,7 +133,7 @@ public class ComponentOperator extends ComponentActions
 				}
 				if (jumpOccurred)
 				{
-					GlobalSystemOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
+					EnvironmentContentOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
 					.incrementJumpIndex();
 				}
 			} catch (Exception behaviorFail)

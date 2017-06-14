@@ -9,6 +9,7 @@ import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 
 /*
  * This class contains the methods available to users that perform a variety of
@@ -77,41 +78,6 @@ public class ComponentActions
 		}
 	}
 
-	public void setInitialized(Boolean initialized)
-	{
-		component.getStatus().setInitialized(initialized);
-	}
-
-	public void setSimulated(boolean simulated)
-	{
-		component.getStatus().setSimulated(simulated);
-	}
-
-	public void saveComponentToFile(String directory_path, String file_name)
-	{
-		Object clonedComponent = ObjectCloner.xmlClone(this.component);
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
-		XMLParser.serializeObject(this.component));// clonedComponent));
-
-	}
-
-	public Component addComponentFromFile(String directory_path, String file_name)
-	{
-		Component newComponent = null;
-		try
-		{
-
-			newComponent = (Component.getComponentFromFile(directory_path, file_name));
-
-			component.getHierarchy().addComponent(newComponent);
-
-		} catch (Exception badComponent)
-		{
-			badComponent.printStackTrace();
-		}
-		return newComponent;
-	}
-
 	/*
 	 * Determines whether or not a jump is occurring in any component within the
 	 * hybrid system
@@ -121,7 +87,8 @@ public class ComponentActions
 	public Boolean isJumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class, true))
+		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class,
+		true))
 		{
 			try
 			{
@@ -142,5 +109,39 @@ public class ComponentActions
 			}
 		}
 		return jumpOccurred;
+	}
+
+	public void addComponentFromFile(String directory_path, String file_name)
+	{
+		Component newComponent = null;
+		try
+		{
+
+			newComponent = (FileParser.loadComponent(directory_path, file_name));
+
+			component.getHierarchy().addComponent(newComponent);
+
+		} catch (Exception badComponent)
+		{
+			badComponent.printStackTrace();
+		}
+	}
+
+	public void saveComponentToFile(String directory_path, String file_name)
+	{
+		Object clonedComponent = ObjectCloner.xmlClone(this.component);
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(this.component));// clonedComponent));
+
+	}
+
+	public void setInitialized(Boolean initialized)
+	{
+		component.getStatus().setInitialized(initialized);
+	}
+
+	public void setSimulated(boolean simulated)
+	{
+		component.getStatus().setSimulated(simulated);
 	}
 }

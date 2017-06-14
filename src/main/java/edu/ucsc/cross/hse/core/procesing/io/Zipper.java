@@ -7,7 +7,7 @@ import java.util.zip.GZIPOutputStream;
 public class Zipper
 {
 
-	public static byte[] compressData(String string)
+	public static byte[] compressDataGZip(String string)
 	{
 		byte[] dataToCompress = string.getBytes(StandardCharsets.ISO_8859_1);
 		byte[] compressedData = null;
@@ -36,5 +36,11 @@ public class Zipper
 			compressedData = string.getBytes();
 		}
 		return compressedData;
+	}
+
+	public static enum CompressionFormat
+	{
+		GZIP,
+		NONE;
 	}
 }

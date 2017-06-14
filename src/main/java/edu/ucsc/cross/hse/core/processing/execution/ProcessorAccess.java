@@ -4,8 +4,8 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
@@ -55,15 +55,15 @@ public abstract class ProcessorAccess
 	}
 
 	// @Override
-	protected GlobalSystem getEnvironment()
+	protected EnvironmentContent getEnvironment()
 	{
 		return proc.environment.getEnvironmentContent();
 	}
 
 	// @Override
-	protected GlobalSystemOperator getEnvironmentOperator()
+	protected EnvironmentContentOperator getEnvironmentOperator()
 	{
-		return GlobalSystemOperator.getGlobalSystemOperator(getEnvironment().toString());
+		return EnvironmentContentOperator.getGlobalSystemOperator(getEnvironment().toString());
 	}
 
 	// @Override

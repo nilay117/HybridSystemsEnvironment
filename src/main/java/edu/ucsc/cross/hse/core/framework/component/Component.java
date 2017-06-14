@@ -5,10 +5,10 @@ import java.io.File;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
 import edu.ucsc.cross.hse.core2.framework.component.ComponentAddress;
+import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
 
 /*
  * This class is the foundation of all components to ensures proper
@@ -63,9 +63,9 @@ public abstract class Component implements Initializer
 	/*
 	 * User Access Functions
 	 */
-	public GlobalSystem getEnvironment()
+	public EnvironmentContent getEnvironment()
 	{
-		return GlobalSystemOperator.getGlobalSystem(getHierarchy().getEnvironmentKey());
+		return EnvironmentContentOperator.getGlobalSystem(getHierarchy().getEnvironmentKey());
 	}
 
 	public ComponentDescription getDescription()
@@ -81,21 +81,6 @@ public abstract class Component implements Initializer
 	public ComponentActions getActions()
 	{
 		return ComponentOperator.getConfigurer(this);
-	}
-
-	public static Component getComponentFromFile(String directory_path, String file_name)
-	{
-		Component newComponent = null;
-		try
-		{
-
-			newComponent = (Component) XMLParser.getObject(new File(directory_path, file_name));
-
-		} catch (Exception badComponent)
-		{
-			badComponent.printStackTrace();
-		}
-		return newComponent;
 	}
 
 	/*

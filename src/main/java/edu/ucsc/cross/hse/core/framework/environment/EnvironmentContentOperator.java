@@ -5,23 +5,23 @@ import java.util.HashMap;
 import bs.commons.objects.access.CoreComponent;
 import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
 
-public class GlobalSystemOperator
+public class EnvironmentContentOperator
 {
 
 	// currently
 	// occurring
 	@CoreComponent
-	public static final HashMap<String, GlobalSystemOperator> globalSystems = new HashMap<String, GlobalSystemOperator>();
-	private GlobalSystem globalSystem;
+	public static final HashMap<String, EnvironmentContentOperator> globalSystems = new HashMap<String, EnvironmentContentOperator>();
+	private EnvironmentContent globalSystem;
 
-	public GlobalSystemOperator(GlobalSystem global_system)
+	public EnvironmentContentOperator(EnvironmentContent global_system)
 	{
 		globalSystem = global_system;
 	}
 
-	public static GlobalSystem getGlobalSystem(String id)
+	public static EnvironmentContent getGlobalSystem(String id)
 	{
-		GlobalSystem returnSystem = null;
+		EnvironmentContent returnSystem = null;
 		// return systems.get(id);
 		try
 		{
@@ -36,9 +36,9 @@ public class GlobalSystemOperator
 		return returnSystem;
 	}
 
-	public static GlobalSystemOperator getGlobalSystemOperator(String id)
+	public static EnvironmentContentOperator getGlobalSystemOperator(String id)
 	{
-		GlobalSystemOperator returnSystem = null;
+		EnvironmentContentOperator returnSystem = null;
 		// return systems.get(id);
 		try
 		{
@@ -52,12 +52,12 @@ public class GlobalSystemOperator
 		return returnSystem;
 	}
 
-	public static void addGlobalHybridSystem(GlobalSystem sys)
+	public static void addGlobalHybridSystem(EnvironmentContent sys)
 	{
-		globalSystems.put(sys.toString(), new GlobalSystemOperator(sys));
+		globalSystems.put(sys.toString(), new EnvironmentContentOperator(sys));
 	}
 
-	public GlobalSystem getGlobalSystem()
+	public EnvironmentContent getGlobalSystem()
 	{
 		return globalSystem;
 	}
