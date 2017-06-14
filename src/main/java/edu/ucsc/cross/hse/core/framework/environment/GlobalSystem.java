@@ -77,9 +77,8 @@ public class GlobalSystem extends Component implements GlobalSystemInterface
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
 		earthStartTime = Time.newSecondsValue(-1.0);
-		// ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
+		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 		GlobalSystemOperator.addGlobalHybridSystem(this);
-		// ComponentHierarchy.loadParent(this.hierarchy(), this);
 		ComponentOperator.getConfigurer(this).setEnvironment(this.toString());
 	}
 

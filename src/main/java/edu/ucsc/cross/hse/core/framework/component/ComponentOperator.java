@@ -137,7 +137,15 @@ public class ComponentOperator extends ComponentActions
 		{
 			try
 			{
-				boolean jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+
+				boolean jumpOccurred = false;
+				if (DynamicalModel.jumpOccurring(localBehavior, true))
+				{
+					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				} else if (DynamicalModel.flowOccurring(localBehavior, true))
+				{
+					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				}
 				if (jumpOccurred)
 				{
 					GlobalSystemOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
@@ -204,7 +212,10 @@ public class ComponentOperator extends ComponentActions
 				{
 					if (jumpOccurring)
 					{
-						jumpComponents.add(localBehavior);
+						if (!jumpComponents.contains(localBehavior)) // make sure the dynamical model has not been accounted for already
+						{
+							jumpComponents.add(localBehavior);
+						}
 					}
 				}
 			} catch (Exception behaviorFail)
