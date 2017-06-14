@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.framework.component;
 
 import bs.commons.objects.execution.Initializer;
 import edu.ucsc.cross.hse.core.framework.annotations.CoreComponent;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
 
@@ -24,7 +25,8 @@ public abstract class Component implements Initializer
 									// component
 
 	@CoreComponent
-	private ComponentClassification classification; // specific properties of this
+	private ComponentClassification classification; // specific properties of
+													// this
 	// component
 
 	@CoreComponent
@@ -110,10 +112,10 @@ public abstract class Component implements Initializer
 
 	private void setup(String title, Class<?> base_class)
 	{
-
 		ComponentOperator.getConfigurer(this);
 		status = new ComponentStatus();
 		address = new ComponentAddress();
+
 		classification = new ComponentClassification(title, base_class);
 		hierarchy = new ComponentHierarchy(this);
 	}

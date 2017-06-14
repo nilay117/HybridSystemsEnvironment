@@ -24,8 +24,8 @@ public class ComponentHierarchy
 
 	@CoreComponent
 	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
-	@CoreComponent
 
+	@CoreComponent
 	private ArrayList<Component> childComponents; // direct children of this
 													// component (no childrens
 													// children)
@@ -35,7 +35,12 @@ public class ComponentHierarchy
 														// children & childrens
 														// children)
 	@CoreComponent
-	private String environmentKey; // key that links the component to the global environment that it is contained in.  This keeps the component size smaller when being copied or saved, and allows for multiple environments to be running simultaneously
+	private String environmentKey; // key that links the component to the global
+									// environment that it is contained in. This
+									// keeps the component size smaller when
+									// being copied or saved, and allows for
+									// multiple environments to be running
+									// simultaneously
 
 	@CoreComponent
 	private Component parentComponent; // parent component
@@ -448,5 +453,17 @@ public class ComponentHierarchy
 	void setEnvironmentKey(String environmentKey)
 	{
 		this.environmentKey = environmentKey;
+	}
+
+	public <S extends Component> HashMap<String, S> getComponentMapByName(Class<S> component_class,
+	boolean include_children)
+	{
+		ArrayList<S> components = getComponents(component_class, include_children);
+		HashMap<String, S> componentMap = new HashMap<String, S>();
+		for (S component : components)
+		{
+			componentMap.put(component.getClassification().name, component);
+		}
+		return componentMap;
 	}
 }

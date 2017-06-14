@@ -76,22 +76,23 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .005; // ode step size if using a fixed step integrator, or
+		odeMinStep = .0005; // ode step size if using a fixed step integrator,
+							// or
 							// minimum ode step size of a
 							// variable step integrator
 
-		odeMaxStep = .01; // maximum step size for variable step integrator
+		odeMaxStep = .001; // maximum step size for variable step integrator
 
-		odeScalAbsoluteTolerance = 1.0e-4; // absolute tolerance of the ode
+		odeScalAbsoluteTolerance = 1.0e-8; // absolute tolerance of the ode
 											// solver
 
-		odeScalRelativeTolerance = 1.0e-4; // relative tolerance of the ode
+		odeScalRelativeTolerance = 1.0e-8; // relative tolerance of the ode
 											// solver
 
-		ehMaxCheckInterval = .0001; // event handler maximum interval to check
-									// for an event
+		ehMaxCheckInterval = .00001; // event handler maximum interval to check
+										// for an event
 
-		ehConvergence = .0001; // convergence threshold of an event
+		ehConvergence = .00001; // convergence threshold of an event
 
 		ehMaxIterationCount = 10; // maximum number of iterations
 

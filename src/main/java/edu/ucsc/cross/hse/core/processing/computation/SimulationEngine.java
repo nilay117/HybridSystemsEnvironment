@@ -54,9 +54,9 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
 			Data element = odeVectorMap.get(odeIndex);
-			if (element.getObject().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
 			{
-				UnitValue uv = (UnitValue) element.getObject();
+				UnitValue uv = (UnitValue) element.getValue();
 				try
 				{
 					uv.set(y[odeIndex], uv.getUnit());
@@ -68,7 +68,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				}
 			} else
 			{
-				element.setObject(y[odeIndex]);
+				element.setValue(y[odeIndex]);
 			}
 		}
 		// IO.dev(XMLParser.serializeObject(odeVectorMap, MessageCategory.DEV));
@@ -110,11 +110,11 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		{
 			Data element = odeVectorMap.get(odeIndex);
 			Double derivative = 0.0;
-			if (element.getObject().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
 			{
 				try
 				{
-					derivative = (Double) ((UnitValue) element.derivative()).get(((UnitValue) element.getObject()).getUnit());
+					derivative = (Double) ((UnitValue) element.getDerivative()).get(((UnitValue) element.getValue()).getUnit());
 				} catch (UnitException e)
 				{
 					// TODO Auto-generated catch block
@@ -122,7 +122,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				}
 			} else
 			{
-				derivative = (Double) element.derivative();
+				derivative = (Double) element.getDerivative();
 			}
 			y[odeIndex] = derivative;// .getDerivative();
 		}
@@ -139,9 +139,9 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
 			Data element = odeVectorMap.get(odeIndex);
-			if (element.getObject().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
 			{
-				UnitValue uv = (UnitValue) element.getObject();
+				UnitValue uv = (UnitValue) element.getValue();
 				try
 				{
 					yValues[odeIndex] = (Double) uv.get(uv.getUnit());
@@ -152,7 +152,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				}
 			} else
 			{
-				yValues[odeIndex] = (Double) element.getObject();
+				yValues[odeIndex] = (Double) element.getValue();
 			}
 			// System.out.println(XMLParser.serializeObject(odeVectorMap));
 		}
@@ -168,9 +168,9 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	private Double getODEStateElementValue(Integer index)
 	{
 		Data element = odeVectorMap.get(index);
-		if (element.getObject().getClass().getSuperclass().equals(UnitValue.class))
+		if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
 		{
-			UnitValue uv = (UnitValue) element.getObject();
+			UnitValue uv = (UnitValue) element.getValue();
 			try
 			{
 				return (Double.class.cast(uv.get(uv.getUnit())));
@@ -181,7 +181,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			}
 		} else
 		{
-			return (Double) element.getObject();
+			return (Double) element.getValue();
 		}
 		return null;
 
@@ -244,8 +244,8 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 					{
 						if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
 						{
-							if (FieldFinder.containsSuper(dat.getObject(), UnitValue.class)
-							|| FieldFinder.containsSuper(dat.getObject(), Number.class))
+							if (FieldFinder.containsSuper(dat.getValue(), UnitValue.class)
+							|| FieldFinder.containsSuper(dat.getValue(), Number.class))
 							{
 								odeVectorMap.put(odeIndex++, dat);
 							}

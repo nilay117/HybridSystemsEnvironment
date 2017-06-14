@@ -94,7 +94,7 @@ public interface DynamicalModel
 	static boolean flowOccurring(DynamicalModel dynamics, boolean jump_priority)
 	{
 		boolean dom = false;
-		if (jump_priority)
+		if (!jump_priority)
 		{
 			if (dynamics.flowSet())
 			{

@@ -79,6 +79,11 @@ public class ComponentOperator extends ComponentActions
 		}
 	}
 
+	public ComponentStatus getStatus()
+	{
+		return component.getStatus();
+	}
+
 	public Boolean isInitialized()
 	{
 		return component.getStatus().getInitialized();
@@ -133,6 +138,7 @@ public class ComponentOperator extends ComponentActions
 	 */
 	public void performTasks(boolean jump_occurring)
 	{
+
 		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
 		{
 			try
@@ -145,6 +151,9 @@ public class ComponentOperator extends ComponentActions
 				} else if (DynamicalModel.flowOccurring(localBehavior, true))
 				{
 					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				} else
+				{
+
 				}
 				if (jumpOccurred)
 				{
@@ -212,7 +221,17 @@ public class ComponentOperator extends ComponentActions
 				{
 					if (jumpOccurring)
 					{
-						if (!jumpComponents.contains(localBehavior)) // make sure the dynamical model has not been accounted for already
+						if (!jumpComponents.contains(localBehavior)) // make
+																		// sure
+																		// the
+																		// dynamical
+																		// model
+																		// has
+																		// not
+																		// been
+																		// accounted
+																		// for
+																		// already
 						{
 							jumpComponents.add(localBehavior);
 						}

@@ -50,7 +50,7 @@ public class Data<T> extends Component// DynamicData<T>
 	private UnitValue prejump; // pre-jump value stored immediately before jump
 								// occurs
 
-	public T getObject()
+	public T getValue()
 	{
 
 		try
@@ -101,7 +101,7 @@ public class Data<T> extends Component// DynamicData<T>
 		// }
 	}
 
-	public void setObject(T element)
+	public void setValue(T element)
 	{
 		this.element = element;
 		// if (element != null)
@@ -135,7 +135,7 @@ public class Data<T> extends Component// DynamicData<T>
 		// }
 	}
 
-	public T derivative()
+	public T getDerivative()
 	{
 		if (!CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
 		{
@@ -145,7 +145,7 @@ public class Data<T> extends Component// DynamicData<T>
 		return derivative;
 	}
 
-	public void derivative(T derivative)
+	public void setDerivative(T derivative)
 	{
 		if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))
 		{
@@ -157,23 +157,9 @@ public class Data<T> extends Component// DynamicData<T>
 		}
 	}
 
-	// public Unit getDefaultUnit()
-	// {
-	// if (defaultUnit == null)
-	// {
-	// // IO.warn("attempted to get default unit of " + get().toString());
-	// }
-	// return defaultUnit;
-	// }
-	//
-	// public DataType getDataClass()
-	// {
-	// return dataType;
-	// }
-
 	public boolean isElementNull()
 	{
-		return (getObject() == null);
+		return (getValue() == null);
 	}
 
 	public InitialValue<T> initialValue()
@@ -266,7 +252,7 @@ public class Data<T> extends Component// DynamicData<T>
 		}
 		if (initialize)
 		{
-			setObject(initialVal.getValue());
+			setValue(initialVal.getValue());
 		}
 
 	}
@@ -333,11 +319,11 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return CloneUtility.cloner.deepClone(getObject());
+				return CloneUtility.cloner.deepClone(getValue());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{
-				return getObject();
+				return getValue();
 			}
 		}
 
@@ -359,7 +345,7 @@ public class Data<T> extends Component// DynamicData<T>
 				prejump.set(val.get(units), units);
 			} else
 			{
-				prejump.set(getObject(), NoUnit.NONE);
+				prejump.set(getValue(), NoUnit.NONE);
 			}
 		} catch (Exception e)
 		{

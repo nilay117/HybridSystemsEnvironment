@@ -21,14 +21,15 @@ public class GlobalSystemOperator
 	public static GlobalSystem getGlobalSystem(String id)
 	{
 		GlobalSystem returnSystem = null;
-		//return systems.get(id);
+		// return systems.get(id);
 		try
 		{
 			returnSystem = globalSystems.get(id).getGlobalSystem();
 		} catch (Exception noSystem)
 		{
-			System.err.println("Attempt to access system with id " + id + " failed");
-			noSystem.printStackTrace();
+			// System.err.println("Attempt to access system with id " + id + "
+			// failed");
+			// noSystem.printStackTrace();
 
 		}
 		return returnSystem;
@@ -37,7 +38,7 @@ public class GlobalSystemOperator
 	public static GlobalSystemOperator getGlobalSystemOperator(String id)
 	{
 		GlobalSystemOperator returnSystem = null;
-		//return systems.get(id);
+		// return systems.get(id);
 		try
 		{
 			returnSystem = globalSystems.get(id);

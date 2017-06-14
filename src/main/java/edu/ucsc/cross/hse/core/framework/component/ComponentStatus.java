@@ -1,5 +1,8 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataFactory;
+
 public class ComponentStatus
 {
 
@@ -14,6 +17,7 @@ public class ComponentStatus
 	{
 		simulated = true;
 		initialized = false;
+
 	}
 
 	Boolean getInitialized()

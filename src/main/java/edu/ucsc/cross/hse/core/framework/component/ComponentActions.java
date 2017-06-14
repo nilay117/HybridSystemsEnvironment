@@ -8,7 +8,7 @@ import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 public class ComponentActions
 {
 
-	public Component component;
+	protected Component component;
 
 	public ComponentActions(Component component)
 	{
@@ -55,4 +55,8 @@ public class ComponentActions
 
 	}
 
+	public void setInitialized(boolean initialized)
+	{
+		component.getStatus().setInitialized(initialized);
+	}
 }

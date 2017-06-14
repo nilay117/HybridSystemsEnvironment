@@ -41,6 +41,16 @@ public class ComponentClassification
 		return name;
 	}
 
+	public String getFullDescription()
+	{
+		String desc = name;
+		if (!name.equals(title))
+		{
+			desc = title + " : " + desc;
+		}
+		return desc;
+	}
+
 	public void setDescription(String description)
 	{
 		this.name = description;
