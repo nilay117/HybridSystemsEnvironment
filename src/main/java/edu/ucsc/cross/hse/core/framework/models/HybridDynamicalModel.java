@@ -6,7 +6,7 @@ package edu.ucsc.cross.hse.core.framework.models;
  * Hybrid Systems Lab at the University of California. More details can be found
  * at https://hybrid.soe.ucsc.edu/
  */
-public interface DynamicalModel
+public interface HybridDynamicalModel
 {
 	////////////////////////////////////////
 	// Required User Function Definitions //
@@ -55,7 +55,7 @@ public interface DynamicalModel
 	 * 
 	 * @return true if jump is occurring, false otherwise
 	 */
-	static boolean jumpOccurring(DynamicalModel dynamics, boolean jump_priority)
+	static boolean jumpOccurring(HybridDynamicalModel dynamics, boolean jump_priority)
 	{
 		boolean dom = false;
 		if (!jump_priority)
@@ -91,7 +91,7 @@ public interface DynamicalModel
 	 * 
 	 * @return true if jump is occurring, false otherwise
 	 */
-	static boolean flowOccurring(DynamicalModel dynamics, boolean jump_priority)
+	static boolean flowOccurring(HybridDynamicalModel dynamics, boolean jump_priority)
 	{
 		boolean dom = false;
 		if (!jump_priority)
@@ -126,7 +126,7 @@ public interface DynamicalModel
 	 * @param jump_occurring - flag indicating if a global jump is occurring.
 	 * This happens when a jump occurs for any system within the environment
 	 */
-	static boolean applyDynamics(DynamicalModel dynamics, boolean jump_priority, boolean global_jump_occurring)
+	static boolean applyDynamics(HybridDynamicalModel dynamics, boolean jump_priority, boolean global_jump_occurring)
 	{
 		boolean jumpOccurred = false;
 		if (!jump_priority)

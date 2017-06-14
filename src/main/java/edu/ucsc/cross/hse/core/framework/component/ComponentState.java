@@ -10,7 +10,7 @@ import edu.ucsc.cross.hse.core.framework.data.DataFactory;
  * to the fields can then be implemented in a safe way as either actions or
  * operations depending on the intended use.
  */
-public class ProtectedComponentData
+public class ComponentState
 {
 
 	private Boolean initialized; // flag indicating if component has been
@@ -20,7 +20,7 @@ public class ProtectedComponentData
 	// simulated
 	// or not
 
-	public ProtectedComponentData()
+	public ComponentState()
 	{
 		simulated = true;
 		initialized = false;

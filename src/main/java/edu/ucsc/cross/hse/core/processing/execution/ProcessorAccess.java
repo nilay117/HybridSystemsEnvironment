@@ -104,7 +104,7 @@ public abstract class ProcessorAccess
 		return ComponentOperator.getConfigurer(component);
 	}
 
-	protected DataOperator getDataOperator(Data component)
+	protected <S> DataOperator<S> getDataOperator(Data<S> component)
 	{
 		return DataOperator.getOperator(component);
 	}

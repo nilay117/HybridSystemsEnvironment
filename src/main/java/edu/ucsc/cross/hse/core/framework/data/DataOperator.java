@@ -7,7 +7,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 public class DataOperator<T> extends ComponentOperator
 {
 
-	protected static HashMap<Data, DataOperator> dataOperators = new HashMap<Data, DataOperator>();
+	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
 	Data<T> element;
 
 	protected DataOperator(Data<T> component)
@@ -28,7 +28,7 @@ public class DataOperator<T> extends ComponentOperator
 	{
 		if (dataOperators.containsKey(data))
 		{
-			return dataOperators.get(data);
+			return (DataOperator<S>) dataOperators.get(data);
 
 		} else
 		{

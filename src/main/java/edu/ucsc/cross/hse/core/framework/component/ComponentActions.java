@@ -1,9 +1,14 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
+import java.io.File;
 import java.util.HashMap;
 
+import bs.commons.io.file.FileSystemOperator;
+import bs.commons.objects.manipulation.ObjectCloner;
+import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
 /*
  * This class contains the methods available to users that perform a variety of
@@ -60,8 +65,82 @@ public class ComponentActions
 
 	}
 
-	public void setInitialized(boolean initialized)
+	public boolean isData()
+	{
+		try
+		{
+			Data d = Data.class.cast(component);
+			return true;
+		} catch (Exception e)
+		{
+			return false;
+		}
+	}
+
+	public void setInitialized(Boolean initialized)
 	{
 		component.getStatus().setInitialized(initialized);
+	}
+
+	public void setSimulated(boolean simulated)
+	{
+		component.getStatus().setSimulated(simulated);
+	}
+
+	public void saveComponentToFile(String directory_path, String file_name)
+	{
+		Object clonedComponent = ObjectCloner.xmlClone(this.component);
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(this.component));// clonedComponent));
+
+	}
+
+	public Component addComponentFromFile(String directory_path, String file_name)
+	{
+		Component newComponent = null;
+		try
+		{
+
+			newComponent = (Component.getComponentFromFile(directory_path, file_name));
+
+			component.getHierarchy().addComponent(newComponent);
+
+		} catch (Exception badComponent)
+		{
+			badComponent.printStackTrace();
+		}
+		return newComponent;
+	}
+
+	/*
+	 * Determines whether or not a jump is occurring in any component within the
+	 * hybrid system
+	 * 
+	 * @return true if a jump is occurring, false otherwise
+	 */
+	public Boolean isJumpOccurring()
+	{
+		Boolean jumpOccurred = false;
+		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class, true))
+		{
+			try
+			{
+				Boolean jumpOccurring = HybridDynamicalModel.jumpOccurring(localBehavior, true);
+				if (jumpOccurring != null)
+				{
+					try
+					{
+						jumpOccurred = jumpOccurred || jumpOccurring;
+					} catch (Exception outOfDomain)
+					{
+						outOfDomain.printStackTrace();
+					}
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+		return jumpOccurred;
 	}
 }

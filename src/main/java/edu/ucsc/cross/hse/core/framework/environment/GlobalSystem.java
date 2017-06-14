@@ -5,6 +5,7 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
 
 /*
  * This is the main root system of the environment that contains all of the
@@ -15,12 +16,12 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 public class GlobalSystem extends Component
 {
 
-	@CoreComponent
 	private HybridTime environmentTime; // time relative to when the environment
-	@CoreComponent // was launched and jump index
-	private Time earthStartTime;
-	@CoreComponent
-	private boolean jumpOccurring; // flag indicating if a jump is
+										// was launched
+
+	private Time earthStartTime; // epoch time when the environment was launched
+	private boolean jumpOccurring; // flag indicating if a jump is occurring in
+									// any component in the environment
 
 	// Constructors
 
@@ -82,12 +83,12 @@ public class GlobalSystem extends Component
 		earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
 	}
 
-	HybridTime getEnvironmentHybridTime()
+	protected HybridTime getEnvironmentHybridTime()
 	{
 		return environmentTime;
 	}
 
-	void setJumpOccurring(boolean jumpOccurring)
+	protected void setJumpOccurring(boolean jumpOccurring)
 	{
 		this.jumpOccurring = jumpOccurring;
 	}

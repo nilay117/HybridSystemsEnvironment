@@ -196,7 +196,7 @@ public class EventMonitor extends ProcessorAccess
 			printOutUnresolvedIssues(e, problemResolved);
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(ComponentOperator.getConfigurer(getEnvironment()).jumpOccurring());
+			this.getComponents().performAllTasks(ComponentOperator.getConfigurer(getEnvironment()).isJumpOccurring());
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

@@ -10,7 +10,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
+import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
 /*
  * This class controls all of the components so that they are setup correctly
@@ -51,7 +51,7 @@ public class ComponentDirector extends ProcessorAccess
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
 		{
-			DynamicalModel dynamics = ((DynamicalModel) component);
+			HybridDynamicalModel dynamics = ((HybridDynamicalModel) component);
 			dynamics.jumpMap();
 			this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		}

@@ -1,6 +1,9 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
+import java.io.File;
+
 import bs.commons.objects.execution.Initializer;
+import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystem;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemInterface;
@@ -19,7 +22,7 @@ import edu.ucsc.cross.hse.core2.framework.component.ComponentAddress;
 public abstract class Component implements Initializer
 {
 
-	private ProtectedComponentData status; // configuration status of
+	private ComponentState state; // configuration state of
 									// this instance of the
 									// component
 
@@ -80,12 +83,27 @@ public abstract class Component implements Initializer
 		return ComponentOperator.getConfigurer(this);
 	}
 
+	public static Component getComponentFromFile(String directory_path, String file_name)
+	{
+		Component newComponent = null;
+		try
+		{
+
+			newComponent = (Component) XMLParser.getObject(new File(directory_path, file_name));
+
+		} catch (Exception badComponent)
+		{
+			badComponent.printStackTrace();
+		}
+		return newComponent;
+	}
+
 	/*
 	 * External Operation Functions
 	 */
-	ProtectedComponentData getStatus()
+	ComponentState getStatus()
 	{
-		return status;
+		return state;
 	}
 
 	void loadHierarchy(ComponentHierarchy hierarchy)
@@ -99,7 +117,7 @@ public abstract class Component implements Initializer
 	private void setup(String title, Class<?> base_class)
 	{
 		ComponentOperator.getConfigurer(this);
-		status = new ProtectedComponentData();
+		state = new ComponentState();
 
 		description = new ComponentDescription(title);
 		hierarchy = new ComponentHierarchy(this);

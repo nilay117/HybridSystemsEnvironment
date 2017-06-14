@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.framework.environment;
 import java.util.HashMap;
 
 import bs.commons.objects.access.CoreComponent;
+import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
 
 public class GlobalSystemOperator
 {

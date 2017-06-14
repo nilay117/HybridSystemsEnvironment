@@ -12,7 +12,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalSystemOperator;
-import edu.ucsc.cross.hse.core.framework.models.DynamicalModel;
+import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
 /*
  * This class contains the methods that are used by processing modules to
@@ -40,38 +40,12 @@ public class ComponentOperator extends ComponentActions
 		// component.hierarchy.
 	}
 
-	public Component addComponentFromFile(String file_path)
-	{
-		Component component = null;
-		try
-		{
-
-			component = (Component) XMLParser.getObject(file_path);
-		} catch (Exception badComponent)
-		{
-			badComponent.printStackTrace();
-		}
-		return component;
-	}
-
 	public String getEnvironmentKey()
 	{
 		return component.getHierarchy().getEnvironmentKey();
 	}
 
-	public boolean getIfData()
-	{
-		try
-		{
-			Data d = Data.class.cast(component);
-			return true;
-		} catch (Exception e)
-		{
-			return false;
-		}
-	}
-
-	public ProtectedComponentData getStatus()
+	public ComponentState getStatus()
 	{
 		return component.getStatus();
 	}
@@ -98,12 +72,12 @@ public class ComponentOperator extends ComponentActions
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
 		for (Component localBehavior : component.getHierarchy().getComponents(Component.class, true,
-		DynamicalModel.class))// ,
+		HybridDynamicalModel.class))// ,
 		// DynamicalModel.class))
 		{
 			try
 			{
-				Boolean jumpOccurring = DynamicalModel.jumpOccurring((DynamicalModel) localBehavior, true);
+				Boolean jumpOccurring = HybridDynamicalModel.jumpOccurring((HybridDynamicalModel) localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					if (jumpOccurring)
@@ -133,38 +107,6 @@ public class ComponentOperator extends ComponentActions
 	}
 
 	/*
-	 * Determines whether or not a jump is occurring in any component within the
-	 * hybrid system
-	 * 
-	 * @return true if a jump is occurring, false otherwise
-	 */
-	public Boolean jumpOccurring()
-	{
-		Boolean jumpOccurred = false;
-		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
-		{
-			try
-			{
-				Boolean jumpOccurring = DynamicalModel.jumpOccurring(localBehavior, true);
-				if (jumpOccurring != null)
-				{
-					try
-					{
-						jumpOccurred = jumpOccurred || jumpOccurring;
-					} catch (Exception outOfDomain)
-					{
-						outOfDomain.printStackTrace();
-					}
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-		return jumpOccurred;
-	}
-
-	/*
 	 * Performs all sub component tasks according to the current domain (jump,
 	 * flow, or neither)
 	 * 
@@ -173,18 +115,18 @@ public class ComponentOperator extends ComponentActions
 	public void performTasks(boolean jump_occurring)
 	{
 
-		for (DynamicalModel localBehavior : component.getHierarchy().getComponents(DynamicalModel.class, true))
+		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class, true))
 		{
 			try
 			{
 
 				boolean jumpOccurred = false;
-				if (DynamicalModel.jumpOccurring(localBehavior, true))
+				if (HybridDynamicalModel.jumpOccurring(localBehavior, true))
 				{
-					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				} else if (DynamicalModel.flowOccurring(localBehavior, true))
+					jumpOccurred = HybridDynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+				} else if (HybridDynamicalModel.flowOccurring(localBehavior, true))
 				{
-					jumpOccurred = DynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+					jumpOccurred = HybridDynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
 				} else
 				{
 
@@ -215,28 +157,9 @@ public class ComponentOperator extends ComponentActions
 		component.getHierarchy().setup();
 	}
 
-	public void saveComponentToFile(String directory_path, String file_name)
-	{
-		Object clonedComponent = ObjectCloner.xmlClone(this.component);
-
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
-		XMLParser.serializeObject(this.component));// clonedComponent));
-
-	}
-
 	public void setEnvironmentKey(String environment_key)
 	{
 		component.getHierarchy().setEnvironmentKey(environment_key);
-	}
-
-	public void setInitialized(Boolean initialized)
-	{
-		component.getStatus().setInitialized(initialized);
-	}
-
-	public void setSimulated(boolean simulated)
-	{
-		component.getStatus().setSimulated(simulated);
 	}
 
 	public void uninitializeComponent()

@@ -5,5 +5,5 @@ import com.rits.cloning.Cloner;
 public class CloneUtility
 {
 
-	public static final Cloner cloner = new Cloner();
+	// public static final Cloner cloner = new Cloner();
 }

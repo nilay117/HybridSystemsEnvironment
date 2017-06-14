@@ -28,22 +28,24 @@ import edu.ucsc.cross.hse.core.processing.data.CloneUtility;
 public class Data<T> extends Component// DynamicData<T>
 {
 
-	boolean save; // flag indicating if object should be stored
+	protected boolean save; // flag indicating if object should be stored
 
 	private final boolean cloneToStore; // flag indicating if object needs to be
 										// cloned to be stored correctly
 
-	DataType dataType; // classification of the data element, ie Hybrid
-						// State or Property
+	protected DataType dataType; // classification of the data element, ie
+									// Hybrid
+	// State or Property
 
-	Unit defaultUnit; // default unit (NoUnit class if object has units)
+	protected Unit defaultUnit; // default unit (NoUnit class if object has
+								// units)
 
 	private T derivative; // current derivative of the data (if the data changes
 							// continuously)
 
-	private InitialValue<T> initialVal; // initial value of object
+	protected InitialValue<T> initialVal; // initial value of object
 
-	HashMap<Double, T> savedValues; // mapping of saved values
+	protected HashMap<Double, T> savedValues; // mapping of saved values
 
 	protected T element; // currently stored data object
 
@@ -103,9 +105,27 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void setValue(T element)
 	{
-		if (savedValues.size() == 0)
+		if (!ComponentOperator.getConfigurer(this).isInitialized())
 		{
-			initialValue().setValue(element);
+			initialVal.setValue(element);
+			try
+			{
+				if (FieldFinder.containsSuper(element, UnitValue.class))
+				{
+					initialVal.setFixedValue((Double) ((UnitValue) element).get(defaultUnit), defaultUnit);
+				} else if (FieldFinder.containsSuper(element, Double.class))
+				{
+					initialVal.setFixedValue((Double) element);
+				} else
+				{
+					initialVal.setValue(element);
+					initialVal.setRandomValues(null, null);
+				}
+			} catch (UnitException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		this.element = element;
 		// if (element != null)
@@ -166,11 +186,6 @@ public class Data<T> extends Component// DynamicData<T>
 		return (getValue() == null);
 	}
 
-	public InitialValue<T> initialValue()
-	{
-		return initialVal;
-	}
-
 	@Override
 	public DataActions getActions()
 	{
@@ -197,7 +212,7 @@ public class Data<T> extends Component// DynamicData<T>
 	 */
 	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
 	{
-		super(name, Data.class);
+		super(name);
 		element = obj;
 		dataType = type;
 		derivative = cloneZeroDerivative(element);
@@ -262,14 +277,14 @@ public class Data<T> extends Component// DynamicData<T>
 	}
 
 	/*
-	 * This list and changeable classes function determine what elements will
-	 * need to be cloned before being saved to ensure the right values are
-	 * stored. For example, a list would need to be copied because a list of
-	 * some sort that was saved without being copied will reflect any changes
-	 * made in the future unless the list is reinitialized. A value such as a
-	 * double can be saved without being copied because the stored pointer
-	 * points to the correct saved value even when a new value is stored. This
-	 * list below contains general classes that not need to be cloned to save
+	 * This list determines what elements will need to be cloned before being
+	 * saved to ensure the right values are stored. For example, a list would
+	 * need to be copied because a list of some sort that was saved without
+	 * being copied will reflect any changes made in the future unless the list
+	 * is reinitialized. A value such as a double can be saved without being
+	 * copied because the stored pointer points to the correct saved value even
+	 * when a new value is stored. This list below contains general classes that
+	 * not need to be cloned to save
 	 */
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
@@ -323,7 +338,7 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return CloneUtility.cloner.deepClone(getValue());
+				return ComponentOperator.cloner.deepClone(getValue());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{

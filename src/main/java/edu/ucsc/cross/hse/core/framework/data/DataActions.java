@@ -36,6 +36,11 @@ public class DataActions<T> extends ComponentActions
 		this.data = data;
 	}
 
+	public InitialValue<T> getInitialValue()
+	{
+		return data.initialVal;
+	}
+
 	public Unit getDefaultUnit()
 	{
 		if (data.defaultUnit == null)
