@@ -43,7 +43,7 @@ public class ComponentDirector extends ProcessorAccess
 		}
 	}
 
-	public void executeAllOccurringJumps()
+	private void executeAllOccurringJumps()
 	{
 
 		ArrayList<Component> jumpComponents = ComponentOperator.getConfigurer(getEnvironment()).jumpingComponents();
@@ -58,7 +58,7 @@ public class ComponentDirector extends ProcessorAccess
 		getEnvironmentOperator().setJumpOccurring(false);
 	}
 
-	public void storeRelavantPreJumpData(ArrayList<Component> jump_components)
+	private void storeRelavantPreJumpData(ArrayList<Component> jump_components)
 	{
 
 		for (Component component : jump_components)
@@ -84,7 +84,7 @@ public class ComponentDirector extends ProcessorAccess
 		linkEnvironment();
 	}
 
-	public void initializeComponents(Class<?>... components_to_initialize)
+	private void initializeComponents(Class<?>... components_to_initialize)
 	{
 		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
 		for (Component component : getEnvironment().getHierarchy().getComponents(true))
@@ -102,7 +102,7 @@ public class ComponentDirector extends ProcessorAccess
 
 	}
 
-	public void linkEnvironment()
+	private void linkEnvironment()
 	{
 		for (Component component : getEnvironment().getHierarchy().getComponents(true))
 		{

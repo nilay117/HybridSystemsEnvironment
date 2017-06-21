@@ -26,6 +26,7 @@ public class DataManager extends ProcessorAccess
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();
+
 	}
 
 	public Data getValue(Integer index)

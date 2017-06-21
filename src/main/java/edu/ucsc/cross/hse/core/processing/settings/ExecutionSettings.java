@@ -22,7 +22,7 @@ public class ExecutionSettings
 	{
 		numberOfTrials = 1;
 		maxParallelExecutions = 1;
-		simDuration = 12.0;
+		simDuration = 8.0;
 		jumpLimit = 20;
 		runThreadded = true;
 	}

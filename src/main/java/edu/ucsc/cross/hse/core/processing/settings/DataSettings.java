@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.settings;
 
+import bes.commons.data.compression.CompressionFormat;
+
 public class DataSettings
 {
 
@@ -35,8 +37,8 @@ public class DataSettings
 												// with the name of the
 												// environment
 
-	public boolean storePreJumpValue; // flag to store data values before a jump
-										// ocurs
+	public CompressionFormat compressionFormat; // Compression format to use
+												// for the results
 
 	/*
 	 * Default value constructor
@@ -44,15 +46,14 @@ public class DataSettings
 	public DataSettings()
 	{
 
-		storePreJumpValue = true;
 		automaticallyStoreResults = false; // flag to store results
 											// automatically
-		storeAtEveryJump = false;
+		storeAtEveryJump = true;
 		storeDataAtIncrements = true; // flag to determine whether data is
 										// stored at a specified increment,
-		dataStoreIncrement = .1;// .01; // time interval between data
-								// points
-								// stored
+		dataStoreIncrement = .05;// .01; // time interval between data
+									// points
+									// stored
 		autoStoreDirectory = "./results"; // location where new directories will
 											// be created containing results
 		environmentNameSubDirectory = true;

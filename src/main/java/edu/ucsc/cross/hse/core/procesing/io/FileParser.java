@@ -1,18 +1,23 @@
 package edu.ucsc.cross.hse.core.procesing.io;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import bes.commons.data.file.general.FileSystemInteractor;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.labeling.StringFormatter;
 import bs.commons.objects.manipulation.ObjectCloner;
@@ -21,9 +26,10 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
-import edu.ucsc.cross.hse.core.procesing.io.Zipper.CompressionFormat;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core2.framework.component.Zipper;
+import edu.ucsc.cross.hse.core2.framework.component.Zipper.CompressionFormat;
 
 public class FileParser extends ProcessorAccess
 {
@@ -127,7 +133,7 @@ public class FileParser extends ProcessorAccess
 			byteOut = serializedComponent.getBytes();
 			break;
 		}
-		createOutputFile(file_directory, file_name, byteOut);// clonedComponent));
+		FileSystemInteractor.createOutputFile(file_directory, file_name, byteOut);// clonedComponent));
 
 		// ComponentOperator.getConfigurer(component).saveComponentToFile(file_directory,
 		// file_name);
@@ -162,88 +168,4 @@ public class FileParser extends ProcessorAccess
 
 	}
 
-	public static String parseGZipFile(String directory, String file_name)
-	{
-		String fileContent = "";
-		try
-		{
-			ByteArrayInputStream bais = new ByteArrayInputStream(
-			FileSystemOperator.getFileContentsAsString(new File(directory, file_name)).getBytes());
-			GZIPInputStream gzis = new GZIPInputStream(bais);
-			InputStreamReader reader = new InputStreamReader(gzis);
-			BufferedReader in = new BufferedReader(reader);
-
-			String readed;
-			while ((readed = in.readLine()) != null)
-			{
-
-				fileContent += readed;
-			}
-		} catch (Exception badFile)
-		{
-			badFile.printStackTrace();
-		}
-		return fileContent;
-	}
-
-	public static boolean checkDirectory(String directory_path, boolean create_if_missing)
-	{
-		File theDir = new File(directory_path);
-		boolean result = theDir.exists();
-		if (!result)
-		{
-			if (create_if_missing)
-			{
-				try
-				{
-					theDir.mkdirs();
-					// System.out.println("hi : " + directory_path + " : " +
-					// theDir.getAbsolutePath());
-				} catch (Exception se)
-				{
-					se.printStackTrace();
-				}
-			}
-
-		}
-
-		return result;
-	}
-
-	public static void createOutputFile(String directory, String file_name, byte[] file_contents)
-	{
-		// System.out.println("dir: " + directory + " file: " + file_name);
-		checkDirectory(directory, true);
-		// File outputFile = new File(directory + "/" + file_name);
-		if (directory.length() > 0)
-		{
-			directory = directory + "/";
-		}
-		try
-		{
-			FileOutputStream output = new FileOutputStream(new File(directory, file_name));
-			// ByteArrayOutputStream out = new
-			// ByteArrayOutputStream(file_contents.length);
-
-			// GZIPOutputStream gzip = new GZIPOutputStream(output);
-			// gzip.write(file_contents);
-			// gzip.close();
-			output.write(file_contents);
-			output.close();
-			// new FileOutputStream(directory + file_name), "utf-8")); // create
-			// the
-			// output
-			// file
-			// and
-			// initialize
-			// file
-			// writer
-
-			// writer.write(file_contents); // write the line to the file
-			// writer.close(); // close the file
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
 }

@@ -28,7 +28,7 @@ public class ComponentActions
 
 	public <T extends Component> T copy()
 	{
-		return copy(false, false);
+		return copy(false, true);
 	}
 
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
@@ -46,12 +46,12 @@ public class ComponentActions
 		}
 		if (!include_hierarchy)
 		{
-			component.loadHierarchy(null);
+			// component.loadHierarchy(null);
 		} // environment = null;
-		T copy = (T) ComponentOperator.cloner.deepClone(component);
+		T copy = (T) ObjectCloner.xmlClone(component);// ComponentOperator.cloner.deepClone(component);
 		if (!include_hierarchy)
 		{
-			component.loadHierarchy(h);
+			// component.loadHierarchy(h);
 		}
 		if (!include_data)
 		{
