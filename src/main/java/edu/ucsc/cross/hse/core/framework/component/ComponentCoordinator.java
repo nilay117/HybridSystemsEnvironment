@@ -21,7 +21,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
  * sub-components. The parent and the environment of this particular are also
  * available within this structure.
  */
-public class ComponentHierarchy
+public class ComponentCoordinator
 {
 
 	// Mapping of all declared components indexed by class
@@ -35,6 +35,11 @@ public class ComponentHierarchy
 
 	// List of all components from all descendants
 	private ArrayList<Component> descendantComponentList;
+
+	// List of all components from all descendants
+	private ArrayList<Component> declaredAdjunctComponentList;
+	// List of all components from all descendants
+	private ArrayList<Component> declaredAdjunctDescendantComponentList;
 
 	// key that links the component to the global environment that it is
 	// contained in. This keeps the component size smaller when being copied or
@@ -59,7 +64,7 @@ public class ComponentHierarchy
 	 * 
 	 * @param base_class - base class of the component
 	 */
-	public ComponentHierarchy(Component self)
+	public ComponentCoordinator(Component self)
 	{
 		this.self = self;
 		setup();
@@ -100,8 +105,29 @@ public class ComponentHierarchy
 			ret.add(clonedComponent);
 			initialClone = clonedComponent;
 		}
-		// ComponentHierarchy.constructTree(this);
+		addAllUndeclaredComponents(ret);
+
 		return ret;
+	}
+
+	private void addAllUndeclaredComponents(ArrayList<Component> undeclareds)
+	{
+
+		for (Component undeclared : undeclareds)
+		{
+			ComponentCoordinator.constructTree(undeclared.getHierarchy());
+			if (!declaredAdjunctComponentList.contains(undeclared))
+			{
+				declaredAdjunctComponentList.add(undeclared);
+			}
+			for (Component undeclaredDescendant : undeclared.getHierarchy().getComponents(true))
+			{
+				if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
+				{
+					declaredAdjunctDescendantComponentList.add(undeclaredDescendant);
+				}
+			}
+		}
 	}
 
 	private HashMap<Class<?>, ArrayList<Component>> getScopeMap(boolean global)
@@ -121,6 +147,8 @@ public class ComponentHierarchy
 		declaredComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
 		declaredComponentList = new ArrayList<Component>();
 		descendantComponentList = new ArrayList<Component>();
+		declaredAdjunctComponentList = new ArrayList<Component>();
+		declaredAdjunctDescendantComponentList = new ArrayList<Component>();
 	}
 
 	private void processComponent(Component parent, Component field)
@@ -193,6 +221,7 @@ public class ComponentHierarchy
 	void setup()
 	{
 		initializeContainers();
+		loadHierarchyComponents();
 	}
 
 	private void loadHierarchyComponents()
@@ -330,7 +359,7 @@ public class ComponentHierarchy
 		return values;
 	}
 
-	public static void constructTree(ComponentHierarchy hierarchy)
+	public static void constructTree(ComponentCoordinator hierarchy)
 	{
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
@@ -338,7 +367,7 @@ public class ComponentHierarchy
 		for (Component component : init)
 		{
 			hierarchy.storeComponent(component, false);
-			ComponentHierarchy.constructTree(component.getHierarchy());
+			ComponentCoordinator.constructTree(component.getHierarchy());
 			for (Component componentChild : component.getHierarchy().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
@@ -468,5 +497,23 @@ public class ComponentHierarchy
 			componentMap.put(component.getDescription().name, component);
 		}
 		return componentMap;
+	}
+
+	public static enum ComponentRelation
+	{
+		DECLARED,
+		DECLARED_DESCENDANT,
+		INSTANTIATED,
+		INSTANTIATED_DECENDANT
+	}
+
+	public HashMap<String, Component> getDeclaredDescendants()
+	{
+		HashMap<String, Component> descendants = new HashMap<String, Component>();
+		for (Component desc : declaredAdjunctComponentList)
+		{
+			descendants.put(desc.toString(), desc);
+		}
+		return descendants;
 	}
 }

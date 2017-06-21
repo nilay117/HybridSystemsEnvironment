@@ -2,15 +2,15 @@ package edu.ucsc.cross.hse.core.framework.data;
 
 import java.util.HashMap;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 
-public class DataOperator<T> extends ComponentOperator
+public class DataAdministrator<T> extends ComponentAdministrator
 {
 
-	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
+	protected static HashMap<Data<?>, DataAdministrator<?>> dataOperators = new HashMap<Data<?>, DataAdministrator<?>>();
 	Data<T> element;
 
-	protected DataOperator(Data<T> component)
+	protected DataAdministrator(Data<T> component)
 	{
 		super(component);
 		try
@@ -24,16 +24,16 @@ public class DataOperator<T> extends ComponentOperator
 
 	}
 
-	public static <S> DataOperator<S> getOperator(Data<S> data)
+	public static <S> DataAdministrator<S> getOperator(Data<S> data)
 	{
 		if (dataOperators.containsKey(data))
 		{
-			return (DataOperator<S>) dataOperators.get(data);
+			return (DataAdministrator<S>) dataOperators.get(data);
 
 		} else
 		{
 
-			DataOperator config = new DataOperator(data);
+			DataAdministrator config = new DataAdministrator(data);
 			dataOperators.put(data, config);
 			return config;
 

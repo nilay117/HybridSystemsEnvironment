@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.processing.execution.Environment;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
@@ -33,7 +33,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 
 		getComputationEngine().updateValues(y);
-		if (ComponentOperator.getConfigurer(getEnvironment()).isJumpOccurring())
+		if (ComponentAdministrator.getConfigurer(getEnvironment()).isJumpOccurring())
 		{
 			flag = -1 * flag;
 			toggles = toggles + 1;

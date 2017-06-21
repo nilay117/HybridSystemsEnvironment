@@ -9,7 +9,7 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
 import bs.commons.objects.access.Protected;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.processing.execution.Environment;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
@@ -196,7 +196,7 @@ public class EventMonitor extends ProcessorAccess
 			printOutUnresolvedIssues(e, problemResolved);
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(ComponentOperator.getConfigurer(getEnvironment()).isJumpOccurring());
+			this.getComponents().performAllTasks(ComponentAdministrator.getConfigurer(getEnvironment()).isJumpOccurring());
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

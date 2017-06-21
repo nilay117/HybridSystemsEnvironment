@@ -20,7 +20,7 @@ public class DataFactory
 
 	public <S> Data<S> newData(S obj, String name, DataType type)
 	{
-		return newData(obj, name, "", type, type.storePreviousDataByDefault());
+		return newData(obj, name, name, type, type.storePreviousDataByDefault());
 	}
 
 	public <S> Data<S> newData(S obj, String name, String description, DataType type)
@@ -33,10 +33,10 @@ public class DataFactory
 		Data<S> newState = null;
 		if (name == null)
 		{
-			newState = DataFactory.instantiateData(obj, type, type.getTitle(), "", save_default);
+			newState = DataFactory.instantiateData(obj, type, name, type.getTitle(), save_default);
 		} else
 		{
-			newState = DataFactory.instantiateData(obj, type, name, "", save_default);
+			newState = DataFactory.instantiateData(obj, type, name, description, save_default);
 		}
 
 		return newState;

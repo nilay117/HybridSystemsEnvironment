@@ -23,8 +23,8 @@ import bs.commons.objects.labeling.StringFormatter;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
@@ -105,7 +105,7 @@ public class FileParser extends ProcessorAccess
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
 		for (Component componen : component.getHierarchy().getComponents(true))
 		{
-			ComponentOperator.getConfigurer(componen).setInitialized(null);
+			ComponentAdministrator.getConfigurer(componen).setInitialized(null);
 			// try
 			// {
 			// Data<T> data = (Data) componen;
@@ -142,7 +142,7 @@ public class FileParser extends ProcessorAccess
 	private static <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		ComponentHierarchy.constructTree(component.getHierarchy());
+		ComponentCoordinator.constructTree(component.getHierarchy());
 		// allComponents.add(component);
 		for (Component subComponent : component.getHierarchy().getComponents(true))
 		{

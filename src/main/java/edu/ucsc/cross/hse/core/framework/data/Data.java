@@ -11,7 +11,7 @@ import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
 /*
@@ -106,7 +106,7 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		// if (this.element.getClass().equals(element.getClass()))
 		{
-			if (!ComponentOperator.getConfigurer(this).isInitialized())
+			if (!ComponentAdministrator.getConfigurer(this).isInitialized())
 			{
 				initialVal.setValue(element);
 				try
@@ -214,7 +214,7 @@ public class Data<T> extends Component// DynamicData<T>
 	 */
 	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
 	{
-		super(name);
+		super(name, description);
 		element = obj;
 		dataType = type;
 		derivative = cloneZeroDerivative(element);
@@ -266,7 +266,7 @@ public class Data<T> extends Component// DynamicData<T>
 		boolean initialize = true;
 		try
 		{
-			initialize = initialize && !ComponentOperator.getConfigurer(this).isInitialized();
+			initialize = initialize && !ComponentAdministrator.getConfigurer(this).isInitialized();
 		} catch (Exception nullInit)
 		{
 			initialize = true;
@@ -340,7 +340,7 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return ComponentOperator.cloner.deepClone(getValue());
+				return ComponentAdministrator.cloner.deepClone(getValue());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{

@@ -3,8 +3,8 @@ package edu.ucsc.cross.hse.core.framework.environment;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
 
 /*
@@ -68,9 +68,9 @@ public class EnvironmentContent extends Component
 		jumpOccurring = false;
 		environmentTime = new HybridTime();
 		earthStartTime = Time.newSecondsValue(-1.0);
-		ComponentOperator.getConfigurer(this).setEnvironmentKey(this.toString());
+		ComponentAdministrator.getConfigurer(this).setEnvironmentKey(this.toString());
 		EnvironmentContentOperator.addGlobalHybridSystem(this);
-		ComponentOperator.getConfigurer(this).setEnvironmentKey(this.toString());
+		ComponentAdministrator.getConfigurer(this).setEnvironmentKey(this.toString());
 	}
 
 	@Override

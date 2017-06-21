@@ -10,7 +10,7 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
@@ -93,7 +93,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		getConsole().printUpdates();
 
 		// sim.environment().storePreJumpStates();
-		ComponentOperator.getConfigurer(getEnvironment()).performTasks(false);
+		ComponentAdministrator.getConfigurer(getEnvironment()).performTasks(false);
 		updateYDotVector(yDot);
 	}
 

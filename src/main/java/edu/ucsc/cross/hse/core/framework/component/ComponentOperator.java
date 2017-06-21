@@ -1,63 +1,81 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.rits.cloning.Cloner;
-
 import bs.commons.io.file.FileSystemOperator;
-import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
+import edu.ucsc.cross.hse.core.framework.data.DataAdministrator;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 
 /*
- * This class contains the methods that are used by processing modules to
- * operate the component. These methods are not intended for use outside of
- * processing, which is why they are not directly accessable from the component
- * itself. Any additional methods that should not be accessible by users should
- * be defined here. Use caution when using them as they can disrupt
- * functionality of the environment.
+ * This class contains the methods available to users that perform a variety of
+ * tasks. These methods are safe to use whenever needed as they do not interfere
+ * with the processor.
  */
-public class ComponentOperator extends ComponentActions
+public class ComponentOperator
 {
 
-	public static Cloner cloner = new Cloner();
-
-	// public Component component;
-
-	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
+	protected Component component;
 
 	public ComponentOperator(Component component)
 	{
-		super(component);
-		// this.component = component;
-		components.put(component, this);
-		// getConfigurer(component);
-		// component.hierarchy.
+		this.component = component;
 	}
 
-	public String getEnvironmentKey()
+	public <T extends Component> T copy()
 	{
-		return component.getHierarchy().getEnvironmentKey();
+		return copy(false, true);
 	}
 
-	public ComponentState getStatus()
+	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
-		return component.getStatus();
+		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
+		ComponentCoordinator h = component.getHierarchy();
+
+		if (!include_data)
+		{
+			for (Data data : component.getHierarchy().getComponents(Data.class, true))
+			{
+				tempValues.put(data, data.getActions().getStoredValues());
+				DataAdministrator.getOperator(data).setStoredValues(new HashMap<Double, T>());
+			}
+		}
+		if (!include_hierarchy)
+		{
+			// component.loadHierarchy(null);
+		} // environment = null;
+		T copy = (T) ObjectCloner.xmlClone(component);// ComponentOperator.cloner.deepClone(component);
+		if (!include_hierarchy)
+		{
+			// component.loadHierarchy(h);
+		}
+		if (!include_data)
+		{
+			for (Data data : component.getHierarchy().getComponents(Data.class, true))
+			{
+				// tempValues.put(data, Data.getStoredValues(data));
+				DataAdministrator.getOperator(data).setStoredValues(tempValues.get(data));
+			}
+		}
+
+		return copy;
+
 	}
 
-	public Boolean isInitialized()
+	public boolean isData()
 	{
-		return component.getStatus().getInitialized();
-	}
-
-	public boolean isSimulated()
-	{
-		return component.getStatus().isSimulated();
+		try
+		{
+			Data d = Data.class.cast(component);
+			return true;
+		} catch (Exception e)
+		{
+			return false;
+		}
 	}
 
 	/*
@@ -66,36 +84,23 @@ public class ComponentOperator extends ComponentActions
 	 * 
 	 * @return true if a jump is occurring, false otherwise
 	 */
-	public ArrayList<Component> jumpingComponents()
+	public Boolean isJumpOccurring()
 	{
-		ArrayList<Component> jumpComponents = new ArrayList<Component>();
-		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
-		// true));
-		for (Component localBehavior : component.getHierarchy().getComponents(Component.class, true,
-		HybridDynamicalModel.class))// ,
-		// DynamicalModel.class))
+		Boolean jumpOccurred = false;
+		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class,
+		true))
 		{
 			try
 			{
-				Boolean jumpOccurring = HybridDynamicalModel.jumpOccurring((HybridDynamicalModel) localBehavior, true);
+				Boolean jumpOccurring = HybridDynamicalModel.jumpOccurring(localBehavior, true);
 				if (jumpOccurring != null)
 				{
-					if (jumpOccurring)
+					try
 					{
-						if (!jumpComponents.contains(localBehavior)) // make
-																		// sure
-																		// the
-																		// dynamical
-																		// model
-																		// has
-																		// not
-																		// been
-																		// accounted
-																		// for
-																		// already
-						{
-							jumpComponents.add(localBehavior);
-						}
+						jumpOccurred = jumpOccurred || jumpOccurring;
+					} catch (Exception outOfDomain)
+					{
+						outOfDomain.printStackTrace();
 					}
 				}
 			} catch (Exception behaviorFail)
@@ -103,87 +108,44 @@ public class ComponentOperator extends ComponentActions
 				behaviorFail.printStackTrace();
 			}
 		}
-		return jumpComponents;
+		return jumpOccurred;
 	}
 
 	/*
-	 * Performs all sub component tasks according to the current domain (jump,
-	 * flow, or neither)
-	 * 
-	 * @param jump_occurring
+	 * Add a sub-component to the current component
 	 */
-	public void performTasks(boolean jump_occurring)
+	public void addComponentFromFile(String directory_path, String file_name)
 	{
-
-		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class, true))
+		Component newComponent = null;
+		try
 		{
-			try
-			{
+			newComponent = (FileParser.loadComponent(directory_path, file_name));
+			component.getHierarchy().addComponent(newComponent);
 
-				boolean jumpOccurred = false;
-				if (HybridDynamicalModel.jumpOccurring(localBehavior, true))
-				{
-					jumpOccurred = HybridDynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				} else if (HybridDynamicalModel.flowOccurring(localBehavior, true))
-				{
-					jumpOccurred = HybridDynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				} else
-				{
-
-				}
-				if (jumpOccurred)
-				{
-					EnvironmentContentOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
-					.incrementJumpIndex();
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
+		} catch (Exception badComponent)
+		{
+			badComponent.printStackTrace();
 		}
 	}
 
-	public void protectedInitialize()
+	/*
+	 * Save the current component to a file
+	 */
+	public void saveComponentToFile(String directory_path, String file_name)
 	{
-		if (!component.getStatus().getInitialized())
-		{
-			component.initialize();
-			component.getStatus().setInitialized(true);
-		}
+		Object clonedComponent = ObjectCloner.xmlClone(this.component);
+		FileSystemOperator.createOutputFile(new File(directory_path, file_name),
+		XMLParser.serializeObject(this.component));// clonedComponent));
+
 	}
 
-	public void resetHierarchy()
+	public void setInitialized(Boolean initialized)
 	{
-		component.getHierarchy().setup();
+		component.getStatus().setInitialized(initialized);
 	}
 
-	public void setEnvironmentKey(String environment_key)
+	public void setSimulated(boolean simulated)
 	{
-		component.getHierarchy().setEnvironmentKey(environment_key);
-	}
-
-	public void uninitializeComponent()
-	{
-		ComponentHierarchy.constructTree(component.getHierarchy());
-		for (Component comp : component.getHierarchy().getComponents(true))
-		{
-			ComponentOperator.getConfigurer(comp).setInitialized(false);
-		}
-	}
-
-	public static ComponentOperator getConfigurer(Component component)
-	{
-		if (components.containsKey(component))
-		{
-			return components.get(component);
-
-		} else
-		{
-
-			ComponentOperator config = new ComponentOperator(component);
-			components.put(component, config);
-			return config;
-
-		}
+		component.getStatus().setSimulated(simulated);
 	}
 }

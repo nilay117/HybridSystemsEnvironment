@@ -6,8 +6,8 @@ import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
@@ -39,14 +39,14 @@ public class ComponentDirector extends ProcessorAccess
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
 		{
-			ComponentOperator.getConfigurer(getEnvironment()).performTasks(jump_occurred);
+			ComponentAdministrator.getConfigurer(getEnvironment()).performTasks(jump_occurred);
 		}
 	}
 
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentOperator.getConfigurer(getEnvironment()).jumpingComponents();
+		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnvironment()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
@@ -76,7 +76,7 @@ public class ComponentDirector extends ProcessorAccess
 
 	void prepareComponents()
 	{
-		ComponentHierarchy.constructTree(getEnvironment().getHierarchy());
+		ComponentCoordinator.constructTree(getEnvironment().getHierarchy());
 		linkEnvironment();
 		initializeComponents(Data.class);
 		// initializeComponents(DataSet.class);

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hse.core.framework.component.ComponentActions;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
-public class DataActions<T> extends ComponentActions
+public class DataActions<T> extends ComponentOperator
 {
 
 	protected static HashMap<Data<?>, DataActions<?>> dataActions = new HashMap<Data<?>, DataActions<?>>();
@@ -23,13 +23,13 @@ public class DataActions<T> extends ComponentActions
 	// device recording the states then a connector model can be implemented
 	// ß to allow the system to access the data
 	// ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	// Internal Operation Functions : everything below for the processing system
-	// only, it is not recommended to call these elsewhere unless trying to
-	// alter the standard behavior
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	/*
+	 * /////////////////////////////////////////////////////////////////////////
+	 * Internal Operation Functions : everything below for the processing system
+	 * only, it is not recommended to call these elsewhere unless trying to
+	 * alter the standard behavior
+	 * /////////////////////////////////////////////////////////////////////////
+	 */
 	public DataActions(Data<T> data)
 	{
 		super(data);

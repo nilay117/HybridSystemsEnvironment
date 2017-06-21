@@ -22,15 +22,32 @@ import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
 public abstract class Component implements Initializer
 {
 
-	private ComponentState state; // configuration state of
+	private ComponentStatus state; // configuration state of
 									// this instance of the
 									// component
 
-	private ComponentDescription description; // specific information describing
-												// the component
+	private ComponentCharacterization description; // specific information
+													// describing
+													// the component
 
-	private ComponentHierarchy hierarchy; // component access hierarchy of this
+	private ComponentCoordinator hierarchy; // component access hierarchy of
+											// this
 											// component
+	/*
+	 * Constructor that defines the name of the component with this class
+	 * (Component) as the base class. This constructor is used to create
+	 * components that are not based off any of the core components:
+	 * Behavior,Data,DataSet, and HybridSystem.
+	 * 
+	 * @param title - title of the component
+	 */
+
+	public Component(String title, String description)
+	{
+		setup(title, this.getClass());
+		this.description.setDescription(description);
+
+	}
 
 	/*
 	 * Constructor that defines the name of the component with this class
@@ -68,30 +85,30 @@ public abstract class Component implements Initializer
 		return EnvironmentContentOperator.getGlobalSystem(getHierarchy().getEnvironmentKey());
 	}
 
-	public ComponentDescription getDescription()
+	public ComponentCharacterization getDescription()
 	{
 		return description;
 	}
 
-	public ComponentHierarchy getHierarchy()
+	public ComponentCoordinator getHierarchy()
 	{
 		return hierarchy;
 	}
 
-	public ComponentActions getActions()
+	public ComponentOperator getActions()
 	{
-		return ComponentOperator.getConfigurer(this);
+		return ComponentAdministrator.getConfigurer(this);
 	}
 
 	/*
 	 * External Operation Functions
 	 */
-	ComponentState getStatus()
+	ComponentStatus getStatus()
 	{
 		return state;
 	}
 
-	void loadHierarchy(ComponentHierarchy hierarchy)
+	void loadHierarchy(ComponentCoordinator hierarchy)
 	{
 		this.hierarchy = hierarchy;
 	}
@@ -101,11 +118,11 @@ public abstract class Component implements Initializer
 	 */
 	private void setup(String title, Class<?> base_class)
 	{
-		ComponentOperator.getConfigurer(this);
-		state = new ComponentState();
+		ComponentAdministrator.getConfigurer(this);
+		state = new ComponentStatus();
 
-		description = new ComponentDescription(title);
-		hierarchy = new ComponentHierarchy(this);
+		description = new ComponentCharacterization(title);
+		hierarchy = new ComponentCoordinator(this);
 	}
 
 }

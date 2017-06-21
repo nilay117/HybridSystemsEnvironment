@@ -128,7 +128,7 @@ public enum CoreDataType implements DataType// ComponenClassification
 	public <T> Data<T> create(T initial_value, String label)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, label, "", this, this.storePreviousDataByDefault());
+		return dataFactory.newData(initial_value, label, label, this, this.storePreviousDataByDefault());
 	}
 
 	/*

@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentHierarchy;
+import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.processing.data.DataManager;
 import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
@@ -48,7 +48,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 		initializeComponents(true);
 	}
 
-	public ComponentHierarchy getContent()
+	public ComponentCoordinator getContent()
 	{
 		return content.getHierarchy();
 	}

@@ -1,9 +1,9 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.DataAdministrator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
@@ -99,14 +99,14 @@ public abstract class ProcessorAccess
 		return proc.fileParser;
 	}
 
-	protected ComponentOperator getComponentOperator(Component component)
+	protected ComponentAdministrator getComponentOperator(Component component)
 	{
-		return ComponentOperator.getConfigurer(component);
+		return ComponentAdministrator.getConfigurer(component);
 	}
 
-	protected <S> DataOperator<S> getDataOperator(Data<S> component)
+	protected <S> DataAdministrator<S> getDataOperator(Data<S> component)
 	{
-		return DataOperator.getOperator(component);
+		return DataAdministrator.getOperator(component);
 	}
 
 	// @Override
