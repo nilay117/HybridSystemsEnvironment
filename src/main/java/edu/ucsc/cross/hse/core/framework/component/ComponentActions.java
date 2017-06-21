@@ -111,14 +111,15 @@ public class ComponentActions
 		return jumpOccurred;
 	}
 
+	/*
+	 * Add a sub-component to the current component
+	 */
 	public void addComponentFromFile(String directory_path, String file_name)
 	{
 		Component newComponent = null;
 		try
 		{
-
 			newComponent = (FileParser.loadComponent(directory_path, file_name));
-
 			component.getHierarchy().addComponent(newComponent);
 
 		} catch (Exception badComponent)
@@ -127,6 +128,9 @@ public class ComponentActions
 		}
 	}
 
+	/*
+	 * Save the current component to a file
+	 */
 	public void saveComponentToFile(String directory_path, String file_name)
 	{
 		Object clonedComponent = ObjectCloner.xmlClone(this.component);

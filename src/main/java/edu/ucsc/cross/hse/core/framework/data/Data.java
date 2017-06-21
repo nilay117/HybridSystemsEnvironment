@@ -104,29 +104,32 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void setValue(T element)
 	{
-		if (!ComponentOperator.getConfigurer(this).isInitialized())
+		// if (this.element.getClass().equals(element.getClass()))
 		{
-			initialVal.setValue(element);
-			try
+			if (!ComponentOperator.getConfigurer(this).isInitialized())
 			{
-				if (FieldFinder.containsSuper(element, UnitValue.class))
+				initialVal.setValue(element);
+				try
 				{
-					initialVal.setFixedValue((Double) ((UnitValue) element).get(defaultUnit), defaultUnit);
-				} else if (FieldFinder.containsSuper(element, Double.class))
+					if (FieldFinder.containsSuper(element, UnitValue.class))
+					{
+						initialVal.setFixedValue((Double) ((UnitValue) element).get(defaultUnit), defaultUnit);
+					} else if (FieldFinder.containsSuper(element, Double.class))
+					{
+						initialVal.setFixedValue((Double) element);
+					} else
+					{
+						initialVal.setValue(element);
+						initialVal.setRandomValues(null, null);
+					}
+				} catch (UnitException e)
 				{
-					initialVal.setFixedValue((Double) element);
-				} else
-				{
-					initialVal.setValue(element);
-					initialVal.setRandomValues(null, null);
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (UnitException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+			this.element = element;
 		}
-		this.element = element;
 		// if (element != null)
 		// {
 		// if (FieldFinder.containsSuper(get(), UnitValue.class) &&
@@ -248,7 +251,7 @@ public class Data<T> extends Component// DynamicData<T>
 		}
 		try
 		{
-			prejump = new UnitValue(obj, defaultUnit);
+			prejump = new UnitValue(initialVal.getValue(), defaultUnit);
 		} catch (UnitException e)
 		{
 			// TODO Auto-generated catch block

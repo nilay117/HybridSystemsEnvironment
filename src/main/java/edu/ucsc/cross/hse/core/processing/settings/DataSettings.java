@@ -51,9 +51,9 @@ public class DataSettings
 		storeAtEveryJump = true;
 		storeDataAtIncrements = true; // flag to determine whether data is
 										// stored at a specified increment,
-		dataStoreIncrement = .05;// .01; // time interval between data
-									// points
-									// stored
+		dataStoreIncrement = .5;// .01; // time interval between data
+								// points
+								// stored
 		autoStoreDirectory = "./results"; // location where new directories will
 											// be created containing results
 		environmentNameSubDirectory = true;

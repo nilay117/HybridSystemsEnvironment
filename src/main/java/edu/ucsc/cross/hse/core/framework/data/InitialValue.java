@@ -115,8 +115,9 @@ public class InitialValue<T>
 	@SuppressWarnings("unchecked")
 	public Double getNumberValue()
 	{
-
-		return Double.class.cast(((max - min) * Math.random()) + min);
+		Double numVal = (max - min) * Math.random() + min;
+		return numVal;//
+		// return Double.class.cast(((max - min) * Math.random()) + min);
 
 	}
 
