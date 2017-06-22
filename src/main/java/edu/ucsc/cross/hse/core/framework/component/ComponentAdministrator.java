@@ -11,7 +11,7 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
 /*
@@ -42,7 +42,7 @@ public class ComponentAdministrator extends ComponentOperator
 
 	public String getEnvironmentKey()
 	{
-		return component.getHierarchy().getEnvironmentKey();
+		return component.getContents().getEnvironmentKey();
 	}
 
 	public ComponentStatus getStatus()
@@ -71,7 +71,7 @@ public class ComponentAdministrator extends ComponentOperator
 		ArrayList<Component> jumpComponents = new ArrayList<Component>();
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
-		for (Component localBehavior : component.getHierarchy().getComponents(Component.class, true,
+		for (Component localBehavior : component.getContents().getObjects(Component.class, true,
 		HybridDynamicalModel.class))// ,
 		// DynamicalModel.class))
 		{
@@ -115,7 +115,7 @@ public class ComponentAdministrator extends ComponentOperator
 	public void performTasks(boolean jump_occurring)
 	{
 
-		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class, true))
+		for (HybridDynamicalModel localBehavior : component.getContents().getObjects(HybridDynamicalModel.class, true))
 		{
 			try
 			{
@@ -133,7 +133,7 @@ public class ComponentAdministrator extends ComponentOperator
 				}
 				if (jumpOccurred)
 				{
-					EnvironmentContentOperator.getGlobalSystemOperator(getEnvironmentKey()).getEnvironmentHybridTime()
+					GlobalContentAdministrator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
 					.incrementJumpIndex();
 				}
 			} catch (Exception behaviorFail)
@@ -154,20 +154,29 @@ public class ComponentAdministrator extends ComponentOperator
 
 	public void resetHierarchy()
 	{
-		component.getHierarchy().setup();
+		component.getContents().setup();
 	}
 
 	public void setEnvironmentKey(String environment_key)
 	{
-		component.getHierarchy().setEnvironmentKey(environment_key);
+		component.getContents().setEnvironmentKey(environment_key);
 	}
 
-	public void uninitializeComponent()
+	public void initializeContentMappings()
 	{
-		ComponentCoordinator.constructTree(component.getHierarchy());
-		for (Component comp : component.getHierarchy().getComponents(true))
+		initializeContentMappings(null);
+	}
+
+	public void initializeContentMappings(Boolean initialize_components)
+	{
+		component.getContents().constructTree();
+		// ComponentOrganizer.constructTree(component.getContents());
+		if (initialize_components != null)
 		{
-			ComponentAdministrator.getConfigurer(comp).setInitialized(false);
+			for (Component comp : component.getContents().getComponents(true))
+			{
+				ComponentAdministrator.getConfigurer(comp).setInitialized(initialize_components);
+			}
 		}
 	}
 

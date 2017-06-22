@@ -233,7 +233,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (Component component : getEnvironment().getHierarchy().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
+		for (Component component : getEnvironment().getContents().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
 		// null))
 		{
 			try

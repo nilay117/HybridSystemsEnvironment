@@ -23,9 +23,9 @@ import bs.commons.objects.labeling.StringFormatter;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 import edu.ucsc.cross.hse.core2.framework.component.Zipper;
@@ -39,9 +39,9 @@ public class FileParser extends ProcessorAccess
 		super(processor);
 	}
 
-	public void autoStoreData(EnvironmentContent data)
+	public void autoStoreData(GlobalEnvironmentContent data)
 	{
-		for (Component comp : getEnvironment().getHierarchy().getComponents(true))
+		for (Component comp : getEnvironment().getContents().getComponents(true))
 		{
 			// comp.getConfigurer().setEnvironment(null);
 			// comp.getConfigurer().resetHierarchy();
@@ -52,15 +52,15 @@ public class FileParser extends ProcessorAccess
 		}
 	}
 
-	public void storeEnvironmentData(EnvironmentContent data)
+	public void storeEnvironmentData(GlobalEnvironmentContent data)
 	{
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
 		{
-			directory += data.getDescription().getName() + "/";
+			directory += data.getCharactarization().getName() + "/";
 		}
 
-		String fileName = data.getDescription().getDescription() + "_"
+		String fileName = data.getCharactarization().getDescription() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
 		String out = XMLParser.serializeObject(processor);
@@ -103,7 +103,7 @@ public class FileParser extends ProcessorAccess
 	public static <T extends Component> T loadComponent(String file_directory, String file_name, boolean compress)
 	{
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.getHierarchy().getComponents(true))
+		for (Component componen : component.getContents().getComponents(true))
 		{
 			ComponentAdministrator.getConfigurer(componen).setInitialized(null);
 			// try
@@ -142,9 +142,9 @@ public class FileParser extends ProcessorAccess
 	private static <T extends Component> void prepareComponent(T component)
 	{
 		ArrayList<Component> allComponents = new ArrayList<Component>();
-		ComponentCoordinator.constructTree(component.getHierarchy());
+		ComponentAdministrator.getConfigurer(component).initializeContentMappings();
 		// allComponents.add(component);
-		for (Component subComponent : component.getHierarchy().getComponents(true))
+		for (Component subComponent : component.getContents().getComponents(true))
 		{
 			if (!allComponents.contains(subComponent))
 			{

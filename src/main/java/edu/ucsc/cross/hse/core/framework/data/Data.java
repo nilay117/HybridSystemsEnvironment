@@ -189,9 +189,9 @@ public class Data<T> extends Component// DynamicData<T>
 	}
 
 	@Override
-	public DataActions getActions()
+	public DataOperator getActions()
 	{
-		return DataActions.getConfigurer(this);
+		return DataOperator.getConfigurer(this);
 	}
 
 	// // Internal Operation Functions

@@ -11,7 +11,7 @@ public class SettingConfigurations
 
 	private HashMap<Class<?>, Object> settings;
 
-	private SettingConfigurations()
+	public SettingConfigurations()
 	{
 		initialize();
 	}

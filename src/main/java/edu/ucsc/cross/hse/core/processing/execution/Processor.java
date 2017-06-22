@@ -4,24 +4,27 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataAdministrator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
-import edu.ucsc.cross.hse.core.processing.data.DataManager;
+import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
 import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public class Processor
 {
 
+	protected GlobalContentAdministrator contentAdmin;
 	protected Environment environment;
 	protected ComponentDirector elements;
-	protected DataManager data;
+	protected DataCollector data;
 	protected SimulationEngine simulationEngine;
 	protected EventMonitor executionMonitor;
 	protected FileParser fileParser;
-	protected SystemConsole outputPrinter; // system notification manager ie % complet
+	protected SystemConsole outputPrinter; // system notification manager ie %
+											// complet
 
 	protected Processor(Environment processor)
 	{
@@ -31,9 +34,10 @@ public class Processor
 
 	private void initializeComponents()
 	{
+
 		simulationEngine = new SimulationEngine(this);
 		executionMonitor = new EventMonitor(this);
-		data = new DataManager(this);
+		data = new DataCollector(this);
 		outputPrinter = new SystemConsole(this);
 		elements = new ComponentDirector(this);
 		fileParser = new FileParser(this);
@@ -42,7 +46,8 @@ public class Processor
 	protected void prepareEnvironment()
 	{
 		// environment.scanAllSystems();
-		elements.prepareComponents();
+		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironmentContent());
+		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		data.loadStoreStates();
 	}

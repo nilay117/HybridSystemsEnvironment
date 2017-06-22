@@ -4,12 +4,12 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataAdministrator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
-import edu.ucsc.cross.hse.core.processing.data.DataManager;
+import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
 import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
@@ -22,11 +22,13 @@ public abstract class ProcessorAccess
 	protected ProcessorAccess(Environment processor)
 	{
 		this.processor = processor;
+		this.proc = processor.processor;
 	}
 
 	protected ProcessorAccess(Processor processor)
 	{
 		proc = processor;
+		this.processor = processor.environment;
 	}
 
 	// @Override
@@ -55,15 +57,15 @@ public abstract class ProcessorAccess
 	}
 
 	// @Override
-	protected EnvironmentContent getEnvironment()
+	protected GlobalEnvironmentContent getEnvironment()
 	{
-		return proc.environment.getEnvironmentContent();
+		return processor.getEnvironmentContent();
 	}
 
 	// @Override
-	protected EnvironmentContentOperator getEnvironmentOperator()
+	protected GlobalContentAdministrator getEnvironmentOperator()
 	{
-		return EnvironmentContentOperator.getGlobalSystemOperator(getEnvironment().toString());
+		return GlobalContentAdministrator.getContentAdministrator(getEnvironment().toString());
 	}
 
 	// @Override
@@ -77,7 +79,7 @@ public abstract class ProcessorAccess
 		return proc.environment.settings();
 	}
 
-	protected DataManager getData()
+	protected DataCollector getData()
 	{
 		return proc.data;
 	}

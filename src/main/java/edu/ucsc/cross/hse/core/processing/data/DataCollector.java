@@ -13,7 +13,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataManager extends ProcessorAccess
+public class DataCollector extends ProcessorAccess
 {
 
 	private Double lastStoreTime = -10.0; // time since last data was stored,
@@ -22,7 +22,7 @@ public class DataManager extends ProcessorAccess
 	private ArrayList<Data> dataElementsToStore; // list of all data elements
 													// that are to be stored
 
-	public DataManager(Processor processor)
+	public DataCollector(Processor processor)
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();
@@ -44,9 +44,9 @@ public class DataManager extends ProcessorAccess
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.getDescription().getName()))
+			if (!stateElements.contains(allStates.getCharactarization().getName()))
 			{
-				stateElements.add(allStates.getDescription().getName());
+				stateElements.add(allStates.getCharactarization().getName());
 			}
 		}
 		// System.out.println(stateElements.toString());
@@ -59,7 +59,7 @@ public class DataManager extends ProcessorAccess
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.getDescription().getName().equals(title))
+			if (element.getCharactarization().getName().equals(title))
 			{
 				datas.add(element);
 			}
@@ -69,16 +69,16 @@ public class DataManager extends ProcessorAccess
 
 	public Data checkIfMatchingElementInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().getHierarchy().getComponents(true))
+		for (Component component : getEnvironment().getContents().getComponents(true))
 		{
 			try
 			{
-				if (component.getHierarchy().getComponents(true).contains(data))
+				if (component.getContents().getComponents(true).contains(data))
 				{
-					for (Data dat : component.getHierarchy().getComponents(Data.class, true))
+					for (Data dat : component.getContents().getObjects(Data.class, true))
 					{
 
-						if (dat.getDescription().getName().equals(title))
+						if (dat.getCharactarization().getName().equals(title))
 						{
 							return dat;
 						}
@@ -123,7 +123,7 @@ public class DataManager extends ProcessorAccess
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Component component : super.getEnvironment().getHierarchy().getComponents(true))
+		for (Component component : super.getEnvironment().getContents().getComponents(true))
 		{
 			try
 			{

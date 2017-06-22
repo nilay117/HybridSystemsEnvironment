@@ -19,13 +19,13 @@ public class EventMonitor extends ProcessorAccess
 
 	private Thread thread;
 	private JumpEvaluator jumpHandler;
-	private EarlyTerminator terminator;
+	private InterruptHandler terminator;
 
 	public EventMonitor(Processor processor)
 	{
 		super(processor);
 		jumpHandler = new JumpEvaluator(processor);
-		terminator = new EarlyTerminator(processor);
+		terminator = new InterruptHandler(processor);
 	}
 
 	public void runSim(boolean run_threadded)
@@ -251,7 +251,7 @@ public class EventMonitor extends ProcessorAccess
 		}
 	}
 
-	public EarlyTerminator getTerminator()
+	public InterruptHandler getTerminator()
 	{
 		return terminator;
 	}

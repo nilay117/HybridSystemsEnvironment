@@ -34,11 +34,11 @@ public class ComponentOperator
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
-		ComponentCoordinator h = component.getHierarchy();
+		ComponentOrganizer h = component.getContents();
 
 		if (!include_data)
 		{
-			for (Data data : component.getHierarchy().getComponents(Data.class, true))
+			for (Data data : component.getContents().getObjects(Data.class, true))
 			{
 				tempValues.put(data, data.getActions().getStoredValues());
 				DataAdministrator.getOperator(data).setStoredValues(new HashMap<Double, T>());
@@ -55,7 +55,7 @@ public class ComponentOperator
 		}
 		if (!include_data)
 		{
-			for (Data data : component.getHierarchy().getComponents(Data.class, true))
+			for (Data data : component.getContents().getObjects(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
 				DataAdministrator.getOperator(data).setStoredValues(tempValues.get(data));
@@ -87,7 +87,7 @@ public class ComponentOperator
 	public Boolean isJumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (HybridDynamicalModel localBehavior : component.getHierarchy().getComponents(HybridDynamicalModel.class,
+		for (HybridDynamicalModel localBehavior : component.getContents().getObjects(HybridDynamicalModel.class,
 		true))
 		{
 			try
@@ -120,7 +120,7 @@ public class ComponentOperator
 		try
 		{
 			newComponent = (FileParser.loadComponent(directory_path, file_name));
-			component.getHierarchy().addComponent(newComponent);
+			component.getContents().addComponent(newComponent);
 
 		} catch (Exception badComponent)
 		{

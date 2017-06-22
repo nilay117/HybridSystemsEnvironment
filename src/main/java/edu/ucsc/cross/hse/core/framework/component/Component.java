@@ -5,8 +5,8 @@ import java.io.File;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
 import edu.ucsc.cross.hse.core2.framework.component.ComponentAddress;
 import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
 
@@ -26,11 +26,11 @@ public abstract class Component implements Initializer
 									// this instance of the
 									// component
 
-	private ComponentCharacterization description; // specific information
+	private ComponentClassification description; // specific information
 													// describing
 													// the component
 
-	private ComponentCoordinator hierarchy; // component access hierarchy of
+	private ComponentOrganizer hierarchy; // component access hierarchy of
 											// this
 											// component
 	/*
@@ -80,17 +80,17 @@ public abstract class Component implements Initializer
 	/*
 	 * User Access Functions
 	 */
-	public EnvironmentContent getEnvironment()
+	public GlobalEnvironmentContent getEnvironment()
 	{
-		return EnvironmentContentOperator.getGlobalSystem(getHierarchy().getEnvironmentKey());
+		return GlobalContentAdministrator.getGlobalSystem(this);
 	}
 
-	public ComponentCharacterization getDescription()
+	public ComponentClassification getCharactarization()
 	{
 		return description;
 	}
 
-	public ComponentCoordinator getHierarchy()
+	public ComponentOrganizer getContents()
 	{
 		return hierarchy;
 	}
@@ -108,7 +108,13 @@ public abstract class Component implements Initializer
 		return state;
 	}
 
-	void loadHierarchy(ComponentCoordinator hierarchy)
+	// @Override
+	// public void initialize()
+	// {
+	//
+	// }
+
+	void loadHierarchy(ComponentOrganizer hierarchy)
 	{
 		this.hierarchy = hierarchy;
 	}
@@ -118,11 +124,11 @@ public abstract class Component implements Initializer
 	 */
 	private void setup(String title, Class<?> base_class)
 	{
-		ComponentAdministrator.getConfigurer(this);
+		// ComponentAdministrator.getConfigurer(this);
 		state = new ComponentStatus();
-
-		description = new ComponentCharacterization(title);
-		hierarchy = new ComponentCoordinator(this);
+		description = new ComponentClassification(title);
+		hierarchy = new ComponentOrganizer(this);
+		// ComponentCoordinator.constructTree(hierarchy);
 	}
 
 }

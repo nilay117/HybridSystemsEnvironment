@@ -1,18 +1,18 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
-import edu.ucsc.cross.hse.core.processing.data.DataManager;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
+import edu.ucsc.cross.hse.core.processing.data.DataCollector;
 import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public class Environment // extends ProcessorAccess// implements Environment
 {
 
-	private EnvironmentContent content; // all elements that make up the
-										// environment
+	private GlobalEnvironmentContent content; // all elements that make up the
+	// environment
 	// itself such as data, components, systems
 	// etc
-	private Processor processor; // environment processor that handles events,
+	protected Processor processor; // environment processor that handles events,
 									// computations, maintenance, etc
 	private SettingConfigurations settings; // collection of settings that
 											// configure the performance of the
@@ -24,7 +24,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 */
 	public Environment()
 	{
-		content = new EnvironmentContent();
+		content = new GlobalEnvironmentContent();
 		initializeComponents(false);
 	}
 
@@ -34,7 +34,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 */
 	public Environment(String name)
 	{
-		content = new EnvironmentContent(name);
+		content = new GlobalEnvironmentContent(name);
 		initializeComponents(false);
 	}
 
@@ -42,18 +42,18 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 * Predefined environment constructor that loads a specified environment and
 	 * default settings
 	 */
-	public Environment(EnvironmentContent environment)
+	public Environment(GlobalEnvironmentContent environment)
 	{
 		content = environment;
 		initializeComponents(true);
 	}
 
-	public ComponentCoordinator getContent()
+	public ComponentOrganizer getContent()
 	{
-		return content.getHierarchy();
+		return content.getContents();
 	}
 
-	public DataManager getDataCollector()
+	public DataCollector getDataCollector()
 	{
 		return processor.data;// ;.getData();
 	}
@@ -79,10 +79,11 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	public void initializeComponents(boolean pre_loaded_content)
 	{
-		settings = SettingConfigurations.loadSettings();
+		settings = new SettingConfigurations();// .loadSettings();
 		processor = new Processor(this);
 		if (pre_loaded_content)
 		{
+
 			this.getDataCollector().loadStoreStates();
 		}
 	}
@@ -95,6 +96,8 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	public void start()
 	{
+
+		this.getDataCollector().loadStoreStates();
 		processor.start();
 	}
 
@@ -104,12 +107,12 @@ public class Environment // extends ProcessorAccess// implements Environment
 		this.settings = settings;
 	}
 
-	protected EnvironmentContent getEnvironmentContent()
+	protected GlobalEnvironmentContent getEnvironmentContent()
 	{
 		return content;
 	}
 
-	public static EnvironmentContent getEnvironmentSystem(Environment env)
+	public static GlobalEnvironmentContent getEnvironmentSystem(Environment env)
 	{
 		return env.content;
 	}

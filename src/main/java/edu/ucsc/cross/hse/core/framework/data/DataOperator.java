@@ -7,10 +7,10 @@ import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
-public class DataActions<T> extends ComponentOperator
+public class DataOperator<T> extends ComponentOperator
 {
 
-	protected static HashMap<Data<?>, DataActions<?>> dataActions = new HashMap<Data<?>, DataActions<?>>();
+	protected static HashMap<Data<?>, DataOperator<?>> dataActions = new HashMap<Data<?>, DataOperator<?>>();
 	public Data<T> data;
 
 	// Stored Data Access Functions
@@ -30,7 +30,7 @@ public class DataActions<T> extends ComponentOperator
 	 * alter the standard behavior
 	 * /////////////////////////////////////////////////////////////////////////
 	 */
-	public DataActions(Data<T> data)
+	public DataOperator(Data<T> data)
 	{
 		super(data);
 		this.data = data;
@@ -165,16 +165,16 @@ public class DataActions<T> extends ComponentOperator
 	}
 
 	// Internal Operation Functions
-	public static <S> DataActions<S> getConfigurer(Data<S> component)
+	public static <S> DataOperator<S> getConfigurer(Data<S> component)
 	{
 		if (dataActions.containsKey(component))
 		{
-			return (DataActions<S>) dataActions.get(component);
+			return (DataOperator<S>) dataActions.get(component);
 
 		} else
 		{
 
-			DataActions<S> config = new DataActions<S>(component);
+			DataOperator<S> config = new DataOperator<S>(component);
 			dataActions.put(component, config);
 			return config;
 

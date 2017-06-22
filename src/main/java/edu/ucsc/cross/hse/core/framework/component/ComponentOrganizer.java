@@ -21,7 +21,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
  * sub-components. The parent and the environment of this particular are also
  * available within this structure.
  */
-public class ComponentCoordinator
+public class ComponentOrganizer
 {
 
 	// Mapping of all declared components indexed by class
@@ -64,7 +64,7 @@ public class ComponentCoordinator
 	 * 
 	 * @param base_class - base class of the component
 	 */
-	public ComponentCoordinator(Component self)
+	public ComponentOrganizer(Component self)
 	{
 		this.self = self;
 		setup();
@@ -96,6 +96,7 @@ public class ComponentCoordinator
 	public <T extends Component> ArrayList<Component> addComponent(T component, Integer quantity)
 	{
 		ArrayList<Component> ret = new ArrayList<Component>();
+
 		T initialClone = (T) ObjectCloner.xmlClone(component);
 
 		for (Integer ind = 0; ind < quantity; ind++)
@@ -115,12 +116,12 @@ public class ComponentCoordinator
 
 		for (Component undeclared : undeclareds)
 		{
-			ComponentCoordinator.constructTree(undeclared.getHierarchy());
+			undeclared.getContents().constructTree();
 			if (!declaredAdjunctComponentList.contains(undeclared))
 			{
 				declaredAdjunctComponentList.add(undeclared);
 			}
-			for (Component undeclaredDescendant : undeclared.getHierarchy().getComponents(true))
+			for (Component undeclaredDescendant : undeclared.getContents().getComponents(true))
 			{
 				if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
 				{
@@ -153,9 +154,9 @@ public class ComponentCoordinator
 
 	private void processComponent(Component parent, Component field)
 	{
-		field.getHierarchy().parentComponent = parent;
-		field.getHierarchy().loadHierarchyComponents();
-		parent.getHierarchy().storeComponent(field, true);
+		field.getContents().parentComponent = parent;
+		field.getContents().loadHierarchyComponents();
+		parent.getContents().storeComponent(field, true);
 	}
 
 	private void processContainer(Component parent, Object container)
@@ -222,6 +223,7 @@ public class ComponentCoordinator
 	{
 		initializeContainers();
 		loadHierarchyComponents();
+		// constructTree(this);
 	}
 
 	private void loadHierarchyComponents()
@@ -276,13 +278,13 @@ public class ComponentCoordinator
 			{
 				descendantComponentList.add(component);
 			}
-			if (!descendantComponentMap.containsKey(component.getDescription().getClass()))
+			if (!descendantComponentMap.containsKey(component.getCharactarization().getClass()))
 			{
-				descendantComponentMap.put(component.getDescription().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.getCharactarization().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!descendantComponentMap.get(component.getDescription().getClass()).contains(component))
+			if (!descendantComponentMap.get(component.getCharactarization().getClass()).contains(component))
 			{
-				descendantComponentMap.get(component.getDescription().getClass()).add(component);
+				descendantComponentMap.get(component.getCharactarization().getClass()).add(component);
 			}
 		}
 	}
@@ -359,16 +361,17 @@ public class ComponentCoordinator
 		return values;
 	}
 
-	public static void constructTree(ComponentCoordinator hierarchy)
+	protected void constructTree()
 	{
+		ComponentOrganizer hierarchy = self.getContents();
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
 			hierarchy.storeComponent(component, false);
-			ComponentCoordinator.constructTree(component.getHierarchy());
-			for (Component componentChild : component.getHierarchy().getComponents(true))
+			component.getContents().constructTree();// ComponentOrganizer.constructTree(component.getContents());
+			for (Component componentChild : component.getContents().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
 			}
@@ -399,11 +402,11 @@ public class ComponentCoordinator
 
 	public ArrayList<Component> getComponents(boolean include_children, Class... classes)
 	{
-		return getComponents(Component.class, include_children, classes);
+		return getObjects(Component.class, include_children, classes);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> ArrayList<T> getComponents(Class<T> component_class, boolean include_children, Class... classes)
+	public <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children, Class<?>... classes)
 	{
 		ArrayList<T> allComponents = new ArrayList<T>();
 		Class[] matchingClasses = classes;
@@ -417,7 +420,7 @@ public class ComponentCoordinator
 			ArrayList<T> componentz;
 			try
 			{
-				componentz = getComponents(component_class, include_children, clas);
+				componentz = getObjects(component_class, include_children, clas);
 				allComponents.addAll(componentz);
 
 			} catch (Exception noComponents)
@@ -444,7 +447,7 @@ public class ComponentCoordinator
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> ArrayList<T> getComponents(Class<T> component_class, boolean include_children, Class<?> search_class)
+	private <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children, Class<?> search_class)
 	{
 		ArrayList<T> components = new ArrayList<T>();
 		try
@@ -490,21 +493,13 @@ public class ComponentCoordinator
 	public <S extends Component> HashMap<String, S> getComponentMapByName(Class<S> component_class,
 	boolean include_children)
 	{
-		ArrayList<S> components = getComponents(component_class, include_children);
+		ArrayList<S> components = getObjects(component_class, include_children);
 		HashMap<String, S> componentMap = new HashMap<String, S>();
 		for (S component : components)
 		{
-			componentMap.put(component.getDescription().name, component);
+			componentMap.put(component.getCharactarization().name, component);
 		}
 		return componentMap;
-	}
-
-	public static enum ComponentRelation
-	{
-		DECLARED,
-		DECLARED_DESCENDANT,
-		INSTANTIATED,
-		INSTANTIATED_DECENDANT
 	}
 
 	public HashMap<String, Component> getDeclaredDescendants()

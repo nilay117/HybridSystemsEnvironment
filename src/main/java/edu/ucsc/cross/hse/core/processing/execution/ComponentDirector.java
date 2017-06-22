@@ -6,7 +6,7 @@ import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentCoordinator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
@@ -46,7 +46,8 @@ public class ComponentDirector extends ProcessorAccess
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnvironment()).jumpingComponents();
+		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnvironment())
+		.jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
@@ -63,7 +64,7 @@ public class ComponentDirector extends ProcessorAccess
 
 		for (Component component : jump_components)
 		{
-			for (Data data : component.getHierarchy().getComponents(Data.class, true))
+			for (Data data : component.getContents().getObjects(Data.class, true))
 			{
 				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
 				{
@@ -74,40 +75,43 @@ public class ComponentDirector extends ProcessorAccess
 		}
 	}
 
-	void prepareComponents()
-	{
-		ComponentCoordinator.constructTree(getEnvironment().getHierarchy());
-		linkEnvironment();
-		initializeComponents(Data.class);
-		// initializeComponents(DataSet.class);
-		initializeComponents();
-		linkEnvironment();
-	}
-
-	private void initializeComponents(Class<?>... components_to_initialize)
-	{
-		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
-		for (Component component : getEnvironment().getHierarchy().getComponents(true))
-		{
-			boolean initialize = initializeList.size() == 0;
-			for (Class<?> checkClass : initializeList)
-			{
-				initialize = initialize || FieldFinder.containsSuper(component, checkClass);
-			}
-			if (initialize)
-			{
-				getComponentOperator(component).protectedInitialize();
-			}
-		}
-
-	}
-
-	private void linkEnvironment()
-	{
-		for (Component component : getEnvironment().getHierarchy().getComponents(true))
-		{
-			getComponentOperator(component).setEnvironmentKey(getEnvironment().toString());
-		}
-	}
+	// void prepareComponents()
+	// {
+	// ComponentOrganizer.constructTree(getEnvironment().getContents());
+	// linkEnvironment();
+	// initializeComponents(Data.class);
+	// // initializeComponents(DataSet.class);
+	// initializeComponents();
+	// linkEnvironment();
+	// }
+	//
+	// private void initializeComponents(Class<?>... components_to_initialize)
+	// {
+	// List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
+	// for (Component component :
+	// getEnvironment().getContents().getComponents(true))
+	// {
+	// boolean initialize = initializeList.size() == 0;
+	// for (Class<?> checkClass : initializeList)
+	// {
+	// initialize = initialize || FieldFinder.containsSuper(component,
+	// checkClass);
+	// }
+	// if (initialize)
+	// {
+	// getComponentOperator(component).protectedInitialize();
+	// }
+	// }
+	//
+	// }
+	//
+	// private void linkEnvironment()
+	// {
+	// for (Component component :
+	// getEnvironment().getContents().getComponents(true))
+	// {
+	// getComponentOperator(component).setEnvironmentKey(getEnvironment().toString());
+	// }
+	// }
 
 }

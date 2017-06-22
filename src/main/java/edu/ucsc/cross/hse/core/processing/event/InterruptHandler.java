@@ -9,7 +9,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 /*
  * This class is used to terminate the environment early if need be.
  */
-public class EarlyTerminator extends ProcessorAccess implements EventHandler
+public class InterruptHandler extends ProcessorAccess implements EventHandler
 {
 
 	private boolean killFlag; // flag that indactes it is wile to kill the
@@ -18,7 +18,7 @@ public class EarlyTerminator extends ProcessorAccess implements EventHandler
 	/*
 	 * Constructor that uses the environment
 	 */
-	EarlyTerminator(Processor processor)
+	InterruptHandler(Processor processor)
 	{
 		super(processor);
 	}
