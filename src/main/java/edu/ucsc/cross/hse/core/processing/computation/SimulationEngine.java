@@ -27,9 +27,13 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class SimulationEngine extends ProcessorAccess implements FirstOrderDifferentialEquations
 {
 
-	// mapping of all state elements used by the ode to the corresponding ode
-	// state vector index. The ode state vector is made up of all the elements
-	// that can change continuously
+	/*
+	 * This is a mapping of all state elements used by the ode with keys that
+	 * correspond to the ode state vector index. The ode state vector is made up
+	 * of all data elements that can change dynamically. This structure allows
+	 * for state values and be adjusted from their respective components and
+	 * always be ready for use in the ode
+	 */
 	private HashMap<Integer, Data> odeVectorMap;
 
 	/*
@@ -91,8 +95,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	{
 		updateValues(y);
 		getConsole().printUpdates();
-
-		// sim.environment().storePreJumpStates();
+		zeroAllDerivatives();
 		ComponentAdministrator.getConfigurer(getEnv()).performTasks(false);
 		updateYDotVector(yDot);
 	}
@@ -110,20 +113,23 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		{
 			Data element = odeVectorMap.get(odeIndex);
 			Double derivative = 0.0;
-			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
+			if (element.getDerivative() != null)
 			{
-				try
+				if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
 				{
-					derivative = (Double) ((UnitValue) element.getDerivative())
-					.get(((UnitValue) element.getValue()).getUnit());
-				} catch (UnitException e)
+					try
+					{
+						derivative = (Double) ((UnitValue) element.getDerivative())
+						.get(((UnitValue) element.getValue()).getUnit());
+					} catch (UnitException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					derivative = (Double) element.getDerivative();
 				}
-			} else
-			{
-				derivative = (Double) element.getDerivative();
 			}
 			y[odeIndex] = derivative;// .getDerivative();
 		}
@@ -259,5 +265,35 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			}
 		}
 		System.out.println("ODE Vector Length: " + odeIndex);
+	}
+
+	private void initializeIndiciehs()
+	{
+		odeVectorMap.clear();
+		Integer odeIndex = 0;
+
+		for (Data dat : getEnv().getContents().getObjects(Data.class, true))// .loadComponents();//.getSpecificComponent(Data.class,
+		// null))
+		{
+			System.out.println(dat.getInformation().getFullDescription());
+			if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
+			{
+				if (FieldFinder.containsSuper(dat.getValue(), UnitValue.class)
+				|| FieldFinder.containsSuper(dat.getValue(), Number.class))
+				{
+					odeVectorMap.put(odeIndex++, dat);
+				}
+			}
+
+		}
+		System.out.println("ODE Vector Length: " + odeIndex);
+	}
+
+	private void zeroAllDerivatives()
+	{
+		for (Data data : odeVectorMap.values())
+		{
+			data.setDerivative(null);
+		}
 	}
 }

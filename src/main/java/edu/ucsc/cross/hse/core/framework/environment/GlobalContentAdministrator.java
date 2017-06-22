@@ -141,6 +141,7 @@ public class GlobalContentAdministrator extends ComponentAdministrator
 		this.initializeContentMappings();
 		for (Component component : globalSystem.getContents().getComponents(true))
 		{
+
 			ComponentAdministrator.getConfigurer(component)
 			.setEnvironmentKey(ComponentAdministrator.getConfigurer(globalSystem).getEnvironmentKey());
 		}

@@ -37,7 +37,7 @@ public class DataSettings
 												// with the name of the
 												// environment
 
-	public CompressionFormat compressionFormat; // Compression format to use
+	public CompressionFormat defaultCompressionFormat; // Compression format to use
 												// for the results
 
 	/*
@@ -48,12 +48,12 @@ public class DataSettings
 
 		automaticallyStoreResults = false; // flag to store results
 											// automatically
-		storeAtEveryJump = false;
+		storeAtEveryJump = true;
 		storeDataAtIncrements = true; // flag to determine whether data is
 										// stored at a specified increment,
-		dataStoreIncrement = .5;// .01; // time interval between data
-								// points
-								// stored
+		dataStoreIncrement = .01;// .01; // time interval between data
+									// points
+									// stored
 		autoStoreDirectory = "./results"; // location where new directories will
 											// be created containing results
 		environmentNameSubDirectory = true;

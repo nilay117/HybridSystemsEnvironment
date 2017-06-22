@@ -8,10 +8,12 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core2.framework.utils.SystemInfo;
 
 public class SystemConsole extends ProcessorAccess
 {
 
+	static SystemInfo info = new SystemInfo();
 	private static CallerRetriever classRetriever = new CallerRetriever();
 	private Double nextPrintTime;
 	private Double printInterval;
@@ -77,7 +79,11 @@ public class SystemConsole extends ProcessorAccess
 		if (message != null)
 		{
 			System.out.println(
-			"[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" + getCallingClassName(1) + "] " + message);
+			// "[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" +
+			// getCallingClassName(1) + "] " + message);
+			"[" + System.currentTimeMillis() / 1000 + "][" + Math.round(info.usedMem() / Math.pow(1024, 2)) + "/"
+			+ Math.round(info.totalMem() / Math.pow(1024, 2)) + "]" + "[" + getCallingClassName(1) + "] " + message);
+
 		}
 	}
 

@@ -46,6 +46,7 @@ public class Processor
 	protected void prepareEnvironment()
 	{
 		// environment.scanAllSystems();
+
 		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironment());
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
@@ -55,6 +56,7 @@ public class Processor
 	protected void start()
 	{
 		prepareEnvironment();
+		simulationEngine.initialize();
 		executionMonitor.runSim(false);
 	}
 }

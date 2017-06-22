@@ -164,6 +164,10 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public T getDerivative()
 	{
+		if (derivative == null)
+		{
+			this.setDerivative(cloneZeroDerivative(derivative));
+		}
 		if (!CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
 		{
 			SystemConsole
