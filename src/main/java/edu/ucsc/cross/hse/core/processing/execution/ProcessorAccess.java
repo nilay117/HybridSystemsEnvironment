@@ -57,15 +57,15 @@ public abstract class ProcessorAccess
 	}
 
 	// @Override
-	protected GlobalEnvironmentContent getEnvironment()
+	public GlobalEnvironmentContent getEnv()
 	{
-		return processor.getEnvironmentContent();
+		return processor.getEnvironment();
 	}
 
 	// @Override
 	protected GlobalContentAdministrator getEnvironmentOperator()
 	{
-		return GlobalContentAdministrator.getContentAdministrator(getEnvironment().toString());
+		return GlobalContentAdministrator.getContentAdministrator(getEnv().toString());
 	}
 
 	// @Override
@@ -76,7 +76,7 @@ public abstract class ProcessorAccess
 
 	protected SettingConfigurations getSettings()
 	{
-		return proc.environment.settings();
+		return processor.getSettings();
 	}
 
 	protected DataCollector getData()

@@ -155,7 +155,7 @@ public class EventMonitor extends ProcessorAccess
 		runIntegrator(integrator, ode, 0.0, getSettings().trial().simDuration, y);
 		this.getConsole().print("Environment Trial Complete - Runtime = "
 		+ Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0 + " seconds");
-		getFileParser().autoStoreData(getEnvironment());
+		getFileParser().autoStoreData(getEnv());
 		if (running_processes != null)
 		{
 			System.out.println(running_processes.get());
@@ -196,7 +196,7 @@ public class EventMonitor extends ProcessorAccess
 			printOutUnresolvedIssues(e, problemResolved);
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(ComponentAdministrator.getConfigurer(getEnvironment()).isJumpOccurring());
+			this.getComponents().performAllTasks(ComponentAdministrator.getConfigurer(getEnv()).isJumpOccurring());
 			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

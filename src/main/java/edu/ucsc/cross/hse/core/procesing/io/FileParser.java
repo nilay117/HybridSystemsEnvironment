@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.rits.cloning.Cloner;
+
 import bes.commons.data.file.general.FileSystemInteractor;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.labeling.StringFormatter;
@@ -34,6 +36,8 @@ import edu.ucsc.cross.hse.core2.framework.component.Zipper.CompressionFormat;
 public class FileParser extends ProcessorAccess
 {
 
+	public static Cloner cloner = new Cloner();
+
 	public FileParser(Processor processor)
 	{
 		super(processor);
@@ -41,7 +45,7 @@ public class FileParser extends ProcessorAccess
 
 	public void autoStoreData(GlobalEnvironmentContent data)
 	{
-		for (Component comp : getEnvironment().getContents().getComponents(true))
+		for (Component comp : getEnv().getContents().getComponents(true))
 		{
 			// comp.getConfigurer().setEnvironment(null);
 			// comp.getConfigurer().resetHierarchy();
@@ -57,10 +61,10 @@ public class FileParser extends ProcessorAccess
 		String directory = getSettings().getData().autoStoreDirectory + "/";
 		if (getSettings().getData().environmentNameSubDirectory)
 		{
-			directory += data.getCharactarization().getName() + "/";
+			directory += data.getInformation().getName() + "/";
 		}
 
-		String fileName = data.getCharactarization().getDescription() + "_"
+		String fileName = data.getInformation().getDescription() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
 		String out = XMLParser.serializeObject(processor);
@@ -137,35 +141,6 @@ public class FileParser extends ProcessorAccess
 
 		// ComponentOperator.getConfigurer(component).saveComponentToFile(file_directory,
 		// file_name);
-	}
-
-	private static <T extends Component> void prepareComponent(T component)
-	{
-		ArrayList<Component> allComponents = new ArrayList<Component>();
-		ComponentAdministrator.getConfigurer(component).initializeContentMappings();
-		// allComponents.add(component);
-		for (Component subComponent : component.getContents().getComponents(true))
-		{
-			if (!allComponents.contains(subComponent))
-			{
-				allComponents.add(subComponent);
-
-				// if
-				// (component.getProperties().getClassification().equals(ElementClassification.DATA_SET))
-				// {
-				// Elements elements = ((Elements) component);
-				// elements.initializeElements();
-				// }
-			}
-		}
-		// System.out.println("hello");
-		// super.getComponents().initializeSimulated(true, allComponents);
-		// super.getComponents().initializeSimulated(false, allComponents);
-		// super.getComponents().clearEmptyMaps(allComponents);
-		// getElements().initializeSimulated(false);
-		// initializeSimulated(true);
-		// component.clearMapsIfEmpty();
-
 	}
 
 }

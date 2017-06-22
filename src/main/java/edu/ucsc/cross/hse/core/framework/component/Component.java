@@ -22,17 +22,17 @@ import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
 public abstract class Component implements Initializer
 {
 
-	private ComponentStatus state; // configuration state of
-									// this instance of the
+	ComponentStatus state; // configuration state of
+							// this instance of the
+							// component
+
+	ComponentInformation description; // specific information
+										// describing
+										// the component
+
+	ComponentOrganizer hierarchy; // component access hierarchy of
+									// this
 									// component
-
-	private ComponentClassification description; // specific information
-													// describing
-													// the component
-
-	private ComponentOrganizer hierarchy; // component access hierarchy of
-											// this
-											// component
 	/*
 	 * Constructor that defines the name of the component with this class
 	 * (Component) as the base class. This constructor is used to create
@@ -44,7 +44,7 @@ public abstract class Component implements Initializer
 
 	public Component(String title, String description)
 	{
-		setup(title, this.getClass());
+		getAdministrator().setup(title, this.getClass());
 		this.description.setDescription(description);
 
 	}
@@ -59,7 +59,7 @@ public abstract class Component implements Initializer
 	 */
 	public Component(String title)
 	{
-		setup(title, this.getClass());
+		getAdministrator().setup(title, this.getClass());
 
 	}
 
@@ -73,62 +73,91 @@ public abstract class Component implements Initializer
 	 */
 	public Component()
 	{
-		setup(this.getClass().getSimpleName(), this.getClass());
+		getAdministrator().setup(this.getClass().getSimpleName(), this.getClass());
 
 	}
 
 	/*
 	 * User Access Functions
 	 */
+
+	/*
+	 * Accesses the global environment containing all other components and the
+	 * time domains
+	 * 
+	 * @return global environment component
+	 */
 	public GlobalEnvironmentContent getEnvironment()
 	{
 		return GlobalContentAdministrator.getGlobalSystem(this);
 	}
 
-	public ComponentClassification getCharactarization()
+	/*
+	 * Accesses information about this component for naming conventions
+	 * 
+	 * @return component information
+	 */
+	public ComponentInformation getInformation()
 	{
 		return description;
 	}
 
+	/*
+	 * Accesses an organized data structure for accessing objects within this
+	 * components hierarchy
+	 * 
+	 * @return component organizer
+	 */
 	public ComponentOrganizer getContents()
 	{
 		return hierarchy;
 	}
 
+	/*
+	 * Accesses a set of actions that are user friendly, meaning they will not
+	 * interfere with the functionality of the environment
+	 * 
+	 * @return component operator
+	 */
 	public ComponentOperator getActions()
 	{
 		return ComponentAdministrator.getConfigurer(this);
 	}
 
 	/*
-	 * External Operation Functions
+	 * Initialize method that can be redefined and will be called each time the
+	 * environment starts. This method is intentionally empty to save space and
+	 * time as many components do not require it.
+	 */
+	@Override
+	public void initialize()
+	{
+
+	}
+
+	/////////////////////////////////////////////////////////////////////////
+	/// Development & Processing Components (not needed for regular use) ////
+	/////////////////////////////////////////////////////////////////////////
+
+	/*
+	 * Accesses the current status of the component. This is for the processor
+	 * and is not intended for users.
 	 */
 	ComponentStatus getStatus()
 	{
 		return state;
 	}
 
-	// @Override
-	// public void initialize()
-	// {
-	//
-	// }
-
-	void loadHierarchy(ComponentOrganizer hierarchy)
-	{
-		this.hierarchy = hierarchy;
-	}
-
 	/*
-	 * Internal Operation Functions
+	 * Accesses an expanded set of actions that are used by various modules
+	 * within the environment. These actions are for processing tasks only and
+	 * can cause problems within the environment if used incorrectly.
+	 * 
+	 * @return component administrator
 	 */
-	private void setup(String title, Class<?> base_class)
+	ComponentAdministrator getAdministrator()
 	{
-		// ComponentAdministrator.getConfigurer(this);
-		state = new ComponentStatus();
-		description = new ComponentClassification(title);
-		hierarchy = new ComponentOrganizer(this);
-		// ComponentCoordinator.constructTree(hierarchy);
+		return ComponentAdministrator.getConfigurer(this);
 	}
 
 }

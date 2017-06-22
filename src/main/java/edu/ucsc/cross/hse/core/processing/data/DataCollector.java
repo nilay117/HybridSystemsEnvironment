@@ -44,9 +44,9 @@ public class DataCollector extends ProcessorAccess
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.getCharactarization().getName()))
+			if (!stateElements.contains(allStates.getInformation().getName()))
 			{
-				stateElements.add(allStates.getCharactarization().getName());
+				stateElements.add(allStates.getInformation().getName());
 			}
 		}
 		// System.out.println(stateElements.toString());
@@ -59,7 +59,7 @@ public class DataCollector extends ProcessorAccess
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.getCharactarization().getName().equals(title))
+			if (element.getInformation().getName().equals(title))
 			{
 				datas.add(element);
 			}
@@ -69,7 +69,7 @@ public class DataCollector extends ProcessorAccess
 
 	public Data checkIfMatchingElementInDataSet(Data data, String title)
 	{
-		for (Component component : getEnvironment().getContents().getComponents(true))
+		for (Component component : getEnv().getContents().getComponents(true))
 		{
 			try
 			{
@@ -78,7 +78,7 @@ public class DataCollector extends ProcessorAccess
 					for (Data dat : component.getContents().getObjects(Data.class, true))
 					{
 
-						if (dat.getCharactarization().getName().equals(title))
+						if (dat.getInformation().getName().equals(title))
 						{
 							return dat;
 						}
@@ -123,7 +123,7 @@ public class DataCollector extends ProcessorAccess
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Component component : super.getEnvironment().getContents().getComponents(true))
+		for (Component component : super.getEnv().getContents().getComponents(true))
 		{
 			try
 			{

@@ -93,7 +93,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		getConsole().printUpdates();
 
 		// sim.environment().storePreJumpStates();
-		ComponentAdministrator.getConfigurer(getEnvironment()).performTasks(false);
+		ComponentAdministrator.getConfigurer(getEnv()).performTasks(false);
 		updateYDotVector(yDot);
 	}
 
@@ -233,7 +233,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (Component component : getEnvironment().getContents().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
+		for (Component component : getEnv().getContents().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
 		// null))
 		{
 			try

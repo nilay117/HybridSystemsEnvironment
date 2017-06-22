@@ -65,45 +65,4 @@ public class GlobalEnvironmentContent extends Component
 		return environmentTime.getJumpIndex();
 	}
 
-	@Override
-	public void initialize()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	// Administrative Functions
-
-	// @Override
-	// public void initialize()
-	// {
-	// // systems = new HashMap<String, GlobalHybridSystem>();
-	// // this.environmentKey = this.toString();
-	// // systems.put(environmentKey, this);
-	// if (earthStartTime.seconds() <= 0)
-	// {
-	// jumpOccurring = false;
-	// earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
-	// }
-	// }
-	//
-	// private void initializeComponents()
-	// {
-	// jumpOccurring = false;
-	// environmentTime = new HybridTime();
-	// earthStartTime = Time.newSecondsValue(-1.0);
-	// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(this.toString());
-	// GlobalContentAdministrator.addGlobalHybridSystem(this);
-	// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(this.toString());
-	// }
-	//
-	// protected HybridTime getEnvironmentHybridTime()
-	// {
-	// return environmentTime;
-	// }
-	//
-	// protected void setJumpOccurring(boolean jumpOccurring)
-	// {
-	// this.jumpOccurring = jumpOccurring;
-	// }
 }

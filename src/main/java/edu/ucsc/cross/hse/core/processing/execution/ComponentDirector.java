@@ -39,14 +39,14 @@ public class ComponentDirector extends ProcessorAccess
 			(true && getSettings().getData().storeAtEveryJump));
 		} else
 		{
-			ComponentAdministrator.getConfigurer(getEnvironment()).performTasks(jump_occurred);
+			ComponentAdministrator.getConfigurer(getEnv()).performTasks(jump_occurred);
 		}
 	}
 
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnvironment())
+		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnv())
 		.jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);

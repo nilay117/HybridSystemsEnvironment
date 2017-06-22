@@ -32,9 +32,9 @@ public class Processor
 		initializeComponents();
 	}
 
-	private void initializeComponents()
+	protected void initializeComponents()
 	{
-
+		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironment());
 		simulationEngine = new SimulationEngine(this);
 		executionMonitor = new EventMonitor(this);
 		data = new DataCollector(this);
@@ -46,13 +46,13 @@ public class Processor
 	protected void prepareEnvironment()
 	{
 		// environment.scanAllSystems();
-		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironmentContent());
+		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironment());
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		data.loadStoreStates();
 	}
 
-	public void start()
+	protected void start()
 	{
 		prepareEnvironment();
 		executionMonitor.runSim(false);

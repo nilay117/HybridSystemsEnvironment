@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.rits.cloning.Cloner;
-
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
@@ -25,7 +23,7 @@ import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 public class ComponentAdministrator extends ComponentOperator
 {
 
-	public static Cloner cloner = new Cloner();
+	
 
 	// public Component component;
 
@@ -178,6 +176,23 @@ public class ComponentAdministrator extends ComponentOperator
 				ComponentAdministrator.getConfigurer(comp).setInitialized(initialize_components);
 			}
 		}
+	}
+
+	void loadHierarchy(ComponentOrganizer hierarchy)
+	{
+		component.hierarchy = hierarchy;
+	}
+
+	/*
+	 * Internal Operation Functions
+	 */
+	void setup(String title, Class<?> base_class)
+	{
+		// ComponentAdministrator.getConfigurer(this);
+		component.state = new ComponentStatus();
+		component.description = new ComponentInformation(title);
+		component.hierarchy = new ComponentOrganizer(component);
+		// ComponentCoordinator.constructTree(hierarchy);
 	}
 
 	public static ComponentAdministrator getConfigurer(Component component)

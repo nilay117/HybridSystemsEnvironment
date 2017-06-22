@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
+import bs.commons.unitvars.values.Time;
+import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
 import edu.ucsc.cross.hse.core.processing.data.DataCollector;
@@ -48,72 +50,81 @@ public class Environment // extends ProcessorAccess// implements Environment
 		initializeComponents(true);
 	}
 
-	public ComponentOrganizer getContent()
+	public void start()
 	{
-		return content.getContents();
+		processor.start();
 	}
 
-	public DataCollector getDataCollector()
+	public void start(Double duration)
 	{
-		return processor.data;// ;.getData();
+		settings.trial().simDuration = duration;
+		processor.start();
 	}
 
-	public SettingConfigurations settings()
+	public void start(Time duration)
+	{
+		settings.trial().simDuration = duration.seconds();
+		processor.start();
+	}
+
+	public void reset()
+	{
+
+	}
+
+	public void save(String directory, String file_name)
+	{
+
+	}
+
+	public DataCollector getData()
+	{
+		return processor.data;
+	}
+
+	public SettingConfigurations getSettings()
 	{
 		return settings;
 	}
 
-	public Processor execution()
-	{
-		return processor;
-	}
-	// public FileParser getFileParser()
-	// {
-	// return fileParser;
-	// }
-
-	// public void setEnvironmentContent(GlobalSystem environmentContent)
-	// {
-	// this.environmentContent = environmentContent;
-	// }
-
-	public void initializeComponents(boolean pre_loaded_content)
-	{
-		settings = new SettingConfigurations();// .loadSettings();
-		processor = new Processor(this);
-		if (pre_loaded_content)
-		{
-
-			this.getDataCollector().loadStoreStates();
-		}
-	}
-
-	private void initializeComponents(SettingConfigurations settings)
-	{
-		this.settings = settings;
-		processor = new Processor(this);
-	}
-
-	public void start()
-	{
-
-		this.getDataCollector().loadStoreStates();
-		processor.start();
-	}
-
-	// Configration Functionsß
 	public void setSettings(SettingConfigurations settings)
 	{
 		this.settings = settings;
 	}
 
-	protected GlobalEnvironmentContent getEnvironmentContent()
+	public GlobalEnvironmentContent getEnvironment()
 	{
 		return content;
 	}
 
-	public static GlobalEnvironmentContent getEnvironmentSystem(Environment env)
+	public void setEnvironment(GlobalEnvironmentContent content)
 	{
-		return env.content;
+		this.content = content;
 	}
+
+	public void addComponents(Component... components)
+	{
+		for (Component component : components)
+		{
+			content.getContents().addComponent(component);
+		}
+	}
+
+	public void addComponents(Component component, Integer quantity)
+	{
+
+		content.getContents().addComponent(component, quantity);
+
+	}
+
+	private void initializeComponents(boolean pre_loaded_content)
+	{
+		settings = new SettingConfigurations();// .loadSettings();
+		processor = new Processor(this);
+		if (pre_loaded_content)
+		{
+			processor.data.loadStoreStates();
+		}
+	}
+
 }

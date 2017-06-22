@@ -33,7 +33,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 
 		getComputationEngine().updateValues(y);
-		if (ComponentAdministrator.getConfigurer(getEnvironment()).isJumpOccurring())
+		if (ComponentAdministrator.getConfigurer(getEnv()).isJumpOccurring())
 		{
 			flag = -1 * flag;
 			toggles = toggles + 1;

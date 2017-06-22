@@ -48,7 +48,7 @@ public class DataSettings
 
 		automaticallyStoreResults = false; // flag to store results
 											// automatically
-		storeAtEveryJump = true;
+		storeAtEveryJump = false;
 		storeDataAtIncrements = true; // flag to determine whether data is
 										// stored at a specified increment,
 		dataStoreIncrement = .5;// .01; // time interval between data

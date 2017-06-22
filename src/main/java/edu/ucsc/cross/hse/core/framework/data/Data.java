@@ -12,6 +12,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
 /*
@@ -340,7 +341,7 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return ComponentAdministrator.cloner.deepClone(getValue());
+				return FileParser.cloner.deepClone(getValue());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{
