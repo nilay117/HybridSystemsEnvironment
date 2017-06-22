@@ -6,6 +6,7 @@ import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.domain.InitialValue;
 
 public class DataOperator<T> extends ComponentOperator
 {
@@ -50,7 +51,7 @@ public class DataOperator<T> extends ComponentOperator
 		return data.defaultUnit;
 	}
 
-	public DataType getDataClass()
+	public DataTypeProperties getDataProperties()
 	{
 		return data.dataType;
 	}

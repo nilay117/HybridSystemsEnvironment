@@ -1,35 +1,25 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
-public enum CoreDataType implements DataType// ComponenClassification
+public enum BaseDataType implements DataTypeProperties, DataInstantiator// ComponenClassification
 {
-	HYBRID_STATE( // State data element that changes continuously and can change
-					// discretely as well
-		"Hybrid State",
+	STATE( // State data element that changes continuously and can change
+			// discretely as well
+		"State",
 		true, // is stored by default
+		true,
 		true), // is a state
-	DISCRETE_STATE( // State data element that only changes discretely
-		"Discrete State",
-		true, // is stored by default
-		true), // is a state
-	PARAMETER( // Value that is not a state but still influences the system and
-				// is variable
-		"Parameter",
-		false, // is not stored by default
-		false), // is not a state
-	PROPERTY( // Constant that describes a component
-		"Property",
-		false, // is not stored by default
-		false), // is not a state
 	DATA(
 		"Data", // Contains some type of data used within the environment
 		false, // is not stored by default
+		false,
 		false); // is not a state
 
 	public final String dataTypeTitle; // title
 	private boolean storePreviousByDefault; // storage flag
 	public final boolean representsState; // state flag
-	private static DataFactory dataFactory = new DataFactory(); // element
-																// factory
+	private boolean changesContinuously;
+	// element
+	// factory
 
 	/*
 	 * Enum constructor
@@ -40,11 +30,12 @@ public enum CoreDataType implements DataType// ComponenClassification
 	 * 
 	 * @param state - flag indicating if data type represents state element
 	 */
-	private CoreDataType(String title, boolean store_previous, boolean state)
+	private BaseDataType(String title, boolean store_previous, boolean state, boolean continuous)
 	{
 		storePreviousByDefault = store_previous;
 		dataTypeTitle = title;
 		this.representsState = state;
+		changesContinuously = continuous;
 	}
 
 	/*
@@ -57,7 +48,7 @@ public enum CoreDataType implements DataType// ComponenClassification
 	public boolean changesContinuously()
 	{
 		// TODO Auto-generated method stub
-		return false;
+		return changesContinuously;
 	}
 
 	/*
@@ -107,7 +98,7 @@ public enum CoreDataType implements DataType// ComponenClassification
 	public <T> Data<T> create(T initial_value)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, this.getTitle(), "", this, this.storePreviousDataByDefault());
+		return DataFactory.newData(initial_value, this.getTitle(), "", this, this.storePreviousDataByDefault());
 	}
 
 	/*
@@ -121,14 +112,14 @@ public enum CoreDataType implements DataType// ComponenClassification
 	public <T> Data<T> create(T initial_value, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, this.getTitle(), "", this, stored_by_default);
+		return DataFactory.newData(initial_value, this.getTitle(), "", this, stored_by_default);
 	}
 
 	@Override
 	public <T> Data<T> create(T initial_value, String label)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, label, label, this, this.storePreviousDataByDefault());
+		return DataFactory.newData(initial_value, label, label, this, this.storePreviousDataByDefault());
 	}
 
 	/*
@@ -146,7 +137,7 @@ public enum CoreDataType implements DataType// ComponenClassification
 	public <T> Data<T> create(T initial_value, String label, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
-		return dataFactory.newData(initial_value, label, "", this, stored_by_default);
+		return DataFactory.newData(initial_value, label, "", this, stored_by_default);
 	}
 
 }

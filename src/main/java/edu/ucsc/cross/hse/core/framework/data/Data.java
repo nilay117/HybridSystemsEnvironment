@@ -12,6 +12,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.domain.InitialValue;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
@@ -33,8 +34,9 @@ public class Data<T> extends Component// DynamicData<T>
 	private final boolean cloneToStore; // flag indicating if object needs to be
 										// cloned to be stored correctly
 
-	protected DataType dataType; // classification of the data element, ie
-									// Hybrid
+	protected DataTypeProperties dataType; // classification of the data
+											// element, ie
+	// Hybrid
 	// State or Property
 
 	protected Unit defaultUnit; // default unit (NoUnit class if object has
@@ -166,9 +168,9 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		if (derivative == null)
 		{
-			this.setDerivative(cloneZeroDerivative(derivative));
+			this.setDerivative(cloneZeroDerivative(element));
 		}
-		if (!CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))// (CoreData.DYNAMIC_STATE))
+		if (!dataType.changesContinuously())// (CoreData.DYNAMIC_STATE))
 		{
 			SystemConsole
 			.print("attempted to get derivative of " + derivative.toString() + " when it is not a dynamic variable");
@@ -178,7 +180,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void setDerivative(T derivative)
 	{
-		if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(this))
+		if (dataType.changesContinuously())
 		{
 			this.derivative = derivative;
 		} else
@@ -217,7 +219,7 @@ public class Data<T> extends Component// DynamicData<T>
 	 * whenever more detail is required, the save_default flag can be specified
 	 * if desired, otherwise it will assume the default defined by the unit type
 	 */
-	protected Data(T obj, DataType type, String name, String description, Boolean save_default)
+	protected Data(T obj, DataTypeProperties type, String name, String description, Boolean save_default)
 	{
 		super(name, description);
 		element = obj;
@@ -263,6 +265,13 @@ public class Data<T> extends Component// DynamicData<T>
 			e.printStackTrace();
 		}
 		// TODO Auto-generated constructor stub
+	}
+
+	protected static <S> Data instantiate(S obj, DataTypeProperties type, String name, String description,
+	Boolean save_default)
+	{
+		Data<S> newData = new Data<S>(obj, type, name, description, save_default);
+		return newData;
 	}
 
 	@Override

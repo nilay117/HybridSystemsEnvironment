@@ -1,18 +1,20 @@
-package edu.ucsc.cross.hse.core.framework.data;
+package edu.ucsc.cross.hse.core2.framework.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import edu.ucsc.cross.hse.core.framework.data.DataGroup;
 
 public enum CoreDataGroup implements DataGroup
 {
 	ALL_DATA( // All data types defined thus far
 		"All Data",
-		new DataType[]
+		new DataTypeProperties[]
 		{ CoreDataType.HYBRID_STATE, CoreDataType.DISCRETE_STATE, CoreDataType.PARAMETER, CoreDataType.PROPERTY }),
 
 	STATE_ELEMENTS( // Only state element data types
 		"All States",
-		new DataType[]
+		new DataTypeProperties[]
 		{ CoreDataType.DISCRETE_STATE, CoreDataType.HYBRID_STATE }),
 
 	HYBRID_STATE_ELEMENTS( // Only hybrid state element
@@ -20,7 +22,7 @@ public enum CoreDataGroup implements DataGroup
 		new CoreDataType[]
 		{ CoreDataType.HYBRID_STATE });
 
-	public final ArrayList<DataType> subTypes;
+	public final ArrayList<DataTypeProperties> subTypes;
 	private final String groupTitle;
 
 	/*
@@ -31,10 +33,10 @@ public enum CoreDataGroup implements DataGroup
 	 * @param sub_types - array of data types that are included in the group
 	 * 
 	 */
-	private CoreDataGroup(String title, DataType[] sub_types)
+	private CoreDataGroup(String title, DataTypeProperties[] sub_types)
 	{
 		groupTitle = title;
-		subTypes = new ArrayList<DataType>(Arrays.asList(sub_types));
+		subTypes = new ArrayList<DataTypeProperties>(Arrays.asList(sub_types));
 	}
 
 	/*
@@ -55,7 +57,7 @@ public enum CoreDataGroup implements DataGroup
 	 * @return list of data types included in the group
 	 */
 	@Override
-	public ArrayList<DataType> getContents()
+	public ArrayList<DataTypeProperties> getContents()
 	{
 		// TODO Auto-generated method stub
 		return subTypes;
@@ -70,6 +72,6 @@ public enum CoreDataGroup implements DataGroup
 	public boolean contains(Data type)
 	{
 		// TODO Auto-generated method stub
-		return subTypes.contains(type.getActions().getDataClass());// subTypes.contains(type.getDataClass());
+		return subTypes.contains(type.getActions().getDataProperties());// subTypes.contains(type.getDataClass());
 	}
 }

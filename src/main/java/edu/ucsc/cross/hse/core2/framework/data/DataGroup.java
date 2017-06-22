@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.framework.data;
+package edu.ucsc.cross.hse.core2.framework.data;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ public interface DataGroup
 	 * 
 	 * @return list of data types included in the group
 	 */
-	public ArrayList<DataType> getContents();
+	public ArrayList<DataTypeProperties> getContents();
 
 	/*
 	 * Determine if a data element belongs to the group

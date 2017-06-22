@@ -11,7 +11,6 @@ import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.processing.execution.Processor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
@@ -249,7 +248,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 				{
 					if (getDataOperator(dat).isSimulated())// .isSimulated())
 					{
-						if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
+						if (dat.getActions().getDataProperties().changesContinuously())
 						{
 							if (FieldFinder.containsSuper(dat.getValue(), UnitValue.class)
 							|| FieldFinder.containsSuper(dat.getValue(), Number.class))
@@ -263,28 +262,6 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 			{
 				// e.printStackTrace();
 			}
-		}
-		System.out.println("ODE Vector Length: " + odeIndex);
-	}
-
-	private void initializeIndiciehs()
-	{
-		odeVectorMap.clear();
-		Integer odeIndex = 0;
-
-		for (Data dat : getEnv().getContents().getObjects(Data.class, true))// .loadComponents();//.getSpecificComponent(Data.class,
-		// null))
-		{
-			System.out.println(dat.getInformation().getFullDescription());
-			if (CoreDataGroup.HYBRID_STATE_ELEMENTS.contains(dat))
-			{
-				if (FieldFinder.containsSuper(dat.getValue(), UnitValue.class)
-				|| FieldFinder.containsSuper(dat.getValue(), Number.class))
-				{
-					odeVectorMap.put(odeIndex++, dat);
-				}
-			}
-
 		}
 		System.out.println("ODE Vector Length: " + odeIndex);
 	}

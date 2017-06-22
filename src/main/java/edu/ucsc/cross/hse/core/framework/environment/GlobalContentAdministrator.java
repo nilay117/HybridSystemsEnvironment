@@ -98,7 +98,7 @@ public class GlobalContentAdministrator extends ComponentAdministrator
 
 	void prepareComponents()
 	{
-		this.initializeContentMappings(false);
+		// this.initializeContentMappings(true);
 		linkEnvironment();
 		initializeComponents(Data.class);
 		initializeComponents();

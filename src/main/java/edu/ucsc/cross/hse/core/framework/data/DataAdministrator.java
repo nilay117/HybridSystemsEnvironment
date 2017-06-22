@@ -19,7 +19,7 @@ public class DataAdministrator<T> extends ComponentAdministrator
 		} catch (Exception e)
 		{
 
-			element = (Data<T>) DataFactory.property.create("Not Data");
+			element = (Data<T>) DataFactory.data.create("Not Data");
 		}
 
 	}

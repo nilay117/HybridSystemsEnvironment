@@ -3,32 +3,27 @@ package edu.ucsc.cross.hse.core.framework.data;
 public class DataFactory
 {
 
-	public static final DataType hybridState = CoreDataType.HYBRID_STATE;
+	public static final DataInstantiator state = BaseDataType.STATE;
 
-	public static final DataType discreteState = CoreDataType.DISCRETE_STATE;
+	public static final DataInstantiator data = BaseDataType.DATA;
 
-	public static final DataType parameter = CoreDataType.PARAMETER;
-
-	public static final DataType property = CoreDataType.PROPERTY;
-
-	public static final DataType data = CoreDataType.DATA;
-
-	public <S> Data<S> newData(S obj, DataType type)
+	protected static <S> Data<S> newData(S obj, DataTypeProperties type)
 	{
 		return newData(obj, type.getTitle(), "", type, type.storePreviousDataByDefault());
 	}
 
-	public <S> Data<S> newData(S obj, String name, DataType type)
+	protected static <S> Data<S> newData(S obj, String name, DataTypeProperties type)
 	{
 		return newData(obj, name, name, type, type.storePreviousDataByDefault());
 	}
 
-	public <S> Data<S> newData(S obj, String name, String description, DataType type)
+	protected static <S> Data<S> newData(S obj, String name, String description, DataTypeProperties type)
 	{
 		return newData(obj, name, description, type, type.storePreviousDataByDefault());
 	}
 
-	public <S> Data<S> newData(S obj, String name, String description, DataType type, boolean save_default)
+	protected static <S> Data<S> newData(S obj, String name, String description, DataTypeProperties type,
+	boolean save_default)
 	{
 		Data<S> newState = null;
 		if (name == null)
@@ -43,7 +38,7 @@ public class DataFactory
 
 	}
 
-	public static <S> Data<S> instantiateData(S obj, DataType type, String name, String description,
+	protected static <S> Data<S> instantiateData(S obj, DataTypeProperties type, String name, String description,
 	Boolean save_default)
 	{
 		Data<S> newData = new Data<S>(obj, type, name, description, save_default);// type,

@@ -8,7 +8,6 @@ import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.framework.data.CoreDataGroup;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
@@ -46,8 +45,7 @@ public class ComponentDirector extends ProcessorAccess
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnv())
-		.jumpingComponents();
+		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
@@ -66,7 +64,7 @@ public class ComponentDirector extends ProcessorAccess
 		{
 			for (Data data : component.getContents().getObjects(Data.class, true))
 			{
-				if (CoreDataGroup.STATE_ELEMENTS.contains(data))
+				if (data.getActions().getDataProperties().changesContinuously())
 				{
 					getDataOperator(data).storePreJumpValue();
 
