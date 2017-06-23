@@ -4,8 +4,8 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
@@ -30,7 +30,7 @@ public abstract class ProcessingElement
 	protected ProcessingElement(CentralProcessor processor)
 	{
 		proc = processor;
-		this.processor = processor.environment;
+		this.processor = processor.environmentInterface;
 	}
 
 	// @Override
@@ -60,30 +60,30 @@ public abstract class ProcessingElement
 
 	protected InterruptResponder getInterruptHandler()
 	{
-		return proc.terminator;
+		return proc.interruptResponder;
 	}
 
 	protected JumpEvaluator getJumpEvaluator()
 	{
-		return proc.jumpHandler;
+		return proc.jumpEvaluator;
 	}
 
 	// @Override
-	public GlobalEnvironmentContent getEnv()
+	public EnvironmentContent getEnv()
 	{
 		return processor.getContents();
 	}
 
 	// @Override
-	protected GlobalContentAdministrator getEnvironmentOperator()
+	protected ContentOperator getEnvironmentOperator()
 	{
-		return GlobalContentAdministrator.getContentAdministrator(getEnv().toString());
+		return ContentOperator.getContentAdministrator(getEnv().toString());
 	}
 
 	// @Override
 	protected SystemConsole getConsole()
 	{
-		return proc.outputPrinter;
+		return proc.systemConsole;
 	}
 
 	protected SettingConfigurer getSettings()
@@ -93,29 +93,29 @@ public abstract class ProcessingElement
 
 	protected DataHandler getData()
 	{
-		return proc.data;
+		return proc.dataHandler;
 	}
 
 	protected ComponentAdministrator getComponents()
 	{
-		return proc.elements;
+		return proc.componentAdmin;
 	}
 
 	// @Override
 	protected HybridEnvironment getProcessor()
 	{
 		// TODO Auto-generated method stub
-		return proc.environment;
+		return proc.environmentInterface;
 	}
 
 	protected FileExchanger getFileParser()
 	{
-		return proc.fileParser;
+		return proc.fileExchanger;
 	}
 
 	protected ComponentOperator getComponentOperator(Component component)
 	{
-		return ComponentOperator.getConfigurer(component);
+		return ComponentOperator.getOperator(component);
 	}
 
 	protected <S> DataOperator<S> getDataOperator(Data<S> component)
@@ -126,6 +126,6 @@ public abstract class ProcessingElement
 	// @Override
 	protected void setSettings(SettingConfigurer settings)
 	{
-		proc.environment.loadSettings(settings);
+		proc.environmentInterface.loadSettings(settings);
 	}
 }

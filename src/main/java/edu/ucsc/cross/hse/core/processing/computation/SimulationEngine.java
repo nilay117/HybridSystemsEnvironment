@@ -95,7 +95,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		updateValues(y);
 		getConsole().printUpdates();
 		zeroAllDerivatives();
-		ComponentOperator.getConfigurer(getEnv()).performTasks(false);
+		ComponentOperator.getOperator(getEnv()).performTasks(false);
 		updateYDotVector(yDot);
 	}
 

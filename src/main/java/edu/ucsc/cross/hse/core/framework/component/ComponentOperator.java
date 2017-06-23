@@ -9,8 +9,9 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
+import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 
 /*
  * This class contains the methods that are used by processing modules to
@@ -22,8 +23,6 @@ import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
  */
 public class ComponentOperator extends ComponentWorker
 {
-
-	
 
 	// public Component component;
 
@@ -43,19 +42,23 @@ public class ComponentOperator extends ComponentWorker
 		return component.getContents().getEnvironmentKey();
 	}
 
+	/*
+	 * Accesses the current status of the component. This is for the processor
+	 * and is not intended for users.
+	 */
 	public ComponentStatus getStatus()
 	{
-		return component.getStatus();
+		return component.status;
 	}
 
 	public Boolean isInitialized()
 	{
-		return component.getStatus().getInitialized();
+		return getStatus().getInitialized();
 	}
 
 	public boolean isSimulated()
 	{
-		return component.getStatus().isSimulated();
+		return getStatus().isSimulated();
 	}
 
 	/*
@@ -75,7 +78,8 @@ public class ComponentOperator extends ComponentWorker
 		{
 			try
 			{
-				Boolean jumpOccurring = HybridDynamicalModel.jumpOccurring((HybridDynamicalModel) localBehavior, true);
+				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring((HybridDynamicalModel) localBehavior,
+				true);
 				if (jumpOccurring != null)
 				{
 					if (jumpOccurring)
@@ -119,19 +123,19 @@ public class ComponentOperator extends ComponentWorker
 			{
 
 				boolean jumpOccurred = false;
-				if (HybridDynamicalModel.jumpOccurring(localBehavior, true))
+				if (ComponentAdministrator.jumpOccurring(localBehavior, true))
 				{
-					jumpOccurred = HybridDynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
-				} else if (HybridDynamicalModel.flowOccurring(localBehavior, true))
+					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
+				} else if (ComponentAdministrator.flowOccurring(localBehavior, true))
 				{
-					jumpOccurred = HybridDynamicalModel.applyDynamics(localBehavior, true, jump_occurring);
+					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
 				} else
 				{
 
 				}
 				if (jumpOccurred)
 				{
-					GlobalContentAdministrator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
+					ContentOperator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
 					.incrementJumpIndex();
 				}
 			} catch (Exception behaviorFail)
@@ -143,10 +147,10 @@ public class ComponentOperator extends ComponentWorker
 
 	public void protectedInitialize()
 	{
-		if (!component.getStatus().getInitialized())
+		if (!getStatus().getInitialized())
 		{
 			component.initialize();
-			component.getStatus().setInitialized(true);
+			getStatus().setInitialized(true);
 		}
 	}
 
@@ -173,29 +177,29 @@ public class ComponentOperator extends ComponentWorker
 		{
 			for (Component comp : component.getContents().getComponents(true))
 			{
-				ComponentOperator.getConfigurer(comp).setInitialized(initialize_components);
+				ComponentOperator.getOperator(comp).setInitialized(initialize_components);
 			}
 		}
 	}
 
-	void loadHierarchy(ComponentOrganizer hierarchy)
+	public void loadHierarchy(ComponentOrganizer hierarchy)
 	{
-		component.hierarchy = hierarchy;
+		component.contents = hierarchy;
 	}
 
 	/*
 	 * Internal Operation Functions
 	 */
-	void setup(String title, Class<?> base_class)
+	public void setup(String title, Class<?> base_class)
 	{
 		// ComponentAdministrator.getConfigurer(this);
-		component.state = new ComponentStatus();
-		component.description = new ComponentLabel(title);
-		component.hierarchy = new ComponentOrganizer(component);
+		component.status = new ComponentStatus();
+		component.labels = new ComponentLabel(title);
+		component.contents = new ComponentOrganizer(component);
 		// ComponentCoordinator.constructTree(hierarchy);
 	}
 
-	public static ComponentOperator getConfigurer(Component component)
+	public static ComponentOperator getOperator(Component component)
 	{
 		if (components.containsKey(component))
 		{

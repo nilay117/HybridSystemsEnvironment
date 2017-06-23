@@ -28,7 +28,7 @@ import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
@@ -46,7 +46,7 @@ public class FileExchanger extends ProcessingElement
 		super(processor);
 	}
 
-	public void autoStoreData(GlobalEnvironmentContent data)
+	public void autoStoreData(EnvironmentContent data)
 	{
 		for (Component comp : getEnv().getContents().getComponents(true))
 		{
@@ -59,15 +59,15 @@ public class FileExchanger extends ProcessingElement
 		}
 	}
 
-	public void storeEnvironmentContents(GlobalEnvironmentContent data)
+	public void storeEnvironmentContents(EnvironmentContent data)
 	{
 		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
 		if (getSettings().getDataSettings().createResultSubDirectory)
 		{
-			directory += data.getInformation().getName() + "/";
+			directory += data.getLabels().getClassification() + "/";
 		}
 
-		String fileName = data.getInformation().getDescription() + "_"
+		String fileName = data.getLabels().getName() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
 		String out = XMLParser.serializeObject(processor);
@@ -150,7 +150,7 @@ public class FileExchanger extends ProcessingElement
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
 		for (Component componen : component.getContents().getComponents(true))
 		{
-			ComponentOperator.getConfigurer(componen).setInitialized(null);
+			ComponentOperator.getOperator(componen).setInitialized(null);
 			// try
 			// {
 			// Data<T> data = (Data) componen;

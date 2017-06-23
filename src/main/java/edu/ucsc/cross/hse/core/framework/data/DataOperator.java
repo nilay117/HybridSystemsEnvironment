@@ -50,7 +50,7 @@ public class DataOperator<T> extends ComponentOperator
 		element.storeValue(time, override_save);
 	}
 
-	public boolean isPreviousDataStored()
+	public boolean isDataStored()
 	{
 		return element.save;
 	}

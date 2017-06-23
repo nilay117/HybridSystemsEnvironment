@@ -55,9 +55,9 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.getInformation().getName()))
+			if (!stateElements.contains(allStates.getLabels().getClassification()))
 			{
-				stateElements.add(allStates.getInformation().getName());
+				stateElements.add(allStates.getLabels().getClassification());
 			}
 		}
 		// System.out.println(stateElements.toString());
@@ -71,7 +71,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.getInformation().getName().equals(title))
+			if (element.getLabels().getClassification().equals(title))
 			{
 				datas.add(element);
 			}
@@ -91,7 +91,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 					for (Data dat : component.getContents().getObjects(Data.class, true))
 					{
 
-						if (dat.getInformation().getName().equals(title))
+						if (dat.getLabels().getClassification().equals(title))
 						{
 							return dat;
 						}
@@ -112,7 +112,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	{
 		for (Data element : dataElementsToStore)
 		{
-			if (getDataOperator(element).isPreviousDataStored())
+			if (getDataOperator(element).isDataStored())
 			{
 				getDataOperator(element).storeValue(time);
 			}
@@ -144,7 +144,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 				if (element.getActions().getDataProperties().changesContinuously())
 				{
-					if (getDataOperator(element).isPreviousDataStored())
+					if (getDataOperator(element).isDataStored())
 					{
 						dataElementsToStore.add(element);
 					}

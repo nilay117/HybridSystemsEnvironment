@@ -5,8 +5,8 @@ import java.io.File;
 import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core2.framework.component.ComponentAddress;
 import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
 
@@ -22,30 +22,26 @@ import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
 public abstract class Component implements Initializer
 {
 
-	ComponentStatus state; // configuration state of
-							// this instance of the
-							// component
+	ComponentStatus status; // current status of this component
 
-	ComponentLabel description; // specific information
-										// describing
-										// the component
+	ComponentLabel labels; // specific information describing this component
 
-	ComponentOrganizer hierarchy; // component access hierarchy of
-									// this
-									// component
+	ComponentOrganizer contents; // component access hierarchy of this component
+
 	/*
 	 * Constructor that defines the name of the component with this class
 	 * (Component) as the base class. This constructor is used to create
 	 * components that are not based off any of the core components:
 	 * Behavior,Data,DataSet, and HybridSystem.
 	 * 
-	 * @param title - title of the component
+	 * @param classification - general title of the component
+	 * 
+	 * @param name - specific name of the component
 	 */
-
-	public Component(String title, String description)
+	public Component(String classification, String name)
 	{
-		getAdministrator().setup(title, this.getClass());
-		this.description.setDescription(description);
+		ComponentOperator.getOperator(this).setup(classification, this.getClass());
+		this.labels.setName(name);
 
 	}
 
@@ -55,11 +51,11 @@ public abstract class Component implements Initializer
 	 * components that are not based off any of the core components:
 	 * Behavior,Data,DataSet, and HybridSystem.
 	 * 
-	 * @param title - title of the component
+	 * @param classification - general title of the component
 	 */
-	public Component(String title)
+	public Component(String classification)
 	{
-		getAdministrator().setup(title, this.getClass());
+		ComponentOperator.getOperator(this).setup(classification, this.getClass());
 
 	}
 
@@ -69,17 +65,12 @@ public abstract class Component implements Initializer
 	 * components that are not based off any of the core components:
 	 * Behavior,Data,DataSet, and HybridSystem.
 	 * 
-	 * @param title - title of the component
 	 */
 	public Component()
 	{
-		getAdministrator().setup(this.getClass().getSimpleName(), this.getClass());
+		ComponentOperator.getOperator(this).setup(this.getClass().getSimpleName(), this.getClass());
 
 	}
-
-	/*
-	 * User Access Functions
-	 */
 
 	/*
 	 * Accesses the global environment containing all other components and the
@@ -87,9 +78,9 @@ public abstract class Component implements Initializer
 	 * 
 	 * @return global environment component
 	 */
-	public GlobalEnvironmentContent getEnvironment()
+	public EnvironmentContent getEnvironment()
 	{
-		return GlobalContentAdministrator.getGlobalSystem(this);
+		return ContentOperator.getGlobalSystem(this);
 	}
 
 	/*
@@ -97,9 +88,9 @@ public abstract class Component implements Initializer
 	 * 
 	 * @return component information
 	 */
-	public ComponentLabel getInformation()
+	public ComponentLabel getLabels()
 	{
-		return description;
+		return labels;
 	}
 
 	/*
@@ -110,7 +101,7 @@ public abstract class Component implements Initializer
 	 */
 	public ComponentOrganizer getContents()
 	{
-		return hierarchy;
+		return contents;
 	}
 
 	/*
@@ -121,7 +112,7 @@ public abstract class Component implements Initializer
 	 */
 	public ComponentWorker getActions()
 	{
-		return ComponentOperator.getConfigurer(this);
+		return ComponentOperator.getOperator(this);
 	}
 
 	/*
@@ -133,31 +124,6 @@ public abstract class Component implements Initializer
 	public void initialize()
 	{
 
-	}
-
-	/////////////////////////////////////////////////////////////////////////
-	/// Development & Processing Components (not needed for regular use) ////
-	/////////////////////////////////////////////////////////////////////////
-
-	/*
-	 * Accesses the current status of the component. This is for the processor
-	 * and is not intended for users.
-	 */
-	ComponentStatus getStatus()
-	{
-		return state;
-	}
-
-	/*
-	 * Accesses an expanded set of actions that are used by various modules
-	 * within the environment. These actions are for processing tasks only and
-	 * can cause problems within the environment if used incorrectly.
-	 * 
-	 * @return component administrator
-	 */
-	ComponentOperator getAdministrator()
-	{
-		return ComponentOperator.getConfigurer(this);
 	}
 
 }

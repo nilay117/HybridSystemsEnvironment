@@ -278,13 +278,13 @@ public class ComponentOrganizer
 			{
 				descendantComponentList.add(component);
 			}
-			if (!descendantComponentMap.containsKey(component.getInformation().getClass()))
+			if (!descendantComponentMap.containsKey(component.getLabels().getClass()))
 			{
-				descendantComponentMap.put(component.getInformation().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.getLabels().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!descendantComponentMap.get(component.getInformation().getClass()).contains(component))
+			if (!descendantComponentMap.get(component.getLabels().getClass()).contains(component))
 			{
-				descendantComponentMap.get(component.getInformation().getClass()).add(component);
+				descendantComponentMap.get(component.getLabels().getClass()).add(component);
 			}
 		}
 	}
@@ -497,7 +497,7 @@ public class ComponentOrganizer
 		HashMap<String, S> componentMap = new HashMap<String, S>();
 		for (S component : components)
 		{
-			componentMap.put(component.getInformation().name, component);
+			componentMap.put(component.getLabels().name, component);
 		}
 		return componentMap;
 	}

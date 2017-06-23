@@ -109,7 +109,7 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		// if (this.element.getClass().equals(element.getClass()))
 		{
-			if (!ComponentOperator.getConfigurer(this).isInitialized())
+			if (!ComponentOperator.getOperator(this).isInitialized())
 			{
 				initialVal.setValue(element);
 				try
@@ -280,7 +280,7 @@ public class Data<T> extends Component// DynamicData<T>
 		boolean initialize = true;
 		try
 		{
-			initialize = initialize && !ComponentOperator.getConfigurer(this).isInitialized();
+			initialize = initialize && !ComponentOperator.getOperator(this).isInitialized();
 		} catch (Exception nullInit)
 		{
 			initialize = true;

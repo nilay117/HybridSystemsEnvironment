@@ -13,7 +13,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class GlobalEnvironmentContent extends Component
+public class EnvironmentContent extends Component
 {
 
 	protected HybridTime environmentTime; // time relative to when the
@@ -29,16 +29,16 @@ public class GlobalEnvironmentContent extends Component
 
 	// Constructors
 
-	public GlobalEnvironmentContent()
+	public EnvironmentContent()
 	{
 		super("Global Environment Hybrid Systems");
-		GlobalContentAdministrator.getContentAdministrator(this);
+		ContentOperator.getContentAdministrator(this);
 	}
 
-	public GlobalEnvironmentContent(String environment_title)
+	public EnvironmentContent(String environment_title)
 	{
 		super(environment_title);
-		GlobalContentAdministrator.getContentAdministrator(this);
+		ContentOperator.getContentAdministrator(this);
 	}
 
 	// Domain Accessibility Functions

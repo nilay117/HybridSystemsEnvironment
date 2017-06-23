@@ -18,7 +18,7 @@ public interface DataTypeProperties
 	 * 
 	 * @return true if data type is stored by default, false otherwise
 	 */
-	public boolean storePreviousDataByDefault();
+	public boolean storeDataByDefault();
 
 	/*
 	 * Determine if the data type represents a state element. A state element is

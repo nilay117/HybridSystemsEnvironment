@@ -9,17 +9,17 @@ public class DataFactory
 
 	protected static <S> Data<S> newData(S obj, DataTypeProperties type)
 	{
-		return newData(obj, type.getTitle(), "", type, type.storePreviousDataByDefault());
+		return newData(obj, type.getTitle(), "", type, type.storeDataByDefault());
 	}
 
 	protected static <S> Data<S> newData(S obj, String name, DataTypeProperties type)
 	{
-		return newData(obj, name, name, type, type.storePreviousDataByDefault());
+		return newData(obj, name, name, type, type.storeDataByDefault());
 	}
 
 	protected static <S> Data<S> newData(S obj, String name, String description, DataTypeProperties type)
 	{
-		return newData(obj, name, description, type, type.storePreviousDataByDefault());
+		return newData(obj, name, description, type, type.storeDataByDefault());
 	}
 
 	protected static <S> Data<S> newData(S obj, String name, String description, DataTypeProperties type,

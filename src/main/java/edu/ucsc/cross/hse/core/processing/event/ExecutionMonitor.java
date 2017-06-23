@@ -197,7 +197,7 @@ public class ExecutionMonitor extends ProcessingElement
 			printOutUnresolvedIssues(e, problemResolved);
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(ComponentOperator.getConfigurer(getEnv()).isJumpOccurring());
+			this.getComponents().performAllTasks(ComponentOperator.getOperator(getEnv()).isJumpOccurring());
 			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

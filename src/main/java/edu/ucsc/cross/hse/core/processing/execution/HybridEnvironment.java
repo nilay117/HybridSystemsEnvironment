@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.processing.execution;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
-import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
@@ -12,7 +12,7 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 public class HybridEnvironment
 {
 
-	private GlobalEnvironmentContent content; // all elements that make up the
+	private EnvironmentContent content; // all elements that make up the
 	// environment
 	// itself such as data, components, systems
 	// etc
@@ -28,7 +28,7 @@ public class HybridEnvironment
 	 */
 	public HybridEnvironment()
 	{
-		content = new GlobalEnvironmentContent();
+		content = new EnvironmentContent();
 		initializeComponents(false);
 	}
 
@@ -38,7 +38,7 @@ public class HybridEnvironment
 	 */
 	public HybridEnvironment(String name)
 	{
-		content = new GlobalEnvironmentContent(name);
+		content = new EnvironmentContent(name);
 		initializeComponents(false);
 	}
 
@@ -46,7 +46,7 @@ public class HybridEnvironment
 	 * Predefined environment constructor that loads a specified environment and
 	 * default settings
 	 */
-	public HybridEnvironment(GlobalEnvironmentContent environment)
+	public HybridEnvironment(EnvironmentContent environment)
 	{
 		content = environment;
 		initializeComponents(true);
@@ -76,7 +76,7 @@ public class HybridEnvironment
 
 	public void stop(boolean terminate)
 	{
-		processor.terminator.killSim();
+		processor.interruptResponder.killSim();
 	}
 
 	public void reset()
@@ -111,7 +111,7 @@ public class HybridEnvironment
 
 	public DataAccessor getDataAccessor()
 	{
-		return processor.data;
+		return processor.dataHandler;
 	}
 
 	public SettingConfigurer getSettings()
@@ -130,12 +130,12 @@ public class HybridEnvironment
 		}
 	}
 
-	public GlobalEnvironmentContent getContents()
+	public EnvironmentContent getContents()
 	{
 		return content;
 	}
 
-	public void loadContents(GlobalEnvironmentContent content)
+	public void loadContents(EnvironmentContent content)
 	{
 		this.content = content;
 	}
@@ -161,7 +161,7 @@ public class HybridEnvironment
 		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
 		{
-			processor.data.loadStoreStates();
+			processor.dataHandler.loadStoreStates();
 		}
 	}
 

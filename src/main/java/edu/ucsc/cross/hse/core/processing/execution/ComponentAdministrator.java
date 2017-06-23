@@ -38,14 +38,14 @@ public class ComponentAdministrator extends ProcessingElement
 			(true && getSettings().getDataSettings().storeAtEveryJump));
 		} else
 		{
-			ComponentOperator.getConfigurer(getEnv()).performTasks(jump_occurred);
+			ComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
 		}
 	}
 
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentOperator.getConfigurer(getEnv()).jumpingComponents();
+		ArrayList<Component> jumpComponents = ComponentOperator.getOperator(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
@@ -73,43 +73,127 @@ public class ComponentAdministrator extends ProcessingElement
 		}
 	}
 
-	// void prepareComponents()
-	// {
-	// ComponentOrganizer.constructTree(getEnvironment().getContents());
-	// linkEnvironment();
-	// initializeComponents(Data.class);
-	// // initializeComponents(DataSet.class);
-	// initializeComponents();
-	// linkEnvironment();
-	// }
-	//
-	// private void initializeComponents(Class<?>... components_to_initialize)
-	// {
-	// List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
-	// for (Component component :
-	// getEnvironment().getContents().getComponents(true))
-	// {
-	// boolean initialize = initializeList.size() == 0;
-	// for (Class<?> checkClass : initializeList)
-	// {
-	// initialize = initialize || FieldFinder.containsSuper(component,
-	// checkClass);
-	// }
-	// if (initialize)
-	// {
-	// getComponentOperator(component).protectedInitialize();
-	// }
-	// }
-	//
-	// }
-	//
-	// private void linkEnvironment()
-	// {
-	// for (Component component :
-	// getEnvironment().getContents().getComponents(true))
-	// {
-	// getComponentOperator(component).setEnvironmentKey(getEnvironment().toString());
-	// }
-	// }
+	/*
+	 * Apply the defined dynamics depending on whether a jump is occurring
+	 * globally or not
+	 * 
+	 * @param dynamics - dynamical model defining the dynamics
+	 * 
+	 * @param jump_priority - flag indicating if jumps have priority over flows
+	 * to determine proper mapping to apply if system state is in both flow and
+	 * jump map
+	 * 
+	 * @param jump_occurring - flag indicating if a global jump is occurring.
+	 * This happens when a jump occurs for any system within the environment
+	 */
+	public static boolean applyDynamics(HybridDynamicalModel dynamics, boolean jump_priority,
+	boolean global_jump_occurring)
+	{
+		boolean jumpOccurred = false;
+		if (!jump_priority)
+		{
+			if (dynamics.flowSet())
+			{
+				if (!global_jump_occurring)
+				{
+					dynamics.flowMap();
+				}
+			} else if (dynamics.jumpSet())
+			{
+				if (global_jump_occurring)
+				{
+					dynamics.jumpMap();
+					jumpOccurred = true;
+				}
+			}
+		} else
+		{
+			if (dynamics.jumpSet())
+			{
+				if (global_jump_occurring)
+				{
+					dynamics.jumpMap();
+					jumpOccurred = true;
+				}
+			} else if (dynamics.flowSet())
+			{
+				if (!global_jump_occurring)
+				{
+					dynamics.flowMap();
+				}
+
+			}
+		}
+		return jumpOccurred;
+	}
+
+	/*
+	 * Determine if a jump is occurring for some dynamical model
+	 * 
+	 * @param dynamics - dynamical model to evaluate
+	 * 
+	 * @param jump_priority - flag indicating if jumps have priority over flows
+	 * to determine proper mapping to apply if system state is in both flow and
+	 * jump map
+	 * 
+	 * @return true if jump is occurring, false otherwise
+	 */
+	public static boolean flowOccurring(HybridDynamicalModel dynamics, boolean jump_priority)
+	{
+		boolean dom = false;
+		if (!jump_priority)
+		{
+			if (dynamics.flowSet())
+			{
+				dom = true;
+			}
+		} else
+		{
+			if (dynamics.jumpSet())
+			{
+				dom = false;
+			} else if (dynamics.flowSet())
+			{
+				dom = true;
+			}
+		}
+		return dom;
+	}
+
+	/*
+	 * Determine if a jump is occurring for some dynamical model
+	 * 
+	 * @param dynamics - dynamical model to evaluate
+	 * 
+	 * @param jump_priority - flag indicating if jumps have priority over flows
+	 * to determine proper mapping to apply if system state is in both flow and
+	 * jump map
+	 * 
+	 * @return true if jump is occurring, false otherwise
+	 */
+	public static boolean jumpOccurring(HybridDynamicalModel dynamics, boolean jump_priority)
+	{
+		boolean dom = false;
+		if (!jump_priority)
+		{
+			if (dynamics.flowSet())
+			{
+				dom = false;
+			} else if (dynamics.jumpSet())
+			{
+				dom = true;
+			}
+		} else
+		{
+			if (dynamics.jumpSet())
+			{
+				dom = true;
+			} else if (dynamics.flowSet())
+			{
+				dom = false;
+			}
+		}
+		return dom;
+	}
 
 }

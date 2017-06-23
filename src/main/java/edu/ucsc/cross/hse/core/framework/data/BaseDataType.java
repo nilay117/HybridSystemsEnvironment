@@ -59,7 +59,7 @@ public enum BaseDataType implements DataTypeProperties, DataInstantiator// Compo
 	 * @return true if data type is stored by default, false otherwise
 	 */
 	@Override
-	public boolean storePreviousDataByDefault()
+	public boolean storeDataByDefault()
 	{
 		return storePreviousByDefault;
 	}
@@ -98,7 +98,7 @@ public enum BaseDataType implements DataTypeProperties, DataInstantiator// Compo
 	public <T> Data<T> create(T initial_value)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, this.getTitle(), "", this, this.storePreviousDataByDefault());
+		return DataFactory.newData(initial_value, this.getTitle(), "", this, this.storeDataByDefault());
 	}
 
 	/*
@@ -119,7 +119,7 @@ public enum BaseDataType implements DataTypeProperties, DataInstantiator// Compo
 	public <T> Data<T> create(T initial_value, String label)
 	{
 		// TODO Auto-generated method stub
-		return DataFactory.newData(initial_value, label, label, this, this.storePreviousDataByDefault());
+		return DataFactory.newData(initial_value, label, label, this, this.storeDataByDefault());
 	}
 
 	/*

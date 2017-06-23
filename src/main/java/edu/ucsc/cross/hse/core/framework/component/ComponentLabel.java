@@ -1,52 +1,73 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
 /*
- * This class contains information that describes the component, which is used
- * in graphical displays and for filtering.
+ * This class contains information that describes the component, and methods to
+ * display this information depending on the application. These are used for
+ * graphical displays, filtering, and producing outputs.
  */
 public class ComponentLabel
 {
 
 	// Naming
-	protected String title; // general description of the element -ie "Storage
-							// Device" or "Navigation Controller"
-	protected String name;// specific desciption of the element -ie "WD Blue 1TB
-							// Internal SSD" or "Crazyflie Nano 2.0"
+	protected String classification; // general description of the element -ie
+										// "Storage Device" or "Navigation
+										// Controller"
 
+	protected String name;// specific desciption of the element -ie "WD Blue 1TB
+	// Internal SSD" or "Crazyflie Nano 2.0"
+
+	protected String information; // any extra information about the component
+
+	/*
+	 * Constructor that defines the title of the component
+	 * 
+	 * @param title - the title given to this component, preferably defined by
+	 * the user, otherwise
+	 */
 	public ComponentLabel(String title)
 	{
-		this.title = title;
+		this.classification = title;
 		this.name = title;
+	}
+
+	public String getClassification()
+	{
+		return classification;
+	}
+
+	public void setClassification(String name)
+	{
+		this.classification = name;
 	}
 
 	public String getName()
 	{
-		return title;
+		return name;
 	}
 
 	public void setName(String name)
 	{
-		this.title = name;
+		this.name = name;
 	}
 
-	public String getDescription()
+	protected String getInformation()
 	{
-		return name;
+		return information;
+	}
+
+	protected void setInformation(String information)
+	{
+		this.information = information;
 	}
 
 	public String getFullDescription()
 	{
 		String desc = name;
-		if (!name.equals(title))
+		if (!name.equals(classification))
 		{
-			desc = title + " : " + desc;
+			desc = classification + " : " + desc;
 		}
 		return desc;
-	}
-
-	public void setDescription(String description)
-	{
-		this.name = description;
 	}
 
 }
