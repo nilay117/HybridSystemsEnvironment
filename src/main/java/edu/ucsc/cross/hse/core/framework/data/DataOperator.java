@@ -6,7 +6,7 @@ import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.framework.domain.InitialValue;
+import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
 public class DataOperator<T> extends ComponentOperator
 {
@@ -37,7 +37,7 @@ public class DataOperator<T> extends ComponentOperator
 		this.data = data;
 	}
 
-	public InitialValue<T> getInitialValue()
+	public ValueDomain<T> getInitialValue()
 	{
 		return data.initialVal;
 	}

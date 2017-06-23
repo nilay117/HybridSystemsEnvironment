@@ -12,7 +12,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.framework.domain.InitialValue;
+import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
@@ -45,7 +45,7 @@ public class Data<T> extends Component// DynamicData<T>
 	private T derivative; // current derivative of the data (if the data changes
 							// continuously)
 
-	protected InitialValue<T> initialVal; // initial value of object
+	protected ValueDomain<T> initialVal; // initial value of object
 
 	protected HashMap<Double, T> savedValues; // mapping of saved values
 
@@ -229,7 +229,7 @@ public class Data<T> extends Component// DynamicData<T>
 		save = save_default;
 		defaultUnit = NoUnit.NONE;
 		savedValues = new HashMap<Double, T>();
-		initialVal = new InitialValue<T>(obj);
+		initialVal = new ValueDomain<T>(obj);
 		cloneToStore = !isCopyRequiredOnSave(obj); // super.id().description().information.set(description);
 		try
 		{
@@ -238,7 +238,7 @@ public class Data<T> extends Component// DynamicData<T>
 			{
 				UnitValue val = ((UnitValue) obj);
 				defaultUnit = (Unit) ((UnitValue) obj).getUnit();
-				initialVal = new InitialValue<T>(obj);
+				initialVal = new ValueDomain<T>(obj);
 				initialVal.setFixedValue((Double) val.get(defaultUnit), defaultUnit);
 
 				// initialVal = new InitialValue<T>((T) ((UnitValue)
@@ -247,14 +247,14 @@ public class Data<T> extends Component// DynamicData<T>
 
 			{
 				// defaultUnit = null;
-				initialVal = new InitialValue<T>(obj);
+				initialVal = new ValueDomain<T>(obj);
 			}
 		} catch (Exception badClass)
 		{
 			badClass.printStackTrace();
 			defaultUnit = NoUnit.NONE;
 			// defaultUnit = null;
-			initialVal = new InitialValue<T>(obj);
+			initialVal = new ValueDomain<T>(obj);
 		}
 		try
 		{

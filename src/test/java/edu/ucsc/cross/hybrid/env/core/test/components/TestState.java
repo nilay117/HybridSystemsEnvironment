@@ -18,7 +18,7 @@ public class TestState extends Component
 	{
 		super("Test State");
 		continuous = DataFactory.state.create(1.0, "Continuous State");
-		discrete = DataFactory.discreteState.create(1.0, "Discrete State");
+		discrete = DataFactory.state.create(1.0, "Discrete State");
 		hybrid = DataFactory.state.create(Velocity.newKilometersPerSecondValue(2.0), "Hybrid State");
 	}
 

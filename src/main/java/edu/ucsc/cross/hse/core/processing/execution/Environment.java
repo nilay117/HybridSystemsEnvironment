@@ -4,8 +4,9 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
-import edu.ucsc.cross.hse.core.processing.data.DataCollector;
-import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
+import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
+import edu.ucsc.cross.hse.core.processing.data.DataHandler;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 
 public class Environment // extends ProcessorAccess// implements Environment
 {
@@ -16,9 +17,9 @@ public class Environment // extends ProcessorAccess// implements Environment
 	// etc
 	protected Processor processor; // environment processor that handles events,
 									// computations, maintenance, etc
-	private SettingConfigurations settings; // collection of settings that
-											// configure the performance of the
-											// environment
+	private SettingConfigurer settings; // collection of settings that
+										// configure the performance of the
+										// environment
 
 	/*
 	 * Generic environment constructor that initializes an empty system with a
@@ -57,47 +58,83 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	public void start(Double duration)
 	{
-		settings.trial().simDuration = duration;
+		settings.getExecutionSettings().simDuration = duration;
 		processor.start();
 	}
 
 	public void start(Time duration)
 	{
-		settings.trial().simDuration = duration.seconds();
+		settings.getExecutionSettings().simDuration = duration.seconds();
 		processor.start();
+	}
+
+	public void stop()
+	{
+		stop(true);
+	}
+
+	public void stop(boolean terminate)
+	{
+
 	}
 
 	public void reset()
 	{
-
+		reset(false);
 	}
 
-	public void save(String directory, String file_name)
+	public void reset(boolean clear_contents)
 	{
 
 	}
 
-	public DataCollector getData()
+	public void saveContents(String directory, String file_name)
+	{
+
+	}
+
+	public void saveSettings(String directory, String file_name)
+	{
+
+	}
+
+	public void loadSettings(String directory, String file_name)
+	{
+
+	}
+
+	public void loadContents(String directory, String file_name)
+	{
+
+	}
+
+	public DataAccessor getDataAccessor()
 	{
 		return processor.data;
 	}
 
-	public SettingConfigurations getSettings()
+	public SettingConfigurer getSettings()
 	{
 		return settings;
 	}
 
-	public void setSettings(SettingConfigurations settings)
+	public void loadSettings(Object... settings)
 	{
-		this.settings = settings;
+		if (settings.length == 1)
+		{
+			if (settings.getClass().equals(SettingConfigurer.class))
+			{
+				this.settings = (SettingConfigurer) settings[0];
+			}
+		}
 	}
 
-	public GlobalEnvironmentContent getEnvironment()
+	public GlobalEnvironmentContent getContents()
 	{
 		return content;
 	}
 
-	public void setEnvironment(GlobalEnvironmentContent content)
+	public void loadContents(GlobalEnvironmentContent content)
 	{
 		this.content = content;
 	}
@@ -119,7 +156,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	private void initializeComponents(boolean pre_loaded_content)
 	{
-		settings = new SettingConfigurations();// .loadSettings();
+		settings = new SettingConfigurer();// .loadSettings();
 		processor = new Processor(this);
 		if (pre_loaded_content)
 		{

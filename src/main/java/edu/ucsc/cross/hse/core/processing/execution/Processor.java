@@ -9,9 +9,9 @@ import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
-import edu.ucsc.cross.hse.core.processing.data.DataCollector;
+import edu.ucsc.cross.hse.core.processing.data.DataHandler;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
-import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public class Processor
 {
@@ -19,7 +19,7 @@ public class Processor
 	protected GlobalContentAdministrator contentAdmin;
 	protected Environment environment;
 	protected ComponentDirector elements;
-	protected DataCollector data;
+	protected DataHandler data;
 	protected SimulationEngine simulationEngine;
 	protected EventMonitor executionMonitor;
 	protected FileParser fileParser;
@@ -34,10 +34,10 @@ public class Processor
 
 	protected void initializeComponents()
 	{
-		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironment());
+		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getContents());
 		simulationEngine = new SimulationEngine(this);
 		executionMonitor = new EventMonitor(this);
-		data = new DataCollector(this);
+		data = new DataHandler(this);
 		outputPrinter = new SystemConsole(this);
 		elements = new ComponentDirector(this);
 		fileParser = new FileParser(this);
@@ -47,7 +47,7 @@ public class Processor
 	{
 		// environment.scanAllSystems();
 
-		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getEnvironment());
+		contentAdmin = GlobalContentAdministrator.getContentAdministrator(environment.getContents());
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		data.loadStoreStates();

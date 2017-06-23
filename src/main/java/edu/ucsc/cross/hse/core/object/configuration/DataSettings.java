@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.processing.settings;
+package edu.ucsc.cross.hse.core.object.configuration;
 
 import bes.commons.data.compression.CompressionFormat;
 
@@ -16,6 +16,9 @@ public class DataSettings
 																// occurs, for
 																// graphing
 																// purposes
+
+	public boolean loadDataFromFile; // flag to load settings from the default
+										// files
 
 	public boolean automaticallyStoreResults; // flag to store results
 												// automatically
@@ -37,8 +40,9 @@ public class DataSettings
 												// with the name of the
 												// environment
 
-	public CompressionFormat defaultCompressionFormat; // Compression format to use
-												// for the results
+	public CompressionFormat defaultCompressionFormat; // Compression format to
+														// use
+	// for the results
 
 	/*
 	 * Default value constructor

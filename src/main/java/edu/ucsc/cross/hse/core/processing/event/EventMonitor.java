@@ -111,20 +111,20 @@ public class EventMonitor extends ProcessorAccess
 	public FirstOrderIntegrator getIntegrator()
 	{
 		FirstOrderIntegrator integrator = null;
-		switch (getSettings().computation().integrator)
+		switch (getSettings().getComputationSettings().integrator)
 		{
 		case EULER:
-			integrator = new EulerIntegrator(getSettings().computation().odeMinStep);
+			integrator = new EulerIntegrator(getSettings().getComputationSettings().odeMinStep);
 			break;
 		case DORMAND_PRINCE_853:
-			integrator = new DormandPrince853Integrator(getSettings().computation().odeMinStep,
-			getSettings().computation().odeMaxStep, getSettings().computation().odeScalAbsoluteTolerance,
-			getSettings().computation().odeScalRelativeTolerance);
+			integrator = new DormandPrince853Integrator(getSettings().getComputationSettings().odeMinStep,
+			getSettings().getComputationSettings().odeMaxStep, getSettings().getComputationSettings().odeScalAbsoluteTolerance,
+			getSettings().getComputationSettings().odeScalRelativeTolerance);
 			break;
 		case DORMAND_PRINCE_54:
-			integrator = new DormandPrince54Integrator(getSettings().computation().odeMinStep,
-			getSettings().computation().odeMaxStep, getSettings().computation().odeScalAbsoluteTolerance,
-			getSettings().computation().odeScalRelativeTolerance);
+			integrator = new DormandPrince54Integrator(getSettings().getComputationSettings().odeMinStep,
+			getSettings().getComputationSettings().odeMaxStep, getSettings().getComputationSettings().odeScalAbsoluteTolerance,
+			getSettings().getComputationSettings().odeScalRelativeTolerance);
 			break;
 		}
 		getEventHandlers(integrator);
@@ -133,10 +133,10 @@ public class EventMonitor extends ProcessorAccess
 
 	private void getEventHandlers(FirstOrderIntegrator integrator)
 	{
-		integrator.addEventHandler(jumpHandler, getSettings().computation().ehMaxCheckInterval,
-		getSettings().computation().ehConvergence, getSettings().computation().ehMaxIterationCount);
-		integrator.addEventHandler(terminator, getSettings().computation().ehMaxCheckInterval,
-		getSettings().computation().ehConvergence, getSettings().computation().ehMaxIterationCount);
+		integrator.addEventHandler(jumpHandler, getSettings().getComputationSettings().ehMaxCheckInterval,
+		getSettings().getComputationSettings().ehConvergence, getSettings().getComputationSettings().ehMaxIterationCount);
+		integrator.addEventHandler(terminator, getSettings().getComputationSettings().ehMaxCheckInterval,
+		getSettings().getComputationSettings().ehConvergence, getSettings().getComputationSettings().ehMaxIterationCount);
 	}
 
 	public void launchEnvironment()
@@ -152,7 +152,7 @@ public class EventMonitor extends ProcessorAccess
 		FirstOrderIntegrator integrator = getIntegrator();
 		double[] y = getComputationEngine().getODEValueVector();
 		FirstOrderDifferentialEquations ode = getComputationEngine();
-		runIntegrator(integrator, ode, 0.0, getSettings().trial().simDuration, y);
+		runIntegrator(integrator, ode, 0.0, getSettings().getExecutionSettings().simDuration, y);
 		this.getConsole().print("Environment Trial Complete - Runtime = "
 		+ Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0 + " seconds");
 		getFileParser().autoStoreData(getEnv());
@@ -184,7 +184,7 @@ public class EventMonitor extends ProcessorAccess
 		try
 		{
 			Double stopTime = integrator.integrate(ode, getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
-			getComputationEngine().getODEValueVector(), getSettings().trial().simDuration,
+			getComputationEngine().getODEValueVector(), getSettings().getExecutionSettings().simDuration,
 			getComputationEngine().getODEValueVector());
 			return stopTime;
 		} catch (Exception e)
@@ -197,7 +197,7 @@ public class EventMonitor extends ProcessorAccess
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
 			this.getComponents().performAllTasks(ComponentAdministrator.getConfigurer(getEnv()).isJumpOccurring());
-			if (recursion_level < getSettings().computation().maxRecursiveStackSize)
+			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
 			} else
@@ -216,10 +216,10 @@ public class EventMonitor extends ProcessorAccess
 		{
 			this.getConsole()
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
-			getSettings().computation().odeMaxStep = getSettings().computation().odeMaxStep
-			/ getSettings().computation().stepSizeReductionFactor;
-			getSettings().computation().odeMinStep = getSettings().computation().odeMinStep
-			/ getSettings().computation().stepSizeReductionFactor;
+			getSettings().getComputationSettings().odeMaxStep = getSettings().getComputationSettings().odeMaxStep
+			/ getSettings().getComputationSettings().stepSizeReductionFactor;
+			getSettings().getComputationSettings().odeMinStep = getSettings().getComputationSettings().odeMinStep
+			/ getSettings().getComputationSettings().stepSizeReductionFactor;
 			handledIssue = true;
 		}
 		return handledIssue;
@@ -233,10 +233,10 @@ public class EventMonitor extends ProcessorAccess
 		{
 			this.getConsole().print(
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
-			getSettings().computation().ehConvergence = getSettings().computation().ehConvergence
-			/ getSettings().computation().handlingThresholdReductionFactor;
-			getSettings().computation().ehMaxCheckInterval = getSettings().computation().ehMaxCheckInterval
-			/ getSettings().computation().handlingThresholdReductionFactor;
+			getSettings().getComputationSettings().ehConvergence = getSettings().getComputationSettings().ehConvergence
+			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
+			getSettings().getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
+			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
 			handledIssue = true;
 		}
 		return handledIssue;

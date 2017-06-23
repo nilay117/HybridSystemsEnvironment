@@ -22,7 +22,7 @@ public class SystemConsole extends ProcessorAccess
 	{
 		super(processor);
 		nextPrintTime = 0.0;
-		printInterval = getSettings().trial().simDuration / getSettings().io().totalSimTimePrintOuts;
+		printInterval = getSettings().getExecutionSettings().simDuration / getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
 	}
 
 	private void initialize()
@@ -38,13 +38,13 @@ public class SystemConsole extends ProcessorAccess
 
 	public void progressUpdate()
 	{
-		if (getSettings().io().printProgressUpdates)
+		if (getSettings().getConsolePrintSettings().printProgressUpdates)
 		{
 			if (nextPrintTime < getEnvironmentOperator().getEnvironmentHybridTime().getTime())
 			{
 				nextPrintTime = getEnvironmentOperator().getEnvironmentHybridTime().getTime() + printInterval;
 				Double percentComplete = 100 * getEnvironmentOperator().getEnvironmentHybridTime().getTime()
-				/ getSettings().trial().simDuration;
+				/ getSettings().getExecutionSettings().simDuration;
 				print("Status : " + Math.round(percentComplete) + "% complete - simulation time at "
 				+ getEnvironmentOperator().getEnvironmentHybridTime().getTime() + " seconds");
 			}
@@ -54,7 +54,7 @@ public class SystemConsole extends ProcessorAccess
 	public String getDiscreteEventIndication()
 	{
 		String string = null;
-		if (getSettings().io().printDiscreteEventIndicator)
+		if (getSettings().getConsolePrintSettings().printDiscreteEventIndicator)
 		{
 			string = ("discrete event detected at " + getEnvironmentOperator().getEnvironmentHybridTime().getTime()
 			+ " seconds");
@@ -81,8 +81,9 @@ public class SystemConsole extends ProcessorAccess
 			System.out.println(
 			// "[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" +
 			// getCallingClassName(1) + "] " + message);
-			"[" + System.currentTimeMillis() / 1000 + "][" + Math.round(info.usedMem() / Math.pow(1024, 2)) + "/"
-			+ Math.round(info.totalMem() / Math.pow(1024, 2)) + "]" + "[" + getCallingClassName(1) + "] " + message);
+			"[" + StringFormatter.getAbsoluteHHMMSS() + "][" + System.currentTimeMillis() / 1000 + "]["
+			+ Math.round(info.usedMem() / Math.pow(1024, 2)) + "/" + Math.round(info.totalMem() / Math.pow(1024, 2))
+			+ "]" + "[" + getCallingClassName(1) + "] " + message);
 
 		}
 	}

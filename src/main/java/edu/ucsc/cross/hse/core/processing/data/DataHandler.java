@@ -12,7 +12,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataCollector extends ProcessorAccess
+public class DataHandler extends ProcessorAccess implements DataAccessor
 {
 
 	private Double lastStoreTime = -10.0; // time since last data was stored,
@@ -21,24 +21,36 @@ public class DataCollector extends ProcessorAccess
 	private ArrayList<Data> dataElementsToStore; // list of all data elements
 													// that are to be stored
 
-	public DataCollector(Processor processor)
+	public static Double postJumpStoreIncrement = .0000000001; // amount of time
+																// subtracted to
+																// store data
+																// before a jump
+																// occurs in
+																// order to
+																// capture data
+																// before and
+																// after a jump
+
+	public DataHandler(Processor processor)
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();
 
 	}
 
-	public Data getValue(Integer index)
+	public Data getDataByIndex(Integer index)
 	{
 		return dataElementsToStore.get(index);
 	}
 
-	public ArrayList<Data> getDataStates()
+	@Override
+	public ArrayList<Data> getAllStateData()
 	{
 		return dataElementsToStore;
 	}
 
-	public ArrayList<String> getAllPossibleStateElements()
+	@Override
+	public ArrayList<String> getAllStateNames()
 	{
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
@@ -53,7 +65,8 @@ public class DataCollector extends ProcessorAccess
 		return stateElements;
 	}
 
-	public ArrayList<Data> findElementsByName(String title)
+	@Override
+	public ArrayList<Data> getDataByTitle(String title)
 	{
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
@@ -66,33 +79,33 @@ public class DataCollector extends ProcessorAccess
 		return datas;
 	}
 
-	public Data checkIfMatchingElementInDataSet(Data data, String title)
-	{
-		for (Component component : getEnv().getContents().getComponents(true))
-		{
-			try
-			{
-				if (component.getContents().getComponents(true).contains(data))
-				{
-					for (Data dat : component.getContents().getObjects(Data.class, true))
-					{
-
-						if (dat.getInformation().getName().equals(title))
-						{
-							return dat;
-						}
-
-					}
-				}
-
-			} catch (Exception notDataSet)
-			{
-
-			}
-		}
-
-		return null;
-	}
+	// public Data checkIfMatchingElementInDataSet(Data data, String title)
+	// {
+	// for (Component component : getEnv().getContents().getComponents(true))
+	// {
+	// try
+	// {
+	// if (component.getContents().getComponents(true).contains(data))
+	// {
+	// for (Data dat : component.getContents().getObjects(Data.class, true))
+	// {
+	//
+	// if (dat.getInformation().getName().equals(title))
+	// {
+	// return dat;
+	// }
+	//
+	// }
+	// }
+	//
+	// } catch (Exception notDataSet)
+	// {
+	//
+	// }
+	// }
+	//
+	// return null;
+	// }
 
 	public void storeData(Double time)
 	{
@@ -112,7 +125,7 @@ public class DataCollector extends ProcessorAccess
 		if (override_store_time)
 		{
 			storeData(t);
-		} else if (t > lastStoreTime + getSettings().getData().dataStoreIncrement)// settings.dataStoreIncrement)
+		} else if (t > lastStoreTime + getSettings().getDataSettings().dataStoreIncrement)// settings.dataStoreIncrement)
 		{
 			lastStoreTime = t;
 			storeData(t);

@@ -4,8 +4,8 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
 
 /*
  * This is the main root system of the environment that contains all of the

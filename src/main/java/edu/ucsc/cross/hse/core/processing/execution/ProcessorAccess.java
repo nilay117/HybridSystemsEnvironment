@@ -9,9 +9,9 @@ import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
 import edu.ucsc.cross.hse.core.procesing.io.FileParser;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
-import edu.ucsc.cross.hse.core.processing.data.DataCollector;
+import edu.ucsc.cross.hse.core.processing.data.DataHandler;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
-import edu.ucsc.cross.hse.core.processing.settings.SettingConfigurations;
 
 public abstract class ProcessorAccess
 {
@@ -59,7 +59,7 @@ public abstract class ProcessorAccess
 	// @Override
 	public GlobalEnvironmentContent getEnv()
 	{
-		return processor.getEnvironment();
+		return processor.getContents();
 	}
 
 	// @Override
@@ -74,12 +74,12 @@ public abstract class ProcessorAccess
 		return proc.outputPrinter;
 	}
 
-	protected SettingConfigurations getSettings()
+	protected SettingConfigurer getSettings()
 	{
 		return processor.getSettings();
 	}
 
-	protected DataCollector getData()
+	protected DataHandler getData()
 	{
 		return proc.data;
 	}
@@ -112,8 +112,8 @@ public abstract class ProcessorAccess
 	}
 
 	// @Override
-	protected void setSettings(SettingConfigurations settings)
+	protected void setSettings(SettingConfigurer settings)
 	{
-		proc.environment.setSettings(settings);
+		proc.environment.loadSettings(settings);
 	}
 }

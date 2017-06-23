@@ -11,7 +11,7 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.domain.HybridTime;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
 public class GlobalContentAdministrator extends ComponentAdministrator
 {

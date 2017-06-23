@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.processing.settings;
+package edu.ucsc.cross.hse.core.object.configuration;
 
 import bs.commons.objects.labeling.ChoiceName;
 
@@ -94,9 +94,12 @@ public class ComputationSettings
 
 		ehConvergence = .001; // convergence threshold of an event
 
-		ehMaxIterationCount = 10; // maximum number of iterations
+		ehMaxIterationCount = 10; // maximum number of iterations by the
 
-		jumpPriority = true;
+		jumpPriority = true; // flag indicating whether jumps have priority if a
+								// situation were to occur where a state was in
+								// both the jump and flow set, true means that
+								// the a jump will occur, false means a flow
 
 		maxRecursiveStackSize = 1000; // maximum recursive stack size that
 										// occurrs when a jump (unrecoverably)

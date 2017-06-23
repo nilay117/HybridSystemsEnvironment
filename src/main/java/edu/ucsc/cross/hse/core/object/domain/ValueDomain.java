@@ -1,11 +1,11 @@
-package edu.ucsc.cross.hse.core.framework.domain;
+package edu.ucsc.cross.hse.core.object.domain;
 
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 
-public class InitialValue<T>
+public class ValueDomain<T>
 {
 
 	private T value;
@@ -14,7 +14,7 @@ public class InitialValue<T>
 	private Double max;
 
 	@SuppressWarnings("unchecked")
-	public InitialValue(T value)
+	public ValueDomain(T value)
 	{
 		assignInitialValue(value);
 	}

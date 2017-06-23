@@ -31,11 +31,11 @@ public class ComponentDirector extends ProcessorAccess
 		if (jump_occurred)
 		{
 			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() - .000001,
-			(true && getSettings().getData().storeAtEveryJump));
+			(true && getSettings().getDataSettings().storeAtEveryJump));
 
 			executeAllOccurringJumps();
 			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
-			(true && getSettings().getData().storeAtEveryJump));
+			(true && getSettings().getDataSettings().storeAtEveryJump));
 		} else
 		{
 			ComponentAdministrator.getConfigurer(getEnv()).performTasks(jump_occurred);
