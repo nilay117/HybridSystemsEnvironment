@@ -11,9 +11,9 @@ import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
-import edu.ucsc.cross.hse.core.procesing.io.FileParser;
+import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
 /*
@@ -109,7 +109,7 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		// if (this.element.getClass().equals(element.getClass()))
 		{
-			if (!ComponentAdministrator.getConfigurer(this).isInitialized())
+			if (!ComponentOperator.getConfigurer(this).isInitialized())
 			{
 				initialVal.setValue(element);
 				try
@@ -196,9 +196,9 @@ public class Data<T> extends Component// DynamicData<T>
 	}
 
 	@Override
-	public DataOperator getActions()
+	public DataWorker getActions()
 	{
-		return DataOperator.getConfigurer(this);
+		return DataWorker.getConfigurer(this);
 	}
 
 	// // Internal Operation Functions
@@ -280,7 +280,7 @@ public class Data<T> extends Component// DynamicData<T>
 		boolean initialize = true;
 		try
 		{
-			initialize = initialize && !ComponentAdministrator.getConfigurer(this).isInitialized();
+			initialize = initialize && !ComponentOperator.getConfigurer(this).isInitialized();
 		} catch (Exception nullInit)
 		{
 			initialize = true;
@@ -354,7 +354,7 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			if (cloneToStore)
 			{
-				return FileParser.cloner.deepClone(getValue());
+				return FileExchanger.cloner.deepClone(getValue());
 				// return (T) ObjectCloner.xmlClone(get());
 			} else
 			{

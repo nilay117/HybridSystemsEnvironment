@@ -7,12 +7,12 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataHandler extends ProcessorAccess implements DataAccessor
+public class DataHandler extends ProcessingElement implements DataAccessor
 {
 
 	private Double lastStoreTime = -10.0; // time since last data was stored,
@@ -31,7 +31,7 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 																// before and
 																// after a jump
 
-	public DataHandler(Processor processor)
+	public DataHandler(CentralProcessor processor)
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();
@@ -79,33 +79,34 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		return datas;
 	}
 
-	// public Data checkIfMatchingElementInDataSet(Data data, String title)
-	// {
-	// for (Component component : getEnv().getContents().getComponents(true))
-	// {
-	// try
-	// {
-	// if (component.getContents().getComponents(true).contains(data))
-	// {
-	// for (Data dat : component.getContents().getObjects(Data.class, true))
-	// {
-	//
-	// if (dat.getInformation().getName().equals(title))
-	// {
-	// return dat;
-	// }
-	//
-	// }
-	// }
-	//
-	// } catch (Exception notDataSet)
-	// {
-	//
-	// }
-	// }
-	//
-	// return null;
-	// }
+	@Override
+	public Data getDifferentDataFromSameDataSet(Data data, String title)
+	{
+		for (Component component : getEnv().getContents().getComponents(true))
+		{
+			try
+			{
+				if (component.getContents().getComponents(true).contains(data))
+				{
+					for (Data dat : component.getContents().getObjects(Data.class, true))
+					{
+
+						if (dat.getInformation().getName().equals(title))
+						{
+							return dat;
+						}
+
+					}
+				}
+
+			} catch (Exception notDataSet)
+			{
+
+			}
+		}
+
+		return null;
+	}
 
 	public void storeData(Double time)
 	{

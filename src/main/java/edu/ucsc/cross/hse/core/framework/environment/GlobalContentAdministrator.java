@@ -8,12 +8,12 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
-public class GlobalContentAdministrator extends ComponentAdministrator
+public class GlobalContentAdministrator extends ComponentOperator
 {
 
 	// currently
@@ -64,7 +64,7 @@ public class GlobalContentAdministrator extends ComponentAdministrator
 
 	public static GlobalEnvironmentContent getGlobalSystem(Component component)
 	{
-		return globalSystems.get(ComponentAdministrator.getConfigurer(component).getEnvironmentKey()).globalSystem;
+		return globalSystems.get(ComponentOperator.getConfigurer(component).getEnvironmentKey()).globalSystem;
 	}
 
 	public HybridTime getEnvironmentHybridTime()
@@ -130,7 +130,7 @@ public class GlobalContentAdministrator extends ComponentAdministrator
 			}
 			if (initialize)
 			{
-				ComponentAdministrator.getConfigurer(component).protectedInitialize();
+				ComponentOperator.getConfigurer(component).protectedInitialize();
 			}
 		}
 
@@ -142,8 +142,8 @@ public class GlobalContentAdministrator extends ComponentAdministrator
 		for (Component component : globalSystem.getContents().getComponents(true))
 		{
 
-			ComponentAdministrator.getConfigurer(component)
-			.setEnvironmentKey(ComponentAdministrator.getConfigurer(globalSystem).getEnvironmentKey());
+			ComponentOperator.getConfigurer(component)
+			.setEnvironmentKey(ComponentOperator.getConfigurer(globalSystem).getEnvironmentKey());
 		}
 	}
 }

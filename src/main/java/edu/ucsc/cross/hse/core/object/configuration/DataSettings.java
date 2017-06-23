@@ -5,20 +5,9 @@ import bes.commons.data.compression.CompressionFormat;
 public class DataSettings
 {
 
-	public static String defaultSettingFileName = "default.xml"; // defalt
-																	// setting
-																	// file
-	public static String defaultSettingDirectory = "./settings";
-	public static Double postJumpStoreIncrement = .0000000001; // amount of time
-																// subtracted to
-																// actual time
-																// before a jump
-																// occurs, for
-																// graphing
-																// purposes
-
-	public boolean loadDataFromFile; // flag to load settings from the default
-										// files
+	public boolean loadSettingsFromFile; // flag to load settings from the
+											// default
+											// files
 
 	public boolean automaticallyStoreResults; // flag to store results
 												// automatically
@@ -33,34 +22,40 @@ public class DataSettings
 	public Double dataStoreIncrement;// .01; // time interval between data
 										// points stored
 
-	public String autoStoreDirectory; // location where new directories will be
-										// created containing results
+	public String resultAutoStoreDirectory; // location where trial results will
+											// be automatically stored (if auto
+											// storage is enabled)
 
-	public boolean environmentNameSubDirectory; // flag to create a subdirectory
+	public boolean createResultSubDirectory; // flag to create a subdirectory
 												// with the name of the
-												// environment
+												// environment to keep results
+												// organized when running a
+												// variety of trials multiple
+												// times
 
-	public CompressionFormat defaultCompressionFormat; // Compression format to
-														// use
-	// for the results
+	public CompressionFormat compressionFormat; // Compression format to
+												// use for files if none
+												// is specified
 
 	/*
 	 * Default value constructor
 	 */
 	public DataSettings()
 	{
-
-		automaticallyStoreResults = false; // flag to store results
-											// automatically
+		loadSettingsFromFile = true;
+		automaticallyStoreResults = false;
+		storeDataAtIncrements = true;
 		storeAtEveryJump = true;
-		storeDataAtIncrements = true; // flag to determine whether data is
-										// stored at a specified increment,
-		dataStoreIncrement = .01;// .01; // time interval between data
-									// points
-									// stored
-		autoStoreDirectory = "./results"; // location where new directories will
-											// be created containing results
-		environmentNameSubDirectory = true;
+		dataStoreIncrement = .05;
+		resultAutoStoreDirectory = defaultResultsDirectory;
+		createResultSubDirectory = true;
+		compressionFormat = CompressionFormat.GZIP;
 	}
 
+	public static String defaultSettingFileName = "defaultSettings.xml"; // defalt
+	// setting
+	// file
+	public static String defaultResultsDirectory = "results";
+
+	public static String defaultSettingDirectory = "settings";
 }

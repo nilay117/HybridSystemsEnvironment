@@ -6,7 +6,9 @@ public class ExecutionSettings
 	public boolean runThreadded; // run the environment in a thread (as opposed
 									// to blocking code)
 
-	public Integer numberOfTrials; // number of trials to run altogether
+	public Integer numberOfTrials; // number of trials to run altogether.
+									// Results will be stored automatically when
+									// running more than one trial
 
 	public Integer maxParallelExecutions; // number of threaded environments to
 											// run

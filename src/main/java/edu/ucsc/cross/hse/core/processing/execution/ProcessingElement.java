@@ -1,31 +1,33 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataAdministrator;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalContentAdministrator;
-import edu.ucsc.cross.hse.core.procesing.io.FileParser;
+import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.event.EventMonitor;
+import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
+import edu.ucsc.cross.hse.core.processing.event.InterruptResponder;
+import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
 
-public abstract class ProcessorAccess
+public abstract class ProcessingElement
 {
 
-	protected Environment processor; // central processors
-	private Processor proc;
+	protected HybridEnvironment processor; // central processors
+	private CentralProcessor proc;
 
-	protected ProcessorAccess(Environment processor)
+	protected ProcessingElement(HybridEnvironment processor)
 	{
 		this.processor = processor;
 		this.proc = processor.processor;
 	}
 
-	protected ProcessorAccess(Processor processor)
+	protected ProcessingElement(CentralProcessor processor)
 	{
 		proc = processor;
 		this.processor = processor.environment;
@@ -51,9 +53,19 @@ public abstract class ProcessorAccess
 	}
 
 	// @Override
-	protected EventMonitor getEnvironmentMonitor()
+	protected ExecutionMonitor getEnvironmentMonitor()
 	{
 		return proc.executionMonitor;
+	}
+
+	protected InterruptResponder getInterruptHandler()
+	{
+		return proc.terminator;
+	}
+
+	protected JumpEvaluator getJumpEvaluator()
+	{
+		return proc.jumpHandler;
 	}
 
 	// @Override
@@ -84,31 +96,31 @@ public abstract class ProcessorAccess
 		return proc.data;
 	}
 
-	protected ComponentDirector getComponents()
+	protected ComponentAdministrator getComponents()
 	{
 		return proc.elements;
 	}
 
 	// @Override
-	protected Environment getProcessor()
+	protected HybridEnvironment getProcessor()
 	{
 		// TODO Auto-generated method stub
 		return proc.environment;
 	}
 
-	protected FileParser getFileParser()
+	protected FileExchanger getFileParser()
 	{
 		return proc.fileParser;
 	}
 
-	protected ComponentAdministrator getComponentOperator(Component component)
+	protected ComponentOperator getComponentOperator(Component component)
 	{
-		return ComponentAdministrator.getConfigurer(component);
+		return ComponentOperator.getConfigurer(component);
 	}
 
-	protected <S> DataAdministrator<S> getDataOperator(Data<S> component)
+	protected <S> DataOperator<S> getDataOperator(Data<S> component)
 	{
-		return DataAdministrator.getOperator(component);
+		return DataOperator.getOperator(component);
 	}
 
 	// @Override

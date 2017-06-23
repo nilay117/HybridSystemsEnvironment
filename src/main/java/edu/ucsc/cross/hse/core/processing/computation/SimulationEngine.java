@@ -10,10 +10,10 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
 /*
  * his class provides the computations and organization necessary to run a
@@ -23,7 +23,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
  */
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
-public class SimulationEngine extends ProcessorAccess implements FirstOrderDifferentialEquations
+public class SimulationEngine extends ProcessingElement implements FirstOrderDifferentialEquations
 {
 
 	/*
@@ -40,7 +40,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	 * 
 	 * @param processor - main environment processor
 	 */
-	public SimulationEngine(Processor processor)
+	public SimulationEngine(CentralProcessor processor)
 	{
 		super(processor);
 		odeVectorMap = new HashMap<Integer, Data>();
@@ -95,7 +95,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		updateValues(y);
 		getConsole().printUpdates();
 		zeroAllDerivatives();
-		ComponentAdministrator.getConfigurer(getEnv()).performTasks(false);
+		ComponentOperator.getConfigurer(getEnv()).performTasks(false);
 		updateYDotVector(yDot);
 	}
 

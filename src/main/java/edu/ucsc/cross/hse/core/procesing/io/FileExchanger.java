@@ -27,21 +27,21 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 import edu.ucsc.cross.hse.core2.framework.component.Zipper;
 import edu.ucsc.cross.hse.core2.framework.component.Zipper.CompressionFormat;
 
-public class FileParser extends ProcessorAccess
+public class FileExchanger extends ProcessingElement
 {
 
 	public static Cloner cloner = new Cloner();
 
-	public FileParser(Processor processor)
+	public FileExchanger(CentralProcessor processor)
 	{
 		super(processor);
 	}
@@ -61,8 +61,8 @@ public class FileParser extends ProcessorAccess
 
 	public void storeEnvironmentContents(GlobalEnvironmentContent data)
 	{
-		String directory = getSettings().getDataSettings().autoStoreDirectory + "/";
-		if (getSettings().getDataSettings().environmentNameSubDirectory)
+		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
+		if (getSettings().getDataSettings().createResultSubDirectory)
 		{
 			directory += data.getInformation().getName() + "/";
 		}
@@ -122,9 +122,8 @@ public class FileParser extends ProcessorAccess
 			settings = new SettingConfigurer();
 			try
 			{
-				// FileSystemOperator.createOutputFile(new File(directory,
-				// file_name),
-				// XMLParser.serializeObject(settings));
+				FileSystemOperator.createOutputFile(new File(directory, file_name),
+				XMLParser.serializeObject(settings));
 			} catch (Exception badFile)
 			{
 				badFile.printStackTrace();
@@ -151,7 +150,7 @@ public class FileParser extends ProcessorAccess
 		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
 		for (Component componen : component.getContents().getComponents(true))
 		{
-			ComponentAdministrator.getConfigurer(componen).setInitialized(null);
+			ComponentOperator.getConfigurer(componen).setInitialized(null);
 			// try
 			// {
 			// Data<T> data = (Data) componen;

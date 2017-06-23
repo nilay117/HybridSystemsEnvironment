@@ -12,4 +12,6 @@ public interface DataAccessor
 	public ArrayList<String> getAllStateNames();
 
 	public ArrayList<Data> getDataByTitle(String title);
+
+	public Data getDifferentDataFromSameDataSet(Data data, String title);
 }

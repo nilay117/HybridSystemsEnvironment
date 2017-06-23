@@ -4,7 +4,7 @@ package edu.ucsc.cross.hse.core.framework.component;
  * This class contains information that describes the component, which is used
  * in graphical displays and for filtering.
  */
-public class ComponentInformation
+public class ComponentLabel
 {
 
 	// Naming
@@ -13,7 +13,7 @@ public class ComponentInformation
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB
 							// Internal SSD" or "Crazyflie Nano 2.0"
 
-	public ComponentInformation(String title)
+	public ComponentLabel(String title)
 	{
 		this.title = title;
 		this.name = title;

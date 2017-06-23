@@ -9,23 +9,20 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
 import bs.commons.objects.access.Protected;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.processing.execution.Environment;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
-public class EventMonitor extends ProcessorAccess
+public class ExecutionMonitor extends ProcessingElement
 {
 
 	private Thread thread;
-	private JumpEvaluator jumpHandler;
-	private InterruptHandler terminator;
 
-	public EventMonitor(Processor processor)
+	public ExecutionMonitor(CentralProcessor processor)
 	{
 		super(processor);
-		jumpHandler = new JumpEvaluator(processor);
-		terminator = new InterruptHandler(processor);
+
 	}
 
 	public void runSim(boolean run_threadded)
@@ -118,12 +115,14 @@ public class EventMonitor extends ProcessorAccess
 			break;
 		case DORMAND_PRINCE_853:
 			integrator = new DormandPrince853Integrator(getSettings().getComputationSettings().odeMinStep,
-			getSettings().getComputationSettings().odeMaxStep, getSettings().getComputationSettings().odeScalAbsoluteTolerance,
+			getSettings().getComputationSettings().odeMaxStep,
+			getSettings().getComputationSettings().odeScalAbsoluteTolerance,
 			getSettings().getComputationSettings().odeScalRelativeTolerance);
 			break;
 		case DORMAND_PRINCE_54:
 			integrator = new DormandPrince54Integrator(getSettings().getComputationSettings().odeMinStep,
-			getSettings().getComputationSettings().odeMaxStep, getSettings().getComputationSettings().odeScalAbsoluteTolerance,
+			getSettings().getComputationSettings().odeMaxStep,
+			getSettings().getComputationSettings().odeScalAbsoluteTolerance,
 			getSettings().getComputationSettings().odeScalRelativeTolerance);
 			break;
 		}
@@ -133,10 +132,12 @@ public class EventMonitor extends ProcessorAccess
 
 	private void getEventHandlers(FirstOrderIntegrator integrator)
 	{
-		integrator.addEventHandler(jumpHandler, getSettings().getComputationSettings().ehMaxCheckInterval,
-		getSettings().getComputationSettings().ehConvergence, getSettings().getComputationSettings().ehMaxIterationCount);
-		integrator.addEventHandler(terminator, getSettings().getComputationSettings().ehMaxCheckInterval,
-		getSettings().getComputationSettings().ehConvergence, getSettings().getComputationSettings().ehMaxIterationCount);
+		integrator.addEventHandler(this.getJumpEvaluator(), getSettings().getComputationSettings().ehMaxCheckInterval,
+		getSettings().getComputationSettings().ehConvergence,
+		getSettings().getComputationSettings().ehMaxIterationCount);
+		integrator.addEventHandler(this.getInterruptHandler(),
+		getSettings().getComputationSettings().ehMaxCheckInterval, getSettings().getComputationSettings().ehConvergence,
+		getSettings().getComputationSettings().ehMaxIterationCount);
 	}
 
 	public void launchEnvironment()
@@ -196,7 +197,7 @@ public class EventMonitor extends ProcessorAccess
 			printOutUnresolvedIssues(e, problemResolved);
 			// getEnvironment().performTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(ComponentAdministrator.getConfigurer(getEnv()).isJumpOccurring());
+			this.getComponents().performAllTasks(ComponentOperator.getConfigurer(getEnv()).isJumpOccurring());
 			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
@@ -235,7 +236,8 @@ public class EventMonitor extends ProcessorAccess
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
 			getSettings().getComputationSettings().ehConvergence = getSettings().getComputationSettings().ehConvergence
 			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
-			getSettings().getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
+			getSettings()
+			.getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
 			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
 			handledIssue = true;
 		}
@@ -249,11 +251,6 @@ public class EventMonitor extends ProcessorAccess
 			this.getConsole().print("Integrator failure due to another cause - please see stack trace for details");
 			exc.printStackTrace();
 		}
-	}
-
-	public InterruptHandler getTerminator()
-	{
-		return terminator;
 	}
 
 	public Thread getThread()

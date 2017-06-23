@@ -6,11 +6,11 @@ import bs.commons.objects.access.CallerRetriever;
 import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 import edu.ucsc.cross.hse.core2.framework.utils.SystemInfo;
 
-public class SystemConsole extends ProcessorAccess
+public class SystemConsole extends ProcessingElement
 {
 
 	static SystemInfo info = new SystemInfo();
@@ -18,7 +18,7 @@ public class SystemConsole extends ProcessorAccess
 	private Double nextPrintTime;
 	private Double printInterval;
 
-	public SystemConsole(Processor processor)
+	public SystemConsole(CentralProcessor processor)
 	{
 		super(processor);
 		nextPrintTime = 0.0;

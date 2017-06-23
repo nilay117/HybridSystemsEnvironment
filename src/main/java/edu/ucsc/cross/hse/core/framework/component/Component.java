@@ -26,7 +26,7 @@ public abstract class Component implements Initializer
 							// this instance of the
 							// component
 
-	ComponentInformation description; // specific information
+	ComponentLabel description; // specific information
 										// describing
 										// the component
 
@@ -97,7 +97,7 @@ public abstract class Component implements Initializer
 	 * 
 	 * @return component information
 	 */
-	public ComponentInformation getInformation()
+	public ComponentLabel getInformation()
 	{
 		return description;
 	}
@@ -119,9 +119,9 @@ public abstract class Component implements Initializer
 	 * 
 	 * @return component operator
 	 */
-	public ComponentOperator getActions()
+	public ComponentWorker getActions()
 	{
-		return ComponentAdministrator.getConfigurer(this);
+		return ComponentOperator.getConfigurer(this);
 	}
 
 	/*
@@ -155,9 +155,9 @@ public abstract class Component implements Initializer
 	 * 
 	 * @return component administrator
 	 */
-	ComponentAdministrator getAdministrator()
+	ComponentOperator getAdministrator()
 	{
-		return ComponentAdministrator.getConfigurer(this);
+		return ComponentOperator.getConfigurer(this);
 	}
 
 }

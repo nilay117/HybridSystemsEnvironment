@@ -2,12 +2,12 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
-import edu.ucsc.cross.hse.core.processing.execution.Environment;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
-class JumpEvaluator extends ProcessorAccess implements EventHandler
+public class JumpEvaluator extends ProcessingElement implements EventHandler
 {
 
 	public Integer toggles = 0; // toggle index to eliminate the error within
@@ -19,7 +19,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 	/*
 	 * constructor to link the environment
 	 */
-	JumpEvaluator(Processor processor)
+	public JumpEvaluator(CentralProcessor processor)
 	{
 		super(processor);
 	}
@@ -33,7 +33,7 @@ class JumpEvaluator extends ProcessorAccess implements EventHandler
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 
 		getComputationEngine().updateValues(y);
-		if (ComponentAdministrator.getConfigurer(getEnv()).isJumpOccurring())
+		if (ComponentOperator.getConfigurer(getEnv()).isJumpOccurring())
 		{
 			flag = -1 * flag;
 			toggles = toggles + 1;

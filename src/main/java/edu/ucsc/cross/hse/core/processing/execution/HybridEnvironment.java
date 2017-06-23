@@ -4,18 +4,19 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.environment.GlobalEnvironmentContent;
+import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 
-public class Environment // extends ProcessorAccess// implements Environment
+public class HybridEnvironment
 {
 
 	private GlobalEnvironmentContent content; // all elements that make up the
 	// environment
 	// itself such as data, components, systems
 	// etc
-	protected Processor processor; // environment processor that handles events,
+	protected CentralProcessor processor; // environment processor that handles events,
 									// computations, maintenance, etc
 	private SettingConfigurer settings; // collection of settings that
 										// configure the performance of the
@@ -25,7 +26,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 * Generic environment constructor that initializes an empty system with a
 	 * default name and settings
 	 */
-	public Environment()
+	public HybridEnvironment()
 	{
 		content = new GlobalEnvironmentContent();
 		initializeComponents(false);
@@ -35,7 +36,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 * Named environment constructor that initializes an empty system with a
 	 * specified name and default settings
 	 */
-	public Environment(String name)
+	public HybridEnvironment(String name)
 	{
 		content = new GlobalEnvironmentContent(name);
 		initializeComponents(false);
@@ -45,7 +46,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 	 * Predefined environment constructor that loads a specified environment and
 	 * default settings
 	 */
-	public Environment(GlobalEnvironmentContent environment)
+	public HybridEnvironment(GlobalEnvironmentContent environment)
 	{
 		content = environment;
 		initializeComponents(true);
@@ -75,7 +76,7 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	public void stop(boolean terminate)
 	{
-
+		processor.terminator.killSim();
 	}
 
 	public void reset()
@@ -156,8 +157,8 @@ public class Environment // extends ProcessorAccess// implements Environment
 
 	private void initializeComponents(boolean pre_loaded_content)
 	{
-		settings = new SettingConfigurer();// .loadSettings();
-		processor = new Processor(this);
+		settings = FileExchanger.loadSettings();
+		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
 		{
 			processor.data.loadStoreStates();

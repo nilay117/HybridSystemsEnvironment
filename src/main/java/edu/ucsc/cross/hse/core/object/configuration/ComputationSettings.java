@@ -76,38 +76,16 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .05; // ode step size if using a fixed step integrator,
-							// or
-							// minimum ode step size of a
-							// variable step integrator
-
-		odeMaxStep = .1; // maximum step size for variable step integrator
-
-		odeScalAbsoluteTolerance = 1.0e-4; // absolute tolerance of the ode
-											// solver
-
-		odeScalRelativeTolerance = 1.0e-4; // relative tolerance of the ode
-											// solver
-
-		ehMaxCheckInterval = .001; // event handler maximum interval to check
-									// for an event
-
-		ehConvergence = .001; // convergence threshold of an event
-
-		ehMaxIterationCount = 10; // maximum number of iterations by the
-
-		jumpPriority = true; // flag indicating whether jumps have priority if a
-								// situation were to occur where a state was in
-								// both the jump and flow set, true means that
-								// the a jump will occur, false means a flow
-
-		maxRecursiveStackSize = 1000; // maximum recursive stack size that
-										// occurrs when a jump (unrecoverably)
-										// interrupts the ode
-
-		integrator = IntegratorType.DORMAND_PRINCE_853;// .EULER;//
-														// .DORMAND_PRINCE_853;
-
+		odeMinStep = .05;
+		odeMaxStep = .1;
+		odeScalAbsoluteTolerance = 1.0e-4;
+		odeScalRelativeTolerance = 1.0e-4;
+		ehMaxCheckInterval = .001;
+		ehConvergence = .001;
+		ehMaxIterationCount = 10;
+		jumpPriority = true;
+		maxRecursiveStackSize = 1000;
+		integrator = IntegratorType.DORMAND_PRINCE_853;
 	}
 
 }

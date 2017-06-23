@@ -7,7 +7,7 @@ import java.util.List;
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
-import edu.ucsc.cross.hse.core.framework.component.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
 
@@ -17,10 +17,10 @@ import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
  */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class ComponentDirector extends ProcessorAccess
+public class ComponentAdministrator extends ProcessingElement
 {
 
-	ComponentDirector(Processor processor)
+	ComponentAdministrator(CentralProcessor processor)
 	{
 		super(processor);
 
@@ -38,14 +38,14 @@ public class ComponentDirector extends ProcessorAccess
 			(true && getSettings().getDataSettings().storeAtEveryJump));
 		} else
 		{
-			ComponentAdministrator.getConfigurer(getEnv()).performTasks(jump_occurred);
+			ComponentOperator.getConfigurer(getEnv()).performTasks(jump_occurred);
 		}
 	}
 
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentAdministrator.getConfigurer(getEnv()).jumpingComponents();
+		ArrayList<Component> jumpComponents = ComponentOperator.getConfigurer(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)

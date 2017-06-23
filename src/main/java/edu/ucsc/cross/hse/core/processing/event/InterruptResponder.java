@@ -2,14 +2,14 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-import edu.ucsc.cross.hse.core.processing.execution.Environment;
-import edu.ucsc.cross.hse.core.processing.execution.Processor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
 /*
  * This class is used to terminate the environment early if need be.
  */
-public class InterruptHandler extends ProcessorAccess implements EventHandler
+public class InterruptResponder extends ProcessingElement implements EventHandler
 {
 
 	private boolean killFlag; // flag that indactes it is wile to kill the
@@ -18,7 +18,7 @@ public class InterruptHandler extends ProcessorAccess implements EventHandler
 	/*
 	 * Constructor that uses the environment
 	 */
-	InterruptHandler(Processor processor)
+	public InterruptResponder(CentralProcessor processor)
 	{
 		super(processor);
 	}
