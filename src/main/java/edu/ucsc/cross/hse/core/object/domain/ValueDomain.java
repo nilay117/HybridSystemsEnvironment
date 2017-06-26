@@ -22,30 +22,35 @@ public class ValueDomain<T>
 	private void assignInitialValue(T val)
 	{
 		value = val;
-
-		if (val.getClass().getSuperclass().equals(UnitValue.class))
+		try
 		{
-			unit = (Unit) ((UnitValue) val).getUnit();
-			try
+			if (val.getClass().getSuperclass().equals(UnitValue.class))
 			{
+				unit = (Unit) ((UnitValue) val).getUnit();
+				try
+				{
 
-				Double minmax = (Double) ((UnitValue) val).get(unit);
-				min = minmax;
-				max = minmax;
-			} catch (UnitException e)
+					Double minmax = (Double) ((UnitValue) val).get(unit);
+					min = minmax;
+					max = minmax;
+				} catch (UnitException e)
+				{
+					// TODO Auto-generated catch block
+					min = max = 0.0;
+					e.printStackTrace();
+				}
+			} else
 			{
-				// TODO Auto-generated catch block
-				min = max = 0.0;
-				e.printStackTrace();
+				unit = NoUnit.NONE;
+				if (val.getClass().equals(Double.class))
+				{
+					Double doubleVal = (Double) val;
+					min = max = doubleVal;
+				}
 			}
-		} else
+		} catch (Exception e)
 		{
 			unit = NoUnit.NONE;
-			if (val.getClass().equals(Double.class))
-			{
-				Double doubleVal = (Double) val;
-				min = max = doubleVal;
-			}
 		}
 	}
 

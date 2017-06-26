@@ -14,7 +14,7 @@ public class ComponentLabel
 										// Controller"
 
 	protected String name;// specific desciption of the element -ie "WD Blue 1TB
-	// Internal SSD" or "Crazyflie Nano 2.0"
+							// Internal SSD" or "Crazyflie Nano 2.0"
 
 	protected String information; // any extra information about the component
 
@@ -30,16 +30,25 @@ public class ComponentLabel
 		this.name = title;
 	}
 
+	/*
+	 * Get the general classification of the element
+	 */
 	public String getClassification()
 	{
 		return classification;
 	}
 
+	/*
+	 * Set the general classification of the element
+	 */
 	public void setClassification(String name)
 	{
 		this.classification = name;
 	}
 
+	/*
+	 * get the specific name of the element
+	 */
 	public String getName()
 	{
 		return name;
@@ -60,6 +69,12 @@ public class ComponentLabel
 		this.information = information;
 	}
 
+	/*
+	 * Get a description of the object that includes both the classification and
+	 * the name.
+	 * 
+	 * @return classification and name combinted
+	 */
 	public String getFullDescription()
 	{
 		String desc = name;

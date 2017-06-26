@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.processing.event;
 import org.apache.commons.math3.ode.events.EventHandler;
 
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
@@ -53,7 +54,7 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	{
 		getComputationEngine().updateValues(y);
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-		this.getConsole().print(getConsole().getDiscreteEventIndication());
+		SystemConsole.print(getConsole().getDiscreteEventIndication());
 		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
 		{
 			flag = -1.0 * flag;

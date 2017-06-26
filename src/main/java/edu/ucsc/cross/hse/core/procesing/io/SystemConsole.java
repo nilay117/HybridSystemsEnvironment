@@ -22,7 +22,8 @@ public class SystemConsole extends ProcessingElement
 	{
 		super(processor);
 		nextPrintTime = 0.0;
-		printInterval = getSettings().getExecutionSettings().simDuration / getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
+		printInterval = getSettings().getExecutionSettings().simDuration
+		/ getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
 	}
 
 	private void initialize()
