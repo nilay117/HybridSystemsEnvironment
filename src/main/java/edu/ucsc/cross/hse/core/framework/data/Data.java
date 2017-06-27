@@ -51,6 +51,8 @@ public class Data<T> extends Component// DynamicData<T>
 
 	protected T element; // currently stored data object
 
+	protected ValueDomain<T> elementDomain;
+
 	private UnitValue prejump; // pre-jump value stored immediately before jump
 								// occurs
 
@@ -62,37 +64,42 @@ public class Data<T> extends Component// DynamicData<T>
 
 			if (getEnvironment().isJumpOccurring())
 			{
-
-				if (defaultUnit.equals(NoUnit.NONE))
+				if (elementDomain != null)
 				{
-					if (element.equals(prejump.get(NoUnit.NONE)))
-					{
-						return (T) prejump.get(NoUnit.NONE);
-					} else
-					{
-						return element;
-					}
+					return elementDomain.getValue();
 				} else
 				{
-					UnitValue val = (UnitValue) element;
-					if (val.get(val.getUnit()).equals(((UnitValue) element).get(val.getUnit())))
+					if (defaultUnit.equals(NoUnit.NONE))
 					{
-						return element;
+						if (element.equals(prejump.get(NoUnit.NONE)))
+						{
+							return (T) prejump.get(NoUnit.NONE);
+						} else
+						{
+							return element;
+						}
 					} else
 					{
-						T oldValue = (T) ObjectCloner.xmlClone(element);
-						UnitValue oldVal = (UnitValue) oldValue;
-						oldVal.set(prejump.get(prejump.getUnit()), prejump.getUnit());
-						return oldValue;
+						UnitValue val = (UnitValue) element;
+						if (val.get(val.getUnit()).equals(((UnitValue) element).get(val.getUnit())))
+						{
+							return element;
+						} else
+						{
+							T oldValue = (T) ObjectCloner.xmlClone(element);
+							UnitValue oldVal = (UnitValue) oldValue;
+							oldVal.set(prejump.get(prejump.getUnit()), prejump.getUnit());
+							return oldValue;
+						}
 					}
 				}
-
 			} else
 			{
 				// if (1 > 0)
 				// {
 				return element;
 			}
+
 		} catch (Exception e)
 		{
 			// System.out.println(this.getHierarchy().getParentComponent().toString());
@@ -164,6 +171,33 @@ public class Data<T> extends Component// DynamicData<T>
 		// }
 	}
 
+	public void setValue(Double min, Double max)
+	{
+		setValue(min, max, defaultUnit);
+	}
+
+	public void setValue(Double min, Double max, Unit unit)
+	{
+		try
+		{
+			ValueDomain<T> domain = new ValueDomain<T>(element);
+			domain.setRandomValues(min, max, unit);
+			T randVal = domain.getValue();
+			element = randVal;
+
+			if (!ComponentOperator.getOperator(this).isInitialized())
+			{
+				elementDomain = domain;
+				initialVal.setRandomValues(min, max, unit);
+			}
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	public T getDerivative()
 	{
 		if (derivative == null)
@@ -222,6 +256,7 @@ public class Data<T> extends Component// DynamicData<T>
 	protected Data(T obj, DataTypeProperties type, String name, String description, Boolean save_default)
 	{
 		super(name, description);
+		elementDomain = null;
 		element = obj;
 		dataType = type;
 		derivative = cloneZeroDerivative(element);

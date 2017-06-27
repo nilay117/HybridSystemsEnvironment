@@ -8,7 +8,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 
@@ -88,7 +88,7 @@ public class ComponentWorker
 	public Boolean isJumpOccurring()
 	{
 		Boolean jumpOccurred = false;
-		for (HybridDynamicalModel localBehavior : component.getContents().getObjects(HybridDynamicalModel.class, true))
+		for (HybridSystem localBehavior : component.getContents().getObjects(HybridSystem.class, true))
 		{
 			try
 			{

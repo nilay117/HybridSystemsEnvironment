@@ -10,7 +10,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
-import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 
 /*
@@ -73,12 +73,12 @@ public class ComponentOperator extends ComponentWorker
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
 		for (Component localBehavior : component.getContents().getObjects(Component.class, true,
-		HybridDynamicalModel.class))// ,
+		HybridSystem.class))// ,
 		// DynamicalModel.class))
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring((HybridDynamicalModel) localBehavior,
+				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring((HybridSystem) localBehavior,
 				true);
 				if (jumpOccurring != null)
 				{
@@ -117,7 +117,7 @@ public class ComponentOperator extends ComponentWorker
 	public void performTasks(boolean jump_occurring)
 	{
 
-		for (HybridDynamicalModel localBehavior : component.getContents().getObjects(HybridDynamicalModel.class, true))
+		for (HybridSystem localBehavior : component.getContents().getObjects(HybridSystem.class, true))
 		{
 			try
 			{

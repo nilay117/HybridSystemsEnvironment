@@ -66,7 +66,6 @@ public class ValueDomain<T>
 	public void setFixedValue(Double val)
 	{
 		min = max = val;
-
 	}
 
 	@SuppressWarnings("unchecked")

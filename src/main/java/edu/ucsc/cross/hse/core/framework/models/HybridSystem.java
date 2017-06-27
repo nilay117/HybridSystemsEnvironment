@@ -2,11 +2,11 @@ package edu.ucsc.cross.hse.core.framework.models;
 
 /*
  * This interface declares the functions needed to define a hybrid dynamical
- * model based on the framework used by Dr. Sanfelice and other members of
+ * system based on the framework used by Dr. Sanfelice and other members of
  * Hybrid Systems Lab at the University of California. More details can be found
  * at https://hybrid.soe.ucsc.edu/
  */
-public interface HybridDynamicalModel
+public interface HybridSystem
 {
 
 	/*

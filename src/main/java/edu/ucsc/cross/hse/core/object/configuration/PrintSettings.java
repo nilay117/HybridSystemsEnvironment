@@ -39,7 +39,7 @@ public class PrintSettings
 	{
 		totalSimTimePrintOuts = 20;
 		printProgressUpdates = true;
-		printDiscreteEventIndicator = false;
+		printDiscreteEventIndicator = true;
 		printCallingClass = true;
 		printMemoryUsage = true;
 		printCurrentTime = true;

@@ -4,7 +4,7 @@ import bs.commons.unitvars.values.Velocity;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataFactory;
-import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 
 public class TestState extends Component
 {

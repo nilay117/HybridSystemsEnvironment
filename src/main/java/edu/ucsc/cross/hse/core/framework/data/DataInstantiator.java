@@ -1,5 +1,9 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
+/*
+ * This class defines the data creation methods for all (current) possible
+ * initial condition
+ */
 public interface DataInstantiator
 {
 

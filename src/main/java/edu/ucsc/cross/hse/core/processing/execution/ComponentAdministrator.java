@@ -9,7 +9,7 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.models.HybridDynamicalModel;
+import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 
 /*
  * This class controls all of the components so that they are setup correctly
@@ -30,7 +30,7 @@ public class ComponentAdministrator extends ProcessingElement
 	{
 		if (jump_occurred)
 		{
-			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() - .000001,
+			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() - .00000001,
 			(true && getSettings().getDataSettings().storeAtEveryJump));
 
 			executeAllOccurringJumps();
@@ -50,7 +50,7 @@ public class ComponentAdministrator extends ProcessingElement
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
 		{
-			HybridDynamicalModel dynamics = ((HybridDynamicalModel) component);
+			HybridSystem dynamics = ((HybridSystem) component);
 			dynamics.jumpMap();
 			this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		}
@@ -86,8 +86,7 @@ public class ComponentAdministrator extends ProcessingElement
 	 * @param jump_occurring - flag indicating if a global jump is occurring.
 	 * This happens when a jump occurs for any system within the environment
 	 */
-	public static boolean applyDynamics(HybridDynamicalModel dynamics, boolean jump_priority,
-	boolean global_jump_occurring)
+	public static boolean applyDynamics(HybridSystem dynamics, boolean jump_priority, boolean global_jump_occurring)
 	{
 		boolean jumpOccurred = false;
 		if (!jump_priority)
@@ -138,7 +137,7 @@ public class ComponentAdministrator extends ProcessingElement
 	 * 
 	 * @return true if jump is occurring, false otherwise
 	 */
-	public static boolean flowOccurring(HybridDynamicalModel dynamics, boolean jump_priority)
+	public static boolean flowOccurring(HybridSystem dynamics, boolean jump_priority)
 	{
 		boolean dom = false;
 		if (!jump_priority)
@@ -171,7 +170,7 @@ public class ComponentAdministrator extends ProcessingElement
 	 * 
 	 * @return true if jump is occurring, false otherwise
 	 */
-	public static boolean jumpOccurring(HybridDynamicalModel dynamics, boolean jump_priority)
+	public static boolean jumpOccurring(HybridSystem dynamics, boolean jump_priority)
 	{
 		boolean dom = false;
 		if (!jump_priority)
