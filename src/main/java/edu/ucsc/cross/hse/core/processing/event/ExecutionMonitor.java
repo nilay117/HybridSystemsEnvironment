@@ -195,9 +195,16 @@ public class ExecutionMonitor extends ProcessingElement
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
+
+			//getEnvironmentOperator().getEnvironmentHybridTime().setTime(getComputationEngine().pastT);
+			//this.getData().removeLastDataPoint();
+			//getComputationEngine().updateValues(getComputationEngine().pastY);
 			// this.getComponents().performAllTasks(true);//
 			// getComponents().performAllTasks(true);
-			this.getComponents().performAllTasks(ComponentOperator.getOperator(getEnv()).isJumpOccurring());
+			//getComponents().performAllTasks(true);
+			this.getData().restoreDataAfterIntegratorFail();
+			//this.getComputationEngine().zeroAllDerivatives();
+
 			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);

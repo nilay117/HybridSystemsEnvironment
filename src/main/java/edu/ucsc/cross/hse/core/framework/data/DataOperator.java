@@ -65,4 +65,16 @@ public class DataOperator<T> extends ComponentOperator
 		element.storePreJumpValue();
 	}
 
+	public void removeDataValue(Double time)
+	{
+		if (element.getActions().getStoredValues().containsKey(time))
+		{
+			element.getActions().getStoredValues().remove(time);
+		}
+	}
+
+	public void setFlow(boolean flow)
+	{
+		element.setDerivative(element.zeroDerivative);
+	}
 }

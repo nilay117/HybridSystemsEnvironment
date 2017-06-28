@@ -32,11 +32,13 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 																// before and
 																// after a jump
 
+	ArrayList<Double> storeTimes;
+
 	public DataHandler(CentralProcessor processor)
 	{
 		super(processor);
 		dataElementsToStore = new ArrayList<Data>();
-
+		storeTimes = new ArrayList<Double>();
 	}
 
 	public Data getDataByIndex(Integer index)
@@ -111,11 +113,24 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 	public void storeData(Double time)
 	{
+		storeTimes.add(time);
 		for (Data element : dataElementsToStore)
 		{
 			if (getDataOperator(element).isDataStored())
 			{
 				getDataOperator(element).storeValue(time);
+			}
+		}
+		// IO.out(getConsole().getDataElementStoreString(time, true));
+	}
+
+	public void removeLastDataPoint()
+	{
+		for (Data element : dataElementsToStore)
+		{
+			if (getDataOperator(element).isDataStored())
+			{
+				getDataOperator(element).removeDataValue(lastStoreTime);
 			}
 		}
 		// IO.out(getConsole().getDataElementStoreString(time, true));
@@ -155,5 +170,35 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 			}
 		}
+	}
+
+	public void restoreDataAfterIntegratorFail()
+	{
+		Double revertTime = findRevertTime();
+		for (Data element : dataElementsToStore)
+		{
+			if (getDataOperator(element).isDataStored())
+			{
+				element.setValue(element.getActions().getStoredValue(revertTime));
+			}
+		}
+		this.setEnvTime(revertTime);
+	}
+
+	private Double findRevertTime()
+	{
+		Double revertTime = getEnv().getEnvironmentTime() - this.getSettings().getComputationSettings().odeMaxStep;
+		Double time = 0.0;
+		for (Double t : storeTimes)
+		{
+			if (t > revertTime)
+			{
+				break;
+			} else
+			{
+				time = t;
+			}
+		}
+		return time;
 	}
 }

@@ -34,10 +34,12 @@ public class Data<T> extends Component// DynamicData<T>
 	private final boolean cloneToStore; // flag indicating if object needs to be
 										// cloned to be stored correctly
 
+	protected boolean flowing;
+
 	protected DataTypeProperties dataType; // classification of the data
 											// element, ie
-	// Hybrid
-	// State or Property
+											// Hybrid
+											// State or Property
 
 	protected Unit defaultUnit; // default unit (NoUnit class if object has
 								// units)
@@ -55,6 +57,8 @@ public class Data<T> extends Component// DynamicData<T>
 
 	private UnitValue prejump; // pre-jump value stored immediately before jump
 								// occurs
+
+	protected T zeroDerivative;
 
 	public T getValue()
 	{
@@ -217,6 +221,7 @@ public class Data<T> extends Component// DynamicData<T>
 		if (dataType.changesContinuously())
 		{
 			this.derivative = derivative;
+			flowing = true;
 		} else
 		{
 			// IO.warn("attempted to set derivative of " + get().toString() + "
@@ -256,10 +261,12 @@ public class Data<T> extends Component// DynamicData<T>
 	protected Data(T obj, DataTypeProperties type, String name, String description, Boolean save_default)
 	{
 		super(name, description);
+		flowing = false;
 		elementDomain = null;
 		element = obj;
 		dataType = type;
 		derivative = cloneZeroDerivative(element);
+		zeroDerivative = cloneZeroDerivative(element);
 		this.element = obj;
 		save = save_default;
 		defaultUnit = NoUnit.NONE;

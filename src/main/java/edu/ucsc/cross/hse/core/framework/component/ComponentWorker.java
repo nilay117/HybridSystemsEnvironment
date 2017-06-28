@@ -11,6 +11,7 @@ import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 
 /*
  * This class contains the methods available to users that perform a variety of
@@ -146,5 +147,12 @@ public class ComponentWorker
 	public void setSimulated(boolean simulated)
 	{
 		ComponentOperator.getOperator(component).setSimulated(simulated);
+	}
+
+	public boolean equalsZero(Double value)
+	{
+		Double zeroThreshold = HybridEnvironment.getEnvironment(component.getEnvironment().toString()).getSettings()
+		.getComputationSettings().zeroThreshold;
+		return Math.abs(value) <= zeroThreshold;
 	}
 }

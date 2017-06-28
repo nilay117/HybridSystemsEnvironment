@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
+import java.util.HashMap;
+
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
@@ -12,12 +14,14 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 public class HybridEnvironment
 {
 
+	private static HashMap<String, HybridEnvironment> environments = new HashMap<String, HybridEnvironment>();
+
 	private EnvironmentContent content; // all elements that make up the
 	// environment
 	// itself such as data, components, systems
 	// etc
 	protected CentralProcessor processor; // environment processor that handles events,
-									// computations, maintenance, etc
+	// computations, maintenance, etc
 	private SettingConfigurer settings; // collection of settings that
 										// configure the performance of the
 										// environment
@@ -157,6 +161,7 @@ public class HybridEnvironment
 
 	private void initializeComponents(boolean pre_loaded_content)
 	{
+		environments.put(content.toString(), this);
 		settings = FileExchanger.loadSettings();
 		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
@@ -165,4 +170,14 @@ public class HybridEnvironment
 		}
 	}
 
+	public static HybridEnvironment getEnvironment(String content_id)
+	{
+		if (environments.containsKey(content_id))
+		{
+			return environments.get(content_id);
+		} else
+		{
+			return null;
+		}
+	}
 }

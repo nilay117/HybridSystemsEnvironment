@@ -12,6 +12,7 @@ import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
@@ -34,6 +35,8 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	 * always be ready for use in the ode
 	 */
 	private HashMap<Integer, Data> odeVectorMap;
+	public double pastY[];
+	public double pastT;
 
 	/*
 	 * Constructor to link the central processor
@@ -56,6 +59,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	{
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
+
 			Data element = odeVectorMap.get(odeIndex);
 			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
 			{
@@ -92,11 +96,25 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	public void computeDerivatives(double t, double[] y, double[] yDot)
 	throws MaxCountExceededException, DimensionMismatchException
 	{
+		//storePastY(y, t);
+		//getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		updateValues(y);
 		getConsole().printUpdates();
-		zeroAllDerivatives();
+		//zeroAllDerivatives();
+
 		ComponentOperator.getOperator(getEnv()).performTasks(false);
+
 		updateYDotVector(yDot);
+	}
+
+	private void storePastY(double[] y, Double t)
+	{
+		pastT = t;
+		for (int i = 0; i < y.length; i++)
+		{
+			pastY[i] = y[i];
+		}
 	}
 
 	/*
@@ -131,7 +149,9 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 				}
 			}
 			y[odeIndex] = derivative;// .getDerivative();
+
 		}
+
 	}
 
 	/*
@@ -263,14 +283,15 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 				// e.printStackTrace();
 			}
 		}
+		pastY = new double[odeIndex];
 		System.out.println("ODE Vector Length: " + odeIndex);
 	}
 
-	private void zeroAllDerivatives()
+	public void zeroAllDerivatives()
 	{
 		for (Data data : odeVectorMap.values())
 		{
-			data.setDerivative(null);
+			DataOperator.getOperator(data).setFlow(false);
 		}
 	}
 }
