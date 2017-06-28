@@ -31,9 +31,9 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
-		//	getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		getComputationEngine().updateValues(y);
-		if (ComponentOperator.getOperator(getEnv()).isJumpOccurring())
+		if (this.getComponentOperator(getEnv()).isJumpOccurring())
 		{
 			flag = -1 * flag;
 			toggles = toggles + 1;
@@ -71,7 +71,7 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 		getComputationEngine().updateValues(y);
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		getComponents().performAllTasks(true);
-		getComponents().performAllTasks(false);
+		//	getComponents().performAllTasks(false);
 		getComputationEngine().setODEValueVector(y);
 		y = getComputationEngine().getODEValueVector();
 

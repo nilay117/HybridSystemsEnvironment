@@ -27,8 +27,8 @@ public class CentralProcessor
 	protected HybridEnvironment environmentInterface; // main user interface
 
 	protected ContentOperator contentAdmin; // operates the main
-														// global environment
-														// component
+											// global environment
+											// component
 
 	protected ComponentAdministrator componentAdmin; // controls all components
 
@@ -48,11 +48,11 @@ public class CentralProcessor
 											// discrete events
 
 	protected InterruptResponder interruptResponder; // reacts to user or system
-												// interruptions to keep the
-												// system from crashing
+	// interruptions to keep the
+	// system from crashing
 
 	protected FileExchanger fileExchanger; // manages all file input and output
-										// tasks
+											// tasks
 
 	protected SystemConsole systemConsole; // prints system notifications and
 											// any user defined outputs
@@ -90,6 +90,8 @@ public class CentralProcessor
 	{
 		prepareEnvironment();
 		simulationEngine.initialize();
+		dataHandler.storeData(0.0, true);
+		componentAdmin.performAllTasks(false);
 		executionMonitor.runSim(false);
 	}
 

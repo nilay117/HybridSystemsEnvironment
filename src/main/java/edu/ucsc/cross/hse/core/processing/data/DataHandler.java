@@ -174,15 +174,20 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 	public void restoreDataAfterIntegratorFail()
 	{
+
 		Double revertTime = findRevertTime();
-		for (Data element : dataElementsToStore)
+		if (revertTime >= 0)
 		{
-			if (getDataOperator(element).isDataStored())
+			for (Data element : dataElementsToStore)
 			{
-				element.setValue(element.getActions().getStoredValue(revertTime));
+				if (getDataOperator(element).isDataStored())
+				{
+					element.setValue(element.getActions().getStoredValue(revertTime));
+				}
 			}
+			this.setEnvTime(revertTime);
+			//this.getComponents().performAllTasks(false);
 		}
-		this.setEnvTime(revertTime);
 	}
 
 	private Double findRevertTime()

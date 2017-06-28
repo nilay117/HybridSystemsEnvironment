@@ -101,10 +101,15 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		updateValues(y);
 		getConsole().printUpdates();
-		//zeroAllDerivatives();
-
-		ComponentOperator.getOperator(getEnv()).performTasks(false);
-
+		if (!this.getComponentOperator(getEnv()).isJumpOccurring())
+		{
+			zeroAllDerivatives();
+		}
+		if (!this.getComponentOperator(getEnv()).isJumpOccurring())
+		{
+			this.getComponents().performAllTasks(false);
+			//ComponentOperator.getOperator(getEnv()).performTasks(false);
+		}
 		updateYDotVector(yDot);
 	}
 
@@ -291,7 +296,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	{
 		for (Data data : odeVectorMap.values())
 		{
-			DataOperator.getOperator(data).setFlow(false);
+			data.setDerivative(null);
 		}
 	}
 }

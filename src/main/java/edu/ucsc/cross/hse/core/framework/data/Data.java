@@ -206,7 +206,7 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		if (derivative == null)
 		{
-			this.setDerivative(cloneZeroDerivative(element));
+			//		return zeroDerivative;//this.setDerivative(cloneZeroDerivative(element));
 		}
 		if (!dataType.changesContinuously())// (CoreData.DYNAMIC_STATE))
 		{
@@ -265,9 +265,9 @@ public class Data<T> extends Component// DynamicData<T>
 		elementDomain = null;
 		element = obj;
 		dataType = type;
-		derivative = cloneZeroDerivative(element);
-		zeroDerivative = cloneZeroDerivative(element);
-		this.element = obj;
+		derivative = (T) ObjectCloner.xmlClone(obj);
+		//zeroDerivative = cloneZeroDerivative(element);
+		//this.element = obj;
 		save = save_default;
 		defaultUnit = NoUnit.NONE;
 		savedValues = new HashMap<Double, T>();

@@ -72,14 +72,12 @@ public class ComponentOperator extends ComponentWorker
 		ArrayList<Component> jumpComponents = new ArrayList<Component>();
 		// System.out.println(getEnvironment().getMatchingComponents(Component.class,
 		// true));
-		for (Component localBehavior : component.getContents().getObjects(Component.class, true,
-		HybridSystem.class))// ,
+		for (Component localBehavior : component.getContents().getObjects(Component.class, true, HybridSystem.class))// ,
 		// DynamicalModel.class))
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring((HybridSystem) localBehavior,
-				true);
+				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring((HybridSystem) localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					if (jumpOccurring)
@@ -123,16 +121,17 @@ public class ComponentOperator extends ComponentWorker
 			{
 
 				boolean jumpOccurred = false;
-				if (ComponentAdministrator.jumpOccurring(localBehavior, true))
-				{
-					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
-				} else if (ComponentAdministrator.flowOccurring(localBehavior, true))
-				{
-					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
-				} else
-				{
-
-				}
+				//				if (ComponentAdministrator.jumpOccurring(localBehavior, true))
+				//				{
+				//					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
+				//				} else if (ComponentAdministrator.flowOccurring(localBehavior, true))
+				//				{
+				//					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
+				//				} else
+				//				{
+				//
+				//				}
+				jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
 				if (jumpOccurred)
 				{
 					ContentOperator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()

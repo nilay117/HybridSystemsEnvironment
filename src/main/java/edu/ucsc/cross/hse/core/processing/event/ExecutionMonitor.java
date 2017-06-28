@@ -184,7 +184,7 @@ public class ExecutionMonitor extends ProcessingElement
 	{
 		try
 		{
-			Double stopTime = integrator.integrate(ode, getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
+			Double stopTime = integrator.integrate(ode, getEnv().getEnvironmentTime(),
 			getComputationEngine().getODEValueVector(), getSettings().getExecutionSettings().simDuration,
 			getComputationEngine().getODEValueVector());
 			return stopTime;
@@ -202,9 +202,14 @@ public class ExecutionMonitor extends ProcessingElement
 			// this.getComponents().performAllTasks(true);//
 			// getComponents().performAllTasks(true);
 			//getComponents().performAllTasks(true);
-			this.getData().restoreDataAfterIntegratorFail();
-			//this.getComputationEngine().zeroAllDerivatives();
-
+			if (this.getComponentOperator(getEnv()).isJumpOccurring())
+			{
+				this.getData().restoreDataAfterIntegratorFail();
+				//getComponents().performAllTasks(this.getComponentOperator(getEnv()).isJumpOccurring());
+			}
+			//getComponents().performAllTasks(getEnv().isJumpOccurring());
+			//			this.getComputationEngine().zeroAllDerivatives();
+			//		getComponents().performAllTasks(false);
 			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize)
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
