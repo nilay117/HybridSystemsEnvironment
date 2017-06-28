@@ -6,6 +6,8 @@ import bs.commons.objects.execution.Initializer;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
+import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core2.framework.component.ComponentAddress;
 import edu.ucsc.cross.hse.core2.framework.environment.GlobalSystemInterface;
@@ -126,4 +128,8 @@ public abstract class Component implements Initializer
 
 	}
 
+	public SettingConfigurer getSettings()
+	{
+		return HybridEnvironment.getEnvironment(contents.getEnvironmentKey()).getSettings();
+	}
 }

@@ -89,24 +89,66 @@ public class CentralProcessor
 	 */
 	protected void start()
 	{
-		EnvironmentContent c = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
-		//correctPotentialSettingErrors();
+		// EnvironmentContent c = (EnvironmentContent)
+		// ObjectCloner.xmlClone(environmentInterface.getContents());
+		// correctPotentialSettingErrors();
 		prepareEnvironment();
-		simulationEngine.initialize();
 
-		dataHandler.storeData(0.0, true);
+		executionMonitor.runSim(environmentInterface.getSettings().getExecutionSettings().runThreadded);
 
-		executionMonitor.runSim(false);
-
-		environmentInterface.loadContents(c);
+		// environmentInterface.loadContents(c);
 		initializeProcessingElements();
 		prepareEnvironment();
 		simulationEngine.initialize();
 
-		dataHandler.storeData(0.0, true);
+		// dataHandler.storeData(0.0, true);
 
 		executionMonitor.runSim(false);
 
+	}
+
+	protected void starzt()
+	{
+		// HybridEnvironment c = (HybridEnvironment)
+		// ObjectCloner.xmlClone(environmentInterface);
+		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
+		// EnvironmentContent content = (EnvironmentContent)
+		// ObjectCloner.xmlClone(environmentInterface.getContents());
+		// this.environmentInterface = c;
+		// c.loadContents((EnvironmentContent) ObjectCloner.xmlClone(ct));
+		Boolean success = false;
+		while (!success)
+		{
+			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
+			environmentInterface.loadContents(content);
+			initializeProcessingElements();
+			;
+			contentAdmin.prepareEnvironmentContent();
+			simulationEngine.initialize();
+			dataHandler.loadStoreStates();
+			interruptResponder = new InterruptResponder(this);
+			success = executionMonitor.runSim(false);// executeEnvironment((EnvironmentContent)
+														// ObjectCloner.xmlClone(content));
+			System.out.println(success);
+		}
+
+	}
+
+	/*
+	 * Gets the environment ready for execution
+	 */
+	protected boolean executeEnvironment(EnvironmentContent content)
+	{
+		environmentInterface.loadContents(content);
+		// initializeProcessingElements();
+		contentAdmin = ContentOperator.getContentAdministrator(content);
+		contentAdmin.prepareEnvironmentContent();
+		simulationEngine.initialize();
+		dataHandler.loadStoreStates();
+		simulationEngine.initialize();
+		dataHandler.storeData(0.0, true);
+		interruptResponder = new InterruptResponder(this);
+		return executionMonitor.runSim(false);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
 
 	/*
@@ -114,19 +156,20 @@ public class CentralProcessor
 	 */
 	protected void prepareEnvironment()
 	{
-		contentAdmin = ContentOperator.getContentAdministrator(environmentInterface.getContents());
-		contentAdmin.prepareEnvironmentContent();
-		simulationEngine.initialize();
-		dataHandler.loadStoreStates();
+		executeEnvironment(environmentInterface.getContents());
+
 	}
 
 	protected void correctPotentialSettingErrors()
 	{
-		//		Double ehInterval = environmentInterface.getSettings().getComputationSettings().ehMaxCheckInterval;
-		//		if (ehInterval < environmentInterface.getSettings().getComputationSettings().odeMaxStep)
-		//		{
-		//			environmentInterface.getSettings().getComputationSettings().odeMaxStep = ehInterval;
-		//		}
+		// Double ehInterval =
+		// environmentInterface.getSettings().getComputationSettings().ehMaxCheckInterval;
+		// if (ehInterval <
+		// environmentInterface.getSettings().getComputationSettings().odeMaxStep)
+		// {
+		// environmentInterface.getSettings().getComputationSettings().odeMaxStep
+		// = ehInterval;
+		// }
 		if (environmentInterface.getSettings().getComputationSettings().odeMinStep > environmentInterface.getSettings()
 		.getComputationSettings().odeMaxStep)
 		{

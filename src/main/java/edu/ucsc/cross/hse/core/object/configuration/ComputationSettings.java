@@ -38,8 +38,8 @@ public class ComputationSettings
 	// list of enumerator options which are printed in the output file to help
 	// with seection
 
-	public double handlingThresholdReductionFactor = 1.0;// 2.0;
-	public double stepSizeReductionFactor = 1.1;// .3;
+	public double handlingThresholdReductionFactor = 1.1;// 2.0;
+	public double stepSizeReductionFactor = 1.3;// .3;
 
 	// available of integrator types for use
 	public static enum IntegratorType

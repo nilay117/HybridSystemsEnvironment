@@ -197,7 +197,12 @@ public class ComponentAdministrator extends ProcessingElement
 
 	public boolean outOfAllDomains()
 	{
-		return (!(this.getComponentOperator(getEnv()).isJumpOccurring()
-		|| this.getComponentOperator(getEnv()).isFlowOccurring()));
+		return outOfAllDomains(getEnv());
+	}
+
+	public boolean outOfAllDomains(Component component)
+	{
+		return (!this.getComponentOperator(component).isJumpOccurring()
+		&& !this.getComponentOperator(component).isFlowOccurring());
 	}
 }

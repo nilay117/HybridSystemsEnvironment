@@ -10,6 +10,7 @@ import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 
@@ -181,4 +182,8 @@ public class ComponentWorker
 		ComponentOperator.getOperator(component).setSimulated(simulated);
 	}
 
+	public SettingConfigurer getSettings()
+	{
+		return HybridEnvironment.getEnvironment(component.contents.getEnvironmentKey()).getSettings();
+	}
 }

@@ -22,6 +22,10 @@ public class ExecutionSettings
 	public Integer jumpLimit; // maximum number of jumps before terminating the
 								// environment, null indicating unlimited
 
+	public boolean rerunOnFatalErrors;
+
+	public boolean rerunUntilNoErrors;
+
 	/*
 	 * Default values constructorc
 	 */
@@ -31,6 +35,8 @@ public class ExecutionSettings
 		maxParallelExecutions = 1;
 		simDuration = 20.0;
 		jumpLimit = 100;
-		runThreadded = true;
+		runThreadded = false;
+		rerunOnFatalErrors = true;
+		rerunUntilNoErrors = true;
 	}
 }
