@@ -31,15 +31,15 @@ public class PrintSettings
 										// ie "[16:24:12][2250/11776
 										// Mb][EventMonitor] Integrator failure
 										// bla bla bla..."
-	/*
-	 * Default constructor
-	 */
+										/*
+										 * Default constructor
+										 */
 
 	public PrintSettings()
 	{
 		totalSimTimePrintOuts = 20;
 		printProgressUpdates = true;
-		printDiscreteEventIndicator = true;
+		printDiscreteEventIndicator = false;
 		printCallingClass = true;
 		printMemoryUsage = true;
 		printCurrentTime = true;

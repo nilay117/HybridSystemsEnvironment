@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
+import bes.commons.data.cloning.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
@@ -70,7 +71,7 @@ public class CentralProcessor
 	 * Initializes all processing elements and links them to this central
 	 * processor, which allows them to access each other
 	 */
-	protected void initializeProcessingElements()
+	public void initializeProcessingElements()
 	{
 		contentAdmin = ContentOperator.getContentAdministrator(environmentInterface.getContents());
 		simulationEngine = new SimulationEngine(this);
@@ -88,11 +89,24 @@ public class CentralProcessor
 	 */
 	protected void start()
 	{
+		EnvironmentContent c = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
+		//correctPotentialSettingErrors();
 		prepareEnvironment();
 		simulationEngine.initialize();
+
 		dataHandler.storeData(0.0, true);
-		componentAdmin.performAllTasks(false);
+
 		executionMonitor.runSim(false);
+
+		environmentInterface.loadContents(c);
+		initializeProcessingElements();
+		prepareEnvironment();
+		simulationEngine.initialize();
+
+		dataHandler.storeData(0.0, true);
+
+		executionMonitor.runSim(false);
+
 	}
 
 	/*
@@ -104,6 +118,27 @@ public class CentralProcessor
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		dataHandler.loadStoreStates();
+	}
+
+	protected void correctPotentialSettingErrors()
+	{
+		//		Double ehInterval = environmentInterface.getSettings().getComputationSettings().ehMaxCheckInterval;
+		//		if (ehInterval < environmentInterface.getSettings().getComputationSettings().odeMaxStep)
+		//		{
+		//			environmentInterface.getSettings().getComputationSettings().odeMaxStep = ehInterval;
+		//		}
+		if (environmentInterface.getSettings().getComputationSettings().odeMinStep > environmentInterface.getSettings()
+		.getComputationSettings().odeMaxStep)
+		{
+			environmentInterface.getSettings().getComputationSettings().odeMinStep = environmentInterface.getSettings()
+			.getComputationSettings().odeMaxStep / 2;
+		}
+		if (environmentInterface.getSettings().getDataSettings().dataStoreIncrement < environmentInterface.getSettings()
+		.getComputationSettings().odeMinStep)
+		{
+			environmentInterface.getSettings().getDataSettings().dataStoreIncrement = environmentInterface.getSettings()
+			.getComputationSettings().odeMinStep;
+		}
 	}
 
 }

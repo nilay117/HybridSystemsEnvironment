@@ -32,8 +32,6 @@ public class ComputationSettings
 										// occurrs when a jump (unrecoverably)
 										// interrupts the ode
 
-	public double zeroThreshold = 0.0001; // threshold to call a value equal to zero
-
 	public IntegratorType integrator; // Integrator to be used
 
 	public final String integratorOptions = IntegratorType.enumNames();

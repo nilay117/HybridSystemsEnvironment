@@ -42,25 +42,17 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	@Override
 	public double g(double t, double[] y)
 	{
-		if (outOfDomain())
+
+		//System.out.println(this.getComponents().outOfAllDomains());
+		if (killFlag || this.getComponents().outOfAllDomains())// || outOfDomain())
 		{
 			killSim();
-		}
-		//System.out.println(outOfDomains());
-		if (killFlag)// || outOfDomain())
-		{
 			//	this.getComputationEngine().zeroAllDerivatives();
-			return -1;
+			return -.0000000001;
 		} else
 		{
 			return 1;
 		}
-	}
-
-	public boolean outOfDomain()
-	{
-		return (!(this.getComponentOperator(getEnv()).isJumpOccurring()
-		|| this.getComponentOperator(getEnv()).isFlowOccurring()));
 	}
 
 	/*
@@ -69,7 +61,8 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	@Override
 	public Action eventOccurred(double t, double[] y, boolean increasing)
 	{
-		if (killFlag || outOfDomain())
+		System.out.println("here");
+		if (killFlag)// || this.getComponents().outOfAllDomains())
 		{
 			return EventHandler.Action.STOP;
 		} else

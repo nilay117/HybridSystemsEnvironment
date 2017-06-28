@@ -118,6 +118,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void setValue(T element)
 	{
+		this.element = element;
 		// if (this.element.getClass().equals(element.getClass()))
 		{
 			if (!ComponentOperator.getOperator(this).isInitialized())

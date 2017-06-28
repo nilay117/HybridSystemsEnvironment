@@ -195,4 +195,9 @@ public class ComponentAdministrator extends ProcessingElement
 		return dom;
 	}
 
+	public boolean outOfAllDomains()
+	{
+		return (!(this.getComponentOperator(getEnv()).isJumpOccurring()
+		|| this.getComponentOperator(getEnv()).isFlowOccurring()));
+	}
 }

@@ -35,8 +35,6 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	 * always be ready for use in the ode
 	 */
 	private HashMap<Integer, Data> odeVectorMap;
-	public double pastY[];
-	public double pastT;
 
 	/*
 	 * Constructor to link the central processor
@@ -99,24 +97,14 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		updateValues(y);
 		getConsole().printUpdates();
-		if (!this.getComponentOperator(getEnv()).isJumpOccurring())
-		{
-			zeroAllDerivatives();
-		}
-		if (!this.getComponentOperator(getEnv()).isJumpOccurring())
+
+		zeroAllDerivatives();
+
+		//if (!this.getComponentOperator(getEnv()).isJumpOccurring())
 		{
 			this.getComponents().performAllTasks(false);
 		}
 		updateYDotVector(yDot);
-	}
-
-	private void storePastY(double[] y, Double t)
-	{
-		pastT = t;
-		for (int i = 0; i < y.length; i++)
-		{
-			pastY[i] = y[i];
-		}
 	}
 
 	/*
@@ -285,7 +273,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 				// e.printStackTrace();
 			}
 		}
-		pastY = new double[odeIndex];
+
 		System.out.println("ODE Vector Length: " + odeIndex);
 	}
 

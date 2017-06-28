@@ -8,8 +8,11 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
+import bes.commons.data.cloning.ObjectCloner;
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
@@ -142,6 +145,7 @@ public class ExecutionMonitor extends ProcessingElement
 
 	public void launchEnvironment()
 	{
+
 		launchEnvironment(null);
 
 	}
@@ -171,7 +175,7 @@ public class ExecutionMonitor extends ProcessingElement
 	{
 		Double endTime = 0.0;
 		// getComponents().performAllTasks(true);
-		while (endTime < duration)
+		while (endTime < duration && !this.getInterruptHandler().isTerminating())
 		{
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
 		}
@@ -202,20 +206,8 @@ public class ExecutionMonitor extends ProcessingElement
 			// this.getComponents().performAllTasks(true);//
 			// getComponents().performAllTasks(true);
 			//getComponents().performAllTasks(true);
-			if (this.getComponentOperator(getEnv()).isJumpOccurring() || this.getInterruptHandler().outOfDomain())
-			{
-				if (!this.getInterruptHandler().isTerminating())
-				{
-					if (this.getInterruptHandler().outOfDomain())
-					{
-						this.getInterruptHandler().killSim();
-					}
-					System.out.println("e");
-					this.getData().restoreDataAfterIntegratorFail();
-				}
-
-				//getComponents().performAllTasks(this.getComponentOperator(getEnv()).isJumpOccurring());
-			}
+			//	if (this.getComponentOperator(getEnv()).isJumpOccurring() || this.getComponents().outOfAllDomains())// || this.getInterruptHandler().outOfDomain())
+			//restoreDataIfTerminalFail(e);
 			//getComponents().performAllTasks(getEnv().isJumpOccurring());
 			//			this.getComputationEngine().zeroAllDerivatives();
 			//		getComponents().performAllTasks(false);
@@ -231,12 +223,21 @@ public class ExecutionMonitor extends ProcessingElement
 
 	}
 
+	private void restoreDataIfTerminalFail(Exception exc)
+	{
+		if (this.getComponents().outOfAllDomains())// && !this.getInterruptHandler().isTerminating())
+		//if (exc.getClass().equals(NumberIsTooSmallException.class))
+		{
+			this.getData().restoreDataAfterIntegratorFail();
+		}
+	}
+
 	private boolean handleStepSizeIssues(Exception exc)
 	{
 		boolean handledIssue = false;
 		if (exc.getClass().equals(NumberIsTooSmallException.class))
 		{
-			this.getConsole()
+			SystemConsole
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
 			getSettings().getComputationSettings().odeMaxStep = getSettings().getComputationSettings().odeMaxStep
 			/ getSettings().getComputationSettings().stepSizeReductionFactor;

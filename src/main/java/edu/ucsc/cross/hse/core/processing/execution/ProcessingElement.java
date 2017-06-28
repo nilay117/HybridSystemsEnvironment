@@ -101,6 +101,11 @@ public abstract class ProcessingElement
 		return proc.componentAdmin;
 	}
 
+	protected CentralProcessor getCenter()
+	{
+		return proc;
+	}
+
 	// @Override
 	protected HybridEnvironment getProcessor()
 	{

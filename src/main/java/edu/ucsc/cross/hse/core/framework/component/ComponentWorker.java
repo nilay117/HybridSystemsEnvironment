@@ -181,10 +181,4 @@ public class ComponentWorker
 		ComponentOperator.getOperator(component).setSimulated(simulated);
 	}
 
-	public boolean equalsZero(Double value)
-	{
-		Double zeroThreshold = HybridEnvironment.getEnvironment(component.getEnvironment().toString()).getSettings()
-		.getComputationSettings().zeroThreshold;
-		return Math.abs(value) <= zeroThreshold;
-	}
 }
