@@ -202,9 +202,18 @@ public class ExecutionMonitor extends ProcessingElement
 			// this.getComponents().performAllTasks(true);//
 			// getComponents().performAllTasks(true);
 			//getComponents().performAllTasks(true);
-			if (this.getComponentOperator(getEnv()).isJumpOccurring())
+			if (this.getComponentOperator(getEnv()).isJumpOccurring() || this.getInterruptHandler().outOfDomain())
 			{
-				this.getData().restoreDataAfterIntegratorFail();
+				if (!this.getInterruptHandler().isTerminating())
+				{
+					if (this.getInterruptHandler().outOfDomain())
+					{
+						this.getInterruptHandler().killSim();
+					}
+					System.out.println("e");
+					this.getData().restoreDataAfterIntegratorFail();
+				}
+
 				//getComponents().performAllTasks(this.getComponentOperator(getEnv()).isJumpOccurring());
 			}
 			//getComponents().performAllTasks(getEnv().isJumpOccurring());

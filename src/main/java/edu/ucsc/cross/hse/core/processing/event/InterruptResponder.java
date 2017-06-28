@@ -12,6 +12,11 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 public class InterruptResponder extends ProcessingElement implements EventHandler
 {
 
+	public boolean isTerminating()
+	{
+		return killFlag;
+	}
+
 	private boolean killFlag; // flag that indactes it is wile to kill the
 								// process
 
@@ -37,13 +42,25 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	@Override
 	public double g(double t, double[] y)
 	{
-		if (killFlag)
+		if (outOfDomain())
 		{
+			killSim();
+		}
+		//System.out.println(outOfDomains());
+		if (killFlag)// || outOfDomain())
+		{
+			//	this.getComputationEngine().zeroAllDerivatives();
 			return -1;
 		} else
 		{
 			return 1;
 		}
+	}
+
+	public boolean outOfDomain()
+	{
+		return (!(this.getComponentOperator(getEnv()).isJumpOccurring()
+		|| this.getComponentOperator(getEnv()).isFlowOccurring()));
 	}
 
 	/*
@@ -52,7 +69,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	@Override
 	public Action eventOccurred(double t, double[] y, boolean increasing)
 	{
-		if (killFlag)
+		if (killFlag || outOfDomain())
 		{
 			return EventHandler.Action.STOP;
 		} else

@@ -113,6 +113,38 @@ public class ComponentWorker
 	}
 
 	/*
+	 * Determines whether or not a jump is occurring in any component within the
+	 * hybrid system
+	 * 
+	 * @return true if a jump is occurring, false otherwise
+	 */
+	public Boolean isFlowOccurring()
+	{
+		Boolean jumpOccurred = false;
+		for (HybridSystem localBehavior : component.getContents().getObjects(HybridSystem.class, true))
+		{
+			try
+			{
+				Boolean jumpOccurring = ComponentAdministrator.flowOccurring(localBehavior, true);
+				if (jumpOccurring != null)
+				{
+					try
+					{
+						jumpOccurred = jumpOccurred || jumpOccurring;
+					} catch (Exception outOfDomain)
+					{
+						outOfDomain.printStackTrace();
+					}
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+		return jumpOccurred;
+	}
+
+	/*
 	 * Add a sub-component to the current component
 	 */
 	public void addComponentFromFile(String directory_path, String file_name)

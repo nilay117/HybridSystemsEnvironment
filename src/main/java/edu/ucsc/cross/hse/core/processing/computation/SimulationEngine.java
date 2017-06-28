@@ -96,8 +96,6 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	public void computeDerivatives(double t, double[] y, double[] yDot)
 	throws MaxCountExceededException, DimensionMismatchException
 	{
-		//storePastY(y, t);
-		//getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		updateValues(y);
 		getConsole().printUpdates();
@@ -108,7 +106,6 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		if (!this.getComponentOperator(getEnv()).isJumpOccurring())
 		{
 			this.getComponents().performAllTasks(false);
-			//ComponentOperator.getOperator(getEnv()).performTasks(false);
 		}
 		updateYDotVector(yDot);
 	}
