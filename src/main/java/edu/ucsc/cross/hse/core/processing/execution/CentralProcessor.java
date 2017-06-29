@@ -89,21 +89,9 @@ public class CentralProcessor
 	 */
 	protected void start()
 	{
-		// EnvironmentContent c = (EnvironmentContent)
-		// ObjectCloner.xmlClone(environmentInterface.getContents());
-		// correctPotentialSettingErrors();
-		prepareEnvironment();
 
+		prepareEnvironment();
 		executionMonitor.runSim(environmentInterface.getSettings().getExecutionSettings().runThreadded);
-
-		// environmentInterface.loadContents(c);
-		initializeProcessingElements();
-		prepareEnvironment();
-		simulationEngine.initialize();
-
-		// dataHandler.storeData(0.0, true);
-
-		executionMonitor.runSim(false);
 
 	}
 

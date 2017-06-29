@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
@@ -138,6 +139,7 @@ public class ExecutionMonitor extends ProcessingElement
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
+			problemResolved = problemResolved || handleEhCountIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
 
 			System.out.println(this.getSettings().getComputationSettings().odeMinStep);
@@ -234,13 +236,29 @@ public class ExecutionMonitor extends ProcessingElement
 		boolean handledIssue = false;
 		if (exc.getClass().equals(NoBracketingException.class))
 		{
-			this.getConsole().print(
-			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
+			// this.getConsole().print(
+			// "Integrator failure due to large exception handling thresholds -
+			// adjusting thresholds and restarting integrator");
 			getSettings()
 			.getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
 			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
 			getSettings().getComputationSettings().ehConvergence = getSettings().getComputationSettings().ehConvergence
 			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
+			handledIssue = true;
+		}
+		return handledIssue;
+	}
+
+	private boolean handleEhCountIssues(Exception exc)
+	{
+		boolean handledIssue = false;
+		if (exc.getClass().equals(TooManyEvaluationsException.class))
+		{
+			this.getConsole().print(
+			"Integrator failure due to maximal event iterations - adjusting thresholds and restarting integrator");
+			getSettings()
+			.getComputationSettings().ehMaxIterationCount = getSettings().getComputationSettings().ehMaxIterationCount
+			* 2;
 			handledIssue = true;
 		}
 		return handledIssue;
