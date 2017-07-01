@@ -30,13 +30,15 @@ public class ComponentAdministrator extends ProcessingElement
 	{
 		if (jump_occurred)
 		{
-			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
-			(true && getSettings().getDataSettings().storeAtEveryJump));
-
-			executeAllOccurringJumps();
-			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() + .000000001,
-			(true && getSettings().getDataSettings().storeAtEveryJump));
-			this.getComponents().setEnvTime(getEnvTime() + .000000001);
+			//\			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
+			//			(true && getSettings().getDataSettings().storeAtEveryJump));
+			while (this.getComponentOperator(getEnv()).isJumpOccurring())
+			{
+				executeAllOccurringJumps();
+			}
+			//			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() + .000000001,
+			//			(true && getSettings().getDataSettings().storeAtEveryJump));
+			//			this.getComponents().setEnvTime(getEnvTime() + .000000001);
 		} else
 		{
 			ComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
@@ -49,12 +51,16 @@ public class ComponentAdministrator extends ProcessingElement
 		ArrayList<Component> jumpComponents = ComponentOperator.getOperator(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
+		//this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		for (Component component : jumpComponents)
 		{
+			//ComponentOperator.getOperator(component).storeData();
 			HybridSystem dynamics = ((HybridSystem) component);
 			dynamics.jumpMap();
-			this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+
+			//ComponentOperator.getOperator(component).storeData();
 		}
+
 		getEnvironmentOperator().setJumpOccurring(false);
 	}
 
@@ -203,7 +209,7 @@ public class ComponentAdministrator extends ProcessingElement
 
 	public boolean outOfAllDomains(Component component)
 	{
-		return (!this.getComponentOperator(component).isJumpOccurring()
-		&& !this.getComponentOperator(component).isFlowOccurring());
+		return !(this.getComponentOperator(component).isJumpOccurring()
+		|| this.getComponentOperator(component).isFlowOccurring());
 	}
 }

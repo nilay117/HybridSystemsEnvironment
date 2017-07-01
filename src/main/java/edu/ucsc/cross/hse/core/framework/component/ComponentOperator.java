@@ -9,6 +9,7 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
@@ -135,16 +136,38 @@ public class ComponentOperator extends ComponentWorker
 				//
 				//				}
 				jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
+
 				if (jumpOccurred)
 				{
-					ContentOperator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
-					.incrementJumpIndex();
+					//					ContentOperator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
+					//					.incrementJumpIndex();
+					//ComponentOperator.getOperator(((Component) localBehavior)).storeData();
 				}
 			} catch (Exception behaviorFail)
 			{
 				behaviorFail.printStackTrace();
 			}
 		}
+	}
+
+	public void storeData()
+	{
+		for (Data data : component.getContents().getObjects(Data.class, true))
+		{
+
+			DataOperator.getOperator(data).storeValue(component.getEnvironment().getEnvironmentTime(), true);
+		}
+	}
+
+	public boolean outOfAllDomains()
+	{
+		return outOfAllDomains(component.getEnvironment());
+	}
+
+	public boolean outOfAllDomains(Component component)
+	{
+		return !(ComponentOperator.getOperator(component).isJumpOccurring()
+		|| ComponentOperator.getOperator(component).isFlowOccurring());
 	}
 
 	public void protectedInitialize()

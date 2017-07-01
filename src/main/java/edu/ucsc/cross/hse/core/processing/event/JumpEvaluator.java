@@ -31,7 +31,6 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
-		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
 		getComputationEngine().updateValues(y);
 		if (this.getComponentOperator(getEnv()).isJumpOccurring())
 		{
@@ -41,7 +40,14 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 
 		} else
 		{
-			getData().storeData(t, false);
+			getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
+			if (ComponentOperator.getOperator(getEnv()).outOfAllDomains())
+			{
+				getData().storeData(t, true);
+			} else
+			{
+				getData().storeData(t, false);
+			}
 		}
 		return flag;
 	}
@@ -70,8 +76,12 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	public void resetState(double t, double[] y)
 	{
 		getComputationEngine().updateValues(y);
+		ComponentOperator.getOperator(getEnv()).storeData();
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
+		//ComponentOperator.getOperator(getEnv()).storeData();
 		getComponents().performAllTasks(true);
+		this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+		ComponentOperator.getOperator(getEnv()).storeData();
 		getComputationEngine().setODEValueVector(y);
 
 	}

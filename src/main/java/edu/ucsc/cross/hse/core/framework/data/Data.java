@@ -384,13 +384,14 @@ public class Data<T> extends Component// DynamicData<T>
 
 	void storeValue(Double time, boolean override_save)
 	{
+
 		if (save || override_save)
 		{
 			T storeValue = getStoreValue();
-			savedValues.put(time, storeValue);
-			//			savedHybridValues
-			//			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
-			//			storeValue);
+			//savedValues.put(time, storeValue);
+			savedHybridValues
+			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			storeValue);
 		}
 	}
 

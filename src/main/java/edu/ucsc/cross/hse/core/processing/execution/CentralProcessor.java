@@ -108,6 +108,8 @@ public class CentralProcessor
 			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
 			success = executeEnvironment(content);
 			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
+			success = success
+			|| (!this.componentAdmin.outOfAllDomains() && this.interruptResponder.isOutsideDomainError());
 			System.out.println(success);
 		}
 
@@ -135,8 +137,8 @@ public class CentralProcessor
 	protected void prepareEnvironment(EnvironmentContent content)
 	{
 		environmentInterface.content = content;
-		initializeProcessingElements();
 		contentAdmin = ContentOperator.getContentAdministrator(content);
+		initializeProcessingElements();
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		dataHandler.loadStoreStates();

@@ -14,6 +14,11 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 public class InterruptResponder extends ProcessingElement implements EventHandler
 {
 
+	public boolean isOutsideDomainError()
+	{
+		return outsideDomainError;
+	}
+
 	public boolean isTerminating()
 	{
 		return killFlag;
@@ -31,6 +36,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	{
 		super(processor);
 		killFlag = false;
+		outsideDomainError = false;
 	}
 
 	/*
@@ -50,9 +56,10 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	{
 
 		// System.out.println(this.getComponents().outOfAllDomains());
-		if (killFlag)// ||
-						// outOfDomain())
+		if (killFlag || this.getComponents().outOfAllDomains())// ||
+		// outOfDomain())
 		{
+			killSim();
 			// this.getComputationEngine().zeroAllDerivatives();
 			return -.0000000001;
 		} else
@@ -70,6 +77,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 		System.out.println("here");
 		if (killFlag)// || this.getComponents().outOfAllDomains())
 		{
+			//	this.getComponentOperator(getEnv()).storeData();
 			return EventHandler.Action.STOP;
 		} else
 		{
@@ -91,5 +99,14 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	public void killSim()
 	{
 		killFlag = true;
+	}
+
+	/*
+	 * Terminates the simulation
+	 */
+	public void killSim(boolean outside_domain_err)
+	{
+		outsideDomainError = outside_domain_err;
+		killSim();
 	}
 }

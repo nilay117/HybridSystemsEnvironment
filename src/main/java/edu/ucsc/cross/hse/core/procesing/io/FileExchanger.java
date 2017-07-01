@@ -36,6 +36,7 @@ import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
@@ -175,7 +176,7 @@ public class FileExchanger extends ProcessingElement
 		{
 			SystemConsole.print(data.getLabels().getFullDescription());
 			dataBytes.put(data.getActions().getAddress(),
-			DataCompressor.compressDataGZip(XMLParser.serializeObject(data.getActions().getStoredValues())));
+			DataCompressor.compressDataGZip(XMLParser.serializeObject(data.getActions().getStoredHybridValues())));
 		}
 		return dataBytes;
 	}
@@ -205,11 +206,11 @@ public class FileExchanger extends ProcessingElement
 			@Override
 			public void run()
 			{
-				HashMap<Double, ?> unzippedData = (HashMap<Double, ?>) XMLParser
+				HashMap<HybridTime, ?> unzippedData = (HashMap<HybridTime, ?>) XMLParser
 				.getObjectFromString(DataDecompressor.decompressDataGZipString(data_bytes));
 				//data_map.put(data, unzippedData);
-				SystemConsole.print(unzippedData.toString());
-				DataOperator.getOperator(data_map.get(data)).setStoredValues(unzippedData);
+				//SystemConsole.print(unzippedData.toString());
+				DataOperator.getOperator(data_map.get(data)).setStoredHybridValues(unzippedData);
 			}
 
 		};

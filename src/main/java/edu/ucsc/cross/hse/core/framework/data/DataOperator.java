@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
 public class DataOperator<T> extends ComponentOperator
 {
@@ -61,7 +62,10 @@ public class DataOperator<T> extends ComponentOperator
 
 	public void storeValue(Double time, boolean override_save)
 	{
-		element.storeValue(time, override_save);
+		if (!ComponentOperator.getOperator(component.getEnvironment()).outOfAllDomains())
+		{
+			element.storeValue(time, override_save);
+		}
 	}
 
 	public boolean isDataStored()
@@ -72,6 +76,11 @@ public class DataOperator<T> extends ComponentOperator
 	public void setStoredValues(HashMap<Double, T> vals)
 	{
 		element.savedValues = vals;
+	}
+
+	public void setStoredHybridValues(HashMap<HybridTime, T> vals)
+	{
+		element.savedHybridValues = vals;
 	}
 
 	public void storePreJumpValue()
@@ -101,7 +110,7 @@ public class DataOperator<T> extends ComponentOperator
 	 */
 	public static <T> boolean isCopyRequiredOnSave(T object)
 	{
-	
+
 		if (object != null)
 		{
 			return changableClasses.contains(object);

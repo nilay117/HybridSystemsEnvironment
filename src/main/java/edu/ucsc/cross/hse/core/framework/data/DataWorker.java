@@ -1,17 +1,20 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
 public class DataWorker<T> extends ComponentWorker
 {
 
 	protected static HashMap<Data<?>, DataWorker<?>> dataActions = new HashMap<Data<?>, DataWorker<?>>();
+	public HashMap<Double, ArrayList<HybridTime>> storedTimes;
 	public Data<T> data;
 
 	// Stored Data Access Functions
@@ -96,16 +99,20 @@ public class DataWorker<T> extends ComponentWorker
 
 	public Double getStoredDoubleValue(Double time)
 	{
+		if (storedTimes == null)
+		{
+			getStoredTimesMap();
+		}
 		Double value = null;
 		try
 		{
 
-			value = (Double) data.savedValues.get(time);
+			value = (Double) data.savedHybridValues.get(storedTimes.get(time));
 		} catch (Exception notDouble)
 		{
 			try
 			{
-				UnitValue unitVal = (UnitValue) data.savedValues.get(time);
+				UnitValue unitVal = (UnitValue) data.savedHybridValues.get(storedTimes.get(time));
 				value = (Double) unitVal.get(unitVal.getUnit());
 			} catch (Exception notNumber)
 			{
@@ -113,6 +120,35 @@ public class DataWorker<T> extends ComponentWorker
 			}
 		}
 		return value;
+	}
+
+	public ArrayList<Double> getStoredDoubleValues(Double time)
+	{
+		if (storedTimes == null)
+		{
+			getStoredTimesMap();
+		}
+		ArrayList<Double> values = new ArrayList<Double>();
+		ArrayList<HybridTime> times = storedTimes.get(time);
+		for (HybridTime valTime : times)
+		{
+			try
+			{
+
+				values.add((Double) data.savedHybridValues.get(valTime));
+			} catch (Exception notDouble)
+			{
+				try
+				{
+					UnitValue unitVal = (UnitValue) data.savedHybridValues.get(valTime);
+					values.add((Double) unitVal.get(unitVal.getUnit()));
+				} catch (Exception notNumber)
+				{
+
+				}
+			}
+		}
+		return values;
 	}
 
 	public Double getStoredDoubleValue(Double time, Unit unit)
@@ -158,6 +194,29 @@ public class DataWorker<T> extends ComponentWorker
 	public HashMap<Double, T> getStoredValues()
 	{
 		return data.savedValues;
+	}
+
+	public HashMap<HybridTime, T> getStoredHybridValues()
+	{
+		return data.savedHybridValues;
+	}
+
+	public HashMap<Double, ArrayList<HybridTime>> getStoredTimesMap()
+	{
+		storedTimes = new HashMap<Double, ArrayList<HybridTime>>();
+		for (HybridTime hybridTime : data.savedHybridValues.keySet())
+		{
+			if (storedTimes.containsKey(hybridTime.getTime()))
+			{
+				storedTimes.get(hybridTime.getTime()).add(hybridTime);
+			} else
+			{
+				ArrayList<HybridTime> times = new ArrayList<HybridTime>();
+				times.add(hybridTime);
+				storedTimes.put(hybridTime.getTime(), times);
+			}
+		}
+		return storedTimes;
 	}
 
 	public void setStorePreviousValues(boolean store)

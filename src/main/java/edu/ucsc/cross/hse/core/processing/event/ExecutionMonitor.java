@@ -90,9 +90,8 @@ public class ExecutionMonitor extends ProcessingElement
 		integrator.addEventHandler(this.getJumpEvaluator(), getSettings().getComputationSettings().ehMaxCheckInterval,
 		getSettings().getComputationSettings().ehConvergence,
 		getSettings().getComputationSettings().ehMaxIterationCount);
-		integrator.addEventHandler(this.getInterruptHandler(),
-		getSettings().getComputationSettings().ehMaxCheckInterval, getSettings().getComputationSettings().ehConvergence,
-		getSettings().getComputationSettings().ehMaxIterationCount);
+		integrator.addEventHandler(this.getInterruptHandler(), getSettings().getComputationSettings().odeMinStep,
+		0.0001, getSettings().getComputationSettings().ehMaxIterationCount);
 	}
 
 	public void launchEnvironment()
@@ -137,7 +136,7 @@ public class ExecutionMonitor extends ProcessingElement
 			e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
-			problemResolved = problemResolved || handleBracketingIssues(e);
+			//problemResolved = problemResolved || handleBracketingIssues(e);
 			problemResolved = problemResolved || handleEhCountIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
 			handleFatalError(e);
@@ -205,24 +204,32 @@ public class ExecutionMonitor extends ProcessingElement
 	{
 		if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
 		{
+
 			if (exc.getClass().equals(NumberIsTooSmallException.class)
 			|| exc.getClass().equals(TooManyEvaluationsException.class))
 			{
-				this.getInterruptHandler().killSim();
+
+				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
 			}
+			if (this.getComponents().outOfAllDomains())
+			{
+				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
+			}
+
 		}
 	}
 
 	private boolean handleStepSizeIssues(Exception exc)
 	{
 		boolean handledIssue = false;
-		if (exc.getClass().equals(NumberIsTooSmallException.class))
+		if (exc.getClass().equals(NumberIsTooSmallException.class)
+		|| exc.getClass().equals(NoBracketingException.class))
 		{
 			SystemConsole
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
-			this.getSettings()
-			.getComputationSettings().odeMaxStep = this.getSettings().getComputationSettings().odeMaxStep
-			/ this.getSettings().getComputationSettings().stepSizeReductionFactor;
+			//			this.getSettings()
+			//			.getComputationSettings().odeMaxStep = this.getSettings().getComputationSettings().odeMaxStep
+			//			/ this.getSettings().getComputationSettings().stepSizeReductionFactor;
 			this.getSettings()
 			.getComputationSettings().odeMinStep = this.getSettings().getComputationSettings().odeMinStep
 			/ (5 * (this.getSettings().getComputationSettings().stepSizeReductionFactor));

@@ -113,7 +113,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 	public void storeData(Double time)
 	{
-		if (!this.getComponents().outOfAllDomains())
+		//if (!this.getComponents().outOfAllDomains())
 		{
 			Double adjustedTime = time;//Math.round(time * 100000.0) / 100000.0;
 			storeTimes.add(adjustedTime);
@@ -148,8 +148,11 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 			storeData(t);
 		} else if (t > lastStoreTime + getSettings().getDataSettings().dataStoreIncrement)// settings.dataStoreIncrement)
 		{
-			lastStoreTime = t;
-			storeData(t);
+			//if ((!this.getComponents().outOfAllDomains()))
+			{
+				lastStoreTime = t;
+				storeData(t);
+			}
 		}
 	}
 
