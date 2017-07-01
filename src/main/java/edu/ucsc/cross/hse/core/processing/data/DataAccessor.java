@@ -7,7 +7,6 @@ import java.util.Set;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public interface DataAccessor
 {

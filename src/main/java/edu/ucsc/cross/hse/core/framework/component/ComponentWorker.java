@@ -14,7 +14,6 @@ import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 /*
  * This class contains the methods available to users that perform a variety of
@@ -74,7 +73,7 @@ public class ComponentWorker
 	{
 		try
 		{
-			Dat d = Dat.class.cast(component);
+			Data d = Data.class.cast(component);
 			return true;
 		} catch (Exception e)
 		{
@@ -185,6 +184,10 @@ public class ComponentWorker
 
 	public String getAddress()
 	{
+		if (component.status.address == null)
+		{
+			ComponentOperator.getOperator(component).generateAddress();
+		}
 		return component.status.address;
 	}
 

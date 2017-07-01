@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.framework.component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
@@ -14,7 +15,6 @@ import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 /*
  * This class contains the methods that are used by processing modules to
@@ -227,15 +227,24 @@ public class ComponentOperator extends ComponentWorker
 
 	public Component getNewInstance()
 	{
-		return (Component) ObjectCloner.xmlClone(configuration);
+		return configuration;//(Component) ObjectCloner.xmlClone(configuration);
 	}
 
 	public void generateAddress()
 	{
 		if (component.status.address == null)
 		{
-			component.status.address = component.toString();
+			String[] packageName = component.toString().split(Pattern.quote("."));
+			component.status.address = packageName[packageName.length - 1];
 		}
+	}
+
+	public static String generateInstanceAddress(Object obj)
+	{
+
+		String[] packageName = obj.toString().split(Pattern.quote("."));
+		return packageName[packageName.length - 1];
+
 	}
 
 	public HashMap<String, Data> getDataLinks()
@@ -260,6 +269,7 @@ public class ComponentOperator extends ComponentWorker
 		component.status = new ComponentStatus();
 		component.labels = new ComponentLabel(title);
 		component.contents = new ComponentOrganizer(component);
+
 		// ComponentCoordinator.constructTree(hierarchy);
 	}
 

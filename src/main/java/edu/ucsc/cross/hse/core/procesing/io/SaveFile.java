@@ -3,7 +3,6 @@ package edu.ucsc.cross.hse.core.procesing.io;
 import java.util.HashMap;
 
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public class SaveFile
 {

@@ -11,7 +11,6 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 /*
  * This class controls all of the components so that they are setup correctly

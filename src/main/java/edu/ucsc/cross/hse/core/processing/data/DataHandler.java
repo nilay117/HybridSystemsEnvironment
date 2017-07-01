@@ -200,7 +200,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 				if (element.getLabels().getClassification().equals(title))
 				{
-					datas.add(element);
+					datas.add(state);
 				}
 			} catch (Exception notState)
 			{

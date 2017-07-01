@@ -22,8 +22,6 @@ import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
-import edu.ucsc.cross.hse.core2.framework.data.DataFactory;
 
 public class HybridEnvironment// implements Serializable
 {
@@ -41,7 +39,7 @@ public class HybridEnvironment// implements Serializable
 	// etc
 	protected CentralProcessor processor; // environment processor that handles
 											// events,
-	// computations, maintenance, etc
+											// computations, maintenance, etc
 	private SettingConfigurer settings; // collection of settings that
 										// configure the performance of the
 										// environment
@@ -114,7 +112,7 @@ public class HybridEnvironment// implements Serializable
 
 	}
 
-	public void saveContents(String directory, String file_name)
+	public void saveContents(File file)
 	{
 
 		// try
@@ -130,7 +128,7 @@ public class HybridEnvironment// implements Serializable
 		// {
 		// i.printStackTrace();
 		// }
-		this.processor.fileExchanger.storeEnvironment();
+		this.processor.fileExchanger.storeEnvironment(file);
 	}
 
 	public void saveSettings(String directory, String file_name)

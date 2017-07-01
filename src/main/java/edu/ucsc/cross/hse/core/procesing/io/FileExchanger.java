@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.be3short.data.compression.CompressionFormat;
 import com.be3short.data.compression.DataCompressor;
@@ -47,16 +49,17 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public class FileExchanger extends ProcessingElement
 {
 
+	private FilePackager packager;
 	public static Cloner cloner = new Cloner();
 
 	public FileExchanger(CentralProcessor processor)
 	{
 		super(processor);
+		packager = new FilePackager(processor);
 	}
 
 	public void autoStoreData(EnvironmentContent data)
@@ -112,7 +115,7 @@ public class FileExchanger extends ProcessingElement
 		}
 	}
 
-	public void storeEnvironment()
+	public void storeEnvironment(File file)
 	{
 		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
 		if (getSettings().getDataSettings().createResultSubDirectory)
@@ -122,56 +125,57 @@ public class FileExchanger extends ProcessingElement
 		String fileName = this.getComponents().getEnv().getLabels().getName() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".hse";
-		store(directory + "/" + fileName, this.getEnv(), FileComponent.CONFIGURATION);// ,.CONFIGURATION);
+		store(file, this.getEnv(), FileContent.ENVIRONMENT_CONFIGURATION, FileContent.ALL_DATA, FileContent.SETTINGS);// ,.CONFIGURATION);
 
 	}
 
-	private void store(String file_path, Component component, FileComponent... contents)
+	private void store(File file_path, Component component, FileContent... contents)
 	{
-		Kryo kryo = new Kryo();
-		SaveFile file = new SaveFile(null);
-		for (FileComponent content : contents)
-		{
-			file.fileComponents.put(content, getContentString(component, content));
-		}
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Output output;
-		try
-		{
-			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-			// output = new Output(oos);//new
-			// FileOutputStream("results/file.bin"));
-			// output = new Output(baos);//new
-			// FileOutputStream("results/file.bin"));
-			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-			output = new Output(new FileOutputStream(file_path));
-			// System.out.println(XMLParser.serializeObject(this.getData().getAllMaps()));
-			HashMap<String, HashMap<HybridTime, ?>> envContent = this.getData().getAllMaps();
-			HashMap<HybridTime, String> filez = new HashMap<HybridTime, String>();
-			filez.put(new HybridTime(), XMLParser.serializeObject(file));
-			envContent.put(SaveFile.class.getName(), filez);
-			kryo.writeClassAndObject(output, envContent);
-			// String output2 = XMLParser.serializeObject(file);
-			// oos.writeObject(output2);
-			// file.dataz = output.toBytes();
-			/// String output2 = XMLParser.serializeObject(file);
-			// FileSystemOperator.createOutputFile(file_path, output2);
-			// baos.close();
-			output.close();
-			// oos.close();
-
-		} catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		packager.storeContents(file_path, component, contents);
+		//		Kryo kryo = new Kryo();
+		//		SaveFile file = new SaveFile(null);
+		//		for (FileComponent content : contents)
+		//		{
+		//			file.fileComponents.put(content, getContentString(component, content));
+		//		}
+		//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		//		Output output;
+		//		try
+		//		{
+		//			// ObjectOutputStream oos = new ObjectOutputStream(baos);
+		//			// ObjectOutputStream oos = new ObjectOutputStream(baos);
+		//			// output = new Output(oos);//new
+		//			// FileOutputStream("results/file.bin"));
+		//			// output = new Output(baos);//new
+		//			// FileOutputStream("results/file.bin"));
+		//			// ObjectOutputStream oos = new ObjectOutputStream(baos);
+		//			output = new Output(new FileOutputStream(file_path));
+		//			// System.out.println(XMLParser.serializeObject(this.getData().getAllMaps()));
+		//			HashMap<String, HashMap<HybridTime, ?>> envContent = this.getData().getAllMaps();
+		//			HashMap<HybridTime, String> filez = new HashMap<HybridTime, String>();
+		//			filez.put(new HybridTime(), XMLParser.serializeObject(file));
+		//			envContent.put(SaveFile.class.getName(), filez);
+		//			kryo.writeClassAndObject(output, envContent);
+		//			// String output2 = XMLParser.serializeObject(file);
+		//			// oos.writeObject(output2);
+		//			// file.dataz = output.toBytes();
+		//			/// String output2 = XMLParser.serializeObject(file);
+		//			// FileSystemOperator.createOutputFile(file_path, output2);
+		//			// baos.close();
+		//			output.close();
+		//			// oos.close();
+		//
+		//		} catch (Exception e)
+		//		{
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 
 		// file.data = getDataByteMap(component);
 
 	}
 
-	public void load(File file)
+	public void loadz(File file)
 	{
 		SaveFile savedFile = null;
 		Kryo kryo = new Kryo();
@@ -229,6 +233,100 @@ public class FileExchanger extends ProcessingElement
 			e.printStackTrace();
 		}
 	}
+
+	public void load(File file)
+	{
+		SaveFile savedFile = null;
+		Kryo kryo = new Kryo();
+		try
+		{
+			ZipInputStream in = new ZipInputStream(new FileInputStream(file));
+			ArrayList<File> filess = new ArrayList<File>();
+			ZipEntry entry = in.getNextEntry();
+
+			// ..ObjectInputStream ois = new ObjectInputStream();
+			// SaveFile savedFile = (SaveFile) ois.readObject();
+
+			// String content = DataDecompressor
+			// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
+			HashMap<String, HashMap<HybridTime, ?>> datas = new HashMap<String, HashMap<HybridTime, ?>>();
+			Input input = new Input(in);
+			EnvironmentContent envContentz = null;
+			while (entry != null)
+			{
+				System.out.println(entry.getName());
+
+				Object readIn = kryo.readClassAndObject(input);
+				if (readIn.getClass().equals(HashMap.class))
+				{
+					datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
+				} else if (readIn.getClass().equals(byte[].class))
+				{
+					if (entry.getName().contains(EnvironmentContent.class.getSimpleName()))
+					{
+						envContentz = (EnvironmentContent) XMLParser
+						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn));
+					} else if (entry.getName().contains(SettingConfigurer.class.getSimpleName()))
+					{
+						this.setSettings((SettingConfigurer) XMLParser
+						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn)));
+					}
+				}
+				entry = in.getNextEntry();
+				// System.out.println(XMLParser.serializeObject(savedFile.dataz));
+
+				// HashMap<String, SavedValues> envContent = (HashMap<String,
+				// SavedValues>) kryo.readClassAndObject(input);//,
+				// EnvironmentContent.class);
+				// HashMap<String, HashMap<HybridTime, ?>> envContent =
+				// (HashMap<String, HashMap<HybridTime, ?>>) kryo
+				// .readClassAndObject(input);// , EnvironmentContent.class);
+				// // System.out.println(XMLParser.serializeObject(envContent));
+				// HashMap<HybridTime, ?> filez =
+				// envContent.get(SaveFile.class.getName());//
+				// .keySet().toArray(new
+				// // HybridTime[1])
+				// for (Object fileString : filez.values())
+				// {
+				// savedFile = new SaveFile((String) fileString);
+				// }
+				// String contentz = DataDecompressor
+				// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
+				// // kryo.register(SavedValues.class, new
+				// ExternalizableSerializer());
+				// // kryo.register(HybridTime.class, new
+				// ExternalizableSerializer());
+				// EnvironmentContent envContentz = (EnvironmentContent)
+				// XMLParser.getObjectFromString(contentz);
+				// input.close();
+				// // loadData(savedFile, envContentz);
+			}
+			this.processor.loadContents(envContentz);
+			// // this.processor.loadContents(envContentz);
+			for (Data id : envContentz.getContents().getObjects(Data.class, true))
+			{
+				// // Runnable runnable = new Runnable()
+				// // {
+				// //
+				// // @Override
+				// // public void run()
+				// // {]
+				// System.out.println(id.getActions().getAddress());
+				DataOperator.getOperator(id).setStoredHybridValues(datas.get(id.getActions().getAddress()));
+			}
+			// // };
+			// // Thread thread = new Thread(runnable);
+			// // thread.start();
+			// }
+
+			this.processor.loadContents(envContentz);
+		} catch (
+
+		Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 	// public void load(File file)
 	// {
 	// SaveFile savedFile = new
@@ -272,7 +370,7 @@ public class FileExchanger extends ProcessingElement
 	private HashMap<String, byte[]> getDataByteMap(Component component)
 	{
 		HashMap<String, byte[]> dataBytes = new HashMap<String, byte[]>();
-		for (Dat data : component.getContents().getObjects(Dat.class, true))
+		for (Data data : component.getContents().getObjects(Data.class, true))
 
 		{
 			SystemConsole.print(data.getLabels().getFullDescription());

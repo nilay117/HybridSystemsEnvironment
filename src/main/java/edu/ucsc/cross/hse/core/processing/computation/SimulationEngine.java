@@ -17,7 +17,6 @@ import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 /*
  * his class provides the computations and organization necessary to run a

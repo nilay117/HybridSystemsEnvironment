@@ -14,7 +14,6 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 import edu.ucsc.cross.hse.core.processing.event.InterruptResponder;
 import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
-import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public abstract class ProcessingElement
 {

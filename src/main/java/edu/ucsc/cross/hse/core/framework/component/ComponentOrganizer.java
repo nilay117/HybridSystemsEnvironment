@@ -361,7 +361,7 @@ public class ComponentOrganizer
 		return values;
 	}
 
-	protected void constructTree()
+	public void constructTree()
 	{
 		ComponentOrganizer hierarchy = self.getContents();
 		hierarchy.loadHierarchyComponents();
