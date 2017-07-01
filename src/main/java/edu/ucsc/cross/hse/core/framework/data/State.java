@@ -16,7 +16,7 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
-public class State extends Obj<Double>// DynamicData<T>
+public class State extends Data<Double>// DynamicData<T>
 {
 
 	private Double derivative; // current derivative of the data (if the data
@@ -31,19 +31,33 @@ public class State extends Obj<Double>// DynamicData<T>
 	@Override
 	public Double getValue()
 	{
-		if (getEnvironment().isJumpOccurring())
+		return getValue(false);
+	}
+
+	@Override
+	public Double getValue(boolean randomize_from_domain)
+	{
+
+		if (randomize_from_domain)
+		{
+			element = elementDomain.getValue();
+
+			return element;
+		} else if (getEnvironment().isJumpOccurring())
 		{
 			return prejump;
 		} else
 		{
+
 			return element;
 		}
 	}
 
+	@Override
 	public void setValue(Double min, Double max)
 	{
 		elementDomain.setRandomValues(min, max);
-		element = elementDomain.getNumberValue();
+		element = elementDomain.getValue();
 	}
 
 	public Double getDerivative()
@@ -82,50 +96,50 @@ public class State extends Obj<Double>// DynamicData<T>
 
 	public State(String name, Double obj)
 	{
-		super(obj, name, "", true);
+		super(name, obj, "", true);
 		init(obj);
 	}
 
 	public State(String name, Double obj_min, Double obj_max)
 	{
-		super(obj_min, name, "", true);
+		super(name, obj_min, "", true);
 		init(obj_min, obj_max);
 	}
 
 	public State(Double obj)
 	{
-		super(obj, "State", "", true);
+		super("State", obj, "", true);
 		init(obj);
 
 	}
 
 	public State(Double obj, String name, String description, Boolean save_default)
 	{
-		super(obj, name, description, save_default);
+		super(name, obj, description, save_default);
 		init(obj);
 	}
 
 	public State(String name, String description, Boolean save_default)
 	{
-		super(0.0, name, description, save_default);
+		super(name, 0.0, description, save_default);
 		init(0.0);
 	}
 
 	public State(String name, Boolean save_default)
 	{
-		super(0.0, name, "", save_default);
+		super(name, 0.0, "", save_default);
 		init(0.0);
 	}
 
 	public State(String name)
 	{
-		super(0.0, name, "", true);
+		super(name, 0.0, "", true);
 		init(0.0);
 	}
 
 	public State()
 	{
-		super(0.0, "State", "", true);
+		super("State", 0.0, "", true);
 		init(0.0);
 	}
 

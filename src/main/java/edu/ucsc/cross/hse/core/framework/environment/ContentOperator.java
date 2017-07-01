@@ -11,9 +11,10 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public class ContentOperator extends ComponentOperator
 {
@@ -117,7 +118,7 @@ public class ContentOperator extends ComponentOperator
 			globalSystem.environmentTime = new HybridTime(true);
 			globalSystem.earthStartTime = -1.0;
 			setEnvironmentKey(globalSystem.toString());
-			globalSystem.dataLinks = new HashMap<String, Data>();
+			globalSystem.dataLinks = new HashMap<String, Dat>();
 		}
 		// EnvironmentContentOperator.addGlobalHybridSystem(globalSystem);
 		// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(globalSystem.toString());

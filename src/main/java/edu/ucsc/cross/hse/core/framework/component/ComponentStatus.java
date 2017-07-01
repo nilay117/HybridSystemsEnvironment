@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core2.framework.data.Dat;
 import edu.ucsc.cross.hse.core2.framework.data.DataFactory;
 
 /*

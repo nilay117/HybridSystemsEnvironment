@@ -8,13 +8,13 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.Obj;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
+import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 /*
  * This class contains the methods that are used by processing modules to
@@ -160,7 +160,7 @@ public class ComponentOperator extends ComponentWorker
 
 	public void storeData()
 	{
-		for (Obj data : component.getContents().getObjects(Obj.class, true))
+		for (Data data : component.getContents().getObjects(Data.class, true))
 		{
 
 			DataOperator.getOperator(data).storeValue(component.getEnvironment().getEnvironmentTime(), true);
@@ -238,10 +238,10 @@ public class ComponentOperator extends ComponentWorker
 		}
 	}
 
-	public HashMap<String, Obj> getDataLinks()
+	public HashMap<String, Data> getDataLinks()
 	{
-		HashMap<String, Obj> links = new HashMap<String, Obj>();
-		for (Obj data : component.contents.getObjects(Obj.class, true))
+		HashMap<String, Data> links = new HashMap<String, Data>();
+		for (Data data : component.contents.getObjects(Data.class, true))
 		{
 			if (!links.containsKey(data.getActions().getAddress()))
 			{

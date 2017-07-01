@@ -11,8 +11,8 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 public class DataOperator<T> extends ComponentOperator
 {
 
-	protected static HashMap<Obj<?>, DataOperator<?>> dataOperators = new HashMap<Obj<?>, DataOperator<?>>();
-	Obj<T> element;
+	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
+	Data<T> element;
 	/*
 	 * This list determines what elements will need to be cloned before being
 	 * saved to ensure the right values are stored. For example, a list would
@@ -26,7 +26,7 @@ public class DataOperator<T> extends ComponentOperator
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
 
-	protected DataOperator(Obj<T> component)
+	protected DataOperator(Data<T> component)
 	{
 		super(component);
 
@@ -34,7 +34,7 @@ public class DataOperator<T> extends ComponentOperator
 
 	}
 
-	public static <S> DataOperator<S> getOperator(Obj<S> data)
+	public static <S> DataOperator<S> getOperator(Data<S> data)
 	{
 		if (dataOperators.containsKey(data))
 		{

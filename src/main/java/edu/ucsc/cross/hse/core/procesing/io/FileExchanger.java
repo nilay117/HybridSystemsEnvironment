@@ -38,9 +38,8 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.Obj;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
@@ -48,6 +47,7 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public class FileExchanger extends ProcessingElement
 {
@@ -206,7 +206,7 @@ public class FileExchanger extends ProcessingElement
 			// loadData(savedFile, envContentz);
 			this.processor.loadContents(envContentz);
 			// this.processor.loadContents(envContentz);
-			for (Obj id : envContentz.getContents().getObjects(Obj.class, true))
+			for (Data id : envContentz.getContents().getObjects(Data.class, true))
 			{
 				// Runnable runnable = new Runnable()
 				// {
@@ -272,7 +272,7 @@ public class FileExchanger extends ProcessingElement
 	private HashMap<String, byte[]> getDataByteMap(Component component)
 	{
 		HashMap<String, byte[]> dataBytes = new HashMap<String, byte[]>();
-		for (Data data : component.getContents().getObjects(Data.class, true))
+		for (Dat data : component.getContents().getObjects(Dat.class, true))
 
 		{
 			SystemConsole.print(data.getLabels().getFullDescription());
@@ -285,7 +285,7 @@ public class FileExchanger extends ProcessingElement
 	private void loadData(SaveFile saved_file, Component component)
 	{
 		HashMap<String, byte[]> dataBytes = saved_file.data;
-		HashMap<String, Obj> dataMap = ComponentOperator.getOperator(component).getDataLinks();
+		HashMap<String, Data> dataMap = ComponentOperator.getOperator(component).getDataLinks();
 		for (String data : dataBytes.keySet())
 		{
 
@@ -293,14 +293,14 @@ public class FileExchanger extends ProcessingElement
 		}
 	}
 
-	private void startDataThread(byte[] data_bytes, HashMap<String, Obj> data_map, String data)
+	private void startDataThread(byte[] data_bytes, HashMap<String, Data> data_map, String data)
 	{
 		Runnable exe = loadDataThread(data_bytes, data_map, data);
 		Thread thread = new Thread(exe);
 		thread.start();
 	}
 
-	private Runnable loadDataThread(byte[] data_bytes, HashMap<String, Obj> data_map, String data)
+	private Runnable loadDataThread(byte[] data_bytes, HashMap<String, Data> data_map, String data)
 	{
 		Runnable task = new Runnable()
 		{

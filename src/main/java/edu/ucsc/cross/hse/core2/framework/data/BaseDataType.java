@@ -1,7 +1,5 @@
 package edu.ucsc.cross.hse.core2.framework.data;
 
-import edu.ucsc.cross.hse.core.framework.data.Data;
-
 public enum BaseDataType implements DataTypeProperties, DataInstantiator// ComponenClassification
 {
 	STATE( // State data element that changes continuously and can change
@@ -97,7 +95,7 @@ public enum BaseDataType implements DataTypeProperties, DataInstantiator// Compo
 	 * @param initial_value - initial value of the data element to be created
 	 */
 	@Override
-	public <T> Data<T> create(T initial_value)
+	public <T> Dat<T> create(T initial_value)
 	{
 		// TODO Auto-generated method stub
 		return DataFactory.newData(initial_value, this.getTitle(), "", this, this.storeDataByDefault());
@@ -111,14 +109,14 @@ public enum BaseDataType implements DataTypeProperties, DataInstantiator// Compo
 	 * @param store_data - flag indicating if data should be stored or not
 	 */
 	@Override
-	public <T> Data<T> create(T initial_value, boolean stored_by_default)
+	public <T> Dat<T> create(T initial_value, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
 		return DataFactory.newData(initial_value, this.getTitle(), "", this, stored_by_default);
 	}
 
 	@Override
-	public <T> Data<T> create(T initial_value, String label)
+	public <T> Dat<T> create(T initial_value, String label)
 	{
 		// TODO Auto-generated method stub
 		return DataFactory.newData(initial_value, label, label, this, this.storeDataByDefault());
@@ -136,7 +134,7 @@ public enum BaseDataType implements DataTypeProperties, DataInstantiator// Compo
 	 * "Vertical Velocity"
 	 */
 	@Override
-	public <T> Data<T> create(T initial_value, String label, boolean stored_by_default)
+	public <T> Dat<T> create(T initial_value, String label, boolean stored_by_default)
 	{
 		// TODO Auto-generated method stub
 		return DataFactory.newData(initial_value, label, "", this, stored_by_default);

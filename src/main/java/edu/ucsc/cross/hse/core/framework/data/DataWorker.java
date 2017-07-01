@@ -13,11 +13,11 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 public class DataWorker<T> extends ComponentWorker
 {
 
-	protected static HashMap<Obj<?>, DataWorker<?>> dataActions = new HashMap<Obj<?>, DataWorker<?>>();
+	protected static HashMap<Data<?>, DataWorker<?>> dataActions = new HashMap<Data<?>, DataWorker<?>>();
 	public HashMap<Double, ArrayList<HybridTime>> storedTimes;
-	public Obj<T> data;
+	public Data<T> data;
 
-	public DataWorker(Obj<T> data)
+	public DataWorker(Data<T> data)
 	{
 		super(data);
 		this.data = data;
@@ -75,7 +75,7 @@ public class DataWorker<T> extends ComponentWorker
 	}
 
 	// Internal Operation Functions
-	public static <S> DataWorker<S> getConfigurer(Obj<S> component)
+	public static <S> DataWorker<S> getConfigurer(Data<S> component)
 	{
 		if (dataActions.containsKey(component))
 		{

@@ -2,14 +2,15 @@ package edu.ucsc.cross.hse.core.processing.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.Obj;
+import edu.ucsc.cross.hse.core.framework.data.State;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
@@ -22,25 +23,25 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	private Double lastStoreTime = -10.0; // time since last data was stored,
 											// used to store data at specified
 											// interval
-	private ArrayList<Obj> dataElementsToStore; // list of all data elements
-												// that are to be stored
+	private ArrayList<Data> dataElementsToStore; // list of all data elements
+													// that are to be stored
 
 	ArrayList<Double> storeTimes;
 
 	public DataHandler(CentralProcessor processor)
 	{
 		super(processor);
-		dataElementsToStore = new ArrayList<Obj>();
+		dataElementsToStore = new ArrayList<Data>();
 		storeTimes = new ArrayList<Double>();
 	}
 
-	public Obj getDataByIndex(Integer index)
+	public Data getDataByIndex(Integer index)
 	{
 		return dataElementsToStore.get(index);
 	}
 
 	@Override
-	public ArrayList<Obj> getAllStateData()
+	public ArrayList<Data> getAllStateData()
 	{
 		return dataElementsToStore;
 	}
@@ -49,23 +50,22 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public ArrayList<String> getAllStateNames()
 	{
 		ArrayList<String> stateElements = new ArrayList<String>();
-		for (Obj allStates : dataElementsToStore)
+		for (Data allStates : dataElementsToStore)
 		{
 			if (!stateElements.contains(allStates.getLabels().getClassification()))
 			{
 				stateElements.add(allStates.getLabels().getClassification());
 			}
 		}
-		// System.out.println(stateElements.toString());
 
 		return stateElements;
 	}
 
 	@Override
-	public ArrayList<Obj> getDataByTitle(String title)
+	public ArrayList<Data> getDataByTitle(String title)
 	{
-		ArrayList<Obj> datas = new ArrayList<Obj>();
-		for (Obj element : dataElementsToStore)
+		ArrayList<Data> datas = new ArrayList<Data>();
+		for (Data element : dataElementsToStore)
 		{
 			if (element.getLabels().getClassification().equals(title))
 			{
@@ -76,7 +76,26 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	}
 
 	@Override
-	public Obj getDifferentDataFromSameDataSet(Obj data, String title)
+	public HashMap<Data, ArrayList<Double[]>> getData(String title)
+	{
+		HashMap<Data, ArrayList<Double[]>> data = new HashMap<Data, ArrayList<Double[]>>();
+		for (Data dat : getDataByTitle(title))
+		{
+			ArrayList<Double[]> values = new ArrayList<Double[]>();
+			Set<HybridTime> tim = dat.getActions().getStoredHybridValues().keySet();
+			for (HybridTime timez : tim)
+			{
+				Double[] vals = new Double[]
+				{ timez.getTime(), (Double) dat.getActions().getStoredValue(timez) };
+				values.add(vals);
+			}
+			data.put(dat, values);
+		}
+		return data;
+	}
+
+	@Override
+	public Data getDifferentDataFromSameDataSet(Data data, String title)
 	{
 		for (Component component : getEnv().getContents().getComponents(true))
 		{
@@ -84,7 +103,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 			{
 				if (component.getContents().getComponents(true).contains(data))
 				{
-					for (Obj dat : component.getContents().getObjects(Obj.class, true))
+					for (Data dat : component.getContents().getObjects(Data.class, true))
 					{
 
 						if (dat.getLabels().getClassification().equals(title))
@@ -108,7 +127,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	{
 
 		storeTimes.add(time);
-		for (Obj element : dataElementsToStore)
+		for (Data element : dataElementsToStore)
 		{
 			if (getDataOperator(element).isDataStored())
 			{
@@ -121,7 +140,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public HashMap<String, HashMap<HybridTime, ?>> getAllMaps()
 	{
 		HashMap<String, HashMap<HybridTime, ?>> mapz = new HashMap<String, HashMap<HybridTime, ?>>();
-		for (Obj element : dataElementsToStore)
+		for (Data element : dataElementsToStore)
 		{
 			if (getDataOperator(element).isDataStored())
 			{
@@ -150,7 +169,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Obj component : super.getEnv().getContents().getObjects(Obj.class, true))
+		for (Data component : super.getEnv().getContents().getObjects(Data.class, true))
 		{
 			try
 			{
@@ -167,6 +186,28 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 			}
 		}
+	}
+
+	@Override
+	public ArrayList<State> getStatesByTitle(String title)
+	{
+		ArrayList<State> datas = new ArrayList<State>();
+		for (Data element : dataElementsToStore)
+		{
+			try
+			{
+				State state = (State) element;
+
+				if (element.getLabels().getClassification().equals(title))
+				{
+					datas.add(element);
+				}
+			} catch (Exception notState)
+			{
+
+			}
+		}
+		return datas;
 	}
 
 }

@@ -2,9 +2,8 @@ package edu.ucsc.cross.hse.core.processing.execution;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.Obj;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
@@ -15,6 +14,7 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 import edu.ucsc.cross.hse.core.processing.event.InterruptResponder;
 import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
+import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 public abstract class ProcessingElement
 {
@@ -124,7 +124,7 @@ public abstract class ProcessingElement
 		return ComponentOperator.getOperator(component);
 	}
 
-	protected <S> DataOperator<S> getDataOperator(Obj<S> component)
+	protected <S> DataOperator<S> getDataOperator(Data<S> component)
 	{
 		return DataOperator.getOperator(component);
 	}

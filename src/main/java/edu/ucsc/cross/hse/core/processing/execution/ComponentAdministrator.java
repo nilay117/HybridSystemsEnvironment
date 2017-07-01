@@ -9,9 +9,9 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.Obj;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
+import edu.ucsc.cross.hse.core2.framework.data.Dat;
 
 /*
  * This class controls all of the components so that they are setup correctly
@@ -58,11 +58,8 @@ public class ComponentAdministrator extends ProcessingElement
 		// this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		for (Component component : jumpComponents)
 		{
-			// ComponentOperator.getOperator(component).storeData();
 			HybridSystem dynamics = ((HybridSystem) component);
 			dynamics.jumpMap();
-
-			// ComponentOperator.getOperator(component).storeData();
 		}
 
 		getEnvironmentOperator().setJumpOccurring(false);

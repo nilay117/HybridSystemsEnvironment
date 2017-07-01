@@ -133,34 +133,14 @@ public class ExecutionMonitor extends ProcessingElement
 		} catch (Exception e)
 		{
 
-			e.printStackTrace();
+			// e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			problemResolved = problemResolved || handleEhCountIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
 			handleFatalError(e);
-			// System.out.println(this.getSettings().getComputationSettings().odeMinStep);
 
-			// boolean out = !checkAComponentsInsideDomain();
-			// boolean end = handleNoToleranceErrors();
-			// if (out || end)
-			{
-				// return getSettings().getExecutionSettings().simDuration;
-			}
-			// getEnvironmentOperator().getEnvironmentHybridTime().setTime(getComputationEngine().pastT);
-			// this.getData().removeLastDataPoint();
-			// getComputationEngine().updateValues(getComputationEngine().pastY);
-			// this.getComponents().performAllTasks(true);//
-			// getComponents().performAllTasks(true);
-			// getComponents().performAllTasks(true);
-			// if (this.getComponentOperator(getEnv()).isJumpOccurring() ||
-			// this.getComponents().outOfAllDomains())// ||
-			// this.getInterruptHandler().outOfDomain())
-			// restoreDataIfTerminalFail(e);
-			// getComponents().performAllTasks(getEnv().isJumpOccurring());
-			// this.getComputationEngine().zeroAllDerivatives();
-			// getComponents().performAllTasks(false);
 			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize
 			&& !this.getInterruptHandler().isTerminating())
 			{
@@ -286,33 +266,5 @@ public class ExecutionMonitor extends ProcessingElement
 	{
 		return thread;
 	}
-
-	// Debugger
-	// integrator
-
-	// private Boolean printStack = false;
-	// private Thread stackPrinter;
-	// long lastPrint = System.currentTimeMillis();
-	//
-	// private void printStack()
-	// {
-	// if (System.nanoTime() > lastPrint)
-	// {
-	// lastPrint = System.nanoTime() + 100000000;
-	// StackTraceElement[] stack = thread.getStackTrace();
-	// String stackString = stack[0].getClassName();
-	// for (Integer ele = 1; ele < stack.length; ele++)
-	// {
-	// // if (stack[ele].getClassName().contains("edu"))
-	// {
-	// stackString += ", " + stack[ele].getClassName();
-	// }
-	// }
-	// if (stackString.contains("XMLParser"))
-	// {
-	// System.out.println(stackString);
-	// }
-	// }
-	// }
 
 }
