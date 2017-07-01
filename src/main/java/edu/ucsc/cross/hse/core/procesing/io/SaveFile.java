@@ -10,6 +10,7 @@ public class SaveFile
 
 	public HashMap<FileComponent, byte[]> fileComponents;
 	public HashMap<String, byte[]> data;
+	public byte[] dataz;
 
 	public SaveFile(String file_input)
 	{
@@ -33,5 +34,6 @@ public class SaveFile
 			fileComponents.put(comp, decodedFile.fileComponents.get(comp));
 		}
 		data = decodedFile.data;
+		dataz = decodedFile.dataz;
 	}
 }

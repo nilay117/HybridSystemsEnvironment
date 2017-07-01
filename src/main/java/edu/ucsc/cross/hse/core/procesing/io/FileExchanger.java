@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -132,45 +134,69 @@ public class FileExchanger extends ProcessingElement
 		{
 			file.fileComponents.put(content, getContentString(component, content));
 		}
-
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Output output;
 		try
 		{
-			output = new Output(new FileOutputStream("results/file.bin"));
+			//ObjectOutputStream oos = new ObjectOutputStream(baos);
+			//ObjectOutputStream oos = new ObjectOutputStream(baos);
+			//	output = new Output(oos);//new FileOutputStream("results/file.bin"));
+			//output = new Output(baos);//new FileOutputStream("results/file.bin"));
+			//ObjectOutputStream oos = new ObjectOutputStream(baos);
+			output = new Output(new FileOutputStream(file_path));
 			//System.out.println(XMLParser.serializeObject(this.getData().getAllMaps()));
 			HashMap<String, HashMap<HybridTime, ?>> envContent = this.getData().getAllMaps();
+			HashMap<HybridTime, String> filez = new HashMap<HybridTime, String>();
+			filez.put(new HybridTime(), XMLParser.serializeObject(file));
+			envContent.put(SaveFile.class.getName(), filez);
 			kryo.writeClassAndObject(output, envContent);
+			//		String output2 = XMLParser.serializeObject(file);
+			//	oos.writeObject(output2);
+			//file.dataz = output.toBytes();
+			///String output2 = XMLParser.serializeObject(file);
+			//FileSystemOperator.createOutputFile(file_path, output2);
+			//	baos.close();
 			output.close();
+			//oos.close();
 
-		} catch (FileNotFoundException e)
+		} catch (Exception e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		//file.data = getDataByteMap(component);
-		String output2 = XMLParser.serializeObject(file);
-		FileSystemOperator.createOutputFile(file_path, output2);
+
 	}
 
 	public void load(File file)
 	{
-		SaveFile savedFile = new SaveFile(FileSystemOperator.getFileContentsAsString(file));
+		SaveFile savedFile = null;
 		Kryo kryo = new Kryo();
 		try
 		{
+			//..ObjectInputStream ois = new ObjectInputStream();
+			//SaveFile savedFile = (SaveFile) ois.readObject();
+
+			//			String content = DataDecompressor
+			//			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
+			Input input = new Input(new FileInputStream(file));
+			//System.out.println(XMLParser.serializeObject(savedFile.dataz));
+
+			//	HashMap<String, SavedValues> envContent = (HashMap<String, SavedValues>) kryo.readClassAndObject(input);//, EnvironmentContent.class);
+			HashMap<String, HashMap<HybridTime, ?>> envContent = (HashMap<String, HashMap<HybridTime, ?>>) kryo
+			.readClassAndObject(input);//, EnvironmentContent.class);
+			//System.out.println(XMLParser.serializeObject(envContent));
+			HashMap<HybridTime, ?> filez = envContent.get(SaveFile.class.getName());//.keySet().toArray(new HybridTime[1])
+			for (Object fileString : filez.values())
+			{
+				savedFile = new SaveFile((String) fileString);
+			}
 			String contentz = DataDecompressor
 			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
 			//kryo.register(SavedValues.class, new ExternalizableSerializer());
 			//kryo.register(HybridTime.class, new ExternalizableSerializer());
 			EnvironmentContent envContentz = (EnvironmentContent) XMLParser.getObjectFromString(contentz);
-			//			String content = DataDecompressor
-			//			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
-			Input input = new Input(new FileInputStream("results/file.bin"));
-			//	HashMap<String, SavedValues> envContent = (HashMap<String, SavedValues>) kryo.readClassAndObject(input);//, EnvironmentContent.class);
-			HashMap<String, HashMap<HybridTime, ?>> envContent = (HashMap<String, HashMap<HybridTime, ?>>) kryo
-			.readClassAndObject(input);//, EnvironmentContent.class);
-			System.out.println(XMLParser.serializeObject(envContent));
 			input.close();
 			//	loadData(savedFile, envContentz);
 			this.processor.loadContents(envContentz);
@@ -191,7 +217,9 @@ public class FileExchanger extends ProcessingElement
 				//				thread.start();
 			}
 			this.processor.loadContents(envContentz);
-		} catch (Exception e)
+		} catch (
+
+		Exception e)
 		{
 			e.printStackTrace();
 		}
