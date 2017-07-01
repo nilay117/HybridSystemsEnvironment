@@ -1,7 +1,5 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import bs.commons.objects.access.FieldFinder;
@@ -12,6 +10,8 @@ import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
@@ -50,6 +50,7 @@ public class Data<T> extends Component// DynamicData<T>
 	protected ValueDomain<T> initialVal; // initial value of object
 
 	protected HashMap<Double, T> savedValues; // mapping of saved values
+	protected HashMap<HybridTime, T> savedHybridValues; // mapping of saved values
 
 	protected T element; // currently stored data object
 
@@ -272,8 +273,9 @@ public class Data<T> extends Component// DynamicData<T>
 		save = save_default;
 		defaultUnit = NoUnit.NONE;
 		savedValues = new HashMap<Double, T>();
+		savedHybridValues = new HashMap<HybridTime, T>();
 		initialVal = new ValueDomain<T>(obj);
-		cloneToStore = !isCopyRequiredOnSave(obj); // super.id().description().information.set(description);
+		cloneToStore = !DataOperator.isCopyRequiredOnSave(obj); // super.id().description().information.set(description);
 		try
 		{
 			System.out.println(obj.getClass().getSuperclass());
@@ -335,63 +337,6 @@ public class Data<T> extends Component// DynamicData<T>
 
 	}
 
-	/*
-	 * This list determines what elements will need to be cloned before being
-	 * saved to ensure the right values are stored. For example, a list would
-	 * need to be copied because a list of some sort that was saved without
-	 * being copied will reflect any changes made in the future unless the list
-	 * is reinitialized. A value such as a double can be saved without being
-	 * copied because the stored pointer points to the correct saved value even
-	 * when a new value is stored. This list below contains general classes that
-	 * not need to be cloned to save
-	 */
-	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
-	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
-
-	/*
-	 * Determine if a copy is required to save a given object
-	 * 
-	 * @param object - object to be evaluated
-	 * 
-	 * @return true if a copy needs to be made, false otherwise
-	 */
-	public static <T> boolean isCopyRequiredOnSave(T object)
-	{
-
-		if (object != null)
-		{
-			return changableClasses.contains(object);
-		}
-		return true;
-	}
-
-	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
-	private T cloneZeroDerivative(T obj)
-	{
-		T derivative;
-		if (FieldFinder.containsSuper(obj, Number.class))
-		{
-			return (T) (Double) 0.0;
-		} else if (FieldFinder.containsSuper(obj, UnitValue.class))
-		{
-			derivative = (T) ObjectCloner.xmlClone(obj);
-			try
-			{
-				((UnitValue) derivative).set(0.0, ((UnitValue) derivative).getUnit());
-			} catch (Exception badUnit)
-			{
-				badUnit.printStackTrace();
-				System.err.println("dynamic variable creation failed : non-numeric classes not allowed");
-				System.exit(1);
-			}
-		} else
-		{
-			derivative = null;
-		}
-		return derivative;
-	}
-
 	private T getStoreValue()
 	{
 		{
@@ -434,11 +379,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	void storeValue(Double time)
 	{
-		if (save)
-		{
-			T storeValue = getStoreValue();
-			savedValues.put(time, storeValue);
-		}
+		storeValue(time, false);
 	}
 
 	void storeValue(Double time, boolean override_save)
@@ -447,6 +388,9 @@ public class Data<T> extends Component// DynamicData<T>
 		{
 			T storeValue = getStoreValue();
 			savedValues.put(time, storeValue);
+			//			savedHybridValues
+			//			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			//			storeValue);
 		}
 	}
 

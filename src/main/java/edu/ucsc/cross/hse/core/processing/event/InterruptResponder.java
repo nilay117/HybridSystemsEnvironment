@@ -39,7 +39,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	@Override
 	public void init(double t0, double[] y0, double t)
 	{
-		// killFlag = false;
+		killFlag = false;
 	}
 
 	/*

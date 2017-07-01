@@ -20,11 +20,13 @@ public class ComponentStatus
 	// simulated
 	// or not
 
+	protected String address; // address of component
+
 	public ComponentStatus()
 	{
 		simulated = true;
 		initialized = false;
-
+		address = this.toString();
 	}
 
 	Boolean getInitialized()

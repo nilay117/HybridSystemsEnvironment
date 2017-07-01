@@ -9,7 +9,6 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
-import bes.commons.data.cloning.ObjectCloner;
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
@@ -135,16 +134,16 @@ public class ExecutionMonitor extends ProcessingElement
 		} catch (Exception e)
 		{
 
-			// e.printStackTrace();
+			e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			problemResolved = problemResolved || handleEhCountIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
+			handleFatalError(e);
+			//System.out.println(this.getSettings().getComputationSettings().odeMinStep);
 
-			System.out.println(this.getSettings().getComputationSettings().odeMinStep);
-
-			boolean out = !checkAComponentsInsideDomain();
+			//	boolean out = !checkAComponentsInsideDomain();
 			// boolean end = handleNoToleranceErrors();
 			// if (out || end)
 			{
@@ -163,7 +162,8 @@ public class ExecutionMonitor extends ProcessingElement
 			// getComponents().performAllTasks(getEnv().isJumpOccurring());
 			// this.getComputationEngine().zeroAllDerivatives();
 			// getComponents().performAllTasks(false);
-			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize)
+			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize
+			&& !this.getInterruptHandler().isTerminating())
 			{
 				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
 			} else
@@ -201,15 +201,16 @@ public class ExecutionMonitor extends ProcessingElement
 		}
 	}
 
-	private boolean handleNoToleranceErrors()
+	private void handleFatalError(Exception exc)
 	{
-		boolean noTolerance = false;
-		if (this.getSettings().getExecutionSettings().rerunUntilNoErrors)
+		if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
 		{
-			noTolerance = true;
-			this.getInterruptHandler().killSim();
+			if (exc.getClass().equals(NumberIsTooSmallException.class)
+			|| exc.getClass().equals(TooManyEvaluationsException.class))
+			{
+				this.getInterruptHandler().killSim();
+			}
 		}
-		return noTolerance;
 	}
 
 	private boolean handleStepSizeIssues(Exception exc)
@@ -224,7 +225,7 @@ public class ExecutionMonitor extends ProcessingElement
 			/ this.getSettings().getComputationSettings().stepSizeReductionFactor;
 			this.getSettings()
 			.getComputationSettings().odeMinStep = this.getSettings().getComputationSettings().odeMinStep
-			/ (this.getSettings().getComputationSettings().stepSizeReductionFactor);
+			/ (5 * (this.getSettings().getComputationSettings().stepSizeReductionFactor));
 			handledIssue = true;
 		}
 		return handledIssue;

@@ -1,9 +1,13 @@
 package edu.ucsc.cross.hse.core.framework.environment;
 
+import java.util.HashMap;
+
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.object.domain.HybridDomain;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 
@@ -15,6 +19,8 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  */
 public class EnvironmentContent extends Component
 {
+
+	protected HashMap<String, Data> dataLinks;
 
 	protected HybridTime environmentTime; // time relative to when the
 											// environment
@@ -65,4 +71,8 @@ public class EnvironmentContent extends Component
 		return environmentTime.getJumpIndex();
 	}
 
+	public HybridDomain getTimeDomain()
+	{
+		return environmentTime;
+	}
 }

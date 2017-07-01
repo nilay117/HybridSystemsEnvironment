@@ -38,7 +38,7 @@ public class ComputationSettings
 	// list of enumerator options which are printed in the output file to help
 	// with seection
 
-	public double handlingThresholdReductionFactor = 1.1;// 2.0;
+	public double handlingThresholdReductionFactor = .9;//1.1;// 2.0;
 	public double stepSizeReductionFactor = 1.3;// .3;
 
 	// available of integrator types for use
@@ -76,12 +76,12 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .05;
+		odeMinStep = .00005;
 		odeMaxStep = .1;
-		odeScalAbsoluteTolerance = 1.0e-4;
-		odeScalRelativeTolerance = 1.0e-4;
-		ehMaxCheckInterval = .001;
-		ehConvergence = .001;
+		odeScalAbsoluteTolerance = 1.0e-6;
+		odeScalRelativeTolerance = 1.0e-6;
+		ehMaxCheckInterval = .000001;
+		ehConvergence = .00001;
 		ehMaxIterationCount = 10;
 		jumpPriority = true;
 		maxRecursiveStackSize = 1000;

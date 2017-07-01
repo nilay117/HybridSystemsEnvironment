@@ -27,6 +27,7 @@ dependencies {
 		compile 'com.github.be3short:UnitValues:v0.3.1'
 		compile 'com.github.be3short:ObjectTools:v0.2.2'
 		   compile 'com.github.be3short:IOTools:-SNAPSHOT'
+		  // compile 'com.github.be3short:DataManagementToolbox:-SNAPSHOT'
     	compile 'com.github.kostaskougios:cloning:1.7.9'
     	// https://mvnrepository.com/artifact/org.apache.commons/commons-compress
     	

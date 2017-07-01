@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
+import java.io.File;
 import java.util.HashMap;
 
 import bs.commons.unitvars.values.Time;
@@ -16,7 +17,7 @@ public class HybridEnvironment
 
 	private static HashMap<String, HybridEnvironment> environments = new HashMap<String, HybridEnvironment>();
 
-	private EnvironmentContent content; // all elements that make up the
+	protected EnvironmentContent content; // all elements that make up the
 	// environment
 	// itself such as data, components, systems
 	// etc
@@ -95,7 +96,7 @@ public class HybridEnvironment
 
 	public void saveContents(String directory, String file_name)
 	{
-
+		this.processor.fileExchanger.storeEnvironment();
 	}
 
 	public void saveSettings(String directory, String file_name)
@@ -106,6 +107,11 @@ public class HybridEnvironment
 	public void loadSettings(String directory, String file_name)
 	{
 
+	}
+
+	public void loadContents(File file)
+	{
+		this.processor.fileExchanger.load(file);
 	}
 
 	public void loadContents(String directory, String file_name)
@@ -141,7 +147,7 @@ public class HybridEnvironment
 
 	public void loadContents(EnvironmentContent content)
 	{
-		this.content = content;
+		processor.prepareEnvironment(content);
 	}
 
 	public void addComponents(Component... components)

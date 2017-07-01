@@ -24,8 +24,6 @@ public class ExecutionSettings
 
 	public boolean rerunOnFatalErrors;
 
-	public boolean rerunUntilNoErrors;
-
 	/*
 	 * Default values constructorc
 	 */
@@ -37,6 +35,5 @@ public class ExecutionSettings
 		jumpLimit = 100;
 		runThreadded = false;
 		rerunOnFatalErrors = true;
-		rerunUntilNoErrors = true;
 	}
 }

@@ -182,6 +182,11 @@ public class ComponentWorker
 		ComponentOperator.getOperator(component).setSimulated(simulated);
 	}
 
+	public String getAddress()
+	{
+		return component.status.address;
+	}
+
 	public SettingConfigurer getSettings()
 	{
 		return HybridEnvironment.getEnvironment(component.contents.getEnvironmentKey()).getSettings();

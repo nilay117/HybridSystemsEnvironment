@@ -1,17 +1,15 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
-import bes.commons.data.cloning.ObjectCloner;
+import com.be3short.data.cloning.ObjectCloner;
+
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
-import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 import edu.ucsc.cross.hse.core.processing.event.InterruptResponder;
 import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
@@ -87,15 +85,15 @@ public class CentralProcessor
 	/*
 	 * Prepares and starts up the environment
 	 */
-	protected void start()
+	protected void startz()
 	{
 
-		prepareEnvironment();
+		//prepareEnvironment();
 		executionMonitor.runSim(environmentInterface.getSettings().getExecutionSettings().runThreadded);
 
 	}
 
-	protected void starzt()
+	protected void start()
 	{
 		// HybridEnvironment c = (HybridEnvironment)
 		// ObjectCloner.xmlClone(environmentInterface);
@@ -108,15 +106,8 @@ public class CentralProcessor
 		while (!success)
 		{
 			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
-			environmentInterface.loadContents(content);
-			initializeProcessingElements();
-			;
-			contentAdmin.prepareEnvironmentContent();
-			simulationEngine.initialize();
-			dataHandler.loadStoreStates();
-			interruptResponder = new InterruptResponder(this);
-			success = executionMonitor.runSim(false);// executeEnvironment((EnvironmentContent)
-														// ObjectCloner.xmlClone(content));
+			success = executeEnvironment(content);
+			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
 			System.out.println(success);
 		}
 
@@ -127,14 +118,13 @@ public class CentralProcessor
 	 */
 	protected boolean executeEnvironment(EnvironmentContent content)
 	{
-		environmentInterface.loadContents(content);
-		// initializeProcessingElements();
-		contentAdmin = ContentOperator.getContentAdministrator(content);
-		contentAdmin.prepareEnvironmentContent();
-		simulationEngine.initialize();
-		dataHandler.loadStoreStates();
-		simulationEngine.initialize();
-		dataHandler.storeData(0.0, true);
+		prepareEnvironment(content);
+		storeConfigurations();
+		while (this.contentAdmin.isJumpOccurring())
+		{
+			this.componentAdmin.performAllTasks(true);
+		}
+		//dataHandler.storeData(0.0, true);
 		interruptResponder = new InterruptResponder(this);
 		return executionMonitor.runSim(false);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
@@ -142,10 +132,25 @@ public class CentralProcessor
 	/*
 	 * Gets the environment ready for execution
 	 */
-	protected void prepareEnvironment()
+	protected void prepareEnvironment(EnvironmentContent content)
 	{
-		executeEnvironment(environmentInterface.getContents());
+		environmentInterface.content = content;
+		initializeProcessingElements();
+		contentAdmin = ContentOperator.getContentAdministrator(content);
+		contentAdmin.prepareEnvironmentContent();
+		simulationEngine.initialize();
+		dataHandler.loadStoreStates();
+		simulationEngine.initialize();
 
+	}
+
+	protected void storeConfigurations()
+	{
+		ComponentOperator.getOperator(this.environmentInterface.getContents()).storeConfiguration();
+		for (Component component : this.environmentInterface.getContents().getContents().getComponents(true))
+		{
+			ComponentOperator.getOperator(component).storeConfiguration();
+		}
 	}
 
 	protected void correctPotentialSettingErrors()

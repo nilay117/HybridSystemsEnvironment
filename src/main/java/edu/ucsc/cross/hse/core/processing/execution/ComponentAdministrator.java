@@ -30,12 +30,13 @@ public class ComponentAdministrator extends ProcessingElement
 	{
 		if (jump_occurred)
 		{
-			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() - .00000001,
+			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
 			(true && getSettings().getDataSettings().storeAtEveryJump));
 
 			executeAllOccurringJumps();
-			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
+			getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime() + .000000001,
 			(true && getSettings().getDataSettings().storeAtEveryJump));
+			this.getComponents().setEnvTime(getEnvTime() + .000000001);
 		} else
 		{
 			ComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);

@@ -15,26 +15,30 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.be3short.data.compression.CompressionFormat;
+import com.be3short.data.compression.DataCompressor;
+import com.be3short.data.compression.DataDecompressor;
+import com.be3short.data.file.general.FileSystemInteractor;
 import com.rits.cloning.Cloner;
 
-import bes.commons.data.file.general.FileSystemInteractor;
 import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.labeling.StringFormatter;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
-import edu.ucsc.cross.hse.core2.framework.component.Zipper;
-import edu.ucsc.cross.hse.core2.framework.component.Zipper.CompressionFormat;
 
 public class FileExchanger extends ProcessingElement
 {
@@ -81,7 +85,7 @@ public class FileExchanger extends ProcessingElement
 			try
 			{
 				fileStream = new FileOutputStream(new File(directory, "zipped.xml.gz"));
-				fileStream.write(Zipper.compressDataGZip(out));
+				fileStream.write(DataCompressor.compressDataGZip(out));
 			} catch (Exception e)
 			{
 				// TODO Auto-generated catch block
@@ -97,6 +101,119 @@ public class FileExchanger extends ProcessingElement
 				e.printStackTrace();
 				/* We should probably delete the file now? */ }
 		}
+	}
+
+	public void storeEnvironment()
+	{
+		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
+		if (getSettings().getDataSettings().createResultSubDirectory)
+		{
+			directory += this.getComponents().getEnv().getLabels().getClassification() + "/";
+		}
+		String fileName = this.getComponents().getEnv().getLabels().getName() + "_"
+		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
+		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".hse";
+		store(directory + "/" + fileName, this.getEnv(), FileComponent.CONFIGURATION);
+
+	}
+
+	private void store(String file_path, Component component, FileComponent... contents)
+	{
+		SaveFile file = new SaveFile(null);
+		for (FileComponent content : contents)
+		{
+			file.fileComponents.put(content, getContentString(component, content));
+		}
+		file.data = getDataByteMap(component);
+		String output = XMLParser.serializeObject(file);
+		FileSystemOperator.createOutputFile(file_path, output);
+	}
+
+	public void load(File file)
+	{
+		SaveFile savedFile = new SaveFile(FileSystemOperator.getFileContentsAsString(file));
+		try
+		{
+			//			String content = DataDecompressor
+			//			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
+			String content = DataDecompressor
+			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
+			EnvironmentContent envContent = (EnvironmentContent) XMLParser.getObjectFromString(content);
+			loadData(savedFile, envContent);
+			this.processor.loadContents(envContent);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	private byte[] getContentString(Component component, FileComponent component_type)
+	{
+		byte[] content = null;
+		switch (component_type)
+		{
+		case COMPONENT:
+			content = (DataCompressor.compressDataGZip(XMLParser.serializeObject(component)));
+			break;
+		case SETTINGS:
+			content = (DataCompressor.compressDataGZip(XMLParser.serializeObject(this.getSettings())));
+			break;
+		case CONFIGURATION:
+			content = (DataCompressor
+			.compressDataGZip(XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance())));
+			break;
+		}
+		return content;
+	}
+
+	private HashMap<String, byte[]> getDataByteMap(Component component)
+	{
+		HashMap<String, byte[]> dataBytes = new HashMap<String, byte[]>();
+		for (Data data : component.getContents().getObjects(Data.class, true))
+
+		{
+			SystemConsole.print(data.getLabels().getFullDescription());
+			dataBytes.put(data.getActions().getAddress(),
+			DataCompressor.compressDataGZip(XMLParser.serializeObject(data.getActions().getStoredValues())));
+		}
+		return dataBytes;
+	}
+
+	private void loadData(SaveFile saved_file, Component component)
+	{
+		HashMap<String, byte[]> dataBytes = saved_file.data;
+		HashMap<String, Data> dataMap = ComponentOperator.getOperator(component).getDataLinks();
+		for (String data : dataBytes.keySet())
+		{
+			startDataThread(dataBytes.get(data), dataMap, data);
+		}
+	}
+
+	private void startDataThread(byte[] data_bytes, HashMap<String, Data> data_map, String data)
+	{
+		Runnable exe = loadDataThread(data_bytes, data_map, data);
+		Thread thread = new Thread(exe);
+		thread.start();
+	}
+
+	private Runnable loadDataThread(byte[] data_bytes, HashMap<String, Data> data_map, String data)
+	{
+		Runnable task = new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				HashMap<Double, ?> unzippedData = (HashMap<Double, ?>) XMLParser
+				.getObjectFromString(DataDecompressor.decompressDataGZipString(data_bytes));
+				//data_map.put(data, unzippedData);
+				SystemConsole.print(unzippedData.toString());
+				DataOperator.getOperator(data_map.get(data)).setStoredValues(unzippedData);
+			}
+
+		};
+		return task;
 	}
 
 	public static SettingConfigurer loadSettings()
@@ -178,7 +295,7 @@ public class FileExchanger extends ProcessingElement
 		switch (compression)
 		{
 		case GZIP:
-			byteOut = Zipper.compressDataGZip(serializedComponent);
+			byteOut = DataCompressor.compressDataGZip(serializedComponent);
 			adjustedFileName += ".gz";
 			break;
 		default:

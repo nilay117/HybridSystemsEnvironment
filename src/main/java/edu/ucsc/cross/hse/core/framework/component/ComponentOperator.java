@@ -10,6 +10,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 
@@ -25,6 +26,7 @@ public class ComponentOperator extends ComponentWorker
 {
 
 	// public Component component;
+	private Component configuration;
 
 	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
 
@@ -33,6 +35,7 @@ public class ComponentOperator extends ComponentWorker
 		super(component);
 		// this.component = component;
 		components.put(component, this);
+		configuration = (Component) ObjectCloner.xmlClone(component);
 		// getConfigurer(component);
 		// component.hierarchy.
 	}
@@ -184,6 +187,34 @@ public class ComponentOperator extends ComponentWorker
 	public void loadHierarchy(ComponentOrganizer hierarchy)
 	{
 		component.contents = hierarchy;
+	}
+
+	public void storeConfiguration()
+	{
+		configuration = (Component) ObjectCloner.xmlClone(component);
+	}
+
+	public Component getNewInstance()
+	{
+		return (Component) ObjectCloner.xmlClone(configuration);
+	}
+
+	public void generateAddress()
+	{
+		component.status.address = component.toString();
+	}
+
+	public HashMap<String, Data> getDataLinks()
+	{
+		HashMap<String, Data> links = new HashMap<String, Data>();
+		for (Data data : component.contents.getObjects(Data.class, true))
+		{
+			if (!links.containsKey(data.getActions().getAddress()))
+			{
+				links.put(data.getActions().getAddress(), data);
+			}
+		}
+		return links;
 	}
 
 	/*

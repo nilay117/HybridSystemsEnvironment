@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.object.configuration;
 
-import bes.commons.data.compression.CompressionFormat;
+import com.be3short.data.compression.CompressionFormat;
 
 public class DataSettings
 {

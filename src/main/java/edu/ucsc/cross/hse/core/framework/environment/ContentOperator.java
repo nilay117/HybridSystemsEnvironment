@@ -4,12 +4,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import com.be3short.data.cloning.ObjectCloner;
+
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
@@ -26,6 +27,7 @@ public class ContentOperator extends ComponentOperator
 	{
 		super(global_system);
 		globalSystem = global_system;
+
 	}
 
 	public static ContentOperator getContentAdministrator(String id)
@@ -110,9 +112,10 @@ public class ContentOperator extends ComponentOperator
 		// if (globalSystem.getContents().getComponents(true).size() <= 0)
 		{
 			globalSystem.jumpOccurring = false;
-			globalSystem.environmentTime = new HybridTime();
+			globalSystem.environmentTime = new HybridTime(true);
 			globalSystem.earthStartTime = Time.newSecondsValue(-1.0);
 			setEnvironmentKey(globalSystem.toString());
+			globalSystem.dataLinks = new HashMap<String, Data>();
 		}
 		// EnvironmentContentOperator.addGlobalHybridSystem(globalSystem);
 		// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(globalSystem.toString());
@@ -133,7 +136,17 @@ public class ContentOperator extends ComponentOperator
 				ComponentOperator.getOperator(component).protectedInitialize();
 			}
 		}
+		linkData();
+		storeConfiguration();
+	}
 
+	private void linkData()
+	{
+		for (Component component : globalSystem.getContents().getComponents(true))
+		{
+
+			ComponentOperator.getOperator(component).generateAddress();
+		}
 	}
 
 	private void linkEnvironment()
@@ -146,4 +159,5 @@ public class ContentOperator extends ComponentOperator
 			.setEnvironmentKey(ComponentOperator.getOperator(globalSystem).getEnvironmentKey());
 		}
 	}
+
 }

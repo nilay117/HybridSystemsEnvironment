@@ -2,13 +2,12 @@ package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.util.HashMap;
 
+import com.be3short.data.info.SystemInfo;
+
 import bs.commons.objects.access.CallerRetriever;
 import bs.commons.objects.labeling.StringFormatter;
-import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
-import edu.ucsc.cross.hse.core2.framework.utils.SystemInfo;
 
 public class SystemConsole extends ProcessingElement
 {
