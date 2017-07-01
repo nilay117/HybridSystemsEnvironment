@@ -1,4 +1,6 @@
-package edu.ucsc.cross.hse.core.framework.data;
+package edu.ucsc.cross.hse.core2.framework.data;
+
+import edu.ucsc.cross.hse.core.framework.data.Data;
 
 public class DataFactory
 {
@@ -41,9 +43,10 @@ public class DataFactory
 	protected static <S> Data<S> instantiateData(S obj, DataTypeProperties type, String name, String description,
 	Boolean save_default)
 	{
-		Data<S> newData = new Data<S>(obj, type, name, description, save_default);// type,
-																					// name,
-																					// description);
+		Data<S> newData = null;
+		// new Data<S>(obj, type, name, description, save_default);// type,
+		// name,
+		// description);
 		return newData;
 		// TODO Auto-generated constructor stub
 	}

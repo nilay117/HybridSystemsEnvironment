@@ -8,7 +8,9 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.Obj;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
@@ -36,32 +38,31 @@ public class ComponentWorker
 
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
-		HashMap<Data, HashMap> tempValues = new HashMap<Data, HashMap>();
+		HashMap<Obj, HashMap<HybridTime, T>> tempValues = new HashMap<Obj, HashMap<HybridTime, T>>();
 		ComponentOrganizer h = component.getContents();
 
 		if (!include_data)
 		{
-			for (Data data : component.getContents().getObjects(Data.class, true))
+			for (Obj data : component.getContents().getObjects(Obj.class, true))
 			{
-				tempValues.put(data, data.getActions().getStoredValues());
-				DataOperator.getOperator(data).setStoredValues(new HashMap<Double, T>());
+				tempValues.put(data, data.getActions().getStoredHybridValues());
 			}
 		}
 		if (!include_hierarchy)
 		{
-			// component.loadHierarchy(null);
+			ComponentOperator.getOperator(component).loadHierarchy(null);
 		} // environment = null;
 		T copy = (T) ObjectCloner.xmlClone(component);// ComponentOperator.cloner.deepClone(component);
 		if (!include_hierarchy)
 		{
-			// component.loadHierarchy(h);
+			ComponentOperator.getOperator(component).loadHierarchy(h);
 		}
 		if (!include_data)
 		{
-			for (Data data : component.getContents().getObjects(Data.class, true))
+			for (Obj data : component.getContents().getObjects(Obj.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
-				DataOperator.getOperator(data).setStoredValues(tempValues.get(data));
+				DataOperator.getOperator(data).setStoredHybridValues(tempValues.get(data));
 			}
 		}
 

@@ -3,8 +3,8 @@ package edu.ucsc.cross.hybrid.env.core.test.components;
 import bs.commons.unitvars.values.Velocity;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataFactory;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
+import edu.ucsc.cross.hse.core2.framework.data.DataFactory;
 
 public class TestState extends Component
 {

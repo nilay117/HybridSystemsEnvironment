@@ -10,6 +10,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.Obj;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
@@ -125,23 +126,30 @@ public class ComponentOperator extends ComponentWorker
 			{
 
 				boolean jumpOccurred = false;
-				//				if (ComponentAdministrator.jumpOccurring(localBehavior, true))
-				//				{
-				//					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
-				//				} else if (ComponentAdministrator.flowOccurring(localBehavior, true))
-				//				{
-				//					jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
-				//				} else
-				//				{
+				// if (ComponentAdministrator.jumpOccurring(localBehavior,
+				// true))
+				// {
+				// jumpOccurred =
+				// ComponentAdministrator.applyDynamics(localBehavior, true,
+				// jump_occurring);
+				// } else if
+				// (ComponentAdministrator.flowOccurring(localBehavior, true))
+				// {
+				// jumpOccurred =
+				// ComponentAdministrator.applyDynamics(localBehavior, true,
+				// jump_occurring);
+				// } else
+				// {
 				//
-				//				}
+				// }
 				jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
 
 				if (jumpOccurred)
 				{
-					//					ContentOperator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
-					//					.incrementJumpIndex();
-					//ComponentOperator.getOperator(((Component) localBehavior)).storeData();
+					// ContentOperator.getContentAdministrator(getEnvironmentKey()).getEnvironmentHybridTime()
+					// .incrementJumpIndex();
+					// ComponentOperator.getOperator(((Component)
+					// localBehavior)).storeData();
 				}
 			} catch (Exception behaviorFail)
 			{
@@ -152,7 +160,7 @@ public class ComponentOperator extends ComponentWorker
 
 	public void storeData()
 	{
-		for (Data data : component.getContents().getObjects(Data.class, true))
+		for (Obj data : component.getContents().getObjects(Obj.class, true))
 		{
 
 			DataOperator.getOperator(data).storeValue(component.getEnvironment().getEnvironmentTime(), true);
@@ -230,10 +238,10 @@ public class ComponentOperator extends ComponentWorker
 		}
 	}
 
-	public HashMap<String, Data> getDataLinks()
+	public HashMap<String, Obj> getDataLinks()
 	{
-		HashMap<String, Data> links = new HashMap<String, Data>();
-		for (Data data : component.contents.getObjects(Data.class, true))
+		HashMap<String, Obj> links = new HashMap<String, Obj>();
+		for (Obj data : component.contents.getObjects(Obj.class, true))
 		{
 			if (!links.containsKey(data.getActions().getAddress()))
 			{

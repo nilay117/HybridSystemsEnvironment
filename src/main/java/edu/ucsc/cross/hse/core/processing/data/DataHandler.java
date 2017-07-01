@@ -9,7 +9,7 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.SavedValues;
+import edu.ucsc.cross.hse.core.framework.data.Obj;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
@@ -22,25 +22,25 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	private Double lastStoreTime = -10.0; // time since last data was stored,
 											// used to store data at specified
 											// interval
-	private ArrayList<Data> dataElementsToStore; // list of all data elements
-													// that are to be stored
+	private ArrayList<Obj> dataElementsToStore; // list of all data elements
+												// that are to be stored
 
 	ArrayList<Double> storeTimes;
 
 	public DataHandler(CentralProcessor processor)
 	{
 		super(processor);
-		dataElementsToStore = new ArrayList<Data>();
+		dataElementsToStore = new ArrayList<Obj>();
 		storeTimes = new ArrayList<Double>();
 	}
 
-	public Data getDataByIndex(Integer index)
+	public Obj getDataByIndex(Integer index)
 	{
 		return dataElementsToStore.get(index);
 	}
 
 	@Override
-	public ArrayList<Data> getAllStateData()
+	public ArrayList<Obj> getAllStateData()
 	{
 		return dataElementsToStore;
 	}
@@ -49,7 +49,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public ArrayList<String> getAllStateNames()
 	{
 		ArrayList<String> stateElements = new ArrayList<String>();
-		for (Data allStates : dataElementsToStore)
+		for (Obj allStates : dataElementsToStore)
 		{
 			if (!stateElements.contains(allStates.getLabels().getClassification()))
 			{
@@ -62,10 +62,10 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	}
 
 	@Override
-	public ArrayList<Data> getDataByTitle(String title)
+	public ArrayList<Obj> getDataByTitle(String title)
 	{
-		ArrayList<Data> datas = new ArrayList<Data>();
-		for (Data element : dataElementsToStore)
+		ArrayList<Obj> datas = new ArrayList<Obj>();
+		for (Obj element : dataElementsToStore)
 		{
 			if (element.getLabels().getClassification().equals(title))
 			{
@@ -76,7 +76,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	}
 
 	@Override
-	public Data getDifferentDataFromSameDataSet(Data data, String title)
+	public Obj getDifferentDataFromSameDataSet(Obj data, String title)
 	{
 		for (Component component : getEnv().getContents().getComponents(true))
 		{
@@ -84,7 +84,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 			{
 				if (component.getContents().getComponents(true).contains(data))
 				{
-					for (Data dat : component.getContents().getObjects(Data.class, true))
+					for (Obj dat : component.getContents().getObjects(Obj.class, true))
 					{
 
 						if (dat.getLabels().getClassification().equals(title))
@@ -108,7 +108,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	{
 
 		storeTimes.add(time);
-		for (Data element : dataElementsToStore)
+		for (Obj element : dataElementsToStore)
 		{
 			if (getDataOperator(element).isDataStored())
 			{
@@ -121,7 +121,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public HashMap<String, HashMap<HybridTime, ?>> getAllMaps()
 	{
 		HashMap<String, HashMap<HybridTime, ?>> mapz = new HashMap<String, HashMap<HybridTime, ?>>();
-		for (Data element : dataElementsToStore)
+		for (Obj element : dataElementsToStore)
 		{
 			if (getDataOperator(element).isDataStored())
 			{
@@ -129,18 +129,6 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 			}
 		}
 		return mapz;
-	}
-
-	public void removeLastDataPoint()
-	{
-		for (Data element : dataElementsToStore)
-		{
-			if (getDataOperator(element).isDataStored())
-			{
-				getDataOperator(element).removeDataValue(lastStoreTime);
-			}
-		}
-		// IO.out(getConsole().getDataElementStoreString(time, true));
 	}
 
 	public void storeData(double t, boolean override_store_time)
@@ -151,7 +139,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 			storeData(t);
 		} else if (t > lastStoreTime + getSettings().getDataSettings().dataStoreIncrement)// settings.dataStoreIncrement)
 		{
-			//if ((!this.getComponents().outOfAllDomains()))
+			// if ((!this.getComponents().outOfAllDomains()))
 			{
 				lastStoreTime = t;
 				storeData(t);
@@ -162,17 +150,16 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Component component : super.getEnv().getContents().getComponents(true))
+		for (Obj component : super.getEnv().getContents().getObjects(Obj.class, true))
 		{
 			try
 			{
-				Data element = (Data) component;
 
 				// if (DataOperator.getOperator(element).isDataStored())
 				{
-					if (getDataOperator(element).isDataStored())
+					if (getDataOperator(component).isDataStored())
 					{
-						dataElementsToStore.add(element);
+						dataElementsToStore.add(component);
 					}
 				}
 			} catch (Exception notElement)
@@ -182,38 +169,4 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		}
 	}
 
-	public void restoreDataAfterIntegratorFail()
-	{
-
-		Double revertTime = findRevertTime();
-		if (revertTime >= 0)
-		{
-			for (Data element : dataElementsToStore)
-			{
-				//if (getDataOperator(element).isDataStored())
-				{
-					element.setValue(element.getActions().getStoredValue(revertTime));
-				}
-			}
-			this.setEnvTime(revertTime);
-			//this.getComponents().performAllTasks(false);
-		}
-	}
-
-	private Double findRevertTime()
-	{
-		Double revertTime = getEnv().getEnvironmentTime() - this.getSettings().getComputationSettings().odeMaxStep;
-		Double time = 0.0;
-		for (Double t : storeTimes)
-		{
-			if (t > revertTime)
-			{
-				break;
-			} else
-			{
-				time = t;
-			}
-		}
-		return time;
-	}
 }

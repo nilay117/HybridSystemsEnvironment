@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataFactory;
+import edu.ucsc.cross.hse.core2.framework.data.DataFactory;
 
 /*
  * This class contains information regarding the status of the component that is

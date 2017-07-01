@@ -16,15 +16,14 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataFactory;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.SavedValues;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
+import edu.ucsc.cross.hse.core2.framework.data.DataFactory;
 
 public class HybridEnvironment// implements Serializable
 {
@@ -32,7 +31,7 @@ public class HybridEnvironment// implements Serializable
 	/**
 	 * 
 	 */
-	//private static final long serialVersionUID = 2514685168328713986L;
+	// private static final long serialVersionUID = 2514685168328713986L;
 
 	private static HashMap<String, HybridEnvironment> environments = new HashMap<String, HybridEnvironment>();
 
@@ -40,7 +39,8 @@ public class HybridEnvironment// implements Serializable
 	// environment
 	// itself such as data, components, systems
 	// etc
-	protected CentralProcessor processor; // environment processor that handles events,
+	protected CentralProcessor processor; // environment processor that handles
+											// events,
 	// computations, maintenance, etc
 	private SettingConfigurer settings; // collection of settings that
 										// configure the performance of the
@@ -117,18 +117,19 @@ public class HybridEnvironment// implements Serializable
 	public void saveContents(String directory, String file_name)
 	{
 
-		//		try
-		//		{
-		//			FileOutputStream fileOut = new FileOutputStream("results/employee.ser");
-		//			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		//			out.writeObject(processor.dataHandler.getAllMaps());
-		//			out.close();
-		//			fileOut.close();
-		//			System.out.printf("Serialized data is saved in /tmp/employee.ser");
-		//		} catch (IOException i)
-		//		{
-		//			i.printStackTrace();
-		//		}
+		// try
+		// {
+		// FileOutputStream fileOut = new
+		// FileOutputStream("results/employee.ser");
+		// ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		// out.writeObject(processor.dataHandler.getAllMaps());
+		// out.close();
+		// fileOut.close();
+		// System.out.printf("Serialized data is saved in /tmp/employee.ser");
+		// } catch (IOException i)
+		// {
+		// i.printStackTrace();
+		// }
 		this.processor.fileExchanger.storeEnvironment();
 	}
 
@@ -144,29 +145,30 @@ public class HybridEnvironment// implements Serializable
 
 	public void loadContents(File file)
 	{
-		//		HybridEnvironment environment = new HybridEnvironment(); // initialize a
-		//		// new
-		//		// environment
-		//		Data dat = DataFactory.state.create(0.0);
-		//		environment.addComponents(dat);
-		//		try
-		//		{
-		//			FileInputStream fileIn = new FileInputStream("results/employee.ser");
-		//			ObjectInputStream in = new ObjectInputStream(fileIn);
-		//			HashMap<HybridTime, ?> s = (HashMap<HybridTime, ?>) in.readObject();
-		//			in.close();
-		//			fileIn.close();
-		//			DataOperator.getOperator(dat).setStoredHybridValues(s);
-		//		} catch (IOException i)
-		//		{
-		//			i.printStackTrace();
-		//			return;
-		//		} catch (ClassNotFoundException c)
-		//		{
-		//			System.out.println("Employee class not found");
-		//			c.printStackTrace();
-		//			return;
-		//		}
+		// HybridEnvironment environment = new HybridEnvironment(); //
+		// initialize a
+		// // new
+		// // environment
+		// Data dat = DataFactory.state.create(0.0);
+		// environment.addComponents(dat);
+		// try
+		// {
+		// FileInputStream fileIn = new FileInputStream("results/employee.ser");
+		// ObjectInputStream in = new ObjectInputStream(fileIn);
+		// HashMap<HybridTime, ?> s = (HashMap<HybridTime, ?>) in.readObject();
+		// in.close();
+		// fileIn.close();
+		// DataOperator.getOperator(dat).setStoredHybridValues(s);
+		// } catch (IOException i)
+		// {
+		// i.printStackTrace();
+		// return;
+		// } catch (ClassNotFoundException c)
+		// {
+		// System.out.println("Employee class not found");
+		// c.printStackTrace();
+		// return;
+		// }
 		this.processor.fileExchanger.load(file);
 	}
 

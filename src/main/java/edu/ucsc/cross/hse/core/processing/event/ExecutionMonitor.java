@@ -136,13 +136,13 @@ public class ExecutionMonitor extends ProcessingElement
 			e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
-			//problemResolved = problemResolved || handleBracketingIssues(e);
+			problemResolved = problemResolved || handleBracketingIssues(e);
 			problemResolved = problemResolved || handleEhCountIssues(e);
 			printOutUnresolvedIssues(e, problemResolved);
 			handleFatalError(e);
-			//System.out.println(this.getSettings().getComputationSettings().odeMinStep);
+			// System.out.println(this.getSettings().getComputationSettings().odeMinStep);
 
-			//	boolean out = !checkAComponentsInsideDomain();
+			// boolean out = !checkAComponentsInsideDomain();
 			// boolean end = handleNoToleranceErrors();
 			// if (out || end)
 			{
@@ -211,10 +211,10 @@ public class ExecutionMonitor extends ProcessingElement
 
 				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
 			}
-			//			if (this.getComponents().outOfAllDomains())
-			//			{
-			//				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
-			//			}
+			// if (this.getComponents().outOfAllDomains())
+			// {
+			// this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
+			// }
 
 		}
 	}
@@ -226,9 +226,11 @@ public class ExecutionMonitor extends ProcessingElement
 		{
 			SystemConsole
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
-			//			this.getSettings()
-			//			.getComputationSettings().odeMaxStep = this.getSettings().getComputationSettings().odeMaxStep
-			//			/ this.getSettings().getComputationSettings().stepSizeReductionFactor;
+			// this.getSettings()
+			// .getComputationSettings().odeMaxStep =
+			// this.getSettings().getComputationSettings().odeMaxStep
+			// /
+			// this.getSettings().getComputationSettings().stepSizeReductionFactor;
 			this.getSettings()
 			.getComputationSettings().odeMinStep = this.getSettings().getComputationSettings().odeMinStep
 			/ (5 * (this.getSettings().getComputationSettings().stepSizeReductionFactor));

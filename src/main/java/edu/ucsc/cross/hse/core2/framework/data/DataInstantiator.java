@@ -1,4 +1,6 @@
-package edu.ucsc.cross.hse.core.framework.data;
+package edu.ucsc.cross.hse.core2.framework.data;
+
+import edu.ucsc.cross.hse.core.framework.data.Data;
 
 /*
  * This class defines the data creation methods for all (current) possible

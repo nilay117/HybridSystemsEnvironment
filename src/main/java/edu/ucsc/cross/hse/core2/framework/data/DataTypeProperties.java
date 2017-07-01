@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.framework.data;
+package edu.ucsc.cross.hse.core2.framework.data;
 
 public interface DataTypeProperties
 {

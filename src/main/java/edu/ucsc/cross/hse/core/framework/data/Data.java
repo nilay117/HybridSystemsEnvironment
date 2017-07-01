@@ -15,6 +15,7 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
+import edu.ucsc.cross.hse.core2.framework.data.DataTypeProperties;
 
 /*
  * This class protects and manages a data object to ensure that the correct
@@ -34,8 +35,6 @@ public class Data<T> extends Component// DynamicData<T>
 	private final boolean cloneToStore; // flag indicating if object needs to be
 										// cloned to be stored correctly
 
-	protected boolean flowing;
-
 	protected DataTypeProperties dataType; // classification of the data
 											// element, ie
 											// Hybrid
@@ -50,8 +49,9 @@ public class Data<T> extends Component// DynamicData<T>
 	protected ValueDomain<T> initialVal; // initial value of object
 
 	protected HashMap<Double, T> savedValues; // mapping of saved values
-	protected HashMap<HybridTime, T> savedHybridValues; // mapping of saved values
-	//protected SavedValues<T> savedHybridValuez; // mapping of saved values
+	protected HashMap<HybridTime, T> savedHybridValues; // mapping of saved
+														// values
+	// protected SavedValues<T> savedHybridValuez; // mapping of saved values
 	protected T element; // currently stored data object
 
 	protected ValueDomain<T> elementDomain;
@@ -208,7 +208,8 @@ public class Data<T> extends Component// DynamicData<T>
 	{
 		if (derivative == null)
 		{
-			//		return zeroDerivative;//this.setDerivative(cloneZeroDerivative(element));
+			// return
+			// zeroDerivative;//this.setDerivative(cloneZeroDerivative(element));
 		}
 		if (!dataType.changesContinuously())// (CoreData.DYNAMIC_STATE))
 		{
@@ -223,7 +224,7 @@ public class Data<T> extends Component// DynamicData<T>
 		if (dataType.changesContinuously())
 		{
 			this.derivative = derivative;
-			flowing = true;
+
 		} else
 		{
 			// IO.warn("attempted to set derivative of " + get().toString() + "
@@ -239,7 +240,7 @@ public class Data<T> extends Component// DynamicData<T>
 	@Override
 	public DataWorker getActions()
 	{
-		return DataWorker.getConfigurer(this);
+		return null;// DataWorker.getConfigurer(this);
 	}
 
 	// // Internal Operation Functions
@@ -263,14 +264,13 @@ public class Data<T> extends Component// DynamicData<T>
 	protected Data(T obj, DataTypeProperties type, String name, String description, Boolean save_default)
 	{
 		super(name, description);
-		//savedHybridValuez = new SavedValues<T>();
-		flowing = false;
+		// savedHybridValuez = new SavedValues<T>();
 		elementDomain = null;
 		element = obj;
 		dataType = type;
 		derivative = (T) ObjectCloner.xmlClone(obj);
-		//zeroDerivative = cloneZeroDerivative(element);
-		//this.element = obj;
+		// zeroDerivative = cloneZeroDerivative(element);
+		// this.element = obj;
 		save = save_default;
 		defaultUnit = NoUnit.NONE;
 		savedValues = new HashMap<Double, T>();
@@ -389,13 +389,13 @@ public class Data<T> extends Component// DynamicData<T>
 		if (save || override_save)
 		{
 			T storeValue = getStoreValue();
-			//savedValues.put(time, storeValue);
+			// savedValues.put(time, storeValue);
 			savedHybridValues
 			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
 			storeValue);
-			//			savedHybridValuez.savedHybridValues
-			//			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
-			//			storeValue);
+			// savedHybridValuez.savedHybridValues
+			// .put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			// storeValue);
 
 		}
 	}

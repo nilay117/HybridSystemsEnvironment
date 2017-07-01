@@ -88,7 +88,7 @@ public class CentralProcessor
 	protected void startz()
 	{
 
-		//prepareEnvironment();
+		// prepareEnvironment();
 		executionMonitor.runSim(environmentInterface.getSettings().getExecutionSettings().runThreadded);
 
 	}
@@ -129,7 +129,8 @@ public class CentralProcessor
 		{
 			this.componentAdmin.performAllTasks(true);
 		}
-		//dataHandler.storeData(0.0, true);
+		this.contentAdmin.performTasks(false);
+		// dataHandler.storeData(0.0, true);
 		interruptResponder = new InterruptResponder(this);
 		return executionMonitor.runSim(false);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
@@ -145,7 +146,7 @@ public class CentralProcessor
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		dataHandler.loadStoreStates();
-		//simulationEngine.initialize();
+		simulationEngine.initialize();
 
 	}
 

@@ -13,6 +13,9 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.Obj;
+import edu.ucsc.cross.hse.core.framework.data.State;
+import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
@@ -34,7 +37,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	 * for state values and be adjusted from their respective components and
 	 * always be ready for use in the ode
 	 */
-	private HashMap<Integer, Data> odeVectorMap;
+	private HashMap<Integer, State> odeVectorMap;
 
 	/*
 	 * Constructor to link the central processor
@@ -44,7 +47,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	public SimulationEngine(CentralProcessor processor)
 	{
 		super(processor);
-		odeVectorMap = new HashMap<Integer, Data>();
+		odeVectorMap = new HashMap<Integer, State>();
 	}
 
 	/*
@@ -58,23 +61,9 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
 
-			Data element = odeVectorMap.get(odeIndex);
-			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
-			{
-				UnitValue uv = (UnitValue) element.getValue();
-				try
-				{
-					uv.set(y[odeIndex], uv.getUnit());
+			State element = odeVectorMap.get(odeIndex);
+			element.setValue(y[odeIndex]);
 
-				} catch (UnitException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else
-			{
-				element.setValue(y[odeIndex]);
-			}
 		}
 		// IO.dev(XMLParser.serializeObject(odeVectorMap, MessageCategory.DEV));
 	}
@@ -100,10 +89,8 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 
 		zeroAllDerivatives();
 
-		//if (!this.getComponentOperator(getEnv()).isJumpOccurring())
-		{
-			this.getComponents().performAllTasks(false);
-		}
+		this.getComponents().performAllTasks(false);
+
 		updateYDotVector(yDot);
 	}
 
@@ -118,25 +105,11 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	{
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
-			Data element = odeVectorMap.get(odeIndex);
-			Double derivative = 0.0;
-			if (element.getDerivative() != null)
+			State element = odeVectorMap.get(odeIndex);
+			Double derivative = element.getDerivative();
+			if (derivative == null)
 			{
-				if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
-				{
-					try
-					{
-						derivative = (Double) ((UnitValue) element.getDerivative())
-						.get(((UnitValue) element.getValue()).getUnit());
-					} catch (UnitException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				} else
-				{
-					derivative = (Double) element.getDerivative();
-				}
+				derivative = 0.0;
 			}
 			y[odeIndex] = derivative;// .getDerivative();
 
@@ -154,22 +127,10 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	{
 		for (Integer odeIndex : odeVectorMap.keySet())
 		{
-			Data element = odeVectorMap.get(odeIndex);
-			if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
-			{
-				UnitValue uv = (UnitValue) element.getValue();
-				try
-				{
-					yValues[odeIndex] = (Double) uv.get(uv.getUnit());
-				} catch (UnitException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else
-			{
-				yValues[odeIndex] = (Double) element.getValue();
-			}
+			State element = odeVectorMap.get(odeIndex);
+
+			yValues[odeIndex] = element.getValue();
+
 			// System.out.println(XMLParser.serializeObject(odeVectorMap));
 		}
 	}
@@ -183,23 +144,8 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 	 */
 	private Double getODEStateElementValue(Integer index)
 	{
-		Data element = odeVectorMap.get(index);
-		if (element.getValue().getClass().getSuperclass().equals(UnitValue.class))
-		{
-			UnitValue uv = (UnitValue) element.getValue();
-			try
-			{
-				return (Double.class.cast(uv.get(uv.getUnit())));
-			} catch (UnitException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else
-		{
-			return (Double) element.getValue();
-		}
-		return null;
+		State element = odeVectorMap.get(index);
+		return element.getValue();
 
 	}
 
@@ -248,38 +194,29 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (Component component : getEnv().getContents().getComponents(true))// .loadComponents();//.getSpecificComponent(Data.class,
-		// null))
-		{
+		for (State component : getEnv().getContents().getObjects(State.class, true))// .loadComponents();//.getSpecificComponent(Data.class,
 			try
 			{
-				Data dat = (Data) component;
-				if (dat.getClass().equals(Data.class))
+				if (getDataOperator(component).isSimulated())// .isSimulated())
 				{
-					if (getDataOperator(dat).isSimulated())// .isSimulated())
+					if (getDataOperator(component).isDataStored())
 					{
-						if (dat.getActions().getDataProperties().changesContinuously())
-						{
-							if (FieldFinder.containsSuper(dat.getValue(), UnitValue.class)
-							|| FieldFinder.containsSuper(dat.getValue(), Number.class))
-							{
-								odeVectorMap.put(odeIndex++, dat);
-							}
-						}
+						odeVectorMap.put(odeIndex++, component);
 					}
 				}
+
 			} catch (Exception e)
 			{
-				// e.printStackTrace();
+				e.printStackTrace();
 			}
-		}
 
-		System.out.println("ODE Vector Length: " + odeIndex);
+		SystemConsole.print("ODE Vector Length: " + odeIndex);
+
 	}
 
 	public void zeroAllDerivatives()
 	{
-		for (Data data : odeVectorMap.values())
+		for (State data : odeVectorMap.values())
 		{
 			data.setDerivative(null);
 		}

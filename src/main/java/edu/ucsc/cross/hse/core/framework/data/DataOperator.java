@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
 public class DataOperator<T> extends ComponentOperator
 {
 
-	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
-	Data<T> element;
+	protected static HashMap<Obj<?>, DataOperator<?>> dataOperators = new HashMap<Obj<?>, DataOperator<?>>();
+	Obj<T> element;
 	/*
 	 * This list determines what elements will need to be cloned before being
 	 * saved to ensure the right values are stored. For example, a list would
@@ -25,21 +26,15 @@ public class DataOperator<T> extends ComponentOperator
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
 
-	protected DataOperator(Data<T> component)
+	protected DataOperator(Obj<T> component)
 	{
 		super(component);
-		try
-		{
-			element = component;
-		} catch (Exception e)
-		{
 
-			element = (Data<T>) DataFactory.data.create("Not Data");
-		}
+		element = component;
 
 	}
 
-	public static <S> DataOperator<S> getOperator(Data<S> data)
+	public static <S> DataOperator<S> getOperator(Obj<S> data)
 	{
 		if (dataOperators.containsKey(data))
 		{
@@ -73,32 +68,22 @@ public class DataOperator<T> extends ComponentOperator
 		return element.save;
 	}
 
-	public void setStoredValues(HashMap<Double, T> vals)
+	public boolean isState()
 	{
-		element.savedValues = vals;
+		return FieldFinder.containsSuper(element, State.class);
+	}
+
+	public void storePrejumpData()
+	{
+		if (FieldFinder.containsSuper(element, State.class))
+		{
+			((State) component).storePreJumpValue();
+		}
 	}
 
 	public void setStoredHybridValues(HashMap<HybridTime, T> vals)
 	{
 		element.savedHybridValues = vals;
-	}
-
-	public void storePreJumpValue()
-	{
-		element.storePreJumpValue();
-	}
-
-	public void removeDataValue(Double time)
-	{
-		if (element.getActions().getStoredValues().containsKey(time))
-		{
-			element.getActions().getStoredValues().remove(time);
-		}
-	}
-
-	public void setFlow(boolean flow)
-	{
-		element.setDerivative(element.zeroDerivative);
 	}
 
 	/*
