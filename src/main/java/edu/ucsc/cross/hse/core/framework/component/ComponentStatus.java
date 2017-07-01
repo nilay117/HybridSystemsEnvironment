@@ -26,7 +26,7 @@ public class ComponentStatus
 	{
 		simulated = true;
 		initialized = false;
-		address = this.toString();
+		address = null;//this.toString();
 	}
 
 	Boolean getInitialized()

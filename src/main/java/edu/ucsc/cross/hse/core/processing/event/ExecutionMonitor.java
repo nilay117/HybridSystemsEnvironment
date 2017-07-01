@@ -211,10 +211,10 @@ public class ExecutionMonitor extends ProcessingElement
 
 				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
 			}
-			if (this.getComponents().outOfAllDomains())
-			{
-				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
-			}
+			//			if (this.getComponents().outOfAllDomains())
+			//			{
+			//				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
+			//			}
 
 		}
 	}
@@ -222,8 +222,7 @@ public class ExecutionMonitor extends ProcessingElement
 	private boolean handleStepSizeIssues(Exception exc)
 	{
 		boolean handledIssue = false;
-		if (exc.getClass().equals(NumberIsTooSmallException.class)
-		|| exc.getClass().equals(NoBracketingException.class))
+		if (exc.getClass().equals(NumberIsTooSmallException.class))
 		{
 			SystemConsole
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");

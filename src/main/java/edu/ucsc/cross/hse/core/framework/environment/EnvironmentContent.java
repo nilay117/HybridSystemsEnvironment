@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.framework.environment;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import bs.commons.objects.access.CoreComponent;
@@ -17,8 +18,13 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class EnvironmentContent extends Component
+public class EnvironmentContent extends Component implements Serializable
 {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4598575822413234480L;
 
 	protected HashMap<String, Data> dataLinks;
 
@@ -26,8 +32,8 @@ public class EnvironmentContent extends Component
 											// environment
 											// was launched
 
-	protected Time earthStartTime; // epoch time when the environment was
-									// launched
+	protected Double earthStartTime; // epoch time when the environment was
+										// launched
 
 	protected boolean jumpOccurring; // flag indicating if a jump is occurring
 										// in
@@ -62,7 +68,7 @@ public class EnvironmentContent extends Component
 
 	public Double getEarthStartTime()
 	{
-		return earthStartTime.seconds();
+		return earthStartTime;
 	}
 
 	public Integer getJumpIndex()

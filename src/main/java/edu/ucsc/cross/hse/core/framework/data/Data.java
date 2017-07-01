@@ -51,7 +51,7 @@ public class Data<T> extends Component// DynamicData<T>
 
 	protected HashMap<Double, T> savedValues; // mapping of saved values
 	protected HashMap<HybridTime, T> savedHybridValues; // mapping of saved values
-
+	//protected SavedValues<T> savedHybridValuez; // mapping of saved values
 	protected T element; // currently stored data object
 
 	protected ValueDomain<T> elementDomain;
@@ -263,6 +263,7 @@ public class Data<T> extends Component// DynamicData<T>
 	protected Data(T obj, DataTypeProperties type, String name, String description, Boolean save_default)
 	{
 		super(name, description);
+		//savedHybridValuez = new SavedValues<T>();
 		flowing = false;
 		elementDomain = null;
 		element = obj;
@@ -392,6 +393,10 @@ public class Data<T> extends Component// DynamicData<T>
 			savedHybridValues
 			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
 			storeValue);
+			//			savedHybridValuez.savedHybridValues
+			//			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			//			storeValue);
+
 		}
 	}
 

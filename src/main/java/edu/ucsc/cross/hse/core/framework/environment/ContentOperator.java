@@ -92,10 +92,10 @@ public class ContentOperator extends ComponentOperator
 		// systems = new HashMap<String, GlobalHybridSystem>();
 		// this.environmentKey = this.toString();
 		// systems.put(environmentKey, this);
-		if (globalSystem.earthStartTime.seconds() <= 0)
+		if (globalSystem.earthStartTime <= 0)
 		{
 			globalSystem.jumpOccurring = false;
-			globalSystem.earthStartTime = Time.newSecondsValue(System.nanoTime() / 1000000000.0);
+			globalSystem.earthStartTime = System.nanoTime() / 1000000000.0;
 		}
 	}
 
@@ -105,6 +105,7 @@ public class ContentOperator extends ComponentOperator
 		linkEnvironment();
 		initializeComponents(Data.class);
 		initializeComponents();
+		linkData();
 		linkEnvironment();
 	}
 
@@ -114,7 +115,7 @@ public class ContentOperator extends ComponentOperator
 		{
 			globalSystem.jumpOccurring = false;
 			globalSystem.environmentTime = new HybridTime(true);
-			globalSystem.earthStartTime = Time.newSecondsValue(-1.0);
+			globalSystem.earthStartTime = -1.0;
 			setEnvironmentKey(globalSystem.toString());
 			globalSystem.dataLinks = new HashMap<String, Data>();
 		}
@@ -137,7 +138,7 @@ public class ContentOperator extends ComponentOperator
 				ComponentOperator.getOperator(component).protectedInitialize();
 			}
 		}
-		linkData();
+
 		storeConfiguration();
 	}
 

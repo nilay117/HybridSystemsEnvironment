@@ -1,6 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
@@ -8,6 +9,8 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.SavedValues;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
@@ -21,16 +24,6 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 											// interval
 	private ArrayList<Data> dataElementsToStore; // list of all data elements
 													// that are to be stored
-
-	public static Double postJumpStoreIncrement = .0000000001; // amount of time
-																// subtracted to
-																// store data
-																// before a jump
-																// occurs in
-																// order to
-																// capture data
-																// before and
-																// after a jump
 
 	ArrayList<Double> storeTimes;
 
@@ -113,19 +106,29 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 
 	public void storeData(Double time)
 	{
-		//if (!this.getComponents().outOfAllDomains())
+
+		storeTimes.add(time);
+		for (Data element : dataElementsToStore)
 		{
-			Double adjustedTime = time;//Math.round(time * 100000.0) / 100000.0;
-			storeTimes.add(adjustedTime);
-			for (Data element : dataElementsToStore)
+			if (getDataOperator(element).isDataStored())
 			{
-				if (getDataOperator(element).isDataStored())
-				{
-					getDataOperator(element).storeValue(adjustedTime);
-				}
+				getDataOperator(element).storeValue(time);
 			}
 		}
-		// IO.out(getConsole().getDataElementStoreString(time, true));
+
+	}
+
+	public HashMap<String, HashMap<HybridTime, ?>> getAllMaps()
+	{
+		HashMap<String, HashMap<HybridTime, ?>> mapz = new HashMap<String, HashMap<HybridTime, ?>>();
+		for (Data element : dataElementsToStore)
+		{
+			if (getDataOperator(element).isDataStored())
+			{
+				mapz.put(element.getActions().getAddress(), element.getActions().getStoredHybridValues());
+			}
+		}
+		return mapz;
 	}
 
 	public void removeLastDataPoint()

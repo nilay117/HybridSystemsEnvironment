@@ -97,6 +97,7 @@ public class CentralProcessor
 	{
 		// HybridEnvironment c = (HybridEnvironment)
 		// ObjectCloner.xmlClone(environmentInterface);
+		prepareEnvironment(environmentInterface.getContents());
 		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
 		// EnvironmentContent content = (EnvironmentContent)
 		// ObjectCloner.xmlClone(environmentInterface.getContents());
@@ -110,6 +111,8 @@ public class CentralProcessor
 			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
 			success = success
 			|| (!this.componentAdmin.outOfAllDomains() && this.interruptResponder.isOutsideDomainError());
+			success = success
+			|| (this.componentAdmin.outOfAllDomains() && !this.interruptResponder.isOutsideDomainError());
 			System.out.println(success);
 		}
 
@@ -142,7 +145,7 @@ public class CentralProcessor
 		contentAdmin.prepareEnvironmentContent();
 		simulationEngine.initialize();
 		dataHandler.loadStoreStates();
-		simulationEngine.initialize();
+		//simulationEngine.initialize();
 
 	}
 

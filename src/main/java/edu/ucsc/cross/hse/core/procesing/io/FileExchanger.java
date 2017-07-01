@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,10 @@ import com.be3short.data.compression.CompressionFormat;
 import com.be3short.data.compression.DataCompressor;
 import com.be3short.data.compression.DataDecompressor;
 import com.be3short.data.file.general.FileSystemInteractor;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.ExternalizableSerializer;
 import com.rits.cloning.Cloner;
 
 import bs.commons.io.file.FileSystemOperator;
@@ -33,6 +38,7 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.SavedValues;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
@@ -114,40 +120,99 @@ public class FileExchanger extends ProcessingElement
 		String fileName = this.getComponents().getEnv().getLabels().getName() + "_"
 		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
 		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".hse";
-		store(directory + "/" + fileName, this.getEnv(), FileComponent.CONFIGURATION);
+		store(directory + "/" + fileName, this.getEnv(), FileComponent.CONFIGURATION);//,.CONFIGURATION);
 
 	}
 
 	private void store(String file_path, Component component, FileComponent... contents)
 	{
+		Kryo kryo = new Kryo();
 		SaveFile file = new SaveFile(null);
 		for (FileComponent content : contents)
 		{
 			file.fileComponents.put(content, getContentString(component, content));
 		}
-		file.data = getDataByteMap(component);
-		String output = XMLParser.serializeObject(file);
-		FileSystemOperator.createOutputFile(file_path, output);
+
+		Output output;
+		try
+		{
+			output = new Output(new FileOutputStream("results/file.bin"));
+			//System.out.println(XMLParser.serializeObject(this.getData().getAllMaps()));
+			HashMap<String, HashMap<HybridTime, ?>> envContent = this.getData().getAllMaps();
+			kryo.writeClassAndObject(output, envContent);
+			output.close();
+
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//file.data = getDataByteMap(component);
+		String output2 = XMLParser.serializeObject(file);
+		FileSystemOperator.createOutputFile(file_path, output2);
 	}
 
 	public void load(File file)
 	{
 		SaveFile savedFile = new SaveFile(FileSystemOperator.getFileContentsAsString(file));
+		Kryo kryo = new Kryo();
 		try
 		{
+			String contentz = DataDecompressor
+			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
+			//kryo.register(SavedValues.class, new ExternalizableSerializer());
+			//kryo.register(HybridTime.class, new ExternalizableSerializer());
+			EnvironmentContent envContentz = (EnvironmentContent) XMLParser.getObjectFromString(contentz);
 			//			String content = DataDecompressor
 			//			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
-			String content = DataDecompressor
-			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
-			EnvironmentContent envContent = (EnvironmentContent) XMLParser.getObjectFromString(content);
-			loadData(savedFile, envContent);
-			this.processor.loadContents(envContent);
+			Input input = new Input(new FileInputStream("results/file.bin"));
+			//	HashMap<String, SavedValues> envContent = (HashMap<String, SavedValues>) kryo.readClassAndObject(input);//, EnvironmentContent.class);
+			HashMap<String, HashMap<HybridTime, ?>> envContent = (HashMap<String, HashMap<HybridTime, ?>>) kryo
+			.readClassAndObject(input);//, EnvironmentContent.class);
+			System.out.println(XMLParser.serializeObject(envContent));
+			input.close();
+			//	loadData(savedFile, envContentz);
+			this.processor.loadContents(envContentz);
+			//this.processor.loadContents(envContentz);
+			for (Data id : envContentz.getContents().getObjects(Data.class, true))
+			{
+				//				Runnable runnable = new Runnable()
+				//				{
+				//
+				//					@Override
+				//					public void run()
+				//					{]
+				System.out.println(id.getActions().getAddress());
+				DataOperator.getOperator(id).setStoredHybridValues(envContent.get(id.getActions().getAddress()));
+				//	}
+				//	};
+				//				Thread thread = new Thread(runnable);
+				//				thread.start();
+			}
+			this.processor.loadContents(envContentz);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 	}
+	//	public void load(File file)
+	//	{
+	//		SaveFile savedFile = new SaveFile(FileSystemOperator.getFileContentsAsString(file));
+	//		try
+	//		{
+	//			//			String content = DataDecompressor
+	//			//			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
+	//			String content = DataDecompressor
+	//			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
+	//			EnvironmentContent envContent = (EnvironmentContent) XMLParser.getObjectFromString(content);
+	//			loadData(savedFile, envContent);
+	//			this.processor.loadContents(envContent);
+	//		} catch (Exception e)
+	//		{
+	//			e.printStackTrace();
+	//		}
+	//	}
 
 	private byte[] getContentString(Component component, FileComponent component_type)
 	{
@@ -187,6 +252,7 @@ public class FileExchanger extends ProcessingElement
 		HashMap<String, Data> dataMap = ComponentOperator.getOperator(component).getDataLinks();
 		for (String data : dataBytes.keySet())
 		{
+
 			startDataThread(dataBytes.get(data), dataMap, data);
 		}
 	}
@@ -206,6 +272,7 @@ public class FileExchanger extends ProcessingElement
 			@Override
 			public void run()
 			{
+				SystemConsole.print(data);
 				HashMap<HybridTime, ?> unzippedData = (HashMap<HybridTime, ?>) XMLParser
 				.getObjectFromString(DataDecompressor.decompressDataGZipString(data_bytes));
 				//data_map.put(data, unzippedData);

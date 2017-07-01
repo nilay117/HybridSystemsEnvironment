@@ -224,7 +224,10 @@ public class ComponentOperator extends ComponentWorker
 
 	public void generateAddress()
 	{
-		component.status.address = component.toString();
+		if (component.status.address == null)
+		{
+			component.status.address = component.toString();
+		}
 	}
 
 	public HashMap<String, Data> getDataLinks()

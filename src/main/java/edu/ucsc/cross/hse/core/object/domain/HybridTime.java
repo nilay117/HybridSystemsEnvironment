@@ -1,7 +1,21 @@
 package edu.ucsc.cross.hse.core.object.domain;
 
-public class HybridTime implements HybridDomain
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
+
+public class HybridTime implements HybridDomain//, Serializable// Externalizable
 {
+
+	/**
+	 * 
+	 */
+	//private static final long serialVersionUID = 7374901522495983050L;
+	/**
+	 * 
+	 */
 
 	private HybridTime current;
 	private Double time;
@@ -80,4 +94,21 @@ public class HybridTime implements HybridDomain
 		}
 		return curr;
 	}
+
+	//	@Override
+	//	public void writeExternal(ObjectOutput out) throws IOException
+	//	{
+	//		out.writeObject(jumpIndex);
+	//		out.writeObject(time);
+	//
+	//	}
+	//
+	//	@Override
+	//	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+	//	{
+	//
+	//		jumpIndex = (Integer) in.readObject();
+	//		time = (Double) in.readObject();
+	//
+	//	}
 }

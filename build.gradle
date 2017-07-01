@@ -30,5 +30,6 @@ dependencies {
 		  // compile 'com.github.be3short:DataManagementToolbox:-SNAPSHOT'
     	compile 'com.github.kostaskougios:cloning:1.7.9'
     	// https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+    	compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.0'
     	
 }
