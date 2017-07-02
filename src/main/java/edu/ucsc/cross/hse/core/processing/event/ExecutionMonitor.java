@@ -113,7 +113,8 @@ public class ExecutionMonitor extends ProcessingElement
 	{
 		Double endTime = 0.0;
 		// getComponents().performAllTasks(true);
-		while (endTime < duration && !this.getInterruptHandler().isTerminating())
+		while (endTime < duration && !this.getInterruptHandler().isTerminating()
+		&& getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit)
 		{
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
 		}
@@ -154,32 +155,6 @@ public class ExecutionMonitor extends ProcessingElement
 
 	}
 
-	private boolean checkAComponentsInsideDomain()
-	{
-		boolean componentsInDomain = true;
-		for (Component sys : this.getEnv().getContents().getComponents(true))
-		{
-			componentsInDomain = componentsInDomain && !this.getComponents().outOfAllDomains(sys);
-			if (!componentsInDomain)
-			{
-				this.getInterruptHandler().killSim();
-			}
-		}
-
-		return componentsInDomain;
-	}
-
-	private void handleDisruptiveError()
-	{
-		if (this.getComponents().outOfAllDomains())
-		{
-			if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
-			{
-				this.getInterruptHandler().killSim();
-			}
-		}
-	}
-
 	private void handleFatalError(Exception exc)
 	{
 		if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
@@ -189,13 +164,8 @@ public class ExecutionMonitor extends ProcessingElement
 			|| exc.getClass().equals(TooManyEvaluationsException.class))
 			{
 
-				this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
+				this.getInterruptHandler().killSim(true);
 			}
-			// if (this.getComponents().outOfAllDomains())
-			// {
-			// this.getInterruptHandler().killSim(this.getComponents().outOfAllDomains());
-			// }
-
 		}
 	}
 
@@ -204,7 +174,7 @@ public class ExecutionMonitor extends ProcessingElement
 		boolean handledIssue = false;
 		if (exc.getClass().equals(NumberIsTooSmallException.class))
 		{
-			SystemConsole
+			this.getConsole()
 			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
 			// this.getSettings()
 			// .getComputationSettings().odeMaxStep =
@@ -225,9 +195,8 @@ public class ExecutionMonitor extends ProcessingElement
 		boolean handledIssue = false;
 		if (exc.getClass().equals(NoBracketingException.class))
 		{
-			// this.getConsole().print(
-			// "Integrator failure due to large exception handling thresholds -
-			// adjusting thresholds and restarting integrator");
+			this.getConsole().print(
+			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
 			getSettings()
 			.getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
 			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;

@@ -60,13 +60,19 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	{
 		// getComputationEngine().updateValues(y);
 		// getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-		SystemConsole.print(getConsole().getDiscreteEventIndication());
+		this.getConsole().print(getConsole().getDiscreteEventIndication());
 		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
 		{
 			flag = -1.0 * flag;
 		}
 		toggles = 0;
-		return EventHandler.Action.RESET_STATE;
+		if (getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit)
+		{
+			return EventHandler.Action.RESET_STATE;
+		} else
+		{
+			return EventHandler.Action.STOP;
+		}
 	}
 
 	/*
@@ -78,7 +84,7 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 		getComputationEngine().updateValues(y);
 		ComponentOperator.getOperator(getEnv()).storeData();
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-		//ComponentOperator.getOperator(getEnv()).storeData();
+		// ComponentOperator.getOperator(getEnv()).storeData();
 		getComponents().performAllTasks(true);
 		this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		ComponentOperator.getOperator(getEnv()).storeData();

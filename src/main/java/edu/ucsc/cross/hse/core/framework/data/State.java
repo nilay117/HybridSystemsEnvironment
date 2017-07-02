@@ -37,20 +37,37 @@ public class State extends Data<Double>// DynamicData<T>
 	@Override
 	public Double getValue(boolean randomize_from_domain)
 	{
-
-		if (randomize_from_domain)
+		try
 		{
-			element = elementDomain.getValue();
+			if (randomize_from_domain)
+			{
+				element = elementDomain.getValue();
 
-			return element;
-		} else if (getEnvironment().isJumpOccurring())
-		{
-			return prejump;
-		} else
-		{
+				return element;
+			} else if (getEnvironment().isJumpOccurring())
+			{
+				return prejump;
+			} else
+			{
 
+				return element;
+			}
+		} catch (Exception e)
+		{
 			return element;
 		}
+
+	}
+
+	@Override
+	public void setValue(Double val)
+	{
+		if (!ComponentOperator.getOperator(this).isInitialized())
+		{
+			elementDomain.setFixedValue(val);
+		}
+		element = val;
+
 	}
 
 	@Override

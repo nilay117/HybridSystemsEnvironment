@@ -209,7 +209,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 				e.printStackTrace();
 			}
 
-		SystemConsole.print("ODE Vector Length: " + odeIndex);
+		this.getConsole().print("ODE Vector Length: " + odeIndex);
 
 	}
 

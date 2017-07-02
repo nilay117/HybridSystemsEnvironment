@@ -67,4 +67,8 @@ public class SettingConfigurer
 		return returnSetting;
 	}
 
+	public static HashMap<Class<?>, Object> getSettingsMap(SettingConfigurer setting)
+	{
+		return setting.settings;
+	}
 }

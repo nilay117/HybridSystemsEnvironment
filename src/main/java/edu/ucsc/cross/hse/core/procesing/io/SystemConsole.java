@@ -25,12 +25,6 @@ public class SystemConsole extends ProcessingElement
 		/ getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
 	}
 
-	private void initialize()
-	{
-		// IO.settings.printCallingClass = false;
-		// classRetriever = new CallerRetriever();
-	}
-
 	public void printUpdates()
 	{
 		progressUpdate();
@@ -72,7 +66,7 @@ public class SystemConsole extends ProcessingElement
 		return classRetriever.retriever.getCallingClasses()[2 + increment].getSimpleName();
 	}
 
-	public static void print(String message)
+	public void print(String message)
 	{
 		// System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" +
 		// getCallingClassName(1) + "] " + message);

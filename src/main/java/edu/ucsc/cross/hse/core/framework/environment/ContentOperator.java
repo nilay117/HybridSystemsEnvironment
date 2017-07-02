@@ -105,20 +105,19 @@ public class ContentOperator extends ComponentOperator
 		linkEnvironment();
 		initializeComponents(Data.class);
 		initializeComponents();
-		linkData();
+		generateAddresses();
 		linkEnvironment();
 	}
 
 	protected void preinitializeContent()
 	{
-		// if (globalSystem.getContents().getComponents(true).size() <= 0)
-		{
-			globalSystem.jumpOccurring = false;
-			globalSystem.environmentTime = new HybridTime(true);
-			globalSystem.earthStartTime = -1.0;
-			setEnvironmentKey(globalSystem.toString());
-			globalSystem.dataLinks = new HashMap<String, Data>();
-		}
+
+		globalSystem.jumpOccurring = false;
+		globalSystem.environmentTime = new HybridTime(true);
+		globalSystem.earthStartTime = -1.0;
+		setEnvironmentKey(globalSystem.toString());
+		globalSystem.dataLinks = new HashMap<String, Data>();
+
 		// EnvironmentContentOperator.addGlobalHybridSystem(globalSystem);
 		// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(globalSystem.toString());
 	}
@@ -142,7 +141,7 @@ public class ContentOperator extends ComponentOperator
 		storeConfiguration();
 	}
 
-	private void linkData()
+	private void generateAddresses()
 	{
 		for (Component component : globalSystem.getContents().getComponents(true))
 		{

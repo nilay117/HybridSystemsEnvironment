@@ -85,19 +85,11 @@ public class CentralProcessor
 	/*
 	 * Prepares and starts up the environment
 	 */
-	protected void startz()
-	{
-
-		// prepareEnvironment();
-		executionMonitor.runSim(environmentInterface.getSettings().getExecutionSettings().runThreadded);
-
-	}
-
 	protected void start()
 	{
 		// HybridEnvironment c = (HybridEnvironment)
 		// ObjectCloner.xmlClone(environmentInterface);
-		prepareEnvironment(environmentInterface.getContents());
+		// prepareEnvironment(environmentInterface.getContents());
 		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
 		// EnvironmentContent content = (EnvironmentContent)
 		// ObjectCloner.xmlClone(environmentInterface.getContents());
@@ -110,10 +102,7 @@ public class CentralProcessor
 			success = executeEnvironment(content);
 			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
 			success = success
-			|| (!this.componentAdmin.outOfAllDomains() && this.interruptResponder.isOutsideDomainError());
-			success = success
 			|| (this.componentAdmin.outOfAllDomains() && !this.interruptResponder.isOutsideDomainError());
-			System.out.println(success);
 		}
 
 	}
@@ -124,13 +113,14 @@ public class CentralProcessor
 	protected boolean executeEnvironment(EnvironmentContent content)
 	{
 		prepareEnvironment(content);
+		simulationEngine.initialize();
 		storeConfigurations();
 		while (this.contentAdmin.isJumpOccurring())
 		{
 			this.componentAdmin.performAllTasks(true);
+			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
 		}
-		this.contentAdmin.performTasks(false);
-		// dataHandler.storeData(0.0, true);
+		// this.contentAdmin.performTasks(false);
 		interruptResponder = new InterruptResponder(this);
 		return executionMonitor.runSim(false);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
@@ -138,13 +128,11 @@ public class CentralProcessor
 	/*
 	 * Gets the environment ready for execution
 	 */
-	protected void prepareEnvironment(EnvironmentContent content)
+	public void prepareEnvironment(EnvironmentContent content)
 	{
 		environmentInterface.content = content;
-		contentAdmin = ContentOperator.getContentAdministrator(content);
 		initializeProcessingElements();
 		contentAdmin.prepareEnvironmentContent();
-		simulationEngine.initialize();
 		dataHandler.loadStoreStates();
 		simulationEngine.initialize();
 

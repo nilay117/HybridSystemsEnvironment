@@ -1,20 +1,30 @@
 package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 
 import com.be3short.data.compression.DataCompressor;
+import com.be3short.data.compression.DataDecompressor;
 import com.be3short.data.file.general.FileSystemInteractor;
 import com.be3short.data.file.xml.XMLParser;
 import com.be3short.data.serialization.ObjectSerializer;
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
@@ -55,7 +65,7 @@ public class FilePackager extends ProcessingElement
 		try
 		{
 			DataCompressor.zipDirectory(location.getAbsolutePath(), location.getAbsolutePath() + ".hse");
-			//FileUtils.deleteDirectory(location);
+			FileUtils.deleteDirectory(location);
 		} catch (IllegalArgumentException e)
 		{
 			// TODO Auto-generated catch block
@@ -74,8 +84,9 @@ public class FilePackager extends ProcessingElement
 		String environment = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(environment);
 		ObjectSerializer.store(location.getAbsolutePath() + "/" + component.getActions().getAddress(), compressed);
-		//		FileSystemInteractor.createOutputFile(location.getAbsolutePath(), component.getActions().getAddress() + ".gz",
-		//		compressed);
+		// FileSystemInteractor.createOutputFile(location.getAbsolutePath(),
+		// component.getActions().getAddress() + ".gz",
+		// compressed);
 	}
 
 	private void storeData(File location, String sub_directory, Component component)
@@ -96,5 +107,60 @@ public class FilePackager extends ProcessingElement
 
 		ObjectSerializer.store(
 		location.getAbsolutePath() + "/" + ComponentOperator.generateInstanceAddress(this.getSettings()), compressed);
+	}
+
+	public HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
+	{
+		ArrayList<FileContent> content = new ArrayList<FileContent>();
+		content.addAll(Arrays.asList(contents));
+		HashMap<FileContent, Object> loadedContent = new HashMap<FileContent, Object>();
+		try
+		{
+			ZipInputStream in = new ZipInputStream(new FileInputStream(location));
+			ArrayList<File> filess = new ArrayList<File>();
+			ZipEntry entry = in.getNextEntry();
+			HashMap<String, HashMap<HybridTime, ?>> datas = new HashMap<String, HashMap<HybridTime, ?>>();
+			Input input = new Input(in);
+
+			while (entry != null)
+			{
+				try
+				{
+					this.getConsole().print("Loading data from file : " + entry.getName());
+					Object readIn = kryo.readClassAndObject(input);
+					FileElement inputElement = FileElement.getFileElementType(entry.getName());
+					switch (inputElement)
+					{
+					case DATA:
+						if (content.contains(FileContent.ALL_DATA))
+						{
+							datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
+						}
+						break;
+					case ENVIRONMENT:
+						EnvironmentContent envContentz = (EnvironmentContent) XMLParser
+						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn));
+						loadedContent.put(FileContent.ENVIRONMENT_CONFIGURATION, envContentz);
+						break;
+					case SETTINGS:
+						loadedContent.put(FileContent.SETTINGS, ((SettingConfigurer) XMLParser
+						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
+						break;
+					case COMPONENT:
+						break;
+
+					}
+				} catch (Exception e)
+				{
+
+				}
+				entry = in.getNextEntry();
+
+			}
+		} catch (Exception ee)
+		{
+
+		}
+		return loadedContent;
 	}
 }

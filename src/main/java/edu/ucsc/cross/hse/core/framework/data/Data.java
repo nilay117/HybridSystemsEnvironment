@@ -64,11 +64,17 @@ public class Data<T> extends Component// DynamicData<T>
 
 	public void setValue(T min, T max)
 	{
-		if (FieldFinder.containsSuper(min, Double.class))
+		// if (FieldFinder.containsSuper(min, Double.class))
+		// {
+		try
 		{
 			elementDomain = new ValueDomain((Double) min, (Double) max);
 			setValue((T) elementDomain.getValue());
+		} catch (Exception e)
+		{
+			setValue(min);
 		}
+		// }
 	}
 
 	public boolean isElementNull()

@@ -180,6 +180,13 @@ public class HybridEnvironment// implements Serializable
 		return processor.dataHandler;
 	}
 
+	public void refreshDataAccessor()
+	{
+		processor.prepareEnvironment(getContents());
+		// processor.dataHandler.loadStoreStates();
+
+	}
+
 	public SettingConfigurer getSettings()
 	{
 		return settings;
@@ -203,6 +210,7 @@ public class HybridEnvironment// implements Serializable
 
 	public void loadContents(EnvironmentContent content)
 	{
+
 		processor.prepareEnvironment(content);
 	}
 
@@ -224,7 +232,7 @@ public class HybridEnvironment// implements Serializable
 	private void initializeComponents(boolean pre_loaded_content)
 	{
 		environments.put(content.toString(), this);
-		settings = FileExchanger.loadSettings();
+		settings = FileExchanger.loadSettings(null);
 		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
 		{

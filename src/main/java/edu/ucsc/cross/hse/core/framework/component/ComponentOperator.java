@@ -14,6 +14,7 @@ import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
+import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
 
 /*
@@ -227,7 +228,7 @@ public class ComponentOperator extends ComponentWorker
 
 	public Component getNewInstance()
 	{
-		return configuration;//(Component) ObjectCloner.xmlClone(configuration);
+		return (Component) ObjectCloner.xmlClone(configuration);
 	}
 
 	public void generateAddress()
@@ -247,18 +248,18 @@ public class ComponentOperator extends ComponentWorker
 
 	}
 
-	public HashMap<String, Data> getDataLinks()
-	{
-		HashMap<String, Data> links = new HashMap<String, Data>();
-		for (Data data : component.contents.getObjects(Data.class, true))
-		{
-			if (!links.containsKey(data.getActions().getAddress()))
-			{
-				links.put(data.getActions().getAddress(), data);
-			}
-		}
-		return links;
-	}
+	// public HashMap<String, Data> getDataLinks()
+	// {
+	// HashMap<String, Data> links = new HashMap<String, Data>();
+	// for (Data data : component.contents.getObjects(Data.class, true))
+	// {
+	// if (!links.containsKey(data.getActions().getAddress()))
+	// {
+	// links.put(data.getActions().getAddress(), data);
+	// }
+	// }
+	// return links;
+	// }
 
 	/*
 	 * Internal Operation Functions

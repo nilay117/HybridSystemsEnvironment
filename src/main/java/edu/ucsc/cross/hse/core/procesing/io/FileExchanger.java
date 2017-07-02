@@ -132,305 +132,50 @@ public class FileExchanger extends ProcessingElement
 	private void store(File file_path, Component component, FileContent... contents)
 	{
 		packager.storeContents(file_path, component, contents);
-		//		Kryo kryo = new Kryo();
-		//		SaveFile file = new SaveFile(null);
-		//		for (FileComponent content : contents)
-		//		{
-		//			file.fileComponents.put(content, getContentString(component, content));
-		//		}
-		//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		//		Output output;
-		//		try
-		//		{
-		//			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-		//			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-		//			// output = new Output(oos);//new
-		//			// FileOutputStream("results/file.bin"));
-		//			// output = new Output(baos);//new
-		//			// FileOutputStream("results/file.bin"));
-		//			// ObjectOutputStream oos = new ObjectOutputStream(baos);
-		//			output = new Output(new FileOutputStream(file_path));
-		//			// System.out.println(XMLParser.serializeObject(this.getData().getAllMaps()));
-		//			HashMap<String, HashMap<HybridTime, ?>> envContent = this.getData().getAllMaps();
-		//			HashMap<HybridTime, String> filez = new HashMap<HybridTime, String>();
-		//			filez.put(new HybridTime(), XMLParser.serializeObject(file));
-		//			envContent.put(SaveFile.class.getName(), filez);
-		//			kryo.writeClassAndObject(output, envContent);
-		//			// String output2 = XMLParser.serializeObject(file);
-		//			// oos.writeObject(output2);
-		//			// file.dataz = output.toBytes();
-		//			/// String output2 = XMLParser.serializeObject(file);
-		//			// FileSystemOperator.createOutputFile(file_path, output2);
-		//			// baos.close();
-		//			output.close();
-		//			// oos.close();
-		//
-		//		} catch (Exception e)
-		//		{
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
 
-		// file.data = getDataByteMap(component);
-
-	}
-
-	public void loadz(File file)
-	{
-		SaveFile savedFile = null;
-		Kryo kryo = new Kryo();
-		try
-		{
-			// ..ObjectInputStream ois = new ObjectInputStream();
-			// SaveFile savedFile = (SaveFile) ois.readObject();
-
-			// String content = DataDecompressor
-			// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
-			Input input = new Input(new FileInputStream(file));
-			// System.out.println(XMLParser.serializeObject(savedFile.dataz));
-
-			// HashMap<String, SavedValues> envContent = (HashMap<String,
-			// SavedValues>) kryo.readClassAndObject(input);//,
-			// EnvironmentContent.class);
-			HashMap<String, HashMap<HybridTime, ?>> envContent = (HashMap<String, HashMap<HybridTime, ?>>) kryo
-			.readClassAndObject(input);// , EnvironmentContent.class);
-			// System.out.println(XMLParser.serializeObject(envContent));
-			HashMap<HybridTime, ?> filez = envContent.get(SaveFile.class.getName());// .keySet().toArray(new
-																					// HybridTime[1])
-			for (Object fileString : filez.values())
-			{
-				savedFile = new SaveFile((String) fileString);
-			}
-			String contentz = DataDecompressor
-			.decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
-			// kryo.register(SavedValues.class, new ExternalizableSerializer());
-			// kryo.register(HybridTime.class, new ExternalizableSerializer());
-			EnvironmentContent envContentz = (EnvironmentContent) XMLParser.getObjectFromString(contentz);
-			input.close();
-			// loadData(savedFile, envContentz);
-			this.processor.loadContents(envContentz);
-			// this.processor.loadContents(envContentz);
-			for (Data id : envContentz.getContents().getObjects(Data.class, true))
-			{
-				// Runnable runnable = new Runnable()
-				// {
-				//
-				// @Override
-				// public void run()
-				// {]
-				System.out.println(id.getActions().getAddress());
-				DataOperator.getOperator(id).setStoredHybridValues(envContent.get(id.getActions().getAddress()));
-				// }
-				// };
-				// Thread thread = new Thread(runnable);
-				// thread.start();
-			}
-			this.processor.loadContents(envContentz);
-		} catch (
-
-		Exception e)
-		{
-			e.printStackTrace();
-		}
 	}
 
 	public void load(File file)
 	{
-		SaveFile savedFile = null;
-		Kryo kryo = new Kryo();
-		try
+
+		HashMap<FileContent, Object> contents = packager.loadContents(file, FileContent.values());
+		EnvironmentContent env = (EnvironmentContent) contents.get(FileContent.ENVIRONMENT_CONFIGURATION);
+		for (FileContent content : contents.keySet())
 		{
-			ZipInputStream in = new ZipInputStream(new FileInputStream(file));
-			ArrayList<File> filess = new ArrayList<File>();
-			ZipEntry entry = in.getNextEntry();
-
-			// ..ObjectInputStream ois = new ObjectInputStream();
-			// SaveFile savedFile = (SaveFile) ois.readObject();
-
-			// String content = DataDecompressor
-			// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
-			HashMap<String, HashMap<HybridTime, ?>> datas = new HashMap<String, HashMap<HybridTime, ?>>();
-			Input input = new Input(in);
-			EnvironmentContent envContentz = null;
-			while (entry != null)
+			switch (content)
 			{
-				System.out.println(entry.getName());
+			case ALL_DATA:
+				loadAllData((HashMap<String, HashMap<HybridTime, ?>>) contents.get(FileContent.ALL_DATA), env);
+				break;
+			case SETTINGS:
+				this.setSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
+				break;
 
-				Object readIn = kryo.readClassAndObject(input);
-				if (readIn.getClass().equals(HashMap.class))
-				{
-					datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
-				} else if (readIn.getClass().equals(byte[].class))
-				{
-					if (entry.getName().contains(EnvironmentContent.class.getSimpleName()))
-					{
-						envContentz = (EnvironmentContent) XMLParser
-						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn));
-					} else if (entry.getName().contains(SettingConfigurer.class.getSimpleName()))
-					{
-						this.setSettings((SettingConfigurer) XMLParser
-						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn)));
-					}
-				}
-				entry = in.getNextEntry();
-				// System.out.println(XMLParser.serializeObject(savedFile.dataz));
-
-				// HashMap<String, SavedValues> envContent = (HashMap<String,
-				// SavedValues>) kryo.readClassAndObject(input);//,
-				// EnvironmentContent.class);
-				// HashMap<String, HashMap<HybridTime, ?>> envContent =
-				// (HashMap<String, HashMap<HybridTime, ?>>) kryo
-				// .readClassAndObject(input);// , EnvironmentContent.class);
-				// // System.out.println(XMLParser.serializeObject(envContent));
-				// HashMap<HybridTime, ?> filez =
-				// envContent.get(SaveFile.class.getName());//
-				// .keySet().toArray(new
-				// // HybridTime[1])
-				// for (Object fileString : filez.values())
-				// {
-				// savedFile = new SaveFile((String) fileString);
-				// }
-				// String contentz = DataDecompressor
-				// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
-				// // kryo.register(SavedValues.class, new
-				// ExternalizableSerializer());
-				// // kryo.register(HybridTime.class, new
-				// ExternalizableSerializer());
-				// EnvironmentContent envContentz = (EnvironmentContent)
-				// XMLParser.getObjectFromString(contentz);
-				// input.close();
-				// // loadData(savedFile, envContentz);
 			}
-			this.processor.loadContents(envContentz);
-			// // this.processor.loadContents(envContentz);
-			for (Data id : envContentz.getContents().getObjects(Data.class, true))
-			{
-				// // Runnable runnable = new Runnable()
-				// // {
-				// //
-				// // @Override
-				// // public void run()
-				// // {]
-				// System.out.println(id.getActions().getAddress());
-				DataOperator.getOperator(id).setStoredHybridValues(datas.get(id.getActions().getAddress()));
-			}
-			// // };
-			// // Thread thread = new Thread(runnable);
-			// // thread.start();
-			// }
-
-			this.processor.loadContents(envContentz);
-		} catch (
-
-		Exception e)
-		{
-			e.printStackTrace();
 		}
-	}
-	// public void load(File file)
-	// {
-	// SaveFile savedFile = new
-	// SaveFile(FileSystemOperator.getFileContentsAsString(file));
-	// try
-	// {
-	// // String content = DataDecompressor
-	// //
-	// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.COMPONENT));
-	// String content = DataDecompressor
-	// .decompressDataGZipString(savedFile.fileComponents.get(FileComponent.CONFIGURATION));
-	// EnvironmentContent envContent = (EnvironmentContent)
-	// XMLParser.getObjectFromString(content);
-	// loadData(savedFile, envContent);
-	// this.processor.loadContents(envContent);
-	// } catch (Exception e)
-	// {
-	// e.printStackTrace();
-	// }
-	// }
-
-	private byte[] getContentString(Component component, FileComponent component_type)
-	{
-		byte[] content = null;
-		switch (component_type)
-		{
-		case COMPONENT:
-			content = (DataCompressor.compressDataGZip(XMLParser.serializeObject(component)));
-			break;
-		case SETTINGS:
-			content = (DataCompressor.compressDataGZip(XMLParser.serializeObject(this.getSettings())));
-			break;
-		case CONFIGURATION:
-			content = (DataCompressor
-			.compressDataGZip(XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance())));
-			break;
-		}
-		return content;
+		this.processor.loadContents(env);
 	}
 
-	private HashMap<String, byte[]> getDataByteMap(Component component)
+	private void loadAllData(HashMap<String, HashMap<HybridTime, ?>> data, EnvironmentContent env)
 	{
-		HashMap<String, byte[]> dataBytes = new HashMap<String, byte[]>();
-		for (Data data : component.getContents().getObjects(Data.class, true))
-
+		for (Data id : env.getContents().getObjects(Data.class, true))
 		{
-			SystemConsole.print(data.getLabels().getFullDescription());
-			dataBytes.put(data.getActions().getAddress(),
-			DataCompressor.compressDataGZip(XMLParser.serializeObject(data.getActions().getStoredHybridValues())));
-		}
-		return dataBytes;
-	}
-
-	private void loadData(SaveFile saved_file, Component component)
-	{
-		HashMap<String, byte[]> dataBytes = saved_file.data;
-		HashMap<String, Data> dataMap = ComponentOperator.getOperator(component).getDataLinks();
-		for (String data : dataBytes.keySet())
-		{
-
-			startDataThread(dataBytes.get(data), dataMap, data);
+			DataOperator.getOperator(id).setStoredHybridValues(data.get(id.getActions().getAddress()));
 		}
 	}
 
-	private void startDataThread(byte[] data_bytes, HashMap<String, Data> data_map, String data)
+	public static SettingConfigurer loadSettings(File file)
 	{
-		Runnable exe = loadDataThread(data_bytes, data_map, data);
-		Thread thread = new Thread(exe);
-		thread.start();
-	}
-
-	private Runnable loadDataThread(byte[] data_bytes, HashMap<String, Data> data_map, String data)
-	{
-		Runnable task = new Runnable()
+		if (file == null)
 		{
-
-			@Override
-			public void run()
-			{
-				SystemConsole.print(data);
-				HashMap<HybridTime, ?> unzippedData = (HashMap<HybridTime, ?>) XMLParser
-				.getObjectFromString(DataDecompressor.decompressDataGZipString(data_bytes));
-				// data_map.put(data, unzippedData);
-				// SystemConsole.print(unzippedData.toString());
-				DataOperator.getOperator(data_map.get(data)).setStoredHybridValues(unzippedData);
-			}
-
-		};
-		return task;
-	}
-
-	public static SettingConfigurer loadSettings()
-	{
-		return loadSettings(DataSettings.defaultSettingDirectory, DataSettings.defaultSettingFileName);
-	}
-
-	public static SettingConfigurer loadSettings(String directory, String file_name)
-	{
+			file = new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName);
+		}
 		SettingConfigurer settings = null;
 		try
 		{
-			if (new File(directory, file_name).exists())
+			if (file.exists())
 			{
-				settings = (SettingConfigurer) XMLParser.getObject(new File(directory, file_name));
+				settings = (SettingConfigurer) XMLParser.getObject(file);
 			} else
 			{
 				throw new IOException();
@@ -441,8 +186,7 @@ public class FileExchanger extends ProcessingElement
 			settings = new SettingConfigurer();
 			try
 			{
-				FileSystemOperator.createOutputFile(new File(directory, file_name),
-				XMLParser.serializeObject(settings));
+				FileSystemOperator.createOutputFile(file, XMLParser.serializeObject(settings));
 			} catch (Exception badFile)
 			{
 				badFile.printStackTrace();

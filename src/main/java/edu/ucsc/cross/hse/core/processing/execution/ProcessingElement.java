@@ -33,26 +33,22 @@ public abstract class ProcessingElement
 		this.processor = processor.environmentInterface;
 	}
 
-	// @Override
 	protected Double getEnvTime()
 	{
 		return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
 	}
 
-	// @Override
 	protected void setEnvTime(Double time)
 	{
 		// TODO Auto-generated method stub
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(time);
 	}
 
-	// @Override
 	protected SimulationEngine getComputationEngine()
 	{
 		return proc.simulationEngine;
 	}
 
-	// @Override
 	protected ExecutionMonitor getEnvironmentMonitor()
 	{
 		return proc.executionMonitor;
@@ -68,19 +64,16 @@ public abstract class ProcessingElement
 		return proc.jumpEvaluator;
 	}
 
-	// @Override
 	public EnvironmentContent getEnv()
 	{
 		return processor.getContents();
 	}
 
-	// @Override
 	protected ContentOperator getEnvironmentOperator()
 	{
 		return ContentOperator.getContentAdministrator(getEnv().toString());
 	}
 
-	// @Override
 	protected SystemConsole getConsole()
 	{
 		return proc.systemConsole;
@@ -106,7 +99,6 @@ public abstract class ProcessingElement
 		return proc;
 	}
 
-	// @Override
 	protected HybridEnvironment getProcessor()
 	{
 		// TODO Auto-generated method stub
@@ -128,7 +120,6 @@ public abstract class ProcessingElement
 		return DataOperator.getOperator(component);
 	}
 
-	// @Override
 	protected void setSettings(SettingConfigurer settings)
 	{
 		proc.environmentInterface.loadSettings(settings);

@@ -77,7 +77,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 		System.out.println("here");
 		if (killFlag)// || this.getComponents().outOfAllDomains())
 		{
-			//	this.getComponentOperator(getEnv()).storeData();
+			// this.getComponentOperator(getEnv()).storeData();
 			return EventHandler.Action.STOP;
 		} else
 		{
@@ -104,9 +104,10 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	/*
 	 * Terminates the simulation
 	 */
-	public void killSim(boolean outside_domain_err)
+	public void killSim(boolean terminated_by_error)
 	{
-		outsideDomainError = outside_domain_err;
+		outsideDomainError = terminated_by_error;
 		killSim();
 	}
+
 }

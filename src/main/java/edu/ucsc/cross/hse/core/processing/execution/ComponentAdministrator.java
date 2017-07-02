@@ -11,6 +11,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
+import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 
 /*
  * This class controls all of the components so that they are setup correctly
@@ -200,6 +201,16 @@ public class ComponentAdministrator extends ProcessingElement
 			}
 		}
 		return dom;
+	}
+
+	public DataHandler getDataHandler()
+	{
+		return this.getData();
+	}
+
+	public void reloadStoreStates()
+	{
+		this.getData().loadStoreStates();
 	}
 
 	public boolean outOfAllDomains()
