@@ -27,18 +27,24 @@ public class Data<T> extends Component// DynamicData<T>
 
 	protected HashMap<HybridTime, T> savedHybridValues; // mapping of saved
 														// values
-	// protected SavedValues<T> savedHybridValuez; // mapping of saved values
+
 	protected T element; // currently stored data object
 
-	protected ValueDomain elementDomain;// = new ValueDomain((Double) min,
-										// (Double) max);
+	protected ValueDomain elementDomain;// domain of the data object in case it
+										// can assume random values
 
+	/*
+	 * Safely access element
+	 */
 	public T getValue()
 	{
 
 		return element;
 	}
 
+	/*
+	 * Safely access element and randomize if domain permits
+	 */
 	public T getValue(boolean randomize_from_domain)
 	{
 		try
@@ -88,6 +94,39 @@ public class Data<T> extends Component// DynamicData<T>
 		return DataWorker.getConfigurer(this);
 	}
 
+	private T getStoreValue()
+	{
+		{
+			if (cloneToStore)
+			{
+				return FileExchanger.cloner.deepClone(getValue());
+				// return (T) ObjectCloner.xmlClone(get());
+			} else
+			{
+				return getValue();
+			}
+		}
+
+	}
+
+	void storeValue(Double time)
+	{
+		storeValue(time, false);
+	}
+
+	void storeValue(Double time, boolean override_save)
+	{
+
+		if (save || override_save)
+		{
+			T storeValue = getStoreValue();
+			savedHybridValues
+			.put(ContentOperator.getOperator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			storeValue);
+
+		}
+	}
+
 	public Data(String name, T obj, String description, Boolean save_default)
 	{
 		super(name, description);
@@ -120,39 +159,6 @@ public class Data<T> extends Component// DynamicData<T>
 		if (obj.getClass().equals(Double.class))
 		{
 			elementDomain = new ValueDomain((Double) obj);
-		}
-	}
-
-	private T getStoreValue()
-	{
-		{
-			if (cloneToStore)
-			{
-				return FileExchanger.cloner.deepClone(getValue());
-				// return (T) ObjectCloner.xmlClone(get());
-			} else
-			{
-				return getValue();
-			}
-		}
-
-	}
-
-	void storeValue(Double time)
-	{
-		storeValue(time, false);
-	}
-
-	void storeValue(Double time, boolean override_save)
-	{
-
-		if (save || override_save)
-		{
-			T storeValue = getStoreValue();
-			savedHybridValues
-			.put(ContentOperator.getContentAdministrator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
-			storeValue);
-
 		}
 	}
 }

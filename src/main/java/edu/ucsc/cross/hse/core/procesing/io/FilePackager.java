@@ -51,14 +51,14 @@ public class FilePackager extends ProcessingElement
 		{
 			switch (content)
 			{
-			case ENVIRONMENT_CONFIGURATION:
-				storeConfiguration(location, content.sub_directory, component.getEnvironment());
+			case ENVIRONMENT:
+				storeConfiguration(location, component.getEnvironment());
 				break;
-			case ALL_DATA:
-				storeData(location, content.sub_directory, component.getEnvironment());
+			case DATA:
+				storeData(location, component.getEnvironment());
 				break;
 			case SETTINGS:
-				storeSettings(location, content.sub_directory, component.getEnvironment());
+				storeSettings(location, component.getEnvironment());
 				break;
 			}
 		}
@@ -78,7 +78,7 @@ public class FilePackager extends ProcessingElement
 
 	}
 
-	private void storeConfiguration(File location, String sub_directory, Component component)
+	private void storeConfiguration(File location, Component component)
 	{
 		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
 		String environment = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
@@ -89,7 +89,7 @@ public class FilePackager extends ProcessingElement
 		// compressed);
 	}
 
-	private void storeData(File location, String sub_directory, Component component)
+	private void storeData(File location, Component component)
 	{
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
 		for (Data dat : component.getContents().getObjects(Data.class, true))
@@ -100,7 +100,7 @@ public class FilePackager extends ProcessingElement
 
 	}
 
-	private void storeSettings(File location, String sub_directory, Component component)
+	private void storeSettings(File location, Component component)
 	{
 		String xmlSettings = XMLParser.serializeObject(this.getSettings());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
@@ -128,11 +128,11 @@ public class FilePackager extends ProcessingElement
 				{
 					this.getConsole().print("Loading data from file : " + entry.getName());
 					Object readIn = kryo.readClassAndObject(input);
-					FileElement inputElement = FileElement.getFileElementType(entry.getName());
+					FileContent inputElement = FileContent.getFileContentType(entry.getName());
 					switch (inputElement)
 					{
 					case DATA:
-						if (content.contains(FileContent.ALL_DATA))
+						if (content.contains(FileContent.DATA))
 						{
 							datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
 						}
@@ -140,7 +140,7 @@ public class FilePackager extends ProcessingElement
 					case ENVIRONMENT:
 						EnvironmentContent envContentz = (EnvironmentContent) XMLParser
 						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn));
-						loadedContent.put(FileContent.ENVIRONMENT_CONFIGURATION, envContentz);
+						loadedContent.put(FileContent.ENVIRONMENT, envContentz);
 						break;
 					case SETTINGS:
 						loadedContent.put(FileContent.SETTINGS, ((SettingConfigurer) XMLParser

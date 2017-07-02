@@ -33,10 +33,6 @@ public class DataSettings
 												// variety of trials multiple
 												// times
 
-	public CompressionFormat compressionFormat; // Compression format to
-												// use for files if none
-												// is specified
-
 	/*
 	 * Default value constructor
 	 */
@@ -49,7 +45,7 @@ public class DataSettings
 		dataStoreIncrement = .05;
 		resultAutoStoreDirectory = defaultResultsDirectory;
 		createResultSubDirectory = true;
-		compressionFormat = CompressionFormat.GZIP;
+
 	}
 
 	public static String defaultSettingFileName = "defaultSettings.xml"; // defalt

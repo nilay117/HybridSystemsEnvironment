@@ -153,7 +153,7 @@ public class ComponentWorker
 		Component newComponent = null;
 		try
 		{
-			newComponent = (FileExchanger.loadComponent(directory_path, file_name));
+			newComponent = (FileExchanger.loadComponent(new File(directory_path, file_name)));
 			component.getContents().addComponent(newComponent);
 
 		} catch (Exception badComponent)

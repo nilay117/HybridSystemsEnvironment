@@ -58,20 +58,27 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	@Override
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
-		// getComputationEngine().updateValues(y);
-		// getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-		this.getConsole().print(getConsole().getDiscreteEventIndication());
-		if (Math.floorMod(toggles, 2) == 0)// && toggles > 1)
+
+		this.getConsole().print(getConsole().getDiscreteEventIndication()); // print
+																			// notification
+																			// if
+																			// enabled
+		if (Math.floorMod(toggles, 2) == 0) // check to see if an odd number of
+											// switches occurred
 		{
-			flag = -1.0 * flag;
+			flag = -1.0 * flag; // adjust the flag if so to avoid integrator
+								// erors
 		}
-		toggles = 0;
+		toggles = 0; // reset the toggle counter
+
 		if (getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit)
 		{
-			return EventHandler.Action.RESET_STATE;
+			return EventHandler.Action.RESET_STATE; // continue if jump limit
+													// hasn't been reached
 		} else
 		{
-			return EventHandler.Action.STOP;
+			return EventHandler.Action.STOP; // otherwise terminate the
+												// environment
 		}
 	}
 
@@ -81,14 +88,25 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	@Override
 	public void resetState(double t, double[] y)
 	{
-		getComputationEngine().updateValues(y);
-		ComponentOperator.getOperator(getEnv()).storeData();
-		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-		// ComponentOperator.getOperator(getEnv()).storeData();
-		getComponents().performAllTasks(true);
-		this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-		ComponentOperator.getOperator(getEnv()).storeData();
-		getComputationEngine().setODEValueVector(y);
+		getComputationEngine().updateValues(y); // load new ode values
+
+		ComponentOperator.getOperator(getEnv()).storeData(); // store pre-jump
+																// data
+
+		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); // store
+																		// new
+																		// step
+																		// time
+
+		getComponents().performAllTasks(true); // execute all jumps
+
+		this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(); // increment
+																						// jump
+																						// index
+		ComponentOperator.getOperator(getEnv()).storeData(); // store post-jump
+																// data
+
+		getComputationEngine().setODEValueVector(y); // update the ode vector
 
 	}
 

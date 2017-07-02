@@ -29,6 +29,8 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 	private boolean outsideDomainError;
 
+	private boolean simPaused;
+
 	/*
 	 * Constructor that uses the environment
 	 */
@@ -36,6 +38,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	{
 		super(processor);
 		killFlag = false;
+		simPaused = false;
 		outsideDomainError = false;
 	}
 
@@ -55,11 +58,9 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	public double g(double t, double[] y)
 	{
 
-		// System.out.println(this.getComponents().outOfAllDomains());
-		if (killFlag || this.getComponents().outOfAllDomains())// ||
-		// outOfDomain())
+		if (killFlag || this.getComponentOperator(getEnv()).outOfAllDomains())
 		{
-			killSim();
+			// killSim();
 			// this.getComputationEngine().zeroAllDerivatives();
 			return -.0000000001;
 		} else
@@ -110,4 +111,9 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 		killSim();
 	}
 
+	public void pauseSim()
+	{
+		simPaused = true;
+		killSim();
+	}
 }

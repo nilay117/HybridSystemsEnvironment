@@ -19,15 +19,12 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class EnvironmentContent extends Component implements Serializable
+public class EnvironmentContent extends Component// implements Serializable
 {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4598575822413234480L;
-
-	protected HashMap<String, Data> dataLinks;
 
 	protected HybridTime environmentTime; // time relative to when the
 											// environment
@@ -45,13 +42,13 @@ public class EnvironmentContent extends Component implements Serializable
 	public EnvironmentContent()
 	{
 		super("Global Environment Hybrid Systems");
-		ContentOperator.getContentAdministrator(this);
+		ContentOperator.getOperator(this);
 	}
 
 	public EnvironmentContent(String environment_title)
 	{
 		super(environment_title);
-		ContentOperator.getContentAdministrator(this);
+		ContentOperator.getOperator(this);
 	}
 
 	// Domain Accessibility Functions

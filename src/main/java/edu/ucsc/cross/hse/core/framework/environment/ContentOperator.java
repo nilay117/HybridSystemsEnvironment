@@ -31,7 +31,7 @@ public class ContentOperator extends ComponentOperator
 
 	}
 
-	public static ContentOperator getContentAdministrator(String id)
+	public static ContentOperator getOperator(String id)
 	{
 		ContentOperator admin = null;
 		// return systems.get(id);
@@ -47,7 +47,7 @@ public class ContentOperator extends ComponentOperator
 		return admin;
 	}
 
-	public static ContentOperator getContentAdministrator(EnvironmentContent sys)
+	public static ContentOperator getOperator(EnvironmentContent sys)
 	{
 		ContentOperator admin = null;//
 		if (globalSystems.containsKey(sys.toString()))
@@ -116,7 +116,7 @@ public class ContentOperator extends ComponentOperator
 		globalSystem.environmentTime = new HybridTime(true);
 		globalSystem.earthStartTime = -1.0;
 		setEnvironmentKey(globalSystem.toString());
-		globalSystem.dataLinks = new HashMap<String, Data>();
+		// globalSystem.dataLinks = new HashMap<String, Data>();
 
 		// EnvironmentContentOperator.addGlobalHybridSystem(globalSystem);
 		// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(globalSystem.toString());

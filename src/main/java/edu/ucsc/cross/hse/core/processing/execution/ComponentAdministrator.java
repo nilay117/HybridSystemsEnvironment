@@ -11,6 +11,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
+import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 
 /*
@@ -213,14 +214,18 @@ public class ComponentAdministrator extends ProcessingElement
 		this.getData().loadStoreStates();
 	}
 
-	public boolean outOfAllDomains()
+	protected void resetComponents(boolean re_initialize)
 	{
-		return outOfAllDomains(getEnv());
-	}
+		for (Component component : this.processor.content.getContents().getComponents(true))
+		{
+			if (FieldFinder.containsSuper(component, Data.class))
+			{
+				Data data = (Data) component;
+				data.getActions().getStoredHybridValues().clear();
 
-	public boolean outOfAllDomains(Component component)
-	{
-		return !(this.getComponentOperator(component).isJumpOccurring()
-		|| this.getComponentOperator(component).isFlowOccurring());
+			}
+			ComponentOperator.getOperator(component).setInitialized(!re_initialize);
+		}
+
 	}
 }

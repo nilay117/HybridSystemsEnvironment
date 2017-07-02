@@ -54,16 +54,25 @@ public class ComponentLabel
 		return name;
 	}
 
+	/*
+	 * set the specific name of the element
+	 */
 	public void setName(String name)
 	{
 		this.name = name;
 	}
 
+	/*
+	 * get any additional information about the element
+	 */
 	protected String getInformation()
 	{
 		return information;
 	}
 
+	/*
+	 * set any additional information about the element
+	 */
 	protected void setInformation(String information)
 	{
 		this.information = information;

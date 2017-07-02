@@ -2,8 +2,12 @@ package edu.ucsc.cross.hse.core.processing.execution;
 
 import com.be3short.data.cloning.ObjectCloner;
 
+import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
@@ -71,7 +75,7 @@ public class CentralProcessor
 	 */
 	public void initializeProcessingElements()
 	{
-		contentAdmin = ContentOperator.getContentAdministrator(environmentInterface.getContents());
+		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
 		systemConsole = new SystemConsole(this);
@@ -87,22 +91,18 @@ public class CentralProcessor
 	 */
 	protected void start()
 	{
-		// HybridEnvironment c = (HybridEnvironment)
-		// ObjectCloner.xmlClone(environmentInterface);
 		// prepareEnvironment(environmentInterface.getContents());
+		// Back up of contents in case of failure
 		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
-		// EnvironmentContent content = (EnvironmentContent)
-		// ObjectCloner.xmlClone(environmentInterface.getContents());
-		// this.environmentInterface = c;
-		// c.loadContents((EnvironmentContent) ObjectCloner.xmlClone(ct));
+
 		Boolean success = false;
 		while (!success)
 		{
 			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
 			success = executeEnvironment(content);
 			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-			success = success
-			|| (this.componentAdmin.outOfAllDomains() && !this.interruptResponder.isOutsideDomainError());
+			success = success || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+			&& !this.interruptResponder.isOutsideDomainError();
 		}
 
 	}
@@ -113,14 +113,14 @@ public class CentralProcessor
 	protected boolean executeEnvironment(EnvironmentContent content)
 	{
 		prepareEnvironment(content);
-		simulationEngine.initialize();
 		storeConfigurations();
+		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
 		while (this.contentAdmin.isJumpOccurring())
 		{
 			this.componentAdmin.performAllTasks(true);
 			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
 		}
-		// this.contentAdmin.performTasks(false);
+		this.contentAdmin.performTasks(false);
 		interruptResponder = new InterruptResponder(this);
 		return executionMonitor.runSim(false);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
@@ -131,11 +131,13 @@ public class CentralProcessor
 	public void prepareEnvironment(EnvironmentContent content)
 	{
 		environmentInterface.content = content;
+		contentAdmin = ContentOperator.getOperator(content);
 		initializeProcessingElements();
 		contentAdmin.prepareEnvironmentContent();
+		storeConfigurations();
+		/// simulationEngine.initialize();
 		dataHandler.loadStoreStates();
 		simulationEngine.initialize();
-
 	}
 
 	protected void storeConfigurations()
@@ -171,4 +173,28 @@ public class CentralProcessor
 		}
 	}
 
+	private void initializeComponents(boolean pre_loaded_content)
+	{
+		environmentInterface.environments.put(environmentInterface.content.toString(), this.environmentInterface);
+		environmentInterface.settings = FileExchanger.loadSettings(null);
+		environmentInterface.processor = new CentralProcessor(this.environmentInterface);
+		if (pre_loaded_content)
+		{
+			dataHandler.loadStoreStates();
+		}
+	}
+
+	protected void resetComponents(boolean re_initialize)
+	{
+		for (Component component : environmentInterface.content.getContents().getComponents(true))
+		{
+			if (FieldFinder.containsSuper(component, Data.class))
+			{
+				Data data = (Data) component;
+				data.getActions().getStoredHybridValues().clear();
+
+			}
+			ComponentOperator.getOperator(component).setInitialized(!re_initialize);
+		}
+	}
 }

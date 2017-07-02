@@ -18,6 +18,7 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
@@ -26,12 +27,7 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 public class HybridEnvironment// implements Serializable
 {
 
-	/**
-	 * 
-	 */
-	// private static final long serialVersionUID = 2514685168328713986L;
-
-	private static HashMap<String, HybridEnvironment> environments = new HashMap<String, HybridEnvironment>();
+	static HashMap<String, HybridEnvironment> environments = new HashMap<String, HybridEnvironment>();
 
 	protected EnvironmentContent content; // all elements that make up the
 	// environment
@@ -40,9 +36,9 @@ public class HybridEnvironment// implements Serializable
 	protected CentralProcessor processor; // environment processor that handles
 											// events,
 											// computations, maintenance, etc
-	private SettingConfigurer settings; // collection of settings that
-										// configure the performance of the
-										// environment
+	SettingConfigurer settings; // collection of settings that
+								// configure the performance of the
+								// environment
 
 	/*
 	 * Generic environment constructor that initializes an empty system with a
@@ -75,123 +71,125 @@ public class HybridEnvironment// implements Serializable
 		initializeComponents(true);
 	}
 
+	/*
+	 * Run the environment for the amount of time defined in the settings
+	 */
 	public void start()
 	{
 		processor.start();
 	}
 
+	/*
+	 * Run the environment for the specified amount of time
+	 */
 	public void start(Double duration)
 	{
 		settings.getExecutionSettings().simDuration = duration;
 		processor.start();
 	}
 
-	public void start(Time duration)
-	{
-		settings.getExecutionSettings().simDuration = duration.seconds();
-		processor.start();
-	}
-
+	/*
+	 * Stop the environment
+	 */
 	public void stop()
-	{
-		stop(true);
-	}
-
-	public void stop(boolean terminate)
 	{
 		processor.interruptResponder.killSim();
 	}
 
+	/*
+	 * Pause the environment
+	 */
+	public void pause()
+	{
+		processor.interruptResponder.pauseSim();
+	}
+
+	/*
+	 * Resume the environment from a pause
+	 */
+	public void resume()
+	{
+		processor.interruptResponder.pauseSim();
+	}
+
+	/*
+	 * Reset all data and variables back to their original states
+	 */
 	public void reset()
 	{
 		reset(false);
 	}
 
-	public void reset(boolean clear_contents)
+	/*
+	 * Reset all data and variables back to their original states and
+	 * re-initialize
+	 */
+	public void reset(boolean re_initialize)
 	{
-
+		processor.resetComponents(re_initialize);
 	}
 
+	/*
+	 * Clear the contents of the environment
+	 */
+	public void clear()
+	{
+		content = new EnvironmentContent();
+		initializeComponents(false);
+	}
+
+	/*
+	 * Save the contents of the environment to a file
+	 */
 	public void saveContents(File file)
 	{
-
-		// try
-		// {
-		// FileOutputStream fileOut = new
-		// FileOutputStream("results/employee.ser");
-		// ObjectOutputStream out = new ObjectOutputStream(fileOut);
-		// out.writeObject(processor.dataHandler.getAllMaps());
-		// out.close();
-		// fileOut.close();
-		// System.out.printf("Serialized data is saved in /tmp/employee.ser");
-		// } catch (IOException i)
-		// {
-		// i.printStackTrace();
-		// }
 		this.processor.fileExchanger.storeEnvironment(file);
 	}
 
-	public void saveSettings(String directory, String file_name)
+	/*
+	 * Save the settings to a file
+	 */
+	public void saveSettings(File file)
 	{
-
+		processor.fileExchanger.store(file, this.content, FileContent.SETTINGS);
 	}
 
-	public void loadSettings(String directory, String file_name)
+	/*
+	 * Load settings from a file
+	 */
+	public void loadSettings(File file)
 	{
-
+		processor.fileExchanger.load(file);
 	}
 
+	/*
+	 * Load contents from a file
+	 */
 	public void loadContents(File file)
 	{
-		// HybridEnvironment environment = new HybridEnvironment(); //
-		// initialize a
-		// // new
-		// // environment
-		// Data dat = DataFactory.state.create(0.0);
-		// environment.addComponents(dat);
-		// try
-		// {
-		// FileInputStream fileIn = new FileInputStream("results/employee.ser");
-		// ObjectInputStream in = new ObjectInputStream(fileIn);
-		// HashMap<HybridTime, ?> s = (HashMap<HybridTime, ?>) in.readObject();
-		// in.close();
-		// fileIn.close();
-		// DataOperator.getOperator(dat).setStoredHybridValues(s);
-		// } catch (IOException i)
-		// {
-		// i.printStackTrace();
-		// return;
-		// } catch (ClassNotFoundException c)
-		// {
-		// System.out.println("Employee class not found");
-		// c.printStackTrace();
-		// return;
-		// }
+
 		this.processor.fileExchanger.load(file);
 	}
 
-	public void loadContents(String directory, String file_name)
-	{
-
-	}
-
+	/*
+	 * Access the data organization module
+	 */
 	public DataAccessor getDataAccessor()
 	{
 		return processor.dataHandler;
 	}
 
-	public void refreshDataAccessor()
-	{
-		processor.prepareEnvironment(getContents());
-		// processor.dataHandler.loadStoreStates();
-
-	}
-
+	/*
+	 * Get the current settings
+	 */
 	public SettingConfigurer getSettings()
 	{
 		return settings;
 	}
 
+	/*
+	 * Load new setting components from files
+	 */
 	public void loadSettings(Object... settings)
 	{
 		if (settings.length == 1)
@@ -203,17 +201,26 @@ public class HybridEnvironment// implements Serializable
 		}
 	}
 
+	/*
+	 * Access the environment contents
+	 */
 	public EnvironmentContent getContents()
 	{
 		return content;
 	}
 
+	/*
+	 * Load a different set of contents
+	 */
 	public void loadContents(EnvironmentContent content)
 	{
 
 		processor.prepareEnvironment(content);
 	}
 
+	/*
+	 * Add components to the environment
+	 */
 	public void addComponents(Component... components)
 	{
 		for (Component component : components)
@@ -222,6 +229,9 @@ public class HybridEnvironment// implements Serializable
 		}
 	}
 
+	/*
+	 * Add components to the environment in bulk
+	 */
 	public void addComponents(Component component, Integer quantity)
 	{
 
@@ -229,17 +239,9 @@ public class HybridEnvironment// implements Serializable
 
 	}
 
-	private void initializeComponents(boolean pre_loaded_content)
-	{
-		environments.put(content.toString(), this);
-		settings = FileExchanger.loadSettings(null);
-		processor = new CentralProcessor(this);
-		if (pre_loaded_content)
-		{
-			processor.dataHandler.loadStoreStates();
-		}
-	}
-
+	/*
+	 * Access this environment statically using the key generated by the content
+	 */
 	public static HybridEnvironment getEnvironment(String content_id)
 	{
 		if (environments.containsKey(content_id))
@@ -248,6 +250,17 @@ public class HybridEnvironment// implements Serializable
 		} else
 		{
 			return null;
+		}
+	}
+
+	private void initializeComponents(boolean pre_loaded_content)
+	{
+		environments.put(this.toString(), this);
+		settings = FileExchanger.loadSettings(null);
+		processor = new CentralProcessor(this);
+		if (pre_loaded_content)
+		{
+			processor.dataHandler.loadStoreStates();
 		}
 	}
 }

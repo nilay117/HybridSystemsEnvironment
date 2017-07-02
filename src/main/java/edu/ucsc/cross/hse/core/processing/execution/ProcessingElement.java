@@ -18,8 +18,8 @@ import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
 public abstract class ProcessingElement
 {
 
-	protected HybridEnvironment processor; // central processors
-	private CentralProcessor proc;
+	protected HybridEnvironment processor; // environment interface
+	private CentralProcessor proc; // central processor
 
 	protected ProcessingElement(HybridEnvironment processor)
 	{
@@ -31,17 +31,6 @@ public abstract class ProcessingElement
 	{
 		proc = processor;
 		this.processor = processor.environmentInterface;
-	}
-
-	protected Double getEnvTime()
-	{
-		return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
-	}
-
-	protected void setEnvTime(Double time)
-	{
-		// TODO Auto-generated method stub
-		getEnvironmentOperator().getEnvironmentHybridTime().setTime(time);
 	}
 
 	protected SimulationEngine getComputationEngine()
@@ -71,7 +60,7 @@ public abstract class ProcessingElement
 
 	protected ContentOperator getEnvironmentOperator()
 	{
-		return ContentOperator.getContentAdministrator(getEnv().toString());
+		return ContentOperator.getOperator(getEnv().toString());
 	}
 
 	protected SystemConsole getConsole()

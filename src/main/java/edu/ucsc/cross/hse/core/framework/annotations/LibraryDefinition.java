@@ -5,6 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/*
+ * This annotation is used to identify a function call that yields a component
+ * to be added to the library. The HSE is capable of many custom libraries,
+ * these just make up ssome of the foundations for models. Functions with these
+ * annotations are automatically scanned and available in the user library.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(
 { ElementType.METHOD, })

@@ -34,12 +34,21 @@ public class ComputationSettings
 
 	public IntegratorType integrator; // Integrator to be used
 
-	public final String integratorOptions = IntegratorType.enumNames();
-	// list of enumerator options which are printed in the output file to help
-	// with seection
+	public double handlingThresholdReductionFactor = 1.0; // the amount that the
+															// event handling
+															// threshold will be
+															// changed upon each
+															// error occurring.
+															// I have found that
+															// changing this
+															// number only makes
+															// things worse.
 
-	public double handlingThresholdReductionFactor = .9;//1.1;// 2.0;
-	public double stepSizeReductionFactor = 1.3;// .3;
+	public double stepSizeReductionFactor = 1.3; // the fraction that the step
+													// size will be reduced when
+													// integerator errors occur
+													// due to the step size
+													// being too large.
 
 	// available of integrator types for use
 	public static enum IntegratorType

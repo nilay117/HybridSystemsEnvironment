@@ -248,19 +248,6 @@ public class ComponentOperator extends ComponentWorker
 
 	}
 
-	// public HashMap<String, Data> getDataLinks()
-	// {
-	// HashMap<String, Data> links = new HashMap<String, Data>();
-	// for (Data data : component.contents.getObjects(Data.class, true))
-	// {
-	// if (!links.containsKey(data.getActions().getAddress()))
-	// {
-	// links.put(data.getActions().getAddress(), data);
-	// }
-	// }
-	// return links;
-	// }
-
 	/*
 	 * Internal Operation Functions
 	 */

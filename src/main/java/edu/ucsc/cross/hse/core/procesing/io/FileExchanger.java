@@ -53,7 +53,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 public class FileExchanger extends ProcessingElement
 {
 
-	private FilePackager packager;
+	private static FilePackager packager;
 	public static Cloner cloner = new Cloner();
 
 	public FileExchanger(CentralProcessor processor)
@@ -64,11 +64,6 @@ public class FileExchanger extends ProcessingElement
 
 	public void autoStoreData(EnvironmentContent data)
 	{
-		for (Component comp : getEnv().getContents().getComponents(true))
-		{
-			// comp.getConfigurer().setEnvironment(null);
-			// comp.getConfigurer().resetHierarchy();
-		}
 		if (getSettings().getDataSettings().automaticallyStoreResults)
 		{
 			storeEnvironmentContents(data);
@@ -77,75 +72,34 @@ public class FileExchanger extends ProcessingElement
 
 	public void storeEnvironmentContents(EnvironmentContent data)
 	{
-		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
-		if (getSettings().getDataSettings().createResultSubDirectory)
-		{
-			directory += data.getLabels().getClassification() + "/";
-		}
-
-		String fileName = data.getLabels().getName() + "_"
-		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
-		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
-		String out = XMLParser.serializeObject(processor);
-		FileSystemOperator.createOutputFile(new File(directory, fileName), out);
-		// FileSystemOperator.createOutputFile(new File(directory, "zipped_" +
-		// fileName), Zipper.compress(out).toString());
-		FileOutputStream fileStream = null;
-		try
-		{
-
-			try
-			{
-				fileStream = new FileOutputStream(new File(directory, "zipped.xml.gz"));
-				fileStream.write(DataCompressor.compressDataGZip(out));
-			} catch (Exception e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} finally
-		{
-			try
-			{
-				fileStream.close();
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				/* We should probably delete the file now? */ }
-		}
+		String dir = generateDirectoryName();
+		String fileName = generateRandomTimeBasedAppendedFileName(data.getActions().getAddress());
+		File output = new File(dir, fileName);
+		storeEnvironment(output);
 	}
 
 	public void storeEnvironment(File file)
 	{
-		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
-		if (getSettings().getDataSettings().createResultSubDirectory)
-		{
-			directory += this.getComponents().getEnv().getLabels().getClassification() + "/";
-		}
-		String fileName = this.getComponents().getEnv().getLabels().getName() + "_"
-		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
-		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".hse";
-		store(file, this.getEnv(), FileContent.ENVIRONMENT_CONFIGURATION, FileContent.ALL_DATA, FileContent.SETTINGS);// ,.CONFIGURATION);
-
+		store(file, this.getEnv(), FileContent.ENVIRONMENT, FileContent.DATA, FileContent.SETTINGS);// ,.CONFIGURATION);
 	}
 
-	private void store(File file_path, Component component, FileContent... contents)
+	public void store(File file_path, Component component, FileContent... contents)
 	{
 		packager.storeContents(file_path, component, contents);
-
 	}
 
 	public void load(File file)
 	{
 
 		HashMap<FileContent, Object> contents = packager.loadContents(file, FileContent.values());
-		EnvironmentContent env = (EnvironmentContent) contents.get(FileContent.ENVIRONMENT_CONFIGURATION);
+		EnvironmentContent env = (EnvironmentContent) contents.get(FileContent.ENVIRONMENT);
+		Component comp = (Component) contents.get(FileContent.COMPONENT);
 		for (FileContent content : contents.keySet())
 		{
 			switch (content)
 			{
-			case ALL_DATA:
-				loadAllData((HashMap<String, HashMap<HybridTime, ?>>) contents.get(FileContent.ALL_DATA), env);
+			case DATA:
+				loadAllData((HashMap<String, HashMap<HybridTime, ?>>) contents.get(FileContent.DATA), env);
 				break;
 			case SETTINGS:
 				this.setSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
@@ -201,57 +155,35 @@ public class FileExchanger extends ProcessingElement
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends Component> T loadComponent(String file_directory, String file_name)
+	public static <T extends Component> T loadComponent(File file)
 	{
-		return loadComponent(file_directory, file_name, false);
 
-	}
+		HashMap<FileContent, Object> stuff = packager.loadContents(file, FileContent.values());
+		Component component = (Component) stuff.get(FileContent.COMPONENT);
+		return (T) component;
 
-	@SuppressWarnings("unchecked")
-	public static <T extends Component> T loadComponent(String file_directory, String file_name, boolean compress)
-	{
-		T component = (T) XMLParser.getObject(new File(file_directory, file_name));
-		for (Component componen : component.getContents().getComponents(true))
-		{
-			ComponentOperator.getOperator(componen).setInitialized(null);
-			// try
-			// {
-			// Data<T> data = (Data) componen;
-			// data.initializeValue();
-			// } catch (Exception e)
-			// {
-			//
-			// }
-		}
-		return component;
 	}
 
 	public static <T extends Component> void saveComponent(T component, String file_directory, String file_name)
 	{
-		saveComponent(component, file_directory, file_name, CompressionFormat.NONE);
+		saveComponent(component, file_directory, file_name, FileContent.values());
 	}
 
 	public static <T extends Component> void saveComponent(T component, String file_directory, String file_name,
-	CompressionFormat compression)
+	FileContent... contents)
 	{
-		String adjustedFileName = file_name;
-		Object clonedComponent = ObjectCloner.xmlClone(component);
-		String serializedComponent = XMLParser.serializeObject(component);
-		byte[] byteOut = null;
-		switch (compression)
-		{
-		case GZIP:
-			byteOut = DataCompressor.compressDataGZip(serializedComponent);
-			adjustedFileName += ".gz";
-			break;
-		default:
-			byteOut = serializedComponent.getBytes();
-			break;
-		}
-		FileSystemInteractor.createOutputFile(file_directory, adjustedFileName, byteOut);// clonedComponent));
+		packager.storeContents(new File(file_directory + "/" + file_name), component, contents);
 
-		// ComponentOperator.getConfigurer(component).saveComponentToFile(file_directory,
-		// file_name);
+	}
+
+	public String generateDirectoryName()
+	{
+		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
+		if (getSettings().getDataSettings().createResultSubDirectory)
+		{
+			directory += this.getComponents().getEnv().getLabels().getClassification() + "/";
+		}
+		return directory;
 	}
 
 	public static String generateRandomTimeBasedAppendedFileName(String file_description)

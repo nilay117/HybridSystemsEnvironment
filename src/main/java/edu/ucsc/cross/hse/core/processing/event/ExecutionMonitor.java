@@ -22,14 +22,20 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 public class ExecutionMonitor extends ProcessingElement
 {
 
-	private Thread thread;
+	private Thread thread; // integrator thread
 
+	/*
+	 * Constructor linking the processor
+	 */
 	public ExecutionMonitor(CentralProcessor processor)
 	{
 		super(processor);
 
 	}
 
+	/*
+	 * Starts the integrator on the main thread or an external thread
+	 */
 	public boolean runSim(boolean run_threadded)
 	{
 
@@ -45,6 +51,10 @@ public class ExecutionMonitor extends ProcessingElement
 		return !this.getInterruptHandler().isTerminating();
 	}
 
+	/*
+	 * Get a runnable version of the integration task for use when running
+	 * threadded
+	 */
 	private Runnable getSimTask()
 	{
 		Runnable task = new Runnable()

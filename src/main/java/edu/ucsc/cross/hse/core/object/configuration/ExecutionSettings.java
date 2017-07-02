@@ -22,7 +22,12 @@ public class ExecutionSettings
 	public Integer jumpLimit; // maximum number of jumps before terminating the
 								// environment, null indicating unlimited
 
-	public boolean rerunOnFatalErrors;
+	public boolean rerunOnFatalErrors; // terminate and reruns the environment
+										// if a fatal error occurs, such as when
+										// an integrator overshoot sends a
+										// system
+										// out of its domains incorrectly.
+										// Adjustments are made before rerunning
 
 	/*
 	 * Default values constructorc
