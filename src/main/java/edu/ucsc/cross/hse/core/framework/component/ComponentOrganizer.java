@@ -30,16 +30,16 @@ public class ComponentOrganizer
 	// Mapping of all components from all descendants indexed by class
 	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 
-	// List of all declared components
-	private ArrayList<Component> declaredComponentList;
-
-	// List of all components from all descendants
-	private ArrayList<Component> descendantComponentList;
-
 	// List of all components from all descendants
 	private ArrayList<Component> declaredAdjunctComponentList;
+
 	// List of all components from all descendants
 	private ArrayList<Component> declaredAdjunctDescendantComponentList;
+
+	// List of all declared components
+	private ArrayList<Component> declaredComponentList;
+	// List of all components from all descendants
+	private ArrayList<Component> descendantComponentList;
 
 	// key that links the component to the global environment that it is
 	// contained in. This keeps the component size smaller when being copied or
@@ -51,24 +51,6 @@ public class ComponentOrganizer
 
 	// Pointer to this component
 	private Component self;
-
-	public Component getParentComponent()
-	{
-		return parentComponent;
-	}
-
-	/*
-	 * Constructor that defines the name and base class of the component
-	 * 
-	 * @param title - title of the component
-	 * 
-	 * @param base_class - base class of the component
-	 */
-	public ComponentOrganizer(Component self)
-	{
-		this.self = self;
-		setup();
-	}
 
 	/*
 	 * Adds a single sub-component to this component. This is used to add
@@ -111,283 +93,24 @@ public class ComponentOrganizer
 		return ret;
 	}
 
-	private void addAllUndeclaredComponents(ArrayList<Component> undeclareds)
+	/*
+	 * Get a mapping of components indexed by their names
+	 */
+	public <S extends Component> HashMap<String, S> getComponentMapByName(Class<S> component_class,
+	boolean include_children)
 	{
-
-		for (Component undeclared : undeclareds)
+		ArrayList<S> components = getObjects(component_class, include_children);
+		HashMap<String, S> componentMap = new HashMap<String, S>();
+		for (S component : components)
 		{
-			undeclared.getContents().constructTree();
-			if (!declaredAdjunctComponentList.contains(undeclared))
-			{
-				declaredAdjunctComponentList.add(undeclared);
-			}
-			for (Component undeclaredDescendant : undeclared.getContents().getComponents(true))
-			{
-				if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
-				{
-					declaredAdjunctDescendantComponentList.add(undeclaredDescendant);
-				}
-			}
+			componentMap.put(component.getLabels().name, component);
 		}
+		return componentMap;
 	}
 
-	private HashMap<Class<?>, ArrayList<Component>> getScopeMap(boolean global)
-	{
-		if (global)
-		{
-			return descendantComponentMap;
-		} else
-		{
-			return declaredComponentMap;
-		}
-	}
-
-	protected void initializeContainers()
-	{
-		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
-		declaredComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
-		declaredComponentList = new ArrayList<Component>();
-		descendantComponentList = new ArrayList<Component>();
-		declaredAdjunctComponentList = new ArrayList<Component>();
-		declaredAdjunctDescendantComponentList = new ArrayList<Component>();
-	}
-
-	private void processComponent(Component parent, Component field)
-	{
-		field.getContents().parentComponent = parent;
-		field.getContents().loadHierarchyComponents();
-		parent.getContents().storeComponent(field, true);
-	}
-
-	private void processContainer(Component parent, Object container)
-	{
-		for (Object content : getContainerContents(container))
-		{
-			// System.out.println(content);
-			processFields(parent, content);
-		}
-	}
-
-	private void processFields(Component parent, ArrayList<Object> fields)
-	{
-		for (Object field : fields)
-		{
-			processFields(parent, field);
-		}
-	}
-
-	private void processFields(Component parent, Object field)
-	{
-		switch (getElementType(field))
-		{
-		case COMPONENT:
-			processComponent(parent, (Component) field);
-			break;
-		case CONTAINER:
-			// System.out.println(field.toString());
-			processContainer(parent, field);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private <T> ArrayList<Component> scanForComponents(Class<T> scan_class, boolean global)
-	{
-		ArrayList<Component> foundObjects = new ArrayList<Component>();
-		ArrayList<Component> allComponents = new ArrayList<Component>();
-		if (global)
-		{
-			allComponents = descendantComponentList;
-		} else
-		{
-			allComponents = declaredComponentList;
-		}
-		for (Component component : allComponents)
-		{
-			// System.out
-			// .println(component.getClass().getSimpleName() + " " +
-			// component.getClass().getInterfaces().length);
-			if (FieldFinder.containsSuper(component, scan_class))
-			{
-				foundObjects.add(component);
-			} else if (Arrays.asList(component.getClass().getInterfaces()).contains(scan_class))
-			{
-				foundObjects.add(component);
-			}
-		}
-		return foundObjects;
-	}
-
-	void setup()
-	{
-		initializeContainers();
-		loadHierarchyComponents();
-		// constructTree(this);
-	}
-
-	private void loadHierarchyComponents()
-	{
-		Object sysObj = self;
-		Class superClass = sysObj.getClass();
-		// System.out.println(self.getClass());
-		ArrayList<Object> allFields = new ArrayList<Object>();
-		{
-			while (superClass != Object.class)
-			{
-				// System.out.println("Class " + superClass + " Object " +
-				// sysObj.toString());
-				for (Object field : FieldFinder.getObjectFieldValues(sysObj, true))
-				{
-					if (!allFields.contains(field))
-					{
-						allFields.add(field);
-					}
-				}
-				superClass = superClass.getSuperclass();
-				Object newSysObj = superClass.cast(sysObj);
-				sysObj = newSysObj;
-				// System.out.println("Class " + superClass);
-				// System.out.println(superClass.getName());
-
-			}
-		}
-		processFields((Component) sysObj, allFields);
-	}
-
-	private void storeComponent(Component component, boolean local)
-	{
-		if (component != null)
-		{
-			if (local)
-			{
-				if (!declaredComponentList.contains(component))
-				{
-					declaredComponentList.add(component);
-				}
-				if (!declaredComponentMap.containsKey(component.getClass()))
-				{
-					declaredComponentMap.put(component.getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
-				}
-				if (!declaredComponentMap.get(component.getClass()).contains(component))
-				{
-					declaredComponentMap.get(component.getClass()).add(component);
-				}
-			}
-			if (!descendantComponentList.contains(component))
-			{
-				descendantComponentList.add(component);
-			}
-			if (!descendantComponentMap.containsKey(component.getLabels().getClass()))
-			{
-				descendantComponentMap.put(component.getLabels().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
-			}
-			if (!descendantComponentMap.get(component.getLabels().getClass()).contains(component))
-			{
-				descendantComponentMap.get(component.getLabels().getClass()).add(component);
-			}
-		}
-	}
-
-	public static ArrayList<Object> getContainerContents(Object container)
-	{
-		ArrayList<Object> components = new ArrayList<Object>();
-
-		// if (!FieldFinder.containsSuper(container, CoreComponent.class))
-		{
-			try
-			{
-				for (Object entry : ((ArrayList) container))
-				{
-					components.add(entry);
-				}
-
-			} catch (Exception notMap)
-			{
-				// notMap.printStackTrace();
-				try
-				{
-					for (Object entry : (HashMap.class.cast(container)).values())
-					{
-						components.add(entry);
-					}
-				} catch (Exception ee)
-				{
-					// ee.printStackTrace();
-				}
-			}
-		}
-
-		return components;
-
-	}
-
-	//
-	private static <T> ObjectType getElementType(T object)
-	{
-		ObjectType type = ObjectType.UNKNOWN;
-		if (object != null)
-		{
-			if (FieldFinder.containsSuper(object, HashMap.class) || FieldFinder.containsSuper(object, ArrayList.class))
-			{
-				type = ObjectType.CONTAINER;
-			} else if (FieldFinder.containsSuper(object, Component.class)
-			|| object.getClass().getSuperclass().equals(Component.class))
-			{
-				type = ObjectType.COMPONENT;
-			}
-		}
-		return type;
-	}
-
-	public static ArrayList<Object> getMapOrListElements(Object obj)
-	{
-		ArrayList<Object> values = new ArrayList<Object>();
-		try
-		{
-			Collection<Object> objects = ((Map) obj).values();
-			values.addAll(objects);
-		} catch (Exception notMap)
-		{
-			try
-			{
-				Collection<Object> objects = ((List) obj);
-				values.addAll(objects);
-			} catch (Exception notList)
-			{
-
-			}
-		}
-		return values;
-	}
-
-	public void constructTree()
-	{
-		ComponentOrganizer hierarchy = self.getContents();
-		hierarchy.loadHierarchyComponents();
-		ArrayList<Component> init = new ArrayList<Component>();
-		init.addAll(hierarchy.getComponents(true));
-		for (Component component : init)
-		{
-			hierarchy.storeComponent(component, false);
-			component.getContents().constructTree();// ComponentOrganizer.constructTree(component.getContents());
-			for (Component componentChild : component.getContents().getComponents(true))
-			{
-				hierarchy.storeComponent(componentChild, false);
-			}
-		}
-
-	}
-
-	private static enum ObjectType
-	{
-		COMPONENT,
-		CONTAINER,
-		JAVA,
-		UNKNOWN;
-
-	}
-
+	/*
+	 * Get all components, can include decendents as well depending on the input
+	 */
 	public ArrayList<Component> getComponents(boolean include_children)
 	{
 		if (include_children)
@@ -400,11 +123,30 @@ public class ComponentOrganizer
 		}
 	}
 
+	/*
+	 * Gets components of a certain class, can also include dependents as well
+	 */
 	public ArrayList<Component> getComponents(boolean include_children, Class... classes)
 	{
 		return getObjects(Component.class, include_children, classes);
 	}
 
+	/*
+	 * Get all components decending from this component
+	 */
+	public HashMap<String, Component> getDeclaredDescendants()
+	{
+		HashMap<String, Component> descendants = new HashMap<String, Component>();
+		for (Component desc : declaredAdjunctComponentList)
+		{
+			descendants.put(desc.toString(), desc);
+		}
+		return descendants;
+	}
+
+	/*
+	 * Get any objects that match the search criteria defined by the inputs
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children, Class<?>... classes)
 	{
@@ -446,6 +188,41 @@ public class ComponentOrganizer
 		return allComponents;
 	}
 
+	/*
+	 * Get the parent component of this component (declaring class)
+	 */
+	public Component getParentComponent()
+	{
+		return parentComponent;
+	}
+
+	/*
+	 * get all components that are not declared in a class, but added later on
+	 * through software
+	 */
+	private void addAllUndeclaredComponents(ArrayList<Component> undeclareds)
+	{
+
+		for (Component undeclared : undeclareds)
+		{
+			undeclared.getContents().constructTree();
+			if (!declaredAdjunctComponentList.contains(undeclared))
+			{
+				declaredAdjunctComponentList.add(undeclared);
+			}
+			for (Component undeclaredDescendant : undeclared.getContents().getComponents(true))
+			{
+				if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
+				{
+					declaredAdjunctDescendantComponentList.add(undeclaredDescendant);
+				}
+			}
+		}
+	}
+
+	/*
+	 * Get all objects that match specific filters
+	 */
 	@SuppressWarnings("unchecked")
 	private <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children, Class<?> search_class)
 	{
@@ -480,35 +257,333 @@ public class ComponentOrganizer
 		return components;
 	}
 
+	/*
+	 * get maps that define the scope of the hierarchies
+	 */
+	private HashMap<Class<?>, ArrayList<Component>> getScopeMap(boolean global)
+	{
+		if (global)
+		{
+			return descendantComponentMap;
+		} else
+		{
+			return declaredComponentMap;
+		}
+	}
+
+	/*
+	 * This method creates the hierarchy structure used throughout the rest of
+	 * the software. Using a combination of recursion and iteration through all
+	 * superclasses it is possible to find almost all fields
+	 */
+	private void loadHierarchyComponents()
+	{
+		Object sysObj = self;
+		Class superClass = sysObj.getClass();
+		// System.out.println(self.getClass());
+		ArrayList<Object> allFields = new ArrayList<Object>();
+		{
+			while (superClass != Object.class)
+			{
+				// System.out.println("Class " + superClass + " Object " +
+				// sysObj.toString());
+				for (Object field : FieldFinder.getObjectFieldValues(sysObj, true))
+				{
+					if (!allFields.contains(field))
+					{
+						allFields.add(field);
+					}
+				}
+				superClass = superClass.getSuperclass();
+				Object newSysObj = superClass.cast(sysObj);
+				sysObj = newSysObj;
+				// System.out.println("Class " + superClass);
+				// System.out.println(superClass.getName());
+
+			}
+		}
+		processFields((Component) sysObj, allFields);
+	}
+
+	/*
+	 * Assign a parent and then traverses the system to construct its own
+	 * hierarchy
+	 */
+	private void processComponent(Component parent, Component field)
+	{
+		field.getContents().parentComponent = parent;
+		field.getContents().loadHierarchyComponents();
+		parent.getContents().storeComponent(field, true);
+	}
+
+	/*
+	 * Attempt to extract the contents from a container such as a hashmap or
+	 * array list to be scannned
+	 */
+	private void processContainer(Component parent, Object container)
+	{
+		for (Object content : getContainerContents(container))
+		{
+			// System.out.println(content);
+			processFields(parent, content);
+		}
+	}
+
+	/*
+	 * Processes an incoming field to determine what type of object it is
+	 */
+	private void processFields(Component parent, ArrayList<Object> fields)
+	{
+		for (Object field : fields)
+		{
+			processFields(parent, field);
+		}
+	}
+
+	/*
+	 * Process the object accordingly after its classification has been
+	 * determined
+	 */
+	private void processFields(Component parent, Object field)
+	{
+		switch (getElementType(field))
+		{
+		case COMPONENT:
+			processComponent(parent, (Component) field);
+			break;
+		case CONTAINER:
+			// System.out.println(field.toString());
+			processContainer(parent, field);
+			break;
+		default:
+			break;
+		}
+	}
+
+	/*
+	 * Get a list of components of a certain class by searching through
+	 * everything since items may get mapped by a sub or super class
+	 */
+	private <T> ArrayList<Component> scanForComponents(Class<T> scan_class, boolean global)
+	{
+		ArrayList<Component> foundObjects = new ArrayList<Component>();
+		ArrayList<Component> allComponents = new ArrayList<Component>();
+		if (global)
+		{
+			allComponents = descendantComponentList;
+		} else
+		{
+			allComponents = declaredComponentList;
+		}
+		for (Component component : allComponents)
+		{
+			// System.out
+			// .println(component.getClass().getSimpleName() + " " +
+			// component.getClass().getInterfaces().length);
+			if (FieldFinder.containsSuper(component, scan_class))
+			{
+				foundObjects.add(component);
+			} else if (Arrays.asList(component.getClass().getInterfaces()).contains(scan_class))
+			{
+				foundObjects.add(component);
+			}
+		}
+		return foundObjects;
+	}
+
+	/*
+	 * Store a component once its location in the hierarchy has been determined
+	 */
+	private void storeComponent(Component component, boolean local)
+	{
+		if (component != null)
+		{
+			if (local)
+			{
+				if (!declaredComponentList.contains(component))
+				{
+					declaredComponentList.add(component);
+				}
+				if (!declaredComponentMap.containsKey(component.getClass()))
+				{
+					declaredComponentMap.put(component.getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				}
+				if (!declaredComponentMap.get(component.getClass()).contains(component))
+				{
+					declaredComponentMap.get(component.getClass()).add(component);
+				}
+			}
+			if (!descendantComponentList.contains(component))
+			{
+				descendantComponentList.add(component);
+			}
+			if (!descendantComponentMap.containsKey(component.getLabels().getClass()))
+			{
+				descendantComponentMap.put(component.getLabels().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+			}
+			if (!descendantComponentMap.get(component.getLabels().getClass()).contains(component))
+			{
+				descendantComponentMap.get(component.getLabels().getClass()).add(component);
+			}
+		}
+	}
+
+	/*
+	 * initialize necessary containers
+	 */
+	protected void initializeContainers()
+	{
+		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
+		declaredComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
+		declaredComponentList = new ArrayList<Component>();
+		descendantComponentList = new ArrayList<Component>();
+		declaredAdjunctComponentList = new ArrayList<Component>();
+		declaredAdjunctDescendantComponentList = new ArrayList<Component>();
+	}
+
+	/*
+	 * Environment key generated by environment that contains this component
+	 */
 	String getEnvironmentKey()
 	{
 		return environmentKey;
 	}
 
+	/*
+	 * Change the environment key if need be
+	 */
 	void setEnvironmentKey(String environmentKey)
 	{
 		this.environmentKey = environmentKey;
 	}
 
-	public <S extends Component> HashMap<String, S> getComponentMapByName(Class<S> component_class,
-	boolean include_children)
+	/*
+	 * Additional setup
+	 */
+	void setup()
 	{
-		ArrayList<S> components = getObjects(component_class, include_children);
-		HashMap<String, S> componentMap = new HashMap<String, S>();
-		for (S component : components)
-		{
-			componentMap.put(component.getLabels().name, component);
-		}
-		return componentMap;
+		initializeContainers();
+		loadHierarchyComponents();
+		// constructTree(this);
 	}
 
-	public HashMap<String, Component> getDeclaredDescendants()
+	/*
+	 * Constructor that defines the name and base class of the component
+	 * 
+	 * @param title - title of the component
+	 * 
+	 * @param base_class - base class of the component
+	 */
+	public ComponentOrganizer(Component self)
 	{
-		HashMap<String, Component> descendants = new HashMap<String, Component>();
-		for (Component desc : declaredAdjunctComponentList)
+		this.self = self;
+		setup();
+	}
+
+	private static enum ObjectType
+	{
+		COMPONENT,
+		CONTAINER,
+		JAVA,
+		UNKNOWN;
+
+	}
+
+	/*
+	 * Extracts the objects out of many different types of containers
+	 */
+	public static ArrayList<Object> getContainerContents(Object container)
+	{
+		ArrayList<Object> components = new ArrayList<Object>();
+
+		// if (!FieldFinder.containsSuper(container, CoreComponent.class))
 		{
-			descendants.put(desc.toString(), desc);
+			try
+			{
+				for (Object entry : ((ArrayList) container))
+				{
+					components.add(entry);
+				}
+
+			} catch (Exception notMap)
+			{
+				// notMap.printStackTrace();
+				try
+				{
+					for (Object entry : (HashMap.class.cast(container)).values())
+					{
+						components.add(entry);
+					}
+				} catch (Exception ee)
+				{
+					// ee.printStackTrace();
+				}
+			}
 		}
-		return descendants;
+
+		return components;
+
+	}
+
+	public static ArrayList<Object> getMapOrListElements(Object obj)
+	{
+		ArrayList<Object> values = new ArrayList<Object>();
+		try
+		{
+			Collection<Object> objects = ((Map) obj).values();
+			values.addAll(objects);
+		} catch (Exception notMap)
+		{
+			try
+			{
+				Collection<Object> objects = ((List) obj);
+				values.addAll(objects);
+			} catch (Exception notList)
+			{
+
+			}
+		}
+		return values;
+	}
+
+	/*
+	 * Roughly categorize an object for sorting
+	 */
+	private static <T> ObjectType getElementType(T object)
+	{
+		ObjectType type = ObjectType.UNKNOWN;
+		if (object != null)
+		{
+			if (FieldFinder.containsSuper(object, HashMap.class) || FieldFinder.containsSuper(object, ArrayList.class))
+			{
+				type = ObjectType.CONTAINER;
+			} else if (FieldFinder.containsSuper(object, Component.class)
+			|| object.getClass().getSuperclass().equals(Component.class))
+			{
+				type = ObjectType.COMPONENT;
+			}
+		}
+		return type;
+	}
+
+	/*
+	 * Constructs the actual hierarchy tree
+	 */
+	public void constructTree()
+	{
+		ComponentOrganizer hierarchy = self.getContents();
+		hierarchy.loadHierarchyComponents();
+		ArrayList<Component> init = new ArrayList<Component>();
+		init.addAll(hierarchy.getComponents(true));
+		for (Component component : init)
+		{
+			hierarchy.storeComponent(component, false);
+			component.getContents().constructTree();// ComponentOrganizer.constructTree(component.getContents());
+			for (Component componentChild : component.getContents().getComponents(true))
+			{
+				hierarchy.storeComponent(componentChild, false);
+			}
+		}
+
 	}
 }

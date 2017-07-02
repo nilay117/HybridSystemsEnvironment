@@ -23,18 +23,27 @@ import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 public class ComponentWorker
 {
 
-	protected Component component;
+	protected Component component; // component this class works for
 
-	public ComponentWorker(Component component)
+	public ComponentWorker(Component component) // constructor assigning a
+												// component
 	{
 		this.component = component;
 	}
 
+	/*
+	 * Copy the component without including the hierarchy or stored data to save
+	 * space and time
+	 */
 	public <T extends Component> T copy()
 	{
 		return copy(false, true);
 	}
 
+	/*
+	 * Copy the component with the option of including the hierarchy or saved
+	 * data is necessary
+	 */
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap<HybridTime, T>> tempValues = new HashMap<Data, HashMap<HybridTime, T>>();
@@ -69,6 +78,9 @@ public class ComponentWorker
 
 	}
 
+	/*
+	 * Flag indicating if this component is a data element
+	 */
 	public boolean isData()
 	{
 		try
@@ -172,16 +184,25 @@ public class ComponentWorker
 
 	}
 
+	/*
+	 * Indicate whetehre or not this component should be initialized
+	 */
 	public void setInitialized(Boolean initialized)
 	{
 		ComponentOperator.getOperator(component).getStatus().setInitialized(initialized);
 	}
 
+	/*
+	 * Indicate whether or not this component is simulated
+	 */
 	public void setSimulated(boolean simulated)
 	{
 		ComponentOperator.getOperator(component).setSimulated(simulated);
 	}
 
+	/*
+	 * Get the address of the component, which is unique for every instance
+	 */
 	public String getAddress()
 	{
 		if (component.status.address == null)
@@ -191,6 +212,9 @@ public class ComponentWorker
 		return component.status.address;
 	}
 
+	/*
+	 * Access the settings
+	 */
 	public SettingConfigurer getSettings()
 	{
 		return HybridEnvironment.getEnvironment(component.contents.getEnvironmentKey()).getSettings();

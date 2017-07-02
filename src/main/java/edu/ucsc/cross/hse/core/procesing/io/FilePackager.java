@@ -46,7 +46,7 @@ public class FilePackager extends ProcessingElement
 
 	public void storeContents(File location, Component component, FileContent... contents)
 	{
-		FileSystemInteractor.checkDirectory(location, true);
+		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
 		for (FileContent content : contents)
 		{
 			switch (content)

@@ -33,4 +33,5 @@ dependencies {
     	compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.0'
     	// https://mvnrepository.com/artifact/commons-io/commons-io
 compile group: 'commons-io', name: 'commons-io', version: '2.4'
+compile 'com.github.be3short:DataManagementToolbox:0.1.0'
 }

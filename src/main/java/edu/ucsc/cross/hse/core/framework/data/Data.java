@@ -62,12 +62,18 @@ public class Data<T> extends Component// DynamicData<T>
 
 	}
 
+	/*
+	 * Safely store element
+	 */
 	public void setValue(T element)
 	{
 		this.element = element;
 
 	}
 
+	/*
+	 * Safely store elements
+	 */
 	public void setValue(T min, T max)
 	{
 		// if (FieldFinder.containsSuper(min, Double.class))
@@ -83,17 +89,27 @@ public class Data<T> extends Component// DynamicData<T>
 		// }
 	}
 
+	/*
+	 * Flag indicating if the element is nulls
+	 */
 	public boolean isElementNull()
 	{
 		return (getValue() == null);
 	}
 
+	/*
+	 * Get a set of complementary methods that are intended to make things
+	 * easier
+	 */
 	@Override
 	public DataWorker<T> getActions()
 	{
 		return DataWorker.getConfigurer(this);
 	}
 
+	/*
+	 * Store the value
+	 */
 	private T getStoreValue()
 	{
 		{
@@ -109,24 +125,39 @@ public class Data<T> extends Component// DynamicData<T>
 
 	}
 
+	/*
+	 * Store the double value
+	 */
 	void storeValue(Double time)
 	{
 		storeValue(time, false);
 	}
 
+	/*
+	 * Store the double overriding the same time increment
+	 */
 	void storeValue(Double time, boolean override_save)
 	{
 
 		if (save || override_save)
 		{
 			T storeValue = getStoreValue();
-			savedHybridValues
-			.put(ContentOperator.getOperator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			savedHybridValues.put(ContentOperator.getOperator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
 			storeValue);
 
 		}
 	}
 
+	/*
+	 * Instantiate the data class however fits your needs.
+	 * 
+	 * Mandatory: initialValue
+	 * 
+	 * Highly Recommended Name or Description for automatic labeling later on
+	 * 
+	 * Optional: Description is just extra information you want to include, and
+	 * the save flag is just if you want to save your car
+	 */
 	public Data(String name, T obj, String description, Boolean save_default)
 	{
 		super(name, description);

@@ -8,6 +8,16 @@ import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
+/*
+ * The purpose of this class is to protect all of the methods that should not be
+ * used by anyone who odesn't know how to use them. These methods are for the
+ * processor to do it's job, not for students. They are accesable though, so if
+ * you'd like to develop some new stuff I'd say go for it! are not intended for
+ * use outside of processing, which is why they are not directly accessable from
+ * the component itself. Any additional methods that should not be accessible by
+ * users should be defined here. Use caution when using them as they can disrupt
+ * functionality of the environment.
+ */
 public class DataOperator<T> extends ComponentOperator
 {
 

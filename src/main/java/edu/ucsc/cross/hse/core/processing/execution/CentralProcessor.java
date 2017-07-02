@@ -122,7 +122,7 @@ public class CentralProcessor
 		}
 		this.contentAdmin.performTasks(false);
 		interruptResponder = new InterruptResponder(this);
-		return executionMonitor.runSim(false);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
+		return executionMonitor.runSim(true);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
 
 	/*
@@ -135,7 +135,6 @@ public class CentralProcessor
 		initializeProcessingElements();
 		contentAdmin.prepareEnvironmentContent();
 		storeConfigurations();
-		/// simulationEngine.initialize();
 		dataHandler.loadStoreStates();
 		simulationEngine.initialize();
 	}

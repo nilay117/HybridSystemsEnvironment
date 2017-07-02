@@ -122,6 +122,9 @@ public abstract class Component implements Initializer
 
 	}
 
+	/*
+	 * Accesses the environment setting in case they are needed
+	 */
 	public SettingConfigurer getSettings()
 	{
 		return HybridEnvironment.getEnvironment(contents.getEnvironmentKey()).getSettings();

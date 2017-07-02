@@ -19,13 +19,19 @@ public class ComponentStatus
 
 	protected String address; // address of component
 
+	/*
+	 * Constructor
+	 */
 	public ComponentStatus()
 	{
 		simulated = true;
 		initialized = false;
-		address = null;//this.toString();
+		address = null;// this.toString();
 	}
 
+	/*
+	 * Boiler plate code to get and set the initialized / simulated flags
+	 */
 	Boolean getInitialized()
 	{
 		return initialized;
