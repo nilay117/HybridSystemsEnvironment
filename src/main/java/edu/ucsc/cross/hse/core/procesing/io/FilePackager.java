@@ -94,7 +94,7 @@ public class FilePackager extends ProcessingElement
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
 		for (Data dat : component.getContents().getObjects(Data.class, true))
 		{
-			data.put(dat.getActions().getAddress(), dat.getActions().getStoredHybridValues());
+			data.put(dat.getActions().getAddress(), dat.getActions().getStoredValues());
 		}
 		ObjectSerializer.store(data, location.getAbsolutePath());
 

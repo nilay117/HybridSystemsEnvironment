@@ -480,15 +480,6 @@ public class ComponentOrganizer
 		setup();
 	}
 
-	private static enum ObjectType
-	{
-		COMPONENT,
-		CONTAINER,
-		JAVA,
-		UNKNOWN;
-
-	}
-
 	/*
 	 * Extracts the objects out of many different types of containers
 	 */
@@ -584,6 +575,19 @@ public class ComponentOrganizer
 				hierarchy.storeComponent(componentChild, false);
 			}
 		}
+
+	}
+
+	/*
+	 * This enum is a very general way of categorizing items to speed up a
+	 * variety of tasks
+	 */
+	private static enum ObjectType
+	{
+		COMPONENT,
+		CONTAINER,
+		JAVA,
+		UNKNOWN;
 
 	}
 }

@@ -16,24 +16,49 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
-public class State extends Data<Double>// DynamicData<T>
+/*
+ * This class is very general description of a state variable, and is used to
+ * define all state variables within the environment. It also stores the
+ * derivative of the state variable to keep the user and processor separated for
+ * convenience. As an extension of the data class, it provides protection by
+ * storing the value internally so every component will always access the true
+ * value (ensures correct pointers) including during jumps, where the value has
+ * been changed before some other system has even applied dynamics. To be more
+ * specific, no system has priority if more than one jump occurs at the same
+ * time, meaning it would be possible to use the incorrect value without knowing
+ * it. This class stores a copy of the value right before every jump occurs,
+ * thus ensuing that every system is accessing the correct value regardless if
+ * it has been changed by another system. The value is represented as a double
+ * since it can also be used as an integer, bit, or other values. Note:
+ * Non-numeric states can be defined using the data class
+ */
+public class State extends Data<Double>
 {
 
 	private Double derivative; // current derivative of the data (if the data
 								// changes
 								// continuously)
 
-	protected ValueDomain elementDomain;
+	protected ValueDomain elementDomain; // domain that allows for the state to
+											// be initialized or reset to a
+											// value within a range
 
 	private Double prejump; // pre-jump value stored immediately before jump
 							// occurs
 
+	/*
+	 * Gets the current state value
+	 */
 	@Override
 	public Double getValue()
 	{
 		return getValue(false);
 	}
 
+	/*
+	 * Gets the state value after being randomized within a specified domain if
+	 * desired. For example a random transmission time in an unreliable network.
+	 */
 	@Override
 	public Double getValue(boolean randomize_from_domain)
 	{
@@ -59,6 +84,9 @@ public class State extends Data<Double>// DynamicData<T>
 
 	}
 
+	/*
+	 * Sets the state value to a fixed number
+	 */
 	@Override
 	public void setValue(Double val)
 	{
@@ -70,6 +98,9 @@ public class State extends Data<Double>// DynamicData<T>
 
 	}
 
+	/*
+	 * Sets the state value to a random number within the specified range
+	 */
 	@Override
 	public void setValue(Double min, Double max)
 	{
@@ -77,38 +108,30 @@ public class State extends Data<Double>// DynamicData<T>
 		element = elementDomain.getValue();
 	}
 
+	/*
+	 * Gets the current derivative of the state value, which will be null if thw
+	 * object is not in the flow set
+	 */
 	public Double getDerivative()
 	{
 		return derivative;
 	}
 
+	/*
+	 * Sets the derivative of the state value
+	 */
 	public void setDerivative(Double derivative)
 	{
 		this.derivative = derivative;
 	}
 
+	/*
+	 * Acesses all of the built in funcions
+	 */
 	@Override
 	public DataWorker<Double> getActions()
 	{
 		return DataWorker.getConfigurer(this);
-	}
-
-	@Override
-	public void initialize()
-	{
-		boolean initialize = true;
-		try
-		{
-			initialize = initialize && !ComponentOperator.getOperator(this).isInitialized();
-		} catch (Exception nullInit)
-		{
-			initialize = true;
-		}
-		if (initialize)
-		{
-			setValue(elementDomain.getValue());
-		}
-
 	}
 
 	public State(String name, Double obj)

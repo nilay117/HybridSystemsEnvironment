@@ -17,5 +17,5 @@ import java.lang.annotation.Target;
 public @interface LibraryDefinition
 {
 
-	String label();
+	String label(); // name that will appear in libraries for the component
 }

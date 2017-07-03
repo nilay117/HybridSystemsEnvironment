@@ -114,7 +114,7 @@ public class FileExchanger extends ProcessingElement
 	{
 		for (Data id : env.getContents().getObjects(Data.class, true))
 		{
-			DataOperator.getOperator(id).setStoredHybridValues(data.get(id.getActions().getAddress()));
+			DataOperator.getOperator(id).loadStoredValues(data.get(id.getActions().getAddress()));
 		}
 	}
 

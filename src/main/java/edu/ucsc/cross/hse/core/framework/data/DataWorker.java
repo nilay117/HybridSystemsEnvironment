@@ -10,71 +10,66 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
+/*
+ * This class contains the methods available to users that perform a variety of
+ * data related tasks. These methods are safe to use whenever needed as they do
+ * not interfere with the processor. Be careful not to violate the constraints
+ * of your system though, if a component does not store data it should not have
+ * access to it.
+ */
 public class DataWorker<T> extends ComponentWorker
 {
 
+	// Mapping of all data workers keeping them completely separate from the
+	// data elements themselves
 	protected static HashMap<Data<?>, DataWorker<?>> dataActions = new HashMap<Data<?>, DataWorker<?>>();
+
+	// Mapping of all stored data times
 	public HashMap<Double, ArrayList<HybridTime>> storedTimes;
+
+	// The data element being serviced by this worker
 	public Data<T> data;
 
+	/*
+	 * Constructor that stores the data element and also passes it along to the
+	 * component worker, which allows it to have that functionality as well
+	 */
 	public DataWorker(Data<T> data)
 	{
 		super(data);
 		this.data = data;
 	}
 
-	public HashMap<HybridTime, T> getStoredValues(Double time)
-	{
-		HashMap<HybridTime, T> values = new HashMap<HybridTime, T>();
-		try
-		{
-			if (storedTimes.containsKey(time))
-				for (HybridTime storedVal : storedTimes.get(time))
-				{
-					values.put(storedVal, getStoredValue(storedVal));
-				}
-		} catch (Exception noValue)
-		{
-
-		}
-		return values;
-	}
-
-	public HashMap<HybridTime, T> getStoredHybridValues()
+	/*
+	 * Gets all of the stored values (if there are any) for a specific point in
+	 * time. Since we are working with hybrid systems it is possible to have
+	 * multiple data points at te same time instant
+	 */
+	public HashMap<HybridTime, T> getStoredValues()
 	{
 		return data.savedHybridValues;
 	}
 
-	public HashMap<Double, ArrayList<HybridTime>> getStoredTimesMap()
-	{
-		storedTimes = new HashMap<Double, ArrayList<HybridTime>>();
-		for (HybridTime hybridTime : data.savedHybridValues.keySet())
-		{
-			if (storedTimes.containsKey(hybridTime.getTime()))
-			{
-				storedTimes.get(hybridTime.getTime()).add(hybridTime);
-			} else
-			{
-				ArrayList<HybridTime> times = new ArrayList<HybridTime>();
-				times.add(hybridTime);
-				storedTimes.put(hybridTime.getTime(), times);
-			}
-		}
-		return storedTimes;
-	}
-
+	/*
+	 * Get a value (if there is one) for a given hybrid time
+	 */
 	public T getStoredValue(HybridTime hybrid_time)
 	{
-		T val = this.getStoredHybridValues().get(hybrid_time);
+		T val = this.getStoredValues().get(hybrid_time);
 		return val;
 	}
 
+	/*
+	 * Specify if values should be stored for this data element
+	 */
 	public void setStorePreviousValues(boolean store)
 	{
 		data.save = store;
 	}
 
-	// Internal Operation Functions
+	/*
+	 * Access to this worker
+	 */
 	public static <S> DataWorker<S> getConfigurer(Data<S> component)
 	{
 		if (dataActions.containsKey(component))

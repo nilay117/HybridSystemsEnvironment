@@ -7,6 +7,7 @@ import java.util.HashMap;
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
 /*
  * The purpose of this class is to protect all of the methods that should not be
@@ -36,6 +37,10 @@ public class DataOperator<T> extends ComponentOperator
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
 
+	/*
+	 * Constructor to pass the data element along to the component operator for
+	 * added functionality. It also adds the data element to the global mapping
+	 */
 	protected DataOperator(Data<T> component)
 	{
 		super(component);
@@ -60,11 +65,20 @@ public class DataOperator<T> extends ComponentOperator
 		}
 	}
 
+	/*
+	 * Access to the store data functionality of the data element, which is
+	 * blocked to the user since it is handled automatically and there are oter
+	 * apis for accessing data
+	 */
 	public void storeValue(Double time)
 	{
 		element.storeValue(time, true);
 	}
 
+	/*
+	 * Same as the above but with the option to overwrite the save time step
+	 * increment
+	 */
 	public void storeValue(Double time, boolean override_save)
 	{
 		if (!ComponentOperator.getOperator(component.getEnvironment()).outOfAllDomains())
@@ -73,16 +87,27 @@ public class DataOperator<T> extends ComponentOperator
 		}
 	}
 
+	/*
+	 * Flag indicating is data values are being stored over time for this
+	 * element
+	 */
 	public boolean isDataStored()
 	{
 		return element.save;
 	}
 
+	/*
+	 * Flag indicating if the data element is a state
+	 */
 	public boolean isState()
 	{
 		return FieldFinder.containsSuper(element, State.class);
 	}
 
+	/*
+	 * Flag indicating that this data should be stored before every jump, which
+	 * is the default in states
+	 */
 	public void storePrejumpData()
 	{
 		if (FieldFinder.containsSuper(element, State.class))
@@ -91,7 +116,10 @@ public class DataOperator<T> extends ComponentOperator
 		}
 	}
 
-	public void setStoredHybridValues(HashMap<HybridTime, T> vals)
+	/*
+	 * Allows externally stored data to be loaded if need be
+	 */
+	public void loadStoredValues(HashMap<HybridTime, T> vals)
 	{
 		element.savedHybridValues = vals;
 	}
@@ -111,5 +139,38 @@ public class DataOperator<T> extends ComponentOperator
 			return changableClasses.contains(object);
 		}
 		return true;
+	}
+
+	/*
+	 * Initializes the domain and sets the state to a value within, also
+	 * nullifies the derivative a stores the prejumo state.
+	 */
+	private void init(Double... vals)
+	{
+		element.elementDomain = new ValueDomain(vals[0]);
+		if (vals.length > 1)
+		{
+			element.elementDomain.setRandomValues(vals[0], vals[1]);
+		}
+		element.setValue(element.elementDomain.getValue());
+		State state = null;
+		try
+		{
+			state = (State) element;
+			state.setDerivative(null);
+			storePreJumpValue();
+		} catch (Exception notState)
+		{
+
+		}
+	}
+
+	/*
+	 * Store a copy of a value immediately before a jump occurs allowing
+	 * pre=jump value access even if the value is changed by another component
+	 */
+	void storePreJumpValue()
+	{
+		prejump = element;
 	}
 }

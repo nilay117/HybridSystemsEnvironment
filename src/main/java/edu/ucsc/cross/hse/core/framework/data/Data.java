@@ -1,23 +1,27 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
-
-import bs.commons.objects.access.FieldFinder;
-import bs.commons.objects.manipulation.ObjectCloner;
-import bs.commons.unitvars.core.UnitValue;
-import bs.commons.unitvars.core.UnitData.Unit;
-import bs.commons.unitvars.exceptions.UnitException;
-import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
-import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
-public class Data<T> extends Component// DynamicData<T>
+/*
+ * This class stores and protects any type of non state data used within the
+ * environment. It stores any object in a way that protects it, and ensures it's
+ * true value can always be accessed from any location. This component is needed
+ * as there may be many systems accessing and modifying the same objects. For
+ * example, take two systems that share some variable, if one of the systems
+ * updates the value, the other system will now be pointing to the old value
+ * unless code is implemented to update the value of the other system as well.
+ * These extra implementations are impractical as they limit compatibility to
+ * explicitly defined components, and would be very difficult to scale. Instead
+ * if both systems store the value data structure, the actual object is stored
+ * within the structure, thus the true value of the object is accessable by any
+ * system with a pointer to the data structure.
+ */
+public class Data<T> extends Component
 {
 
 	protected boolean save; // flag indicating if object should be stored

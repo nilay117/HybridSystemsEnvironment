@@ -18,7 +18,7 @@ import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 /*
  * This class contains the methods available to users that perform a variety of
  * tasks. These methods are safe to use whenever needed as they do not interfere
- * with the processor.
+ * with the processor, though most are for preparing components.
  */
 public class ComponentWorker
 {
@@ -53,7 +53,7 @@ public class ComponentWorker
 		{
 			for (Data data : component.getContents().getObjects(Data.class, true))
 			{
-				tempValues.put(data, data.getActions().getStoredHybridValues());
+				tempValues.put(data, data.getActions().getStoredValues());
 			}
 		}
 		if (!include_hierarchy)
@@ -70,7 +70,7 @@ public class ComponentWorker
 			for (Data data : component.getContents().getObjects(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
-				DataOperator.getOperator(data).setStoredHybridValues(tempValues.get(data));
+				DataOperator.getOperator(data).loadStoredValues(tempValues.get(data));
 			}
 		}
 

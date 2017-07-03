@@ -8,10 +8,13 @@ import bs.commons.unitvars.units.NoUnit;
 public class ValueDomain
 {
 
-	private Double value;
-	private Double min;
-	private Double max;
+	private Double value; // fixed value
+	private Double min; // minimum value of the range
+	private Double max; // maximum value of the range
 
+	/*
+	 * Constructor that implements a value domain with a fixed range
+	 */
 	@SuppressWarnings("unchecked")
 	public ValueDomain(Double value)
 	{

@@ -83,7 +83,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		for (Data dat : getDataByTitle(title))
 		{
 			ArrayList<Double[]> values = new ArrayList<Double[]>();
-			Set<HybridTime> tim = dat.getActions().getStoredHybridValues().keySet();
+			Set<HybridTime> tim = dat.getActions().getStoredValues().keySet();
 			for (HybridTime timez : tim)
 			{
 				Double[] vals = new Double[]
@@ -145,7 +145,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		{
 			if (getDataOperator(element).isDataStored())
 			{
-				mapz.put(element.getActions().getAddress(), element.getActions().getStoredHybridValues());
+				mapz.put(element.getActions().getAddress(), element.getActions().getStoredValues());
 			}
 		}
 		return mapz;

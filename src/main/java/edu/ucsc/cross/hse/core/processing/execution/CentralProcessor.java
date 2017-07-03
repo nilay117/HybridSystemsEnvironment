@@ -6,8 +6,6 @@ import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
@@ -73,7 +71,7 @@ public class CentralProcessor
 	 * Initializes all processing elements and links them to this central
 	 * processor, which allows them to access each other
 	 */
-	public void initializeProcessingElements()
+	protected void initializeProcessingElements()
 	{
 		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
 		simulationEngine = new SimulationEngine(this);
@@ -86,42 +84,22 @@ public class CentralProcessor
 		executionMonitor = new ExecutionMonitor(this);
 	}
 
-	/*
-	 * Prepares and starts up the environment
-	 */
-	protected Runnable getRunnable()
+	protected void start()
 	{
-		Runnable task = new Runnable()
+		// Back up of environment contents in case of failure
+		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
+
+		Boolean success = false;
+		while (!success)
 		{
+			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
 
-			@Override
-			public void run()
-			{
-				// prepareEnvironment(environmentInterface.getContents());
-				// Back up of contents in case of failure
-				EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
-
-				Boolean success = false;
-				while (!success)
-				{
-					EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
-
-					success = executeEnvironment(content);
-					success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-					success = success || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
-					&& !interruptResponder.isOutsideDomainError();
-					success = success && !interruptResponder.isPauseTemporary();
-				}
-
-			}
-		};
-		return task;
-	}
-
-	public void start()
-	{
-		Thread thread = new Thread(getRunnable());
-		thread.start();
+			success = executeEnvironment(content);
+			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
+			success = success || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+			&& !interruptResponder.isOutsideDomainError();
+			success = success && !interruptResponder.isPauseTemporary();
+		}
 	}
 
 	/*
@@ -156,6 +134,10 @@ public class CentralProcessor
 		simulationEngine.initialize();
 	}
 
+	/*
+	 * Store the state of all components right before a simulation begins to
+	 * allow the simulation to be run again in the future
+	 */
 	protected void storeConfigurations()
 	{
 		ComponentOperator.getOperator(this.environmentInterface.getContents()).storeConfiguration();
@@ -207,7 +189,7 @@ public class CentralProcessor
 			if (FieldFinder.containsSuper(component, Data.class))
 			{
 				Data data = (Data) component;
-				data.getActions().getStoredHybridValues().clear();
+				data.getActions().getStoredValues().clear();
 
 			}
 			ComponentOperator.getOperator(component).setInitialized(!re_initialize);

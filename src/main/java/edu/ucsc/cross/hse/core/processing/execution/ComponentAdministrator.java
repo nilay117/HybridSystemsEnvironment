@@ -221,7 +221,7 @@ public class ComponentAdministrator extends ProcessingElement
 			if (FieldFinder.containsSuper(component, Data.class))
 			{
 				Data data = (Data) component;
-				data.getActions().getStoredHybridValues().clear();
+				data.getActions().getStoredValues().clear();
 
 			}
 			ComponentOperator.getOperator(component).setInitialized(!re_initialize);
