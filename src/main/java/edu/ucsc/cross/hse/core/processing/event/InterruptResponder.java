@@ -31,6 +31,13 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 	private boolean simPaused;
 
+	private boolean earlyTermination;
+
+	public boolean isPauseTemporary()
+	{
+		return simPaused;
+	}
+
 	/*
 	 * Constructor that uses the environment
 	 */
@@ -62,7 +69,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 		{
 			// killSim();
 			// this.getComputationEngine().zeroAllDerivatives();
-			return -.0000000001;
+			return -1;
 		} else
 		{
 			return 1;
@@ -115,5 +122,11 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	{
 		simPaused = true;
 		killSim();
+	}
+
+	public void resumeSim()
+	{
+		simPaused = false;
+		killFlag = false;
 	}
 }

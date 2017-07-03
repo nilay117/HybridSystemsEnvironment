@@ -9,6 +9,8 @@ import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 
+import com.be3short.data.cloning.ObjectCloner;
+
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
@@ -39,16 +41,34 @@ public class ExecutionMonitor extends ProcessingElement
 	public boolean runSim(boolean run_threadded)
 	{
 
-		if (run_threadded)
+		boolean success = false;
+		while (!success)
 		{
-			thread = new Thread(getSimTask());
-			thread.start();
 
-		} else
-		{
 			launchEnvironment();
+
+			success = successfulAttempt() || !getSettings().getExecutionSettings().rerunOnFatalErrors;
 		}
-		return !this.getInterruptHandler().isTerminating();
+		return success;
+	}
+
+	private boolean successfulAttempt()
+	{
+		Boolean success = false;
+
+		while (!success)
+		{
+			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(getEnv());
+
+			success = getCenter().executeEnvironment(content);
+
+			success = success || !getSettings().getExecutionSettings().rerunOnFatalErrors;
+			success = success || ComponentOperator.getOperator(getEnv()).outOfAllDomains()
+			&& !this.getInterruptHandler().isOutsideDomainError();
+			success = success && !this.getInterruptHandler().isPauseTemporary();
+		}
+
+		return success;
 	}
 
 	/*
@@ -123,13 +143,29 @@ public class ExecutionMonitor extends ProcessingElement
 	{
 		Double endTime = 0.0;
 		// getComponents().performAllTasks(true);
-		while (endTime < duration && !this.getInterruptHandler().isTerminating()
+		while ((endTime < duration && !this.getInterruptHandler().isTerminating()
 		&& getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit)
+		|| (this.getInterruptHandler().isPauseTemporary()))
+
 		{
+			if (this.getInterruptHandler().isPauseTemporary())
+
+			{
+				try
+				{
+					thread.sleep(500);
+				} catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
+
 		}
 
 		return endTime;
+
 	}
 
 	private Double recursiveIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,

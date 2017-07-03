@@ -16,6 +16,7 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
@@ -169,6 +170,10 @@ public class HybridEnvironment// implements Serializable
 	{
 
 		this.processor.fileExchanger.load(file);
+		//		processor.prepareEnvironment(content);
+		//		processor.storeConfigurations();
+		//		processor.contentAdmin = ContentOperator.getOperator(content);
+		//		this.processor.dataHandler.loadStoreStates();
 	}
 
 	/*

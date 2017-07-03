@@ -89,28 +89,45 @@ public class CentralProcessor
 	/*
 	 * Prepares and starts up the environment
 	 */
-	protected void start()
+	protected Runnable getRunnable()
 	{
-		// prepareEnvironment(environmentInterface.getContents());
-		// Back up of contents in case of failure
-		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
-
-		Boolean success = false;
-		while (!success)
+		Runnable task = new Runnable()
 		{
-			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
-			success = executeEnvironment(content);
-			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-			success = success || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
-			&& !this.interruptResponder.isOutsideDomainError();
-		}
 
+			@Override
+			public void run()
+			{
+				// prepareEnvironment(environmentInterface.getContents());
+				// Back up of contents in case of failure
+				EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
+
+				Boolean success = false;
+				while (!success)
+				{
+					EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
+
+					success = executeEnvironment(content);
+					success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
+					success = success || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+					&& !interruptResponder.isOutsideDomainError();
+					success = success && !interruptResponder.isPauseTemporary();
+				}
+
+			}
+		};
+		return task;
+	}
+
+	public void start()
+	{
+		Thread thread = new Thread(getRunnable());
+		thread.start();
 	}
 
 	/*
 	 * Gets the environment ready for execution
 	 */
-	protected boolean executeEnvironment(EnvironmentContent content)
+	public boolean executeEnvironment(EnvironmentContent content)
 	{
 		prepareEnvironment(content);
 		storeConfigurations();
@@ -121,7 +138,6 @@ public class CentralProcessor
 			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
 		}
 		this.contentAdmin.performTasks(false);
-		interruptResponder = new InterruptResponder(this);
 		return executionMonitor.runSim(true);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
 
@@ -130,6 +146,7 @@ public class CentralProcessor
 	 */
 	public void prepareEnvironment(EnvironmentContent content)
 	{
+		// content.getContents().constructTree();
 		environmentInterface.content = content;
 		contentAdmin = ContentOperator.getOperator(content);
 		initializeProcessingElements();

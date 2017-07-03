@@ -6,16 +6,8 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
 
-public class HybridTime implements HybridDomain//, Serializable// Externalizable
+public class HybridTime
 {
-
-	/**
-	 * 
-	 */
-	//private static final long serialVersionUID = 7374901522495983050L;
-	/**
-	 * 
-	 */
 
 	private HybridTime current;
 	private Double time;
@@ -49,7 +41,6 @@ public class HybridTime implements HybridDomain//, Serializable// Externalizable
 		current = null;//= new HybridTime(initial_time, initial_jump_index);
 	}
 
-	@Override
 	public Double getTime()
 	{
 		return time;
@@ -64,7 +55,6 @@ public class HybridTime implements HybridDomain//, Serializable// Externalizable
 		}
 	}
 
-	@Override
 	public Integer getJumpIndex()
 	{
 		return jumpIndex;
@@ -84,7 +74,6 @@ public class HybridTime implements HybridDomain//, Serializable// Externalizable
 		}
 	}
 
-	@Override
 	public HybridTime getCurrent()
 	{
 		HybridTime curr = this;

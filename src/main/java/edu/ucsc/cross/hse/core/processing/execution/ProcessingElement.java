@@ -15,11 +15,16 @@ import edu.ucsc.cross.hse.core.processing.event.ExecutionMonitor;
 import edu.ucsc.cross.hse.core.processing.event.InterruptResponder;
 import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
 
+/*
+ * This class is just an interface between all of the processing elements making
+ * it easier for them to coordinate. These Elements are all declared within the
+ * central processor and are for operational usse only
+ */
 public abstract class ProcessingElement
 {
 
 	protected HybridEnvironment processor; // environment interface
-	private CentralProcessor proc; // central processor
+	private CentralProcessor proc; // central process or
 
 	protected ProcessingElement(HybridEnvironment processor)
 	{
