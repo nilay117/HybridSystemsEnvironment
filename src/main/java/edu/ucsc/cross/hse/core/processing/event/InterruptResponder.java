@@ -24,6 +24,11 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 		return killFlag;
 	}
 
+	public boolean isTerminatedEarly()
+	{
+		return envStopped;
+	}
+
 	private boolean killFlag; // flag that indactes it is wile to kill the
 								// process
 
@@ -31,7 +36,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 	private boolean simPaused;
 
-	private boolean earlyTermination;
+	private boolean envStopped;
 
 	public boolean isPauseTemporary()
 	{
@@ -44,9 +49,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	public InterruptResponder(CentralProcessor processor)
 	{
 		super(processor);
-		killFlag = false;
-		simPaused = false;
-		outsideDomainError = false;
+
 	}
 
 	/*
@@ -56,6 +59,9 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	public void init(double t0, double[] y0, double t)
 	{
 		killFlag = false;
+		simPaused = false;
+		envStopped = false;
+		outsideDomainError = false;
 	}
 
 	/*
@@ -67,8 +73,6 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 		if (killFlag || this.getComponentOperator(getEnv()).outOfAllDomains())
 		{
-			// killSim();
-			// this.getComputationEngine().zeroAllDerivatives();
 			return -1;
 		} else
 		{
@@ -82,10 +86,8 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	@Override
 	public Action eventOccurred(double t, double[] y, boolean increasing)
 	{
-		System.out.println("here");
 		if (killFlag)// || this.getComponents().outOfAllDomains())
 		{
-			// this.getComponentOperator(getEnv()).storeData();
 			return EventHandler.Action.STOP;
 		} else
 		{
@@ -104,7 +106,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	/*
 	 * Terminates the simulation
 	 */
-	public void killSim()
+	public void interruptEnv()
 	{
 		killFlag = true;
 	}
@@ -112,16 +114,22 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	/*
 	 * Terminates the simulation
 	 */
-	public void killSim(boolean terminated_by_error)
+	public void interruptEnv(boolean terminated_by_error)
 	{
 		outsideDomainError = terminated_by_error;
-		killSim();
+		interruptEnv();
+	}
+
+	public void killEnv()
+	{
+		envStopped = true;
+		interruptEnv();
 	}
 
 	public void pauseSim()
 	{
 		simPaused = true;
-		killSim();
+		interruptEnv();
 	}
 
 	public void resumeSim()

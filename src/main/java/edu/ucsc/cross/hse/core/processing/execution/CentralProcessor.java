@@ -58,6 +58,8 @@ public class CentralProcessor
 	protected SystemConsole systemConsole; // prints system notifications and
 											// any user defined outputs
 
+	protected Thread environmentThread;
+
 	/*
 	 * Constructor called by the main user interface
 	 */
@@ -73,6 +75,15 @@ public class CentralProcessor
 	 */
 	protected void initializeProcessingElements()
 	{
+		Double runTime = 0.0;
+
+		try
+		{
+			runTime = executionMonitor.getRunTime();
+		} catch (Exception e)
+		{
+
+		}
 		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
@@ -81,34 +92,80 @@ public class CentralProcessor
 		fileExchanger = new FileExchanger(this);
 		jumpEvaluator = new JumpEvaluator(this);
 		interruptResponder = new InterruptResponder(this);
-		executionMonitor = new ExecutionMonitor(this);
+		executionMonitor = new ExecutionMonitor(this, runTime);
+	}
+
+	/*
+	 * Get a runnable version of the integration task for use when running
+	 * threadded
+	 */
+	private Runnable getEnvironmentTask(boolean resume)
+	{
+		Runnable task = new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+
+				launchEnvironment(resume);
+				while (!environmentThread.isInterrupted())
+				{
+
+				}
+				interruptResponder.interruptEnv();
+			}
+
+		};
+		return task;
+
 	}
 
 	protected void start()
 	{
-		// Back up of environment contents in case of failure
-		EnvironmentContent og = (EnvironmentContent) ObjectCloner.xmlClone(environmentInterface.getContents());
+		start(false);
+	}
 
-		Boolean success = false;
-		while (!success)
+	protected void start(boolean resume)
+	{
+		environmentThread = new Thread(getEnvironmentTask(resume));
+		environmentThread.start();
+	}
+
+	protected void launchEnvironment(boolean resume_paused)
+	{
+		Boolean running = false;
+		while (!running)
 		{
-			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(og);
-
-			success = executeEnvironment(content);
-			success = success || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-			success = success || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+			if (!resume_paused)
+			{
+				systemConsole.print("Environment Started");
+				EnvironmentContent content = (EnvironmentContent) ObjectCloner
+				.xmlClone(environmentInterface.getContents());
+				prepareEnvironment(content);
+			} else
+			{
+				systemConsole.print("Environment Resumed");
+				prepareEnvironment(environmentInterface.getContents());
+			}
+			executeEnvironment();
+			running = !interruptResponder.isTerminating();
+			running = running || interruptResponder.isPauseTemporary();
+			running = running || interruptResponder.isTerminatedEarly();
+			running = running || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
+			running = running || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
 			&& !interruptResponder.isOutsideDomainError();
-			success = success && !interruptResponder.isPauseTemporary();
 		}
+		systemConsole
+		.print("Environment Stopped - Simulation Time: " + environmentInterface.getContents().getEnvironmentTime()
+		+ " sec - Run Time : " + executionMonitor.getRunTime() + "sec");
 	}
 
 	/*
 	 * Gets the environment ready for execution
 	 */
-	public boolean executeEnvironment(EnvironmentContent content)
+	public void executeEnvironment()
 	{
-		prepareEnvironment(content);
-		storeConfigurations();
 		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
 		while (this.contentAdmin.isJumpOccurring())
 		{
@@ -116,7 +173,7 @@ public class CentralProcessor
 			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
 		}
 		this.contentAdmin.performTasks(false);
-		return executionMonitor.runSim(true);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
+		executionMonitor.runSim(true);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
 	}
 
 	/*
@@ -132,6 +189,7 @@ public class CentralProcessor
 		storeConfigurations();
 		dataHandler.loadStoreStates();
 		simulationEngine.initialize();
+		storeConfigurations();
 	}
 
 	/*

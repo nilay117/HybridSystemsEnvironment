@@ -24,7 +24,12 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 public class ExecutionMonitor extends ProcessingElement
 {
 
-	private Thread thread; // integrator thread
+	Double runTime;
+
+	public Double getRunTime()
+	{
+		return runTime;
+	}
 
 	/*
 	 * Constructor linking the processor
@@ -32,62 +37,44 @@ public class ExecutionMonitor extends ProcessingElement
 	public ExecutionMonitor(CentralProcessor processor)
 	{
 		super(processor);
+		runTime = 0.0;
+	}
 
+	/*
+	 * Constructor linking the processor
+	 */
+	public ExecutionMonitor(CentralProcessor processor, Double run_time)
+	{
+		super(processor);
+		runTime = run_time;
 	}
 
 	/*
 	 * Starts the integrator on the main thread or an external thread
 	 */
-	public boolean runSim(boolean run_threadded)
+	public void runSim(boolean run_threadded)
 	{
 
-		boolean success = false;
-		while (!success)
-		{
+		successfulAttempt();
+		//}/
+		//		return !this.getInterruptHandler().isTerminating();
 
-			launchEnvironment();
-
-			success = successfulAttempt() || !getSettings().getExecutionSettings().rerunOnFatalErrors;
-		}
-		return success;
 	}
 
 	private boolean successfulAttempt()
 	{
 		Boolean success = false;
 
-		while (!success)
-		{
-			EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(getEnv());
-
-			success = getCenter().executeEnvironment(content);
-
-			success = success || !getSettings().getExecutionSettings().rerunOnFatalErrors;
-			success = success || ComponentOperator.getOperator(getEnv()).outOfAllDomains()
-			&& !this.getInterruptHandler().isOutsideDomainError();
-			success = success && !this.getInterruptHandler().isPauseTemporary();
-		}
+		//EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(getEnv());
+		launchEnvironment();
+		//success = getCenter().executeEnvironment(content);
+		//
+		//	success = success || !getSettings().getExecutionSettings().rerunOnFatalErrors;
+		//success = success || ComponentOperator.getOperator(getEnv()).outOfAllDomains()
+		//	&& !this.getInterruptHandler().isOutsideDomainError();
+		//success = success && !this.getInterruptHandler().isPauseTemporary();
 
 		return success;
-	}
-
-	/*
-	 * Get a runnable version of the integration task for use when running
-	 * threadded
-	 */
-	private Runnable getSimTask()
-	{
-		Runnable task = new Runnable()
-		{
-
-			@Override
-			public void run()
-			{
-				launchEnvironment();
-			}
-
-		};
-		return task;
 	}
 
 	public FirstOrderIntegrator getIntegrator()
@@ -117,11 +104,12 @@ public class ExecutionMonitor extends ProcessingElement
 
 	private void getEventHandlers(FirstOrderIntegrator integrator)
 	{
-		integrator.addEventHandler(this.getJumpEvaluator(), getSettings().getComputationSettings().ehMaxCheckInterval,
+		integrator.addEventHandler(getJumpEvaluator(), getSettings().getComputationSettings().ehMaxCheckInterval,
 		getSettings().getComputationSettings().ehConvergence,
 		getSettings().getComputationSettings().ehMaxIterationCount);
-		integrator.addEventHandler(this.getInterruptHandler(), getSettings().getComputationSettings().odeMinStep,
-		0.0001, getSettings().getComputationSettings().ehMaxIterationCount);
+		integrator.addEventHandler(getInterruptHandler(), getSettings().getComputationSettings().ehMaxCheckInterval,
+		getSettings().getComputationSettings().ehConvergence,
+		getSettings().getComputationSettings().ehMaxIterationCount);
 	}
 
 	public void launchEnvironment()
@@ -131,9 +119,9 @@ public class ExecutionMonitor extends ProcessingElement
 		FirstOrderIntegrator integrator = getIntegrator();
 		double[] y = getComputationEngine().getODEValueVector();
 		FirstOrderDifferentialEquations ode = getComputationEngine();
-		runIntegrator(integrator, ode, 0.0, getSettings().getExecutionSettings().simDuration, y);
-		this.getConsole().print("Environment Trial Complete - Runtime = "
-		+ Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0 + " seconds");
+		runIntegrator(integrator, ode, getEnv().getEnvironmentTime(), getSettings().getExecutionSettings().simDuration,
+		y);
+		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
 		getFileParser().autoStoreData(getEnv());
 
 	}
@@ -144,26 +132,10 @@ public class ExecutionMonitor extends ProcessingElement
 		Double endTime = 0.0;
 		// getComponents().performAllTasks(true);
 		while ((endTime < duration && !this.getInterruptHandler().isTerminating()
-		&& getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit)
-		|| (this.getInterruptHandler().isPauseTemporary()))
-
+		&& getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit))
 		{
-			if (this.getInterruptHandler().isPauseTemporary())
-
-			{
-				try
-				{
-					thread.sleep(500);
-				} catch (InterruptedException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
-
 		}
-
 		return endTime;
 
 	}
@@ -179,7 +151,10 @@ public class ExecutionMonitor extends ProcessingElement
 			return stopTime;
 		} catch (Exception e)
 		{
-
+			if (this.getInterruptHandler().isTerminating())
+			{
+				return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
+			}
 			// e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
@@ -210,7 +185,7 @@ public class ExecutionMonitor extends ProcessingElement
 			|| exc.getClass().equals(TooManyEvaluationsException.class))
 			{
 
-				this.getInterruptHandler().killSim(true);
+				this.getInterruptHandler().interruptEnv(true);
 			}
 		}
 	}
@@ -275,11 +250,6 @@ public class ExecutionMonitor extends ProcessingElement
 			this.getConsole().print("Integrator failure due to another cause - please see stack trace for details");
 			exc.printStackTrace();
 		}
-	}
-
-	public Thread getThread()
-	{
-		return thread;
 	}
 
 }

@@ -136,7 +136,7 @@ public class State extends Data<Double>
 
 	public State(String name, Double obj)
 	{
-		super(name, obj, "", true);
+		super(name, obj, true);
 		init(obj);
 	}
 

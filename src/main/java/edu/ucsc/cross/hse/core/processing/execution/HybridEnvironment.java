@@ -94,7 +94,9 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void stop()
 	{
-		processor.interruptResponder.killSim();
+		//processor.environmentThread.interrupt();
+		//processor.environmentThread.stop();
+		processor.interruptResponder.killEnv();
 	}
 
 	/*
@@ -103,6 +105,8 @@ public class HybridEnvironment// implements Serializable
 	public void pause()
 	{
 		processor.interruptResponder.pauseSim();
+		//processor.environmentThread.interrupt();
+		//processor.environmentThread.stop();
 	}
 
 	/*
@@ -110,7 +114,8 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void resume()
 	{
-		processor.interruptResponder.pauseSim();
+		processor.start(true);
+
 	}
 
 	/*

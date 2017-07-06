@@ -141,36 +141,4 @@ public class DataOperator<T> extends ComponentOperator
 		return true;
 	}
 
-	/*
-	 * Initializes the domain and sets the state to a value within, also
-	 * nullifies the derivative a stores the prejumo state.
-	 */
-	private void init(Double... vals)
-	{
-		element.elementDomain = new ValueDomain(vals[0]);
-		if (vals.length > 1)
-		{
-			element.elementDomain.setRandomValues(vals[0], vals[1]);
-		}
-		element.setValue(element.elementDomain.getValue());
-		State state = null;
-		try
-		{
-			state = (State) element;
-			state.setDerivative(null);
-			storePreJumpValue();
-		} catch (Exception notState)
-		{
-
-		}
-	}
-
-	/*
-	 * Store a copy of a value immediately before a jump occurs allowing
-	 * pre=jump value access even if the value is changed by another component
-	 */
-	void storePreJumpValue()
-	{
-		prejump = element;
-	}
 }

@@ -82,4 +82,13 @@ public class SystemConsole extends ProcessingElement
 		}
 	}
 
+	public void printStartMessage()
+	{
+
+	}
+
+	public void printInterruptMessage()
+	{
+
+	}
 }
