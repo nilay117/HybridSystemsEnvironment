@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.processing.execution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
@@ -23,10 +24,12 @@ import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 public class ComponentAdministrator extends ProcessingElement
 {
 
+	HashMap<String, Data> initialData;
+
 	ComponentAdministrator(CentralProcessor processor)
 	{
 		super(processor);
-
+		initialData = new HashMap<String, Data>();
 	}
 
 	public void performAllTasks(boolean jump_occurred)
@@ -37,7 +40,7 @@ public class ComponentAdministrator extends ProcessingElement
 			// \
 			// getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
 			// (true && getSettings().getDataSettings().storeAtEveryJump));
-			//this.getEnvironmentOperator().storeData();
+			// this.getEnvironmentOperator().storeData();
 			while (this.getComponentOperator(getEnv()).isJumpOccurring())
 			{
 				jumpOccurred = true;
@@ -47,7 +50,7 @@ public class ComponentAdministrator extends ProcessingElement
 			{
 				this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 			}
-			//this.getComponentOperator(getEnv()).storeData();
+			// this.getComponentOperator(getEnv()).storeData();
 			// getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime()
 			// + .000000001,
 			// (true && getSettings().getDataSettings().storeAtEveryJump));
@@ -222,18 +225,4 @@ public class ComponentAdministrator extends ProcessingElement
 		this.getData().loadStoreStates();
 	}
 
-	protected void resetComponents(boolean re_initialize)
-	{
-		for (Component component : this.processor.content.getContents().getComponents(true))
-		{
-			if (FieldFinder.containsSuper(component, Data.class))
-			{
-				Data data = (Data) component;
-				data.getActions().getStoredValues().clear();
-
-			}
-			ComponentOperator.getOperator(component).setInitialized(!re_initialize);
-		}
-
-	}
 }

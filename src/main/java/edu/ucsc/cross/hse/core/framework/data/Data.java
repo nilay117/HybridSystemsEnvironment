@@ -1,7 +1,11 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
 import java.util.HashMap;
+
+import bs.commons.objects.manipulation.ObjectCloner;
+import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
@@ -36,6 +40,8 @@ public class Data<T> extends Component
 
 	protected ValueDomain elementDomain;// domain of the data object in case it
 										// can assume random values
+
+	protected T initialValue;
 
 	/*
 	 * Safely access element
@@ -166,26 +172,33 @@ public class Data<T> extends Component
 	{
 		super(name, description);
 		cloneToStore = !DataOperator.isCopyRequiredOnSave(obj);
-		init(obj, save_default);
+		init(save_default, obj);
 	}
 
 	public Data(String name, T obj, Boolean save_default)
 	{
 		super(name, "");
 		cloneToStore = !DataOperator.isCopyRequiredOnSave(obj);
-		init(obj, save_default);
+		init(save_default, obj);
 	}
 
 	public Data(String name, T obj)
 	{
 		super(name, "");
 		cloneToStore = !DataOperator.isCopyRequiredOnSave(obj);
-		init(obj, false);
+		init(false, obj);
 	}
 
-	private void init(T obj, Boolean save_default)
+	public Data(String name, T min, T max)
 	{
-		element = obj;
+		super(name, "");
+		cloneToStore = !DataOperator.isCopyRequiredOnSave(min);
+		init(false, min, max);
+	}
+
+	private void init(Boolean save_default, T... obj)
+	{
+		element = obj[0];
 
 		save = save_default;
 
@@ -193,7 +206,30 @@ public class Data<T> extends Component
 
 		if (obj.getClass().equals(Double.class))
 		{
-			elementDomain = new ValueDomain((Double) obj);
+			if (obj.length > 1)
+			{
+				elementDomain = new ValueDomain((Double) obj[0], (Double) obj[1]);
+			}
+		}
+	}
+
+	@Override
+	public void initialize()
+	{
+		if (savedHybridValues == null)
+		{
+			savedHybridValues = new HashMap<HybridTime, T>();
+		}
+		if (!ComponentOperator.getOperator(this).isInitialized())
+		{
+			try
+			{
+				setValue((T) elementDomain.getValue(true));
+			} catch (Exception e)
+			{
+				setValue(element);
+			}
+			initialValue = (T) ObjectCloner.xmlClone(element);
 		}
 	}
 }

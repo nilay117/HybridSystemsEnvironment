@@ -19,6 +19,7 @@ import com.be3short.data.serialization.ObjectSerializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 
+import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
@@ -52,9 +53,6 @@ public class FilePackager extends ProcessingElement
 		{
 			switch (content)
 			{
-			case ENVIRONMENT:
-				storeConfiguration(location, component.getEnvironment());
-				break;
 			case DATA:
 				storeData(location, component);
 				break;
@@ -82,16 +80,18 @@ public class FilePackager extends ProcessingElement
 
 	}
 
-	private void storeConfiguration(File location, Component component)
-	{
-		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
-		String environment = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
-		byte[] compressed = DataCompressor.compressDataGZip(environment);
-		ObjectSerializer.store(location.getAbsolutePath() + "/" + component.getActions().getAddress(), compressed);
-		// FileSystemInteractor.createOutputFile(location.getAbsolutePath(),
-		// component.getActions().getAddress() + ".gz",
-		// compressed);
-	}
+	// private void storeConfiguration(File location, Component component)
+	// {
+	// FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
+	// String environment =
+	// XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
+	// byte[] compressed = DataCompressor.compressDataGZip(environment);
+	// ObjectSerializer.store(location.getAbsolutePath() + "/" +
+	// component.getActions().getAddress(), compressed);
+	// // FileSystemInteractor.createOutputFile(location.getAbsolutePath(),
+	// // component.getActions().getAddress() + ".gz",
+	// // compressed);
+	// }
 
 	private void storeData(File location, Component component)
 	{
@@ -120,9 +120,13 @@ public class FilePackager extends ProcessingElement
 	{
 		String xmlSettings = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
-
-		ObjectSerializer.store(
-		location.getAbsolutePath() + "/" + component.getLabels().getFullDescription() + "_Component", compressed);
+		String suffix = component.getLabels().getFullDescription() + " Component";
+		if (FieldFinder.containsInterface(component, EnvironmentContent.class))
+		{
+			suffix = component.getLabels().getFullDescription() + " " + component.getActions().getAddress();
+		}
+		System.out.println(suffix);
+		ObjectSerializer.store(location.getAbsolutePath() + "/" + suffix, compressed);
 	}
 
 	public HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
@@ -145,28 +149,32 @@ public class FilePackager extends ProcessingElement
 					this.getConsole().print("Loading data from file : " + entry.getName());
 					Object readIn = kryo.readClassAndObject(input);
 					FileContent inputElement = FileContent.getFileContentType(entry.getName());
-					switch (inputElement)
+					if (content.contains(inputElement))
 					{
-					case DATA:
-						if (content.contains(FileContent.DATA))
+						switch (inputElement)
 						{
-							datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
-						}
-						break;
-					case ENVIRONMENT:
-						EnvironmentContent envContentz = (EnvironmentContent) XMLParser
-						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn));
-						loadedContent.put(FileContent.ENVIRONMENT, envContentz);
-						break;
-					case SETTINGS:
-						loadedContent.put(FileContent.SETTINGS, ((SettingConfigurer) XMLParser
-						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
-						break;
-					case COMPONENT:
-						loadedContent.put(FileContent.COMPONENT, ((Component) XMLParser
-						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
-						break;
 
+						case DATA:
+							if (content.contains(FileContent.DATA))
+							{
+								datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
+							}
+							break;
+						case ENVIRONMENT:
+							EnvironmentContent envContentz = (EnvironmentContent) XMLParser
+							.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn));
+							loadedContent.put(FileContent.ENVIRONMENT, envContentz);
+							break;
+						case SETTINGS:
+							loadedContent.put(FileContent.SETTINGS, ((SettingConfigurer) XMLParser
+							.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
+							break;
+						case COMPONENT:
+							loadedContent.put(FileContent.COMPONENT, ((Component) XMLParser
+							.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
+							break;
+
+						}
 					}
 				} catch (Exception e)
 				{

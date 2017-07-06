@@ -45,18 +45,28 @@ public class ValueDomain
 	@SuppressWarnings("unchecked")
 	public void setFixedValue(Double val)
 	{
-		min = max = val;
+		value = min = max = val;
 	}
 
 	@SuppressWarnings("unchecked")
 	public Double getValue()
 	{
+		return getValue(true);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public Double getValue(boolean regenerate)
+	{
 		Double generatedValue = value;
-
-		if (min != null && max != null)
+		if (regenerate)
 		{
-			generatedValue = (((max - min) * Math.random()) + min);
+			if (min != null && max != null)
+			{
+				generatedValue = (((max - min) * Math.random()) + min);
+				value = generatedValue;
 
+			}
 		}
 		return generatedValue;
 

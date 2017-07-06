@@ -141,4 +141,11 @@ public class DataOperator<T> extends ComponentOperator
 		return true;
 	}
 
+	public void resetData()
+	{
+		((Data) component).getActions().getStoredValues().clear();
+		((Data) component).setValue(((Data) component).initialValue);
+		((Data) component).elementDomain = (((Data) component).elementDomain);
+	}
+
 }

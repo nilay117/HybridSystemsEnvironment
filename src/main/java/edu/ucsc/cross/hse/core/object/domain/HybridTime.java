@@ -114,4 +114,8 @@ public class HybridTime
 		return curr;
 	}
 
+	public void setJumpIndex(Integer index)
+	{
+		jumpIndex = index;
+	}
 }

@@ -118,7 +118,6 @@ public class HybridEnvironment// implements Serializable
 		processor.systemConsole
 		.print("Environment Resumed - Simulation Time: " + getContents().getEnvironmentTime() + " sec");
 		processor.startEnvironment(true);
-
 	}
 
 	/*
@@ -184,10 +183,10 @@ public class HybridEnvironment// implements Serializable
 	{
 
 		this.processor.fileExchanger.load(file);
-		//		processor.prepareEnvironment(content);
-		//		processor.storeConfigurations();
-		//		processor.contentAdmin = ContentOperator.getOperator(content);
-		//		this.processor.dataHandler.loadStoreStates();
+		// processor.prepareEnvironment(content);
+		// processor.storeConfigurations();
+		// processor.contentAdmin = ContentOperator.getOperator(content);
+		// this.processor.dataHandler.loadStoreStates();
 	}
 
 	/*
@@ -243,7 +242,7 @@ public class HybridEnvironment// implements Serializable
 	{
 		for (Component component : components)
 		{
-			addComponents(component);
+			addComponents(component, 1);
 		}
 	}
 

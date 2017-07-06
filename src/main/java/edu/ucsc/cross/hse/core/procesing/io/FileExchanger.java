@@ -82,7 +82,7 @@ public class FileExchanger extends ProcessingElement
 
 	public void storeEnvironment(File file)
 	{
-		store(file, this.getEnv(), FileContent.ENVIRONMENT, FileContent.DATA, FileContent.SETTINGS);// ,.CONFIGURATION);
+		store(file, this.getEnv(), FileContent.COMPONENT, FileContent.DATA, FileContent.SETTINGS);// ,.CONFIGURATION);
 	}
 
 	public void store(File file_path, Component component, FileContent... contents)
@@ -125,7 +125,7 @@ public class FileExchanger extends ProcessingElement
 		try
 		{
 			comp = (Component) contents.get(FileContent.COMPONENT);
-			//env.getContents().addComponent(comp);
+			// env.getContents().addComponent(comp);
 		} catch (Exception noEnvironment)
 		{
 
@@ -148,11 +148,7 @@ public class FileExchanger extends ProcessingElement
 
 			}
 		}
-		if (reload_env)
-		{
-			environment.loadContents(env);
-		}
-		//	System.out.println(XMLParser.serializeObject(comp));
+
 		return comp;
 	}
 
