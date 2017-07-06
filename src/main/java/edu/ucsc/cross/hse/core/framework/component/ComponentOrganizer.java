@@ -205,17 +205,24 @@ public class ComponentOrganizer
 
 		for (Component undeclared : undeclareds)
 		{
-			undeclared.getContents().constructTree();
-			if (!declaredAdjunctComponentList.contains(undeclared))
+			try
 			{
-				declaredAdjunctComponentList.add(undeclared);
-			}
-			for (Component undeclaredDescendant : undeclared.getContents().getComponents(true))
-			{
-				if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
+
+				undeclared.getContents().constructTree();
+				if (!declaredAdjunctComponentList.contains(undeclared))
 				{
-					declaredAdjunctDescendantComponentList.add(undeclaredDescendant);
+					declaredAdjunctComponentList.add(undeclared);
 				}
+				for (Component undeclaredDescendant : undeclared.getContents().getComponents(true))
+				{
+					if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
+					{
+						declaredAdjunctDescendantComponentList.add(undeclaredDescendant);
+					}
+				}
+			} catch (Exception e)
+			{
+
 			}
 		}
 	}

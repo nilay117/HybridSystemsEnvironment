@@ -45,7 +45,7 @@ public abstract class ProcessingElement
 
 	protected ExecutionMonitor getEnvironmentMonitor()
 	{
-		return proc.executionMonitor;
+		return proc.integrationMonitor;
 	}
 
 	protected InterruptResponder getInterruptHandler()

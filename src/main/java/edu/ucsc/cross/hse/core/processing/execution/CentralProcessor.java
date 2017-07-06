@@ -40,7 +40,7 @@ public class CentralProcessor
 													// produce simulated
 													// solutions
 
-	protected ExecutionMonitor executionMonitor; // monitors and resolves any
+	protected ExecutionMonitor integrationMonitor; // monitors and resolves any
 													// issues that arise while
 													// the environment is
 													// running
@@ -58,7 +58,7 @@ public class CentralProcessor
 	protected SystemConsole systemConsole; // prints system notifications and
 											// any user defined outputs
 
-	protected Thread environmentThread;
+	protected Thread environmentThread; // thread that the environment is running on (if the environment is running on a thread)
 
 	/*
 	 * Constructor called by the main user interface
@@ -76,10 +76,9 @@ public class CentralProcessor
 	protected void initializeProcessingElements()
 	{
 		Double runTime = 0.0;
-
 		try
 		{
-			runTime = executionMonitor.getRunTime();
+			runTime = integrationMonitor.getRunTime();
 		} catch (Exception e)
 		{
 
@@ -92,7 +91,7 @@ public class CentralProcessor
 		fileExchanger = new FileExchanger(this);
 		jumpEvaluator = new JumpEvaluator(this);
 		interruptResponder = new InterruptResponder(this);
-		executionMonitor = new ExecutionMonitor(this, runTime);
+		integrationMonitor = new ExecutionMonitor(this, runTime);
 	}
 
 	/*
@@ -108,7 +107,7 @@ public class CentralProcessor
 			public void run()
 			{
 
-				launchEnvironment(resume);
+				runEnvironment(resume);
 				while (!environmentThread.isInterrupted())
 				{
 
@@ -121,28 +120,37 @@ public class CentralProcessor
 
 	}
 
-	protected void start()
+	protected void startEnvironment()
 	{
-		start(false);
+		startEnvironment(false);
 	}
 
-	protected void start(boolean resume)
+	protected void startEnvironment(boolean resume)
 	{
-		environmentThread = new Thread(getEnvironmentTask(resume));
-		environmentThread.start();
+		if (environmentInterface.getSettings().getExecutionSettings().runThreadded)
+		{
+			environmentThread = new Thread(getEnvironmentTask(resume));
+			environmentThread.start();
+		} else
+		{
+			runEnvironment(resume);
+		}
 	}
 
-	protected void launchEnvironment(boolean resume_paused)
+	protected void runEnvironment(boolean resume)
 	{
 		Boolean running = false;
+		if (!resume)
+		{
+			resetEnvironment();
+		}
 		while (!running)
 		{
-			if (!resume_paused)
+			if (!resume)
 			{
 				systemConsole.print("Environment Started");
-				EnvironmentContent content = (EnvironmentContent) ObjectCloner
-				.xmlClone(environmentInterface.getContents());
-				prepareEnvironment(content);
+				prepareEnvironment(
+				(EnvironmentContent) ContentOperator.getOperator(environmentInterface.getContents()).getNewInstance());
 			} else
 			{
 				systemConsole.print("Environment Resumed");
@@ -158,7 +166,30 @@ public class CentralProcessor
 		}
 		systemConsole
 		.print("Environment Stopped - Simulation Time: " + environmentInterface.getContents().getEnvironmentTime()
-		+ " sec - Run Time : " + executionMonitor.getRunTime() + "sec");
+		+ " sec - Run Time : " + integrationMonitor.getRunTime() + "sec");
+	}
+
+	protected void resetEnvironment()
+	{
+		resetEnvironment(false);
+	}
+
+	protected void resetEnvironment(boolean reinitialize)
+	{
+		EnvironmentContent content = environmentInterface.getContents();
+		if (!(environmentInterface.getContents().getEnvironmentTime() > 0.0))
+		{
+			prepareEnvironment(content);
+		}
+		content = (EnvironmentContent) ContentOperator.getOperator(content).getNewInstance();
+		if (reinitialize)
+		{
+			for (Component component : environmentInterface.content.getContents().getComponents(true))
+			{
+				ComponentOperator.getOperator(component).setInitialized(false);
+			}
+		}
+		prepareEnvironment(content);
 	}
 
 	/*
@@ -167,13 +198,13 @@ public class CentralProcessor
 	public void executeEnvironment()
 	{
 		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
-		while (this.contentAdmin.isJumpOccurring())
-		{
-			this.componentAdmin.performAllTasks(true);
-			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
-		}
-		this.contentAdmin.performTasks(false);
-		executionMonitor.runSim(true);// environmentInterface.getSettings().getExecutionSettings().runThreadded);
+		//		while (this.contentAdmin.isJumpOccurring())
+		//		{
+		//			this.componentAdmin.performAllTasks(true);
+		//			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
+		//		}
+		//		this.contentAdmin.performTasks(false);
+		integrationMonitor.launchEnvironment();
 	}
 
 	/*
@@ -229,28 +260,4 @@ public class CentralProcessor
 		}
 	}
 
-	private void initializeComponents(boolean pre_loaded_content)
-	{
-		environmentInterface.environments.put(environmentInterface.content.toString(), this.environmentInterface);
-		environmentInterface.settings = FileExchanger.loadSettings(null);
-		environmentInterface.processor = new CentralProcessor(this.environmentInterface);
-		if (pre_loaded_content)
-		{
-			dataHandler.loadStoreStates();
-		}
-	}
-
-	protected void resetComponents(boolean re_initialize)
-	{
-		for (Component component : environmentInterface.content.getContents().getComponents(true))
-		{
-			if (FieldFinder.containsSuper(component, Data.class))
-			{
-				Data data = (Data) component;
-				data.getActions().getStoredValues().clear();
-
-			}
-			ComponentOperator.getOperator(component).setInitialized(!re_initialize);
-		}
-	}
 }

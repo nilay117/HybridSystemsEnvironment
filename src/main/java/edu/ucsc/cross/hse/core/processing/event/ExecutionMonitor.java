@@ -49,35 +49,18 @@ public class ExecutionMonitor extends ProcessingElement
 		runTime = run_time;
 	}
 
-	/*
-	 * Starts the integrator on the main thread or an external thread
-	 */
-	public void runSim(boolean run_threadded)
+	public void launchEnvironment()
 	{
-
-		successfulAttempt();
-		//}/
-		//		return !this.getInterruptHandler().isTerminating();
-
+		long startTime = System.currentTimeMillis();
+		FirstOrderIntegrator integrator = getSimulationIntegrator();
+		double[] y = getComputationEngine().getODEValueVector();
+		FirstOrderDifferentialEquations ode = getComputationEngine();
+		runIntegrator(integrator, ode, getEnv().getEnvironmentTime(), getSettings().getExecutionSettings().simDuration,
+		y);
+		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
 	}
 
-	private boolean successfulAttempt()
-	{
-		Boolean success = false;
-
-		//EnvironmentContent content = (EnvironmentContent) ObjectCloner.xmlClone(getEnv());
-		launchEnvironment();
-		//success = getCenter().executeEnvironment(content);
-		//
-		//	success = success || !getSettings().getExecutionSettings().rerunOnFatalErrors;
-		//success = success || ComponentOperator.getOperator(getEnv()).outOfAllDomains()
-		//	&& !this.getInterruptHandler().isOutsideDomainError();
-		//success = success && !this.getInterruptHandler().isPauseTemporary();
-
-		return success;
-	}
-
-	public FirstOrderIntegrator getIntegrator()
+	protected FirstOrderIntegrator getSimulationIntegrator()
 	{
 		FirstOrderIntegrator integrator = null;
 		switch (getSettings().getComputationSettings().integrator)
@@ -98,11 +81,11 @@ public class ExecutionMonitor extends ProcessingElement
 			getSettings().getComputationSettings().odeScalRelativeTolerance);
 			break;
 		}
-		getEventHandlers(integrator);
+		loadEventHandlers(integrator);
 		return integrator;
 	}
 
-	private void getEventHandlers(FirstOrderIntegrator integrator)
+	private void loadEventHandlers(FirstOrderIntegrator integrator)
 	{
 		integrator.addEventHandler(getJumpEvaluator(), getSettings().getComputationSettings().ehMaxCheckInterval,
 		getSettings().getComputationSettings().ehConvergence,
@@ -112,29 +95,16 @@ public class ExecutionMonitor extends ProcessingElement
 		getSettings().getComputationSettings().ehMaxIterationCount);
 	}
 
-	public void launchEnvironment()
-	{
-		long startTime = System.currentTimeMillis();
-		this.getConsole().print("Starting Environment Trial");
-		FirstOrderIntegrator integrator = getIntegrator();
-		double[] y = getComputationEngine().getODEValueVector();
-		FirstOrderDifferentialEquations ode = getComputationEngine();
-		runIntegrator(integrator, ode, getEnv().getEnvironmentTime(), getSettings().getExecutionSettings().simDuration,
-		y);
-		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
-		getFileParser().autoStoreData(getEnv());
-
-	}
-
 	private Double runIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
 	Double start_time, Double duration, double[] ode_vector)
 	{
 		Double endTime = 0.0;
 		// getComponents().performAllTasks(true);
-		while ((endTime < duration && !this.getInterruptHandler().isTerminating()
-		&& getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit))
+		while ((endTime < duration) && !this.getInterruptHandler().isTerminating()
+		&& (getEnv().getJumpIndex() < getSettings().getExecutionSettings().jumpLimit)
+		&& (!this.getComponentOperator(getEnv()).outOfAllDomains()))
 		{
-			endTime = recursiveIntegrator(getIntegrator(), getComputationEngine(), 0);
+			endTime = recursiveIntegrator(getSimulationIntegrator(), getComputationEngine(), 0);
 		}
 		return endTime;
 
@@ -155,7 +125,6 @@ public class ExecutionMonitor extends ProcessingElement
 			{
 				return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
 			}
-			// e.printStackTrace();
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
@@ -166,7 +135,7 @@ public class ExecutionMonitor extends ProcessingElement
 			if (recursion_level < getSettings().getComputationSettings().maxRecursiveStackSize
 			&& !this.getInterruptHandler().isTerminating())
 			{
-				return recursiveIntegrator(getIntegrator(), ode, recursion_level + 1);
+				return recursiveIntegrator(getSimulationIntegrator(), ode, recursion_level + 1);
 			} else
 			{
 				return getEnvironmentOperator().getEnvironmentHybridTime().getTime();
@@ -174,20 +143,6 @@ public class ExecutionMonitor extends ProcessingElement
 
 		}
 
-	}
-
-	private void handleFatalError(Exception exc)
-	{
-		if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
-		{
-
-			if (exc.getClass().equals(NumberIsTooSmallException.class)
-			|| exc.getClass().equals(TooManyEvaluationsException.class))
-			{
-
-				this.getInterruptHandler().interruptEnv(true);
-			}
-		}
 	}
 
 	private boolean handleStepSizeIssues(Exception exc)
@@ -241,6 +196,20 @@ public class ExecutionMonitor extends ProcessingElement
 			handledIssue = true;
 		}
 		return handledIssue;
+	}
+
+	private void handleFatalError(Exception exc)
+	{
+		if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
+		{
+
+			if (exc.getClass().equals(NumberIsTooSmallException.class)
+			|| exc.getClass().equals(TooManyEvaluationsException.class))
+			{
+
+				this.getInterruptHandler().interruptEnv(true);
+			}
+		}
 	}
 
 	private void printOutUnresolvedIssues(Exception exc, boolean resolved)

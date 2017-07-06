@@ -170,7 +170,16 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
-		for (Data component : super.getEnv().getContents().getObjects(Data.class, true))
+		ArrayList<Data> storeStates = new ArrayList<Data>();
+		storeStates.addAll(super.getEnv().getContents().getObjects(State.class, true));
+		for (Data data : super.getEnv().getContents().getObjects(Data.class, true))
+		{
+			if (!storeStates.contains(data))
+			{
+				storeStates.add(data);
+			}
+		}
+		for (Data component : storeStates)
 		{
 			try
 			{

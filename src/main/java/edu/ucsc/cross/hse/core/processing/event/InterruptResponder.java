@@ -16,7 +16,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 	public boolean isOutsideDomainError()
 	{
-		return outsideDomainError;
+		return errorTermination;
 	}
 
 	public boolean isTerminating()
@@ -32,15 +32,15 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	private boolean killFlag; // flag that indactes it is wile to kill the
 								// process
 
-	private boolean outsideDomainError;
+	private boolean errorTermination;
 
-	private boolean simPaused;
+	private boolean envPaused;
 
 	private boolean envStopped;
 
 	public boolean isPauseTemporary()
 	{
-		return simPaused;
+		return envPaused;
 	}
 
 	/*
@@ -59,9 +59,9 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	public void init(double t0, double[] y0, double t)
 	{
 		killFlag = false;
-		simPaused = false;
+		envPaused = false;
 		envStopped = false;
-		outsideDomainError = false;
+		errorTermination = false;
 	}
 
 	/*
@@ -73,6 +73,10 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 		if (killFlag || this.getComponentOperator(getEnv()).outOfAllDomains())
 		{
+			if (this.getComponentOperator(getEnv()).outOfAllDomains())
+			{
+				killEnv();
+			}
 			return -1;
 		} else
 		{
@@ -116,7 +120,7 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 	 */
 	public void interruptEnv(boolean terminated_by_error)
 	{
-		outsideDomainError = terminated_by_error;
+		errorTermination = terminated_by_error;
 		interruptEnv();
 	}
 
@@ -128,13 +132,13 @@ public class InterruptResponder extends ProcessingElement implements EventHandle
 
 	public void pauseSim()
 	{
-		simPaused = true;
+		envPaused = true;
 		interruptEnv();
 	}
 
 	public void resumeSim()
 	{
-		simPaused = false;
+		envPaused = false;
 		killFlag = false;
 	}
 }

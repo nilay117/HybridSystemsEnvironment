@@ -10,6 +10,8 @@ import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core.procesing.io.FileContent;
+import edu.ucsc.cross.hse.core.procesing.io.FileElement;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
@@ -160,12 +162,12 @@ public class ComponentWorker
 	/*
 	 * Add a sub-component to the current component
 	 */
-	public void addComponentFromFile(String directory_path, String file_name)
+	public void addComponentFromFile(File file)
 	{
 		Component newComponent = null;
 		try
 		{
-			newComponent = (FileExchanger.loadComponent(new File(directory_path, file_name)));
+			newComponent = (FileExchanger.loadComponent(file));
 			component.getContents().addComponent(newComponent);
 
 		} catch (Exception badComponent)
@@ -177,11 +179,23 @@ public class ComponentWorker
 	/*
 	 * Save the current component to a file
 	 */
-	public void saveToFile(String directory_path, String file_name)
+	public void saveToFile(File file)
 	{
+		saveToFile(file, false);
+	}
 
-		FileSystemOperator.createOutputFile(new File(directory_path, file_name), XMLParser.serializeObject(component));// clonedComponent));
-
+	/*
+	 * Save the current component to a file
+	 */
+	public void saveToFile(File file, boolean save_data)
+	{
+		if (save_data)
+		{
+			FileExchanger.saveComponent(component, file, FileContent.COMPONENT, FileContent.DATA);
+		} else
+		{
+			FileExchanger.saveComponent(component, file, FileContent.COMPONENT);
+		}
 	}
 
 	/*

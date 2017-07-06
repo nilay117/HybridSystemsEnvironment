@@ -87,16 +87,13 @@ public class ContentOperator extends ComponentOperator
 		initializeTimeDomains();
 	}
 
-	private void initializeTimeDomains()
+	public void initializeTimeDomains()
 	{
-		// systems = new HashMap<String, GlobalHybridSystem>();
-		// this.environmentKey = this.toString();
-		// systems.put(environmentKey, this);
-		if (globalSystem.earthStartTime <= 0)
-		{
-			globalSystem.jumpOccurring = false;
-			globalSystem.earthStartTime = System.nanoTime() / 1000000000.0;
-		}
+		globalSystem.jumpOccurring = false;
+		globalSystem.environmentTime = new HybridTime(true);
+		globalSystem.jumpOccurring = false;
+		globalSystem.earthStartTime = System.nanoTime() / 1000000000.0;
+
 	}
 
 	void prepareComponents()

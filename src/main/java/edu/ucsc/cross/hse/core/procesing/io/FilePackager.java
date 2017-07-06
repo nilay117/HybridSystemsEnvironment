@@ -22,6 +22,7 @@ import com.esotericsoftware.kryo.io.Input;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
@@ -55,10 +56,13 @@ public class FilePackager extends ProcessingElement
 				storeConfiguration(location, component.getEnvironment());
 				break;
 			case DATA:
-				storeData(location, component.getEnvironment());
+				storeData(location, component);
 				break;
 			case SETTINGS:
 				storeSettings(location, component.getEnvironment());
+				break;
+			case COMPONENT:
+				storeComponent(location, component);
 				break;
 			}
 		}
@@ -92,7 +96,10 @@ public class FilePackager extends ProcessingElement
 	private void storeData(File location, Component component)
 	{
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
-		for (Data dat : component.getContents().getObjects(Data.class, true))
+		ArrayList<Data> datas = new ArrayList<Data>();
+		datas.addAll(component.getContents().getObjects(State.class, true));
+		datas.addAll(component.getContents().getObjects(Data.class, true));
+		for (Data dat : datas)
 		{
 			data.put(dat.getActions().getAddress(), dat.getActions().getStoredValues());
 		}
@@ -107,6 +114,15 @@ public class FilePackager extends ProcessingElement
 
 		ObjectSerializer.store(
 		location.getAbsolutePath() + "/" + ComponentOperator.generateInstanceAddress(this.getSettings()), compressed);
+	}
+
+	private void storeComponent(File location, Component component)
+	{
+		String xmlSettings = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
+		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
+
+		ObjectSerializer.store(
+		location.getAbsolutePath() + "/" + component.getLabels().getFullDescription() + "_Component", compressed);
 	}
 
 	public HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
@@ -147,6 +163,8 @@ public class FilePackager extends ProcessingElement
 						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
 						break;
 					case COMPONENT:
+						loadedContent.put(FileContent.COMPONENT, ((Component) XMLParser
+						.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
 						break;
 
 					}
@@ -156,6 +174,10 @@ public class FilePackager extends ProcessingElement
 				}
 				entry = in.getNextEntry();
 
+			}
+			if (datas.size() > 0)
+			{
+				loadedContent.put(FileContent.DATA, datas);
 			}
 		} catch (Exception ee)
 		{

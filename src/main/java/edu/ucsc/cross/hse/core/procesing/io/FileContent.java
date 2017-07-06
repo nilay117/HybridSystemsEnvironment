@@ -11,8 +11,8 @@ import javafx.scene.chart.PieChart.Data;
 public enum FileContent
 {
 	DATA(
-		Data.class.getSimpleName(),
-		State.class.getSimpleName()),
+		Data.class.getSimpleName() + "@",
+		State.class.getSimpleName() + "@"),
 	ENVIRONMENT(
 		EnvironmentContent.class.getSimpleName()),
 	SETTINGS(
