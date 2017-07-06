@@ -13,8 +13,8 @@ public enum FileContent
 	DATA(
 		Data.class.getSimpleName() + "@",
 		State.class.getSimpleName() + "@"),
-	ENVIRONMENT(
-		EnvironmentContent.class.getSimpleName()),
+	// ENVIRONMENT(
+	// EnvironmentContent.class.getSimpleName()),
 	SETTINGS(
 		SettingConfigurer.class.getSimpleName()),
 	COMPONENT(

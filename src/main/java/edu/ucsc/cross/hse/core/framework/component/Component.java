@@ -22,7 +22,8 @@ public abstract class Component implements Initializer
 
 	ComponentLabel labels; // specific information describing this component
 
-	ComponentOrganizer contents; // component access hierarchy of this component
+	ComponentOrganizer contents; // component access hierarchy of this
+									// component
 
 	/*
 	 * Constructor that defines the name of the component with this class
@@ -95,9 +96,20 @@ public abstract class Component implements Initializer
 	 * 
 	 * @return component organizer
 	 */
-	public ComponentOrganizer getContents()
+	public ComponentOrganizer getContent()
 	{
 		return contents;
+	}
+
+	/*
+	 * Accesses an organized data structure for accessing objects within this
+	 * components hierarchy
+	 * 
+	 * @return component organizer
+	 */
+	public ComponentConfigurer getConfiguration()
+	{
+		return ComponentConfigurer.getOperator(this);
 	}
 
 	/*
@@ -127,6 +139,6 @@ public abstract class Component implements Initializer
 	 */
 	public SettingConfigurer getSettings()
 	{
-		return HybridEnvironment.getEnvironment(contents.getEnvironmentKey()).getSettings();
+		return HybridEnvironment.getEnvironment(getActions().getEnvironmentKey()).getSettings();
 	}
 }

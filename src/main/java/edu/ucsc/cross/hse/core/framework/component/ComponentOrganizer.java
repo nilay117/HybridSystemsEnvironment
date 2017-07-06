@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +12,8 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
+import edu.ucsc.cross.hse.core.procesing.io.FileContent;
+import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 /*
  * This class contains structures that define the hierarchy of additional
@@ -27,10 +30,10 @@ public class ComponentOrganizer
 {
 
 	// Mapping of all declared components indexed by class
-	public HashMap<Class<?>, ArrayList<Component>> declaredComponentMap;
+	private HashMap<Class<?>, ArrayList<Component>> declaredComponentMap;
 
 	// Mapping of all components from all descendants indexed by class
-	public HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
+	private HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 
 	// List of all components from all descendants
 	private ArrayList<Component> declaredAdjunctComponentList;
@@ -46,7 +49,7 @@ public class ComponentOrganizer
 	// key that links the component to the global environment that it is
 	// contained in. This keeps the component size smaller when being copied or
 	// saved, and allows for multiple environments to be running simultaneously
-	private String environmentKey;
+	protected String environmentKey;
 
 	// The parent that declared this component
 	private Component parentComponent;
@@ -54,47 +57,67 @@ public class ComponentOrganizer
 	// Pointer to this component
 	private Component self;
 
-	/*
-	 * Adds a single sub-component to this component. This is used to add
-	 * components that are not explicitly defined in the main class, which
-	 * allows for variations without modifying the main component code itself
-	 *
-	 * @param component - component to be added
-	 */
-	public <T extends Component> ArrayList<Component> addComponent(T component)
-	{
-		return addComponent(component, 1);
-	}
-
-	/*
-	 * Adds a number of sub-components to this component. This is used to add
-	 * components that are not explicitly defined in the main class, which
-	 * allows for variations without modifying the main component code itself.
-	 * This method allows any number of duplicate components to be added
-	 * 
-	 * @param component - component to be added
-	 * 
-	 * @param quantity - number of components to be added
-	 */
-	@SuppressWarnings("unchecked")
-	public <T extends Component> ArrayList<Component> addComponent(T component, Integer quantity)
-	{
-		ArrayList<Component> ret = new ArrayList<Component>();
-
-		T initialClone = (T) ObjectCloner.xmlClone(component);
-		// T initialClone = ObjectCloner.cloner.deepClone(component);
-		for (Integer ind = 0; ind < quantity; ind++)
-		{
-			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-			storeComponent(clonedComponent, true);
-			ret.add(clonedComponent);
-			initialClone = clonedComponent;
-			// clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-		}
-		addAllUndeclaredComponents(ret);
-
-		return ret;
-	}
+	// /*
+	// * Adds a single sub-component to this component. This is used to add
+	// * components that are not explicitly defined in the main class, which
+	// * allows for variations without modifying the main component code itself
+	// *
+	// * @param component - component to be added
+	// */
+	// public <T extends Component> ArrayList<Component> addComponent(T
+	// component)
+	// {
+	// return addComponent(component, 1);
+	// }
+	//
+	// /*
+	// * Adds a number of sub-components to this component. This is used to add
+	// * components that are not explicitly defined in the main class, which
+	// * allows for variations without modifying the main component code itself.
+	// * This method allows any number of duplicate components to be added
+	// *
+	// * @param component - component to be added
+	// *
+	// * @param quantity - number of components to be added
+	// */
+	// @SuppressWarnings("unchecked")
+	// public <T extends Component> ArrayList<Component> addComponent(T
+	// component, Integer quantity)
+	// {
+	// ArrayList<Component> ret = new ArrayList<Component>();
+	//
+	// T initialClone = (T) ObjectCloner.xmlClone(component);
+	// // T initialClone = ObjectCloner.cloner.deepClone(component);
+	// for (Integer ind = 0; ind < quantity; ind++)
+	// {
+	// T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
+	// storeComponent(clonedComponent, true);
+	// ret.add(clonedComponent);
+	// initialClone = clonedComponent;
+	// // clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
+	// }
+	// addAllUndeclaredComponents(ret);
+	//
+	// return ret;
+	// }
+	//
+	// /*
+	// * Load contents from a file
+	// */
+	// public void loadComponentFromFile(File file)
+	// {
+	// loadComponentsFromFile(file, 1);
+	// }
+	//
+	// /*
+	// * Load contents from a file
+	// */
+	// public void loadComponentsFromFile(File file, Integer quantity)
+	// {
+	// Component component = FileProcessor.load(file, FileContent.COMPONENT,
+	// FileContent.DATA);
+	// addComponent(component, quantity);
+	// }
 
 	/*
 	 * Get a mapping of components indexed by their names
@@ -223,7 +246,7 @@ public class ComponentOrganizer
 	 * get all components that are not declared in a class, but added later on
 	 * through software
 	 */
-	private void addAllUndeclaredComponents(ArrayList<Component> undeclareds)
+	protected void addAllUndeclaredComponents(ArrayList<Component> undeclareds)
 	{
 
 		for (Component undeclared : undeclareds)
@@ -231,12 +254,12 @@ public class ComponentOrganizer
 			try
 			{
 
-				undeclared.getContents().constructTree();
+				undeclared.getContent().constructTree();
 				if (!declaredAdjunctComponentList.contains(undeclared))
 				{
 					declaredAdjunctComponentList.add(undeclared);
 				}
-				for (Component undeclaredDescendant : undeclared.getContents().getComponents(true))
+				for (Component undeclaredDescendant : undeclared.getContent().getComponents(true))
 				{
 					if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
 					{
@@ -341,9 +364,9 @@ public class ComponentOrganizer
 	 */
 	private void processComponent(Component parent, Component field)
 	{
-		field.getContents().parentComponent = parent;
-		field.getContents().loadHierarchyComponents();
-		parent.getContents().storeComponent(field, true);
+		field.getContent().parentComponent = parent;
+		field.getContent().loadHierarchyComponents();
+		parent.getContent().storeComponent(field, true);
 	}
 
 	/*
@@ -424,7 +447,7 @@ public class ComponentOrganizer
 	/*
 	 * Store a component once its location in the hierarchy has been determined
 	 */
-	private void storeComponent(Component component, boolean local)
+	protected void storeComponent(Component component, boolean local)
 	{
 		if (component != null)
 		{
@@ -461,7 +484,7 @@ public class ComponentOrganizer
 	/*
 	 * initialize necessary containers
 	 */
-	protected void initializeContainers()
+	private void initializeContainers()
 	{
 		descendantComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
 		declaredComponentMap = new HashMap<Class<?>, ArrayList<Component>>();
@@ -469,22 +492,6 @@ public class ComponentOrganizer
 		descendantComponentList = new ArrayList<Component>();
 		declaredAdjunctComponentList = new ArrayList<Component>();
 		declaredAdjunctDescendantComponentList = new ArrayList<Component>();
-	}
-
-	/*
-	 * Environment key generated by environment that contains this component
-	 */
-	String getEnvironmentKey()
-	{
-		return environmentKey;
-	}
-
-	/*
-	 * Change the environment key if need be
-	 */
-	void setEnvironmentKey(String environmentKey)
-	{
-		this.environmentKey = environmentKey;
 	}
 
 	/*
@@ -592,15 +599,15 @@ public class ComponentOrganizer
 	 */
 	public void constructTree()
 	{
-		ComponentOrganizer hierarchy = self.getContents();
+		ComponentOrganizer hierarchy = self.getContent();
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
 			hierarchy.storeComponent(component, false);
-			component.getContents().constructTree();// ComponentOrganizer.constructTree(component.getContents());
-			for (Component componentChild : component.getContents().getComponents(true))
+			component.getContent().constructTree();// ComponentOrganizer.constructTree(component.getContents());
+			for (Component componentChild : component.getContent().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
 			}

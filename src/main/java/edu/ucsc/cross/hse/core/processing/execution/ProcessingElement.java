@@ -60,7 +60,7 @@ public abstract class ProcessingElement
 
 	public EnvironmentContent getEnv()
 	{
-		return processor.getContents();
+		return processor.getE();
 	}
 
 	protected ContentOperator getEnvironmentOperator()

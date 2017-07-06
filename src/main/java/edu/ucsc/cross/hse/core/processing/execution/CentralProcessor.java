@@ -88,7 +88,7 @@ public class CentralProcessor
 		{
 
 		}
-		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
+		contentAdmin = ContentOperator.getOperator(environmentInterface.getE());
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
 		systemConsole = new SystemConsole(this);
@@ -120,12 +120,12 @@ public class CentralProcessor
 
 	}
 
-	protected void startEnvironment()
+	protected void launchEnvironment()
 	{
-		startEnvironment(false);
+		launchEnvironment(false);
 	}
 
-	protected void startEnvironment(boolean resume)
+	protected void launchEnvironment(boolean resume)
 	{
 		if (environmentInterface.getSettings().getExecutionSettings().runThreadded)
 		{
@@ -140,27 +140,44 @@ public class CentralProcessor
 	protected void runEnvironment(boolean resume)
 	{
 		Boolean running = false;
-
 		while (!running)
 		{
-			if (!resume)
-			{
-				resetEnvironment();
-
-			}
-			prepareEnvironment(!resume);
-			executeEnvironment();
-			running = !interruptResponder.isTerminating();
-			running = running || interruptResponder.isPauseTemporary();
-			running = running || interruptResponder.isTerminatedEarly();
-			running = running || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-			running = running || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
-			&& !interruptResponder.isOutsideDomainError();
+			runExecution(resume);
+			running = repeatRun();
 		}
-		// interruptResponder.killEnv();
-		systemConsole
-		.print("Environment Execution Completed - Simulation Time: " + environmentInterface.content.getEnvironmentTime()
-		+ " sec - Run Time : " + integrationMonitor.getRunTime() + "sec");
+		adknowledgeSuccess();
+	}
+
+	private void runExecution(boolean resume)
+	{
+		if (!resume)
+		{
+			resetEnvironment();
+		}
+		prepareEnvironment(!resume);
+		startExecution();
+	}
+
+	private boolean repeatRun()
+	{
+		Boolean repeat = !interruptResponder.isTerminating();
+		repeat = repeat || interruptResponder.isPauseTemporary();
+		repeat = repeat || interruptResponder.isTerminatedEarly();
+		repeat = repeat || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
+		repeat = repeat || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+		&& !interruptResponder.isOutsideDomainError();
+		return repeat;
+	}
+
+	private void adknowledgeSuccess()
+	{
+		if (!interruptResponder.isTerminating() && !interruptResponder.isTerminatedEarly()
+		&& !interruptResponder.isPauseTemporary())
+		{
+			systemConsole.print(
+			"Environment Execution Completed - Simulation Time: " + environmentInterface.content.getEnvironmentTime()
+			+ " sec - Run Time : " + integrationMonitor.getRunTime() + "sec");
+		}
 	}
 
 	protected void resetEnvironment()
@@ -170,48 +187,28 @@ public class CentralProcessor
 
 	protected void resetEnvironment(boolean reinitialize_data)
 	{
-		ArrayList<Data> dat = environmentInterface.content.getContents().getData(true);
-		for (Component data : environmentInterface.content.getContents().getComponents(true))
+		ArrayList<Data> dat = environmentInterface.content.getContent().getData(true);
+		for (Component data : environmentInterface.content.getContent().getComponents(true))
 		{
 			if (!dat.contains(dat))
 			{
-				ComponentOperator.getOperator(data).setInitialized(false);
+				data.getConfiguration().setInitialized(false);
 			}
-			// data.getActions().getStoredValues().clear();
 		}
 		for (Data data : dat)
 		{
 			DataOperator.getOperator(data).resetData();
-			ComponentOperator.getOperator(data)
+			data.getConfiguration()
 			.setInitialized(ComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
-			// data.getActions().getStoredValues().clear();
 		}
-		this.simulationEngine.zeroAllDerivatives();
-		contentAdmin.getEnvironmentHybridTime().setTime(0.0);
-		contentAdmin.getEnvironmentHybridTime().setJumpIndex(0);
-		// if (!(environmentInterface.getContents().getEnvironmentTime() > 0.0))
-		// {
-		// prepareEnvironment(content);
-		// }
-		// content = (EnvironmentContent)
-		// ContentOperator.getOperator(content).getNewInstance();
-		// if (reinitialize)
-		// {
-		// for (Component component :
-		// environmentInterface.content.getContents().getComponents(true))
-		// {
-		// ComponentOperator.getOperator(component).setInitialized(false);
-		// }
-		// }
-		// prepareEnvironment(content);
 	}
 
 	/*
 	 * Gets the environment ready for execution
 	 */
-	public void executeEnvironment()
+	public void startExecution()
 	{
-		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
+		contentAdmin = ContentOperator.getOperator(environmentInterface.getE());
 		if (this.contentAdmin.isJumpOccurring())
 		{
 			contentAdmin.storeData();
@@ -228,18 +225,11 @@ public class CentralProcessor
 	 */
 	public void prepareEnvironment(EnvironmentContent content)
 	{
-		// content.getContents().constructTree();
 		if (content != null)
 		{
 			environmentInterface.content = content;
 		}
-		contentAdmin = ContentOperator.getOperator(environmentInterface.content);
-		initializeProcessingElements();
-		contentAdmin.prepareEnvironmentContent();
-		storeConfigurations();
-		dataHandler.loadStoreStates();
-		simulationEngine.initialize();
-		// storeConfigurations();
+		prepareEnvironment();
 	}
 
 	public void prepareEnvironment()
@@ -249,13 +239,11 @@ public class CentralProcessor
 
 	public void prepareEnvironment(boolean reset_content)
 	{
-		// content.getContents().constructTree();
-
 		contentAdmin = ContentOperator.getOperator(environmentInterface.content);
 		initializeProcessingElements();
 		if (reset_content)
 		{
-			contentAdmin.prepareEnvironmentContent();
+			contentAdmin.initializeEnvironmentContent();
 		}
 		storeConfigurations();
 		dataHandler.loadStoreStates();
@@ -269,8 +257,8 @@ public class CentralProcessor
 	 */
 	protected void storeConfigurations()
 	{
-		ComponentOperator.getOperator(this.environmentInterface.getContents()).storeConfiguration();
-		for (Component component : this.environmentInterface.getContents().getContents().getComponents(true))
+		ComponentOperator.getOperator(this.environmentInterface.getE()).storeConfiguration();
+		for (Component component : this.environmentInterface.getE().getContent().getComponents(true))
 		{
 			ComponentOperator.getOperator(component).storeConfiguration();
 		}
@@ -303,13 +291,13 @@ public class CentralProcessor
 	public static void refreshIfDataPresent(HybridEnvironment env, Component component)
 	{
 		boolean loadData = false;
-		for (Component comp : env.content.getContents().getComponents(true))
+		for (Component comp : env.content.getContent().getComponents(true))
 		{
 			System.out.println(comp.toString());
 			try
 			{
 
-				for (Data data : comp.getContents().getData(true))
+				for (Data data : comp.getContent().getData(true))
 				{
 					if (data.getActions().getStoredValues().size() > 0)
 					{

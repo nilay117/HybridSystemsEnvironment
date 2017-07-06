@@ -193,7 +193,7 @@ public class SimulationEngine extends ProcessingElement implements FirstOrderDif
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
 
-		for (State component : getEnv().getContents().getObjects(State.class, true))// .loadComponents();//.getSpecificComponent(Data.class,
+		for (State component : getEnv().getContent().getObjects(State.class, true))// .loadComponents();//.getSpecificComponent(Data.class,
 			try
 			{
 				if (getDataOperator(component).isSimulated())// .isSimulated())

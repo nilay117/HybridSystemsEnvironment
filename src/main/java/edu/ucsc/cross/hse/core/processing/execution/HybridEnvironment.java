@@ -23,7 +23,7 @@ import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
+import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
@@ -87,7 +87,7 @@ public class HybridEnvironment// implements Serializable
 	{
 		processor.systemConsole.print("Environment Started");
 		settings.getExecutionSettings().simDuration = duration;
-		processor.startEnvironment();
+		processor.launchEnvironment();
 	}
 
 	/*
@@ -96,7 +96,7 @@ public class HybridEnvironment// implements Serializable
 	public void stop()
 	{
 		processor.interruptResponder.killEnv();
-		processor.systemConsole.print("Environment Stopped - Simulation Time: " + getContents().getEnvironmentTime()
+		processor.systemConsole.print("Environment Stopped - Simulation Time: " + getE().getEnvironmentTime()
 		+ " sec - Run Time : " + processor.integrationMonitor.getRunTime() + "sec");
 	}
 
@@ -106,7 +106,7 @@ public class HybridEnvironment// implements Serializable
 	public void pause()
 	{
 		processor.interruptResponder.pauseSim();
-		processor.systemConsole.print("Environment Paused - Simulation Time: " + getContents().getEnvironmentTime()
+		processor.systemConsole.print("Environment Paused - Simulation Time: " + getE().getEnvironmentTime()
 		+ " sec - Run Time : " + processor.integrationMonitor.getRunTime() + "sec");
 	}
 
@@ -115,9 +115,8 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void resume()
 	{
-		processor.systemConsole
-		.print("Environment Resumed - Simulation Time: " + getContents().getEnvironmentTime() + " sec");
-		processor.startEnvironment(true);
+		processor.systemConsole.print("Environment Resumed - Simulation Time: " + getE().getEnvironmentTime() + " sec");
+		processor.launchEnvironment(true);
 	}
 
 	/*
@@ -154,7 +153,7 @@ public class HybridEnvironment// implements Serializable
 	/*
 	 * Access the data organization module
 	 */
-	public DataAccessor getDataAccessor()
+	public DataAccessor getData()
 	{
 		return processor.dataHandler;
 	}
@@ -162,9 +161,17 @@ public class HybridEnvironment// implements Serializable
 	/*
 	 * Access the environment contents
 	 */
-	public EnvironmentContent getContents()
+	public EnvironmentContent getE()
 	{
 		return content;
+	}
+
+	/*
+	 * Access the environment contents
+	 */
+	public ComponentOrganizer getContent()
+	{
+		return content.getContent();
 	}
 
 	/*
@@ -179,14 +186,16 @@ public class HybridEnvironment// implements Serializable
 	/*
 	 * Load contents from a file
 	 */
+	public void loadContentsFromFile(File file, boolean load_data, boolean load_settings)
+	{
+		FileContent[] content = FileProcessor.getContentArray(load_data, load_settings);
+		loadContents((EnvironmentContent) processor.fileExchanger.load(file, content));
+	}
+
 	public void loadContentsFromFile(File file)
 	{
 
-		this.processor.fileExchanger.load(file);
-		// processor.prepareEnvironment(content);
-		// processor.storeConfigurations();
-		// processor.contentAdmin = ContentOperator.getOperator(content);
-		// this.processor.dataHandler.loadStoreStates();
+		processor.fileExchanger.load(file, FileContent.values());
 	}
 
 	/*
@@ -194,7 +203,16 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void saveContents(File file)
 	{
-		this.processor.fileExchanger.storeEnvironment(file);
+		saveContents(file, true, true);
+	}
+
+	/*
+	 * Save the contents of the environment to a file
+	 */
+	public void saveContents(File file, boolean save_data, boolean save_settings)
+	{
+		FileContent[] contents = FileProcessor.getContentArray(save_data, save_settings);
+		this.processor.fileExchanger.store(file, this.content, contents);
 	}
 
 	/*
@@ -222,9 +240,21 @@ public class HybridEnvironment// implements Serializable
 	/*
 	 * Load settings from a file
 	 */
-	public void loadSettingsFromFile(File file)
+	public void loadSettingsFromXMLFile(File file)
 	{
-		processor.fileExchanger.load(file, false);
+
+		SettingConfigurer loaded = null;
+		if (file == null)
+		{
+			loaded = FileProcessor.loadXMLSettings();
+		} else
+		{
+			loaded = FileProcessor.loadXMLSettings(file);
+		}
+		for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
+		{
+			settings.loadSettings(set);
+		}
 	}
 
 	/*
@@ -252,7 +282,7 @@ public class HybridEnvironment// implements Serializable
 	public void addComponents(Component component, Integer quantity)
 	{
 
-		content.getContents().addComponent(component, quantity);
+		content.getConfiguration().addComponent(component, quantity);
 	}
 
 	/*
@@ -269,7 +299,7 @@ public class HybridEnvironment// implements Serializable
 	public void loadComponentsFromFile(File file, Integer quantity)
 	{
 
-		Component component = this.processor.fileExchanger.load(file, false);
+		Component component = this.processor.fileExchanger.load(file, FileContent.COMPONENT, FileContent.DATA);
 		addComponents(component, quantity);
 
 	}
@@ -293,12 +323,7 @@ public class HybridEnvironment// implements Serializable
 		this.content = content;
 		settings = new SettingConfigurer();
 		environments.put(this.toString(), this);
-		SettingConfigurer defaultz = FileExchanger.loadSettings();
-		System.out.println(XMLParser.serializeObject(defaultz));
-		for (Object set : SettingConfigurer.getSettingsMap(defaultz).values())
-		{
-			settings.loadSettings(set);
-		}
+		loadSettingsFromXMLFile(null);
 		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
 		{

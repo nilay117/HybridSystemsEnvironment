@@ -39,10 +39,6 @@ public class State extends Data<Double>
 								// changes
 								// continuously)
 
-//	protected ValueDomain elementDomain; // domain that allows for the state to
-//											// be initialized or reset to a
-//											// value within a range
-
 	private Double prejump; // pre-jump value stored immediately before jump
 							// occurs
 

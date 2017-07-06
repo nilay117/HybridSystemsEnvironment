@@ -82,7 +82,7 @@ public class ContentOperator extends ComponentOperator
 	}
 
 	// Preparation Methods
-	public void prepareEnvironmentContent()
+	public void initializeEnvironmentContent()
 	{
 		prepareComponents();
 		initializeTimeDomains();
@@ -94,6 +94,7 @@ public class ContentOperator extends ComponentOperator
 		globalSystem.environmentTime = new HybridTime(true);
 		globalSystem.jumpOccurring = false;
 		globalSystem.earthStartTime = System.nanoTime() / 1000000000.0;
+		getEnvironmentHybridTime().setJumpIndex(0);
 
 	}
 
@@ -123,7 +124,7 @@ public class ContentOperator extends ComponentOperator
 	private void initializeComponents(Class<?>... components_to_initialize)
 	{
 		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
-		for (Component component : globalSystem.getContents().getComponents(true))
+		for (Component component : globalSystem.getContent().getComponents(true))
 		{
 			boolean initialize = initializeList.size() == 0;
 			for (Class<?> checkClass : initializeList)
@@ -141,7 +142,7 @@ public class ContentOperator extends ComponentOperator
 
 	private void generateAddresses()
 	{
-		for (Component component : globalSystem.getContents().getComponents(true))
+		for (Component component : globalSystem.getContent().getComponents(true))
 		{
 
 			ComponentOperator.getOperator(component).generateAddress();
@@ -151,7 +152,7 @@ public class ContentOperator extends ComponentOperator
 	private void linkEnvironment()
 	{
 		this.initializeContentMappings();
-		for (Component component : globalSystem.getContents().getComponents(true))
+		for (Component component : globalSystem.getContent().getComponents(true))
 		{
 
 			ComponentOperator.getOperator(component)

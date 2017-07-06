@@ -135,13 +135,13 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	@Override
 	public Data getDifferentDataFromSameDataSet(Data data, String title)
 	{
-		for (Component component : getEnv().getContents().getComponents(true))
+		for (Component component : getEnv().getContent().getComponents(true))
 		{
 			try
 			{
-				if (component.getContents().getComponents(true).contains(data))
+				if (component.getContent().getComponents(true).contains(data))
 				{
-					for (Data dat : component.getContents().getObjects(Data.class, true))
+					for (Data dat : component.getContent().getObjects(Data.class, true))
 					{
 
 						if (dat.getLabels().getClassification().equals(title))
@@ -208,8 +208,8 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	{
 		dataElementsToStore.clear();
 		ArrayList<Data> storeStates = new ArrayList<Data>();
-		storeStates.addAll(super.getEnv().getContents().getObjects(State.class, true));
-		for (Data data : super.getEnv().getContents().getObjects(Data.class, true))
+		storeStates.addAll(super.getEnv().getContent().getObjects(State.class, true));
+		for (Data data : super.getEnv().getContent().getObjects(Data.class, true))
 		{
 			if (!storeStates.contains(data))
 			{
