@@ -4,13 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 public class ComponentConfigurer
 {
 
+	private boolean isEnvironment;
 	private Component co; // wpointer to own component
 
 	protected static HashMap<Component, ComponentConfigurer> components = new HashMap<Component, ComponentConfigurer>();
@@ -18,6 +21,8 @@ public class ComponentConfigurer
 	public ComponentConfigurer(Component self)
 	{
 		co = self;
+		isEnvironment = (FieldFinder.containsSuper(co, EnvironmentContent.class));
+
 		// TODO Auto-generated constructor stub
 	}
 

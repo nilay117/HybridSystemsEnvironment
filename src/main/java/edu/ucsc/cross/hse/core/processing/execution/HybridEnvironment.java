@@ -16,6 +16,7 @@ import com.esotericsoftware.kryo.serializers.ExternalizableSerializer;
 import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.framework.component.ComponentConfigurer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
@@ -69,6 +70,7 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public HybridEnvironment(EnvironmentContent environment)
 	{
+		this.content = environment;
 		initialize(environment, true);
 	}
 
@@ -147,7 +149,7 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void clear()
 	{
-		initialize(new EnvironmentContent(content.getLabels().getName()), false);
+		initialize(new EnvironmentContent(content.component().getLabels().getName()), false);
 	}
 
 	/*
@@ -171,48 +173,55 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public ComponentOrganizer getContent()
 	{
-		return content.getContent();
+		return content.component().getContent();
+	}
+
+	/*
+	 * Access the environment contents
+	 */
+	public ComponentConfigurer configure()
+	{
+		return ComponentConfigurer.getOperator(content);
+	}
+
+	/*
+	 * Save the contents of the environment to a file
+	 */
+	public void save(File file)
+	{
+		save(file, true, true);
+	}
+
+	/*
+	 * Save the contents of the environment to a file
+	 */
+	public void save(File file, boolean save_data, boolean save_settings)
+	{
+		FileContent[] contents = FileProcessor.getContentArray(save_data, save_settings);
+		processor.fileExchanger.store(file, content, contents);
 	}
 
 	/*
 	 * Load a different set of contents
 	 */
-	public void loadContents(EnvironmentContent content)
+	public void load(EnvironmentContent content)
 	{
-
+		this.content = content;
 		processor.prepareEnvironment(content);
 	}
 
 	/*
 	 * Load contents from a file
 	 */
-	public void loadContentsFromFile(File file, boolean load_data, boolean load_settings)
+	public void load(File file, boolean load_data, boolean load_settings)
 	{
 		FileContent[] content = FileProcessor.getContentArray(load_data, load_settings);
-		loadContents((EnvironmentContent) processor.fileExchanger.load(file, content));
+		load((EnvironmentContent) processor.fileExchanger.load(file, content));
 	}
 
-	public void loadContentsFromFile(File file)
+	public void load(File file)
 	{
-
-		processor.fileExchanger.load(file, FileContent.values());
-	}
-
-	/*
-	 * Save the contents of the environment to a file
-	 */
-	public void saveContents(File file)
-	{
-		saveContents(file, true, true);
-	}
-
-	/*
-	 * Save the contents of the environment to a file
-	 */
-	public void saveContents(File file, boolean save_data, boolean save_settings)
-	{
-		FileContent[] contents = FileProcessor.getContentArray(save_data, save_settings);
-		this.processor.fileExchanger.store(file, this.content, contents);
+		load((EnvironmentContent) processor.fileExchanger.load(file, FileContent.values()));
 	}
 
 	/*
@@ -222,87 +231,132 @@ public class HybridEnvironment// implements Serializable
 	{
 		return settings;
 	}
+	//
+	// /*
+	// * Load a different set of contents
+	// */
+	// public void loadContents(EnvironmentContent content)
+	// {
+	//
+	// processor.prepareEnvironment(content);
+	// }
+	//
+	// /*
+	// * Load contents from a file
+	// */
+	// public void loadContentsFromFile(File file, boolean load_data, boolean
+	// load_settings)
+	// {
+	// FileContent[] content = FileProcessor.getContentArray(load_data,
+	// load_settings);
+	// loadContents((EnvironmentContent) processor.fileExchanger.load(file,
+	// content));
+	// }
+	//
+	// public void loadContentsFromFile(File file)
+	// {
+	// processor.fileExchanger.load(file, FileContent.values());
+	// }
+	//
+	// /*
+	// * Save the contents of the environment to a file
+	// */
+	// public void saveEnvironment(File file)
+	// {
+	// saveEnvironment(file, true, true);
+	// }
+	//
+	// /*
+	// * Save the contents of the environment to a file
+	// */
+	// public void saveEnvironment(File file, boolean save_data, boolean
+	// save_settings)
+	// {
+	// FileContent[] contents = FileProcessor.getContentArray(save_data,
+	// save_settings);
+	// this.processor.fileExchanger.store(file, this.content, contents);
+	// }
+	//
+	// /*
+	// * Get the current settings
+	// */
+	// public SettingConfigurer getSettings()
+	// {
+	// return settings;
+	// }
+	//
+	// /*
+	// * Load settings from a file
+	// */
+	// public void loadSettingsFromXMLFile(File file)
+	// {
+	//
+	// SettingConfigurer loaded = null;
+	// if (file == null)
+	// {
+	// loaded = FileProcessor.loadXMLSettings();
+	// } else
+	// {
+	// loaded = FileProcessor.loadXMLSettings(file);
+	// }
+	// for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
+	// {
+	// settings.loadSettings(set);
+	// }
+	// }
+	//
+	// /*
+	// * Save the settings to a file
+	// */
+	// public void saveSettingsToXMLFile(File file)
+	// {
+	// processor.fileExchanger.store(file, this.content, FileContent.SETTINGS);
+	// }
 
-	/*
-	 * Load new setting components from files
-	 */
-	public void loadSettings(Object... settings)
-	{
-		if (settings.length == 1)
-		{
-			if (settings.getClass().equals(SettingConfigurer.class))
-			{
-				this.settings = (SettingConfigurer) settings[0];
-			}
-		}
-	}
+	// /*
+	// * Add components to the environment
+	// */
+	// public void addComponents(Component... components)
+	// {
+	// for (Component component : components)
+	// {
+	// addComponents(component, 1);
+	// }
+	// }
+	//
+	// /*
+	// * Add components to the environment in bulk
+	// */
+	// public void addComponents(Component component, Integer quantity)
+	// {
+	//
+	// content.getConfiguration().addComponent(component, quantity);
+	// }
+	//
+	// /*
+	// * Load contents from a file
+	// */
+	// public void loadComponentFromFile(File file)
+	// {
+	// loadComponentsFromFile(file, 1);
+	// }
+	//
+	// /*
+	// * Load contents from a file
+	// */
+	// public void loadComponentsFromFile(File file, Integer quantity)
+	// {
+	//
+	// Component component = this.processor.fileExchanger.load(file,
+	// FileContent.COMPONENT, FileContent.DATA);
+	// addComponents(component, quantity);
+	//
+	// }
 
-	/*
-	 * Load settings from a file
-	 */
-	public void loadSettingsFromXMLFile(File file)
-	{
-
-		SettingConfigurer loaded = null;
-		if (file == null)
-		{
-			loaded = FileProcessor.loadXMLSettings();
-		} else
-		{
-			loaded = FileProcessor.loadXMLSettings(file);
-		}
-		for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
-		{
-			settings.loadSettings(set);
-		}
-	}
-
-	/*
-	 * Save the settings to a file
-	 */
-	public void saveSettings(File file)
-	{
-		processor.fileExchanger.store(file, this.content, FileContent.SETTINGS);
-	}
-
-	/*
-	 * Add components to the environment
-	 */
-	public void addComponents(Component... components)
-	{
-		for (Component component : components)
-		{
-			addComponents(component, 1);
-		}
-	}
-
-	/*
-	 * Add components to the environment in bulk
-	 */
-	public void addComponents(Component component, Integer quantity)
-	{
-
-		content.getConfiguration().addComponent(component, quantity);
-	}
-
-	/*
-	 * Load contents from a file
-	 */
-	public void loadComponentFromFile(File file)
-	{
-		loadComponentsFromFile(file, 1);
-	}
-
-	/*
-	 * Load contents from a file
-	 */
-	public void loadComponentsFromFile(File file, Integer quantity)
-	{
-
-		Component component = this.processor.fileExchanger.load(file, FileContent.COMPONENT, FileContent.DATA);
-		addComponents(component, quantity);
-
-	}
+	// public EnvironmentConfiguration getActions()
+	// {
+	// return EnvironmentConfiguration.getOperator(this);
+	// }
 
 	/*
 	 * Access this environment statically using the key generated by the content
@@ -323,7 +377,7 @@ public class HybridEnvironment// implements Serializable
 		this.content = content;
 		settings = new SettingConfigurer();
 		environments.put(this.toString(), this);
-		loadSettingsFromXMLFile(null);
+		settings.loadSettingsFromXMLFile(null);
 		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
 		{

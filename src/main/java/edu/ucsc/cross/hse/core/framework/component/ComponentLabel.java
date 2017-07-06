@@ -18,6 +18,8 @@ public class ComponentLabel
 
 	protected String information; // any extra information about the component
 
+	protected String address; // address of component
+
 	/*
 	 * Constructor that defines the title of the component
 	 * 
@@ -28,6 +30,7 @@ public class ComponentLabel
 	{
 		this.classification = title;
 		this.name = title;
+		address = null;// this.toString();
 	}
 
 	/*

@@ -81,7 +81,7 @@ public class DataOperator<T> extends ComponentOperator
 	 */
 	public void storeValue(Double time, boolean override_save)
 	{
-		if (!ComponentOperator.getOperator(component.getEnvironment()).outOfAllDomains())
+		if (!ComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
 		{
 			element.storeValue(time, override_save);
 		}
@@ -143,7 +143,7 @@ public class DataOperator<T> extends ComponentOperator
 
 	public void resetData()
 	{
-		((Data) component).getActions().getStoredValues().clear();
+		((Data) component).component().getStoredValues().clear();
 		((Data) component).setValue(((Data) component).initialValue);
 		((Data) component).elementDomain = (((Data) component).elementDomain);
 	}

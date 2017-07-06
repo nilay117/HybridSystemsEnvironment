@@ -116,6 +116,6 @@ public abstract class ProcessingElement
 
 	protected void setSettings(SettingConfigurer settings)
 	{
-		proc.environmentInterface.loadSettings(settings);
+		proc.environmentInterface.settings.loadSettings(settings);
 	}
 }

@@ -17,7 +17,7 @@ public class ComponentStatus
 	// simulated
 	// or not
 
-	protected String address; // address of component
+	// protected String address; // address of component
 
 	/*
 	 * Constructor
@@ -26,7 +26,7 @@ public class ComponentStatus
 	{
 		simulated = true;
 		initialized = false;
-		address = null;// this.toString();
+
 	}
 
 	/*
@@ -55,4 +55,5 @@ public class ComponentStatus
 			this.simulated = simulated;
 		}
 	}
+
 }

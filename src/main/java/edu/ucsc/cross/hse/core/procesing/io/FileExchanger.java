@@ -78,7 +78,7 @@ public class FileExchanger extends ProcessingElement
 		String directory = getSettings().getDataSettings().resultAutoStoreDirectory + "/";
 		if (getSettings().getDataSettings().createResultSubDirectory)
 		{
-			directory += this.getComponents().getEnv().getLabels().getClassification() + "/";
+			directory += this.getComponents().getEnv().component().getLabels().getClassification() + "/";
 		}
 		return directory;
 	}

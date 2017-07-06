@@ -83,15 +83,16 @@ public class ComponentOperator extends ComponentWorker
 																			// jumping
 																			// components
 
-		for (Component localBehavior : component.getContent().getObjects(Component.class, true, HybridSystem.class)) // check
-																														// through
-																														// all
-																														// components
-																														// where
-																														// a
-																														// jump
-																														// could
-																														// occur
+		for (Component localBehavior : component.component().getContent().getObjects(Component.class, true,
+		HybridSystem.class)) // check
+		// through
+		// all
+		// components
+		// where
+		// a
+		// jump
+		// could
+		// occur
 
 		{
 			try
@@ -135,7 +136,7 @@ public class ComponentOperator extends ComponentWorker
 	public void performTasks(boolean jump_occurring)
 	{
 
-		for (HybridSystem localBehavior : component.getContent().getObjects(HybridSystem.class, true))
+		for (HybridSystem localBehavior : component.component().getContent().getObjects(HybridSystem.class, true))
 		{
 			try
 			{
@@ -178,9 +179,10 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public void storeData()
 	{
-		for (Data data : component.getContent().getData(true))
+		for (Data data : component.component().getContent().getData(true))
 		{
-			DataOperator.getOperator(data).storeValue(component.getEnvironment().getEnvironmentTime(), true);
+			DataOperator.getOperator(data).storeValue(component.component().getEnvironment().getEnvironmentTime(),
+			true);
 		}
 	}
 
@@ -190,7 +192,7 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public boolean outOfAllDomains()
 	{
-		return outOfAllDomains(component.getEnvironment());
+		return outOfAllDomains(component.component().getEnvironment());
 	}
 
 	/*
@@ -222,7 +224,7 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public void resetHierarchy()
 	{
-		component.getContent().setup();
+		component.component().getContent().setup();
 	}
 
 	/*
@@ -239,13 +241,13 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public void initializeContentMappings(Boolean initialize_components)
 	{
-		component.getContent().constructTree();
+		component.component().getContent().constructTree();
 		// ComponentOrganizer.constructTree(component.getContents());
 		if (initialize_components != null)
 		{
-			for (Component comp : component.getContent().getComponents(true))
+			for (Component comp : component.component().getContent().getComponents(true))
 			{
-				comp.getConfiguration().setInitialized(initialize_components);
+				comp.component().configure().setInitialized(initialize_components);
 			}
 		}
 	}
@@ -281,10 +283,10 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public void generateAddress()
 	{
-		if (component.status.address == null)
+		if (component.labels.address == null)
 		{
 			String[] packageName = component.toString().split(Pattern.quote("."));
-			component.status.address = packageName[packageName.length - 1];
+			component.labels.address = packageName[packageName.length - 1];
 		}
 	}
 
@@ -340,4 +342,69 @@ public class ComponentOperator extends ComponentWorker
 
 		}
 	}
+
+	/*
+	 * Determines whether or not a jump is occurring in any component within the
+	 * hybrid system
+	 * 
+	 * @return true if a jump is occurring, false otherwise
+	 */
+	public Boolean isJumpOccurring()
+	{
+		Boolean jumpOccurred = false;
+		for (HybridSystem localBehavior : component.component().getContent().getObjects(HybridSystem.class, true))
+		{
+			try
+			{
+				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring(localBehavior, true);
+				if (jumpOccurring != null)
+				{
+					try
+					{
+						jumpOccurred = jumpOccurred || jumpOccurring;
+					} catch (Exception outOfDomain)
+					{
+						outOfDomain.printStackTrace();
+					}
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+		return jumpOccurred;
+	}
+
+	/*
+	 * Determines whether or not a jump is occurring in any component within the
+	 * hybrid system
+	 * 
+	 * @return true if a jump is occurring, false otherwise
+	 */
+	public Boolean isFlowOccurring()
+	{
+		Boolean jumpOccurred = false;
+		for (HybridSystem localBehavior : component.component().getContent().getObjects(HybridSystem.class, true))
+		{
+			try
+			{
+				Boolean jumpOccurring = ComponentAdministrator.flowOccurring(localBehavior, true);
+				if (jumpOccurring != null)
+				{
+					try
+					{
+						jumpOccurred = jumpOccurred || jumpOccurring;
+					} catch (Exception outOfDomain)
+					{
+						outOfDomain.printStackTrace();
+					}
+				}
+			} catch (Exception behaviorFail)
+			{
+				behaviorFail.printStackTrace();
+			}
+		}
+		return jumpOccurred;
+	}
+
 }

@@ -15,7 +15,7 @@ import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
  * also provides some additional functionality and access to the environment and
  * components within its hierarchy.
  */
-public abstract class Component implements Initializer
+public abstract class Component // implements Initializer
 {
 
 	ComponentStatus status; // current status of this component
@@ -69,56 +69,57 @@ public abstract class Component implements Initializer
 
 	}
 
-	/*
-	 * Accesses the global environment containing all other components and the
-	 * time domains
-	 * 
-	 * @return global environment component
-	 */
-	public EnvironmentContent getEnvironment()
-	{
-		return ContentOperator.getGlobalSystem(this);
-	}
-
-	/*
-	 * Accesses information about this component for naming conventions
-	 * 
-	 * @return component information
-	 */
-	public ComponentLabel getLabels()
-	{
-		return labels;
-	}
-
-	/*
-	 * Accesses an organized data structure for accessing objects within this
-	 * components hierarchy
-	 * 
-	 * @return component organizer
-	 */
-	public ComponentOrganizer getContent()
-	{
-		return contents;
-	}
-
-	/*
-	 * Accesses an organized data structure for accessing objects within this
-	 * components hierarchy
-	 * 
-	 * @return component organizer
-	 */
-	public ComponentConfigurer getConfiguration()
-	{
-		return ComponentConfigurer.getOperator(this);
-	}
-
-	/*
-	 * Accesses a set of actions that are user friendly, meaning they will not
-	 * interfere with the functionality of the environment
-	 * 
-	 * @return component operator
-	 */
-	public ComponentWorker getActions()
+	//
+	// /*
+	// * Accesses the global environment containing all other components and the
+	// * time domains
+	// *
+	// * @return global environment component
+	// */
+	// public EnvironmentContent getEnvironment()
+	// {
+	// return ContentOperator.getGlobalSystem(this);
+	// }
+	//
+	// /*
+	// * Accesses information about this component for naming conventions
+	// *
+	// * @return component information
+	// */
+	// public ComponentLabel getLabels()
+	// {
+	// return labels;
+	// }
+	//
+	// /*
+	// * Accesses an organized data structure for accessing objects within this
+	// * components hierarchy
+	// *
+	// * @return component organizer
+	// */
+	// public ComponentOrganizer getContent()
+	// {
+	// return contents;
+	// }
+	//
+	// /*
+	// * Accesses an organized data structure for accessing objects within this
+	// * components hierarchy
+	// *
+	// * @return component organizer
+	// */
+	// public ComponentConfigurer getConfiguration()
+	// {
+	// return ComponentConfigurer.getOperator(this);
+	// }
+	//
+	// /*
+	// * Accesses a set of actions that are user friendly, meaning they will not
+	// * interfere with the functionality of the environment
+	// *
+	// * @return component operator
+	// */
+	public ComponentWorker component()
 	{
 		return ComponentOperator.getOperator(this);
 	}
@@ -128,17 +129,18 @@ public abstract class Component implements Initializer
 	 * environment starts. This method is intentionally empty to save space and
 	 * time as many components do not require it.
 	 */
-	@Override
-	public void initialize()
+	// @Override
+	protected void initialize()
 	{
 
 	}
 
-	/*
-	 * Accesses the environment setting in case they are needed
-	 */
-	public SettingConfigurer getSettings()
-	{
-		return HybridEnvironment.getEnvironment(getActions().getEnvironmentKey()).getSettings();
-	}
+	// /*
+	// * Accesses the environment setting in case they are needed
+	// */
+	// public SettingConfigurer getSettings()
+	// {
+	// return
+	// HybridEnvironment.getEnvironment(getActions().getEnvironmentKey()).getSettings();
+	// }
 }

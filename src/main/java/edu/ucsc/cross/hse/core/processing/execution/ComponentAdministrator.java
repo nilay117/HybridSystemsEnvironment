@@ -82,7 +82,7 @@ public class ComponentAdministrator extends ProcessingElement
 
 		for (Component component : jump_components)
 		{
-			for (State data : component.getContent().getObjects(State.class, true))
+			for (State data : component.component().getContent().getObjects(State.class, true))
 			{
 				if (getDataOperator(data).isState())
 				{

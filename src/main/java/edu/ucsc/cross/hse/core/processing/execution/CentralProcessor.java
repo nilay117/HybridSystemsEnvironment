@@ -187,18 +187,18 @@ public class CentralProcessor
 
 	protected void resetEnvironment(boolean reinitialize_data)
 	{
-		ArrayList<Data> dat = environmentInterface.content.getContent().getData(true);
-		for (Component data : environmentInterface.content.getContent().getComponents(true))
+		ArrayList<Data> dat = environmentInterface.content.component().getContent().getData(true);
+		for (Component data : environmentInterface.content.component().getContent().getComponents(true))
 		{
 			if (!dat.contains(dat))
 			{
-				data.getConfiguration().setInitialized(false);
+				data.component().configure().setInitialized(false);
 			}
 		}
 		for (Data data : dat)
 		{
 			DataOperator.getOperator(data).resetData();
-			data.getConfiguration()
+			data.component().configure()
 			.setInitialized(ComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
 		}
 	}
@@ -229,7 +229,7 @@ public class CentralProcessor
 		{
 			environmentInterface.content = content;
 		}
-		prepareEnvironment();
+		prepareEnvironment(true);
 	}
 
 	public void prepareEnvironment()
@@ -258,7 +258,7 @@ public class CentralProcessor
 	protected void storeConfigurations()
 	{
 		ComponentOperator.getOperator(this.environmentInterface.getE()).storeConfiguration();
-		for (Component component : this.environmentInterface.getE().getContent().getComponents(true))
+		for (Component component : this.environmentInterface.getE().component().getContent().getComponents(true))
 		{
 			ComponentOperator.getOperator(component).storeConfiguration();
 		}
@@ -291,15 +291,15 @@ public class CentralProcessor
 	public static void refreshIfDataPresent(HybridEnvironment env, Component component)
 	{
 		boolean loadData = false;
-		for (Component comp : env.content.getContent().getComponents(true))
+		for (Component comp : env.content.component().getContent().getComponents(true))
 		{
 			System.out.println(comp.toString());
 			try
 			{
 
-				for (Data data : comp.getContent().getData(true))
+				for (Data data : comp.component().getContent().getData(true))
 				{
-					if (data.getActions().getStoredValues().size() > 0)
+					if (data.component().getStoredValues().size() > 0)
 					{
 						loadData = true;
 						break;
@@ -316,11 +316,11 @@ public class CentralProcessor
 				noStates.printStackTrace();
 			}
 		}
-		if (loadData)
+		// if (loadData)
 		{
-			// processor = new CentralProcessor(this);
-			env.processor.prepareEnvironment();
-			// processor.dataHandler.loadStoreStates();
+			// env.processor = new CentralProcessor(env);
+			env.processor.prepareEnvironment(env.content);
+			// env.processor.dataHandler.loadStoreStates();
 		}
 	}
 

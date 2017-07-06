@@ -71,7 +71,7 @@ public class FileProcessor extends ProcessingElement
 					storeData(location, component);
 					break;
 				case SETTINGS:
-					storeSettings(location, component.getActions().getSettings());
+					storeSettings(location, component.component().getSettings());
 					break;
 				case COMPONENT:
 					storeComponent(location, component);
@@ -97,25 +97,12 @@ public class FileProcessor extends ProcessingElement
 		}
 	}
 
-	// private void storeConfiguration(File location, Component component)
-	// {
-	// FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
-	// String environment =
-	// XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
-	// byte[] compressed = DataCompressor.compressDataGZip(environment);
-	// ObjectSerializer.store(location.getAbsolutePath() + "/" +
-	// component.getActions().getAddress(), compressed);
-	// // FileSystemInteractor.createOutputFile(location.getAbsolutePath(),
-	// // component.getActions().getAddress() + ".gz",
-	// // compressed);
-	// }
-
 	private static void storeData(File location, Component component)
 	{
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
-		for (Data dat : component.getContent().getData(true))
+		for (Data dat : component.component().getContent().getData(true))
 		{
-			data.put(dat.getActions().getAddress(), dat.getActions().getStoredValues());
+			data.put(dat.component().getAddress(), dat.component().getStoredValues());
 		}
 		ObjectSerializer.store(data, location.getAbsolutePath());
 
@@ -134,10 +121,11 @@ public class FileProcessor extends ProcessingElement
 	{
 		String xmlSettings = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
-		String suffix = component.getLabels().getFullDescription() + " Component";
-		if (FieldFinder.containsInterface(component, EnvironmentContent.class))
+		String suffix = component.component().getLabels().getFullDescription() + " Component";
+		if (FieldFinder.containsSuper(component, EnvironmentContent.class))
 		{
-			suffix = component.getLabels().getFullDescription() + " " + component.getActions().getAddress();
+			// suffix = component.component().getLabels().getFullDescription() +
+			// " " + component.component().getAddress();
 		}
 		System.out.println(suffix);
 		ObjectSerializer.store(location.getAbsolutePath() + "/" + suffix, compressed);
@@ -248,7 +236,7 @@ public class FileProcessor extends ProcessingElement
 					loadAllData(contents, component);
 					break;
 				case SETTINGS:
-					environment.loadSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
+					environment.getSettings().loadSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
 					break;
 				}
 			} catch (Exception noEnvironment)
@@ -280,9 +268,9 @@ public class FileProcessor extends ProcessingElement
 			HashMap<String, HashMap<HybridTime, ?>> data = (HashMap<String, HashMap<HybridTime, ?>>) contents
 			.get(FileContent.DATA);
 
-			for (Data id : component.getContent().getData(true))
+			for (Data id : component.component().getContent().getData(true))
 			{
-				DataOperator.getOperator(id).loadStoredValues(data.get(id.getActions().getAddress()));
+				DataOperator.getOperator(id).loadStoredValues(data.get(id.component().getAddress()));
 			}
 		}
 	}

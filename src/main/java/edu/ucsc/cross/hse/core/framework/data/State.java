@@ -65,7 +65,7 @@ public class State extends Data<Double>
 				element = elementDomain.getValue();
 
 				return element;
-			} else if (getEnvironment().isJumpOccurring())
+			} else if (component().getEnvironment().isJumpOccurring())
 			{
 				return prejump;
 			} else
@@ -125,7 +125,7 @@ public class State extends Data<Double>
 	 * Acesses all of the built in funcions
 	 */
 	@Override
-	public DataWorker<Double> getActions()
+	public DataWorker<Double> component()
 	{
 		return DataWorker.getConfigurer(this);
 	}

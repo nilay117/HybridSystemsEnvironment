@@ -112,7 +112,7 @@ public class Data<T> extends Component
 	 * easier
 	 */
 	@Override
-	public DataWorker<T> getActions()
+	public DataWorker<T> component()
 	{
 		return DataWorker.getConfigurer(this);
 	}
@@ -152,7 +152,8 @@ public class Data<T> extends Component
 		if (save || override_save)
 		{
 			T storeValue = getStoreValue();
-			savedHybridValues.put(ContentOperator.getOperator(getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			savedHybridValues
+			.put(ContentOperator.getOperator(component().getEnvironment()).getEnvironmentHybridTime().getCurrent(),
 			storeValue);
 
 		}

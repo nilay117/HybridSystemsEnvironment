@@ -124,7 +124,7 @@ public class ContentOperator extends ComponentOperator
 	private void initializeComponents(Class<?>... components_to_initialize)
 	{
 		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
-		for (Component component : globalSystem.getContent().getComponents(true))
+		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 			boolean initialize = initializeList.size() == 0;
 			for (Class<?> checkClass : initializeList)
@@ -142,7 +142,7 @@ public class ContentOperator extends ComponentOperator
 
 	private void generateAddresses()
 	{
-		for (Component component : globalSystem.getContent().getComponents(true))
+		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
 			ComponentOperator.getOperator(component).generateAddress();
@@ -152,7 +152,7 @@ public class ContentOperator extends ComponentOperator
 	private void linkEnvironment()
 	{
 		this.initializeContentMappings();
-		for (Component component : globalSystem.getContent().getComponents(true))
+		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
 			ComponentOperator.getOperator(component)

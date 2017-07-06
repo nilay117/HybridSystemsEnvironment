@@ -7,6 +7,8 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
@@ -50,13 +52,13 @@ public class ComponentWorker
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap<HybridTime, T>> tempValues = new HashMap<Data, HashMap<HybridTime, T>>();
-		ComponentOrganizer h = component.getContent();
+		ComponentOrganizer h = component.component().getContent();
 
 		if (!include_data)
 		{
-			for (Data data : component.getContent().getObjects(Data.class, true))
+			for (Data data : component.component().getContent().getObjects(Data.class, true))
 			{
-				tempValues.put(data, data.getActions().getStoredValues());
+				tempValues.put(data, data.component().getStoredValues());
 			}
 		}
 		if (!include_hierarchy)
@@ -70,7 +72,7 @@ public class ComponentWorker
 		}
 		if (!include_data)
 		{
-			for (Data data : component.getContent().getObjects(Data.class, true))
+			for (Data data : component.component().getContent().getObjects(Data.class, true))
 			{
 				// tempValues.put(data, Data.getStoredValues(data));
 				DataOperator.getOperator(data).loadStoredValues(tempValues.get(data));
@@ -81,82 +83,131 @@ public class ComponentWorker
 
 	}
 
+	// /*
+	// * Determines whether or not a jump is occurring in any component within
+	// the
+	// * hybrid system
+	// *
+	// * @return true if a jump is occurring, false otherwise
+	// */
+	// public Boolean isJumpOccurring()
+	// {
+	// Boolean jumpOccurred = false;
+	// for (HybridSystem localBehavior :
+	// component.getContent().getObjects(HybridSystem.class, true))
+	// {
+	// try
+	// {
+	// Boolean jumpOccurring =
+	// ComponentAdministrator.jumpOccurring(localBehavior, true);
+	// if (jumpOccurring != null)
+	// {
+	// try
+	// {
+	// jumpOccurred = jumpOccurred || jumpOccurring;
+	// } catch (Exception outOfDomain)
+	// {
+	// outOfDomain.printStackTrace();
+	// }
+	// }
+	// } catch (Exception behaviorFail)
+	// {
+	// behaviorFail.printStackTrace();
+	// }
+	// }
+	// return jumpOccurred;
+	// }
+	//
+	// /*
+	// * Determines whether or not a jump is occurring in any component within
+	// the
+	// * hybrid system
+	// *
+	// * @return true if a jump is occurring, false otherwise
+	// */
+	// public Boolean isFlowOccurring()
+	// {
+	// Boolean jumpOccurred = false;
+	// for (HybridSystem localBehavior :
+	// component.getContent().getObjects(HybridSystem.class, true))
+	// {
+	// try
+	// {
+	// Boolean jumpOccurring =
+	// ComponentAdministrator.flowOccurring(localBehavior, true);
+	// if (jumpOccurring != null)
+	// {
+	// try
+	// {
+	// jumpOccurred = jumpOccurred || jumpOccurring;
+	// } catch (Exception outOfDomain)
+	// {
+	// outOfDomain.printStackTrace();
+	// }
+	// }
+	// } catch (Exception behaviorFail)
+	// {
+	// behaviorFail.printStackTrace();
+	// }
+	// }
+	// return jumpOccurred;
+	// }
+
 	/*
-	 * Determines whether or not a jump is occurring in any component within the
-	 * hybrid system
+	 * Accesses the global environment containing all other components and the
+	 * time domains
 	 * 
-	 * @return true if a jump is occurring, false otherwise
+	 * @return global environment component
 	 */
-	public Boolean isJumpOccurring()
+	public EnvironmentContent getEnvironment()
 	{
-		Boolean jumpOccurred = false;
-		for (HybridSystem localBehavior : component.getContent().getObjects(HybridSystem.class, true))
-		{
-			try
-			{
-				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring(localBehavior, true);
-				if (jumpOccurring != null)
-				{
-					try
-					{
-						jumpOccurred = jumpOccurred || jumpOccurring;
-					} catch (Exception outOfDomain)
-					{
-						outOfDomain.printStackTrace();
-					}
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-		return jumpOccurred;
+		return ContentOperator.getGlobalSystem(component);
 	}
 
 	/*
-	 * Determines whether or not a jump is occurring in any component within the
-	 * hybrid system
+	 * Accesses information about this component for naming conventions
 	 * 
-	 * @return true if a jump is occurring, false otherwise
+	 * @return component information
 	 */
-	public Boolean isFlowOccurring()
+	public ComponentLabel getLabels()
 	{
-		Boolean jumpOccurred = false;
-		for (HybridSystem localBehavior : component.getContent().getObjects(HybridSystem.class, true))
-		{
-			try
-			{
-				Boolean jumpOccurring = ComponentAdministrator.flowOccurring(localBehavior, true);
-				if (jumpOccurring != null)
-				{
-					try
-					{
-						jumpOccurred = jumpOccurred || jumpOccurring;
-					} catch (Exception outOfDomain)
-					{
-						outOfDomain.printStackTrace();
-					}
-				}
-			} catch (Exception behaviorFail)
-			{
-				behaviorFail.printStackTrace();
-			}
-		}
-		return jumpOccurred;
+		return component.labels;
+	}
+
+	/*
+	 * Accesses an organized data structure for accessing objects within this
+	 * components hierarchy
+	 * 
+	 * @return component organizer
+	 */
+	public ComponentOrganizer getContent()
+	{
+		return component.contents;
+	}
+
+	/*
+	 * Accesses an organized data structure for accessing objects within this
+	 * components hierarchy
+	 * 
+	 * @return component organizer
+	 */
+	public ComponentConfigurer configure()
+	{
+		return ComponentConfigurer.getOperator(component);
 	}
 
 	/*
 	 * Save the current component to a file
 	 */
-	public void saveToFile(File file)
+	public void save(File file)
 	{
-		saveToFile(file, false);
+		save(file, false);
 	}
 
 	/*
 	 * Save the current component to a file
 	 */
-	public void saveToFile(File file, boolean save_data)
+	public void save(File file, boolean save_data)
 	{
 		if (save_data)
 		{
@@ -172,11 +223,11 @@ public class ComponentWorker
 	 */
 	public String getAddress()
 	{
-		if (component.status.address == null)
+		if (component.labels.address == null)
 		{
 			ComponentOperator.getOperator(component).generateAddress();
 		}
-		return component.status.address;
+		return component.labels.address;
 	}
 
 	/*
@@ -184,7 +235,7 @@ public class ComponentWorker
 	 */
 	public SettingConfigurer getSettings()
 	{
-		return HybridEnvironment.getEnvironment(component.getActions().getEnvironmentKey()).getSettings();
+		return HybridEnvironment.getEnvironment(component.component().getEnvironmentKey()).getSettings();
 	}
 
 	/*

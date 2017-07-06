@@ -129,7 +129,7 @@ public class ComponentOrganizer
 		HashMap<String, S> componentMap = new HashMap<String, S>();
 		for (S component : components)
 		{
-			componentMap.put(component.getLabels().name, component);
+			componentMap.put(component.component().getLabels().name, component);
 		}
 		return componentMap;
 	}
@@ -254,12 +254,12 @@ public class ComponentOrganizer
 			try
 			{
 
-				undeclared.getContent().constructTree();
+				undeclared.component().getContent().constructTree();
 				if (!declaredAdjunctComponentList.contains(undeclared))
 				{
 					declaredAdjunctComponentList.add(undeclared);
 				}
-				for (Component undeclaredDescendant : undeclared.getContent().getComponents(true))
+				for (Component undeclaredDescendant : undeclared.component().getContent().getComponents(true))
 				{
 					if (!declaredAdjunctDescendantComponentList.contains(undeclaredDescendant))
 					{
@@ -364,9 +364,9 @@ public class ComponentOrganizer
 	 */
 	private void processComponent(Component parent, Component field)
 	{
-		field.getContent().parentComponent = parent;
-		field.getContent().loadHierarchyComponents();
-		parent.getContent().storeComponent(field, true);
+		field.component().getContent().parentComponent = parent;
+		field.component().getContent().loadHierarchyComponents();
+		parent.component().getContent().storeComponent(field, true);
 	}
 
 	/*
@@ -599,15 +599,15 @@ public class ComponentOrganizer
 	 */
 	public void constructTree()
 	{
-		ComponentOrganizer hierarchy = self.getContent();
+		ComponentOrganizer hierarchy = self.component().getContent();
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
 		init.addAll(hierarchy.getComponents(true));
 		for (Component component : init)
 		{
 			hierarchy.storeComponent(component, false);
-			component.getContent().constructTree();// ComponentOrganizer.constructTree(component.getContents());
-			for (Component componentChild : component.getContent().getComponents(true))
+			component.component().getContent().constructTree();// ComponentOrganizer.constructTree(component.getContents());
+			for (Component componentChild : component.component().getContent().getComponents(true))
 			{
 				hierarchy.storeComponent(componentChild, false);
 			}

@@ -55,9 +55,9 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		ArrayList<String> stateElements = new ArrayList<String>();
 		for (Data allStates : dataElementsToStore)
 		{
-			if (!stateElements.contains(allStates.getLabels().getClassification()))
+			if (!stateElements.contains(allStates.component().getLabels().getClassification()))
 			{
-				stateElements.add(allStates.getLabels().getClassification());
+				stateElements.add(allStates.component().getLabels().getClassification());
 			}
 		}
 
@@ -70,7 +70,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		ArrayList<Data> datas = new ArrayList<Data>();
 		for (Data element : dataElementsToStore)
 		{
-			if (element.getLabels().getClassification().equals(title))
+			if (element.component().getLabels().getClassification().equals(title))
 			{
 				datas.add(element);
 			}
@@ -85,11 +85,11 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		for (Data dat : getDataByTitle(title))
 		{
 			ArrayList<Double[]> values = new ArrayList<Double[]>();
-			Set<HybridTime> tim = dat.getActions().getStoredValues().keySet();
+			Set<HybridTime> tim = dat.component().getStoredValues().keySet();
 			for (HybridTime timez : tim)
 			{
 				Double[] vals = new Double[]
-				{ timez.getTime(), (Double) dat.getActions().getStoredValue(timez) };
+				{ timez.getTime(), (Double) dat.component().getStoredValue(timez) };
 				values.add(vals);
 			}
 			data.put(dat, values);
@@ -103,7 +103,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		for (Data dat : getDataByTitle(title))
 		{
 			ArrayList<Double[]> values = new ArrayList<Double[]>();
-			Set<HybridTime> tim = dat.getActions().getStoredValues().keySet();
+			Set<HybridTime> tim = dat.component().getStoredValues().keySet();
 			HashMap<Integer, ArrayList<HybridTime>> orderedTimes = new HashMap<Integer, ArrayList<HybridTime>>();
 			for (HybridTime timez : tim)
 			{
@@ -123,7 +123,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 				for (HybridTime timez : timezz)
 				{
 					Double[] vals = new Double[]
-					{ timez.getTime(), (Double) dat.getActions().getStoredValue(timez) };
+					{ timez.getTime(), (Double) dat.component().getStoredValue(timez) };
 					values.add(vals);
 				}
 			}
@@ -135,16 +135,16 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	@Override
 	public Data getDifferentDataFromSameDataSet(Data data, String title)
 	{
-		for (Component component : getEnv().getContent().getComponents(true))
+		for (Component component : getEnv().component().getContent().getComponents(true))
 		{
 			try
 			{
-				if (component.getContent().getComponents(true).contains(data))
+				if (component.component().getContent().getComponents(true).contains(data))
 				{
-					for (Data dat : component.getContent().getObjects(Data.class, true))
+					for (Data dat : component.component().getContent().getObjects(Data.class, true))
 					{
 
-						if (dat.getLabels().getClassification().equals(title))
+						if (dat.component().getLabels().getClassification().equals(title))
 						{
 							return dat;
 						}
@@ -182,7 +182,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 		{
 			if (getDataOperator(element).isDataStored())
 			{
-				mapz.put(element.getActions().getAddress(), element.getActions().getStoredValues());
+				mapz.put(element.component().getAddress(), element.component().getStoredValues());
 			}
 		}
 		return mapz;
@@ -208,8 +208,8 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 	{
 		dataElementsToStore.clear();
 		ArrayList<Data> storeStates = new ArrayList<Data>();
-		storeStates.addAll(super.getEnv().getContent().getObjects(State.class, true));
-		for (Data data : super.getEnv().getContent().getObjects(Data.class, true))
+		storeStates.addAll(super.getEnv().component().getContent().getObjects(State.class, true));
+		for (Data data : super.getEnv().component().getContent().getObjects(Data.class, true))
 		{
 			if (!storeStates.contains(data))
 			{
@@ -245,7 +245,7 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 			{
 				State state = (State) element;
 
-				if (element.getLabels().getClassification().equals(title))
+				if (element.component().getLabels().getClassification().equals(title))
 				{
 					datas.add(state);
 				}

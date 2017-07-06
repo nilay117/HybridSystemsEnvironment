@@ -1,11 +1,17 @@
 package edu.ucsc.cross.hse.core.processing.data;
 
+import java.io.File;
 import java.util.HashMap;
+
+import com.be3short.data.file.general.FileSystemInteractor;
+import com.be3short.data.file.xml.XMLParser;
 
 import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
 import edu.ucsc.cross.hse.core.object.configuration.PrintSettings;
+import edu.ucsc.cross.hse.core.procesing.io.FileContent;
+import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 public class SettingConfigurer
 {
@@ -13,7 +19,7 @@ public class SettingConfigurer
 	private HashMap<Class<?>, Object> settings;
 
 	public SettingConfigurer()
-	{//settings = new HashMap<Class<?>, Object>();
+	{// settings = new HashMap<Class<?>, Object>();
 		initialize();
 	}
 
@@ -70,5 +76,33 @@ public class SettingConfigurer
 	public static HashMap<Class<?>, Object> getSettingsMap(SettingConfigurer setting)
 	{
 		return setting.settings;
+	}
+
+	/*
+	 * Load settings from a file
+	 */
+	public void loadSettingsFromXMLFile(File file)
+	{
+
+		SettingConfigurer loaded = null;
+		if (file == null)
+		{
+			loaded = FileProcessor.loadXMLSettings();
+		} else
+		{
+			loaded = FileProcessor.loadXMLSettings(file);
+		}
+		for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
+		{
+			loadSettings(set);
+		}
+	}
+
+	/*
+	 * Save the settings to a file
+	 */
+	public void saveSettingsToXMLFile(File file)
+	{
+		FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(this));
 	}
 }
