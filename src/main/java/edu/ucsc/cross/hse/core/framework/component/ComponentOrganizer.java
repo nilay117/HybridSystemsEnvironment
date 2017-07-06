@@ -81,13 +81,13 @@ public class ComponentOrganizer
 	{
 		ArrayList<Component> ret = new ArrayList<Component>();
 
-		T initialClone = component;//(T) ObjectCloner.xmlClone(component);
+		T initialClone = (T) ObjectCloner.xmlClone(component);
 		// T initialClone = ObjectCloner.cloner.deepClone(component);
 		for (Integer ind = 0; ind < quantity; ind++)
 		{
 			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-			storeComponent(initialClone, true);
-			ret.add(initialClone);
+			storeComponent(clonedComponent, true);
+			ret.add(clonedComponent);
 			initialClone = clonedComponent;
 			// clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
 		}

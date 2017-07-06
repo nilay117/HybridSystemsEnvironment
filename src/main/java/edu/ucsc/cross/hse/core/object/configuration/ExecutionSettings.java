@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.object.configuration;
 public class ExecutionSettings
 {
 
-	public boolean runThreadded; // run the environment in a thread (as opposed
+	public Boolean runThreadded; // run the environment in a thread (as opposed
 									// to blocking code)
 
 	public Integer numberOfTrials; // number of trials to run altogether.

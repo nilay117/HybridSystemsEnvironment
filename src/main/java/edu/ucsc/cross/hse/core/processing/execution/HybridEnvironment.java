@@ -13,6 +13,7 @@ import java.util.HashMap;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.ExternalizableSerializer;
 
+import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
@@ -39,9 +40,9 @@ public class HybridEnvironment// implements Serializable
 	protected CentralProcessor processor; // environment processor that handles
 											// events,
 											// computations, maintenance, etc
-	SettingConfigurer settings; // collection of settings that
-								// configure the performance of the
-								// environment
+	protected SettingConfigurer settings; // collection of settings that
+	// configure the performance of the
+	// environment
 
 	/*
 	 * Generic environment constructor that initializes an empty system with a
@@ -291,8 +292,14 @@ public class HybridEnvironment// implements Serializable
 	private void initialize(EnvironmentContent content, boolean pre_loaded_content)
 	{
 		this.content = content;
+		settings = new SettingConfigurer();
 		environments.put(this.toString(), this);
-		settings = FileExchanger.loadSettings(null);
+		SettingConfigurer defaultz = FileExchanger.loadSettings();
+		System.out.println(XMLParser.serializeObject(defaultz));
+		for (Object set : SettingConfigurer.getSettingsMap(defaultz).values())
+		{
+			settings.loadSettings(set);
+		}
 		processor = new CentralProcessor(this);
 		if (pre_loaded_content)
 		{

@@ -168,12 +168,14 @@ public class FileExchanger extends ProcessingElement
 		}
 	}
 
+	public static SettingConfigurer loadSettings()
+	{
+		return loadSettings(new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName));
+	}
+
 	public static SettingConfigurer loadSettings(File file)
 	{
-		if (file == null)
-		{
-			file = new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName);
-		}
+
 		SettingConfigurer settings = null;
 		try
 		{

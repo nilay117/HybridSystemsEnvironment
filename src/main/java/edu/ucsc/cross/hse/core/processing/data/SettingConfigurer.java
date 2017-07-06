@@ -13,7 +13,7 @@ public class SettingConfigurer
 	private HashMap<Class<?>, Object> settings;
 
 	public SettingConfigurer()
-	{
+	{//settings = new HashMap<Class<?>, Object>();
 		initialize();
 	}
 

@@ -108,11 +108,6 @@ public class CentralProcessor
 			{
 
 				runEnvironment(resume);
-				while (!environmentThread.isInterrupted())
-				{
-
-				}
-				interruptResponder.interruptEnv();
 			}
 
 		};
@@ -163,6 +158,10 @@ public class CentralProcessor
 			running = running || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
 			&& !interruptResponder.isOutsideDomainError();
 		}
+		interruptResponder.killEnv();
+		systemConsole
+		.print("Environment Execution Completed - Simulation Time: " + environmentInterface.content.getEnvironmentTime()
+		+ " sec - Run Time : " + integrationMonitor.getRunTime() + "sec");
 	}
 
 	protected void resetEnvironment()
