@@ -16,7 +16,6 @@ import com.esotericsoftware.kryo.serializers.ExternalizableSerializer;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
-import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
@@ -139,6 +138,11 @@ public class HybridEnvironment// implements Serializable
 		processor.resetEnvironment(re_initialize);
 	}
 
+	public void refresh()
+	{
+		CentralProcessor.refreshIfDataPresent(this, content);
+	}
+
 	/*
 	 * Clear the contents of the environment
 	 */
@@ -238,7 +242,7 @@ public class HybridEnvironment// implements Serializable
 	{
 		for (Component component : components)
 		{
-			content.getContents().addComponent(component);
+			addComponents(component);
 		}
 	}
 
@@ -249,7 +253,6 @@ public class HybridEnvironment// implements Serializable
 	{
 
 		content.getContents().addComponent(component, quantity);
-
 	}
 
 	/*
@@ -268,29 +271,6 @@ public class HybridEnvironment// implements Serializable
 
 		Component component = this.processor.fileExchanger.load(file, false);
 		addComponents(component, quantity);
-		try
-		{
-			ArrayList<Data> datas = new ArrayList<Data>();
-			datas.addAll(component.getContents().getObjects(State.class, true));
-			datas.addAll(component.getContents().getObjects(Data.class, true));
-			boolean loadData = false;
-			for (Data data : datas)
-			{
-				if (data.getActions().getStoredValues().size() > 0)
-				{
-					loadData = true;
-					break;
-				}
-			}
-			if (loadData)
-			{
-				processor = new CentralProcessor(this);
-				processor.prepareEnvironment(getContents());
-			}
-		} catch (Exception noStates)
-		{
-			noStates.printStackTrace();
-		}
 
 	}
 

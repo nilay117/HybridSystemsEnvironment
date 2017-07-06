@@ -100,11 +100,12 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 
 		getComponents().performAllTasks(true); // execute all jumps
 
-		this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(); // increment
-																						// jump
-																						// index
+		//	this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(); // increment
+		//																						// jump
+		//																						// index
+		//
 		ComponentOperator.getOperator(getEnv()).storeData(); // store post-jump
-																// data
+		//																// data
 
 		getComputationEngine().setODEValueVector(y); // update the ode vector
 

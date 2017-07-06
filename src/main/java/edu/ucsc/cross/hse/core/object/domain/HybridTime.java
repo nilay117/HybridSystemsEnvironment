@@ -92,10 +92,11 @@ public class HybridTime
 	 */
 	public void incrementJumpIndex(Integer increment)
 	{
-		jumpIndex = jumpIndex + increment;
+		Integer newJumpIndex = jumpIndex + increment;
+		jumpIndex = newJumpIndex;
 		if (current != null)
 		{
-			current = new HybridTime(time, jumpIndex);
+			current = new HybridTime(time, newJumpIndex);
 		}
 	}
 

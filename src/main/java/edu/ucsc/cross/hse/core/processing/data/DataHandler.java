@@ -1,6 +1,8 @@
 package edu.ucsc.cross.hse.core.processing.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -89,6 +91,41 @@ public class DataHandler extends ProcessingElement implements DataAccessor
 				Double[] vals = new Double[]
 				{ timez.getTime(), (Double) dat.getActions().getStoredValue(timez) };
 				values.add(vals);
+			}
+			data.put(dat, values);
+		}
+		return data;
+	}
+
+	public HashMap<Data, ArrayList<Double[]>> getDatazz(String title)
+	{
+		HashMap<Data, ArrayList<Double[]>> data = new HashMap<Data, ArrayList<Double[]>>();
+		for (Data dat : getDataByTitle(title))
+		{
+			ArrayList<Double[]> values = new ArrayList<Double[]>();
+			Set<HybridTime> tim = dat.getActions().getStoredValues().keySet();
+			HashMap<Integer, ArrayList<HybridTime>> orderedTimes = new HashMap<Integer, ArrayList<HybridTime>>();
+			for (HybridTime timez : tim)
+			{
+				if (!orderedTimes.containsKey(timez.getJumpIndex()))
+				{
+					orderedTimes.put(timez.getJumpIndex(), new ArrayList<HybridTime>());
+				}
+
+				orderedTimes.get(timez.getJumpIndex()).add(timez);
+			}
+			ArrayList<Integer> times = new ArrayList<Integer>(
+			Arrays.asList(orderedTimes.keySet().toArray(new Integer[orderedTimes.size()])));
+			Collections.sort(times);
+			for (Integer timei : times)
+			{
+				ArrayList<HybridTime> timezz = orderedTimes.get(timei);
+				for (HybridTime timez : timezz)
+				{
+					Double[] vals = new Double[]
+					{ timez.getTime(), (Double) dat.getActions().getStoredValue(timez) };
+					values.add(vals);
+				}
 			}
 			data.put(dat, values);
 		}

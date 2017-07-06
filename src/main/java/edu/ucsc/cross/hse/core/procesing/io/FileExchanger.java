@@ -49,6 +49,7 @@ import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
+import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
 
 public class FileExchanger extends ProcessingElement
@@ -96,12 +97,26 @@ public class FileExchanger extends ProcessingElement
 
 	public Component load(File file, boolean reload_env)
 	{
+		return load(this.getProcessor(), file, reload_env);
+	}
+
+	public static Component load(HybridEnvironment environment, File file, boolean reload_env)
+	{
 
 		HashMap<FileContent, Object> contents = packager.loadContents(file, FileContent.values());
-		EnvironmentContent env = getEnv();
+		EnvironmentContent env = null;
+		try
+		{
+
+			env = environment.getContents();
+		} catch (Exception noEnvironment)
+		{
+
+		}
 		Component comp = null;
 		try
 		{
+
 			env = (EnvironmentContent) contents.get(FileContent.ENVIRONMENT);
 		} catch (Exception noEnvironment)
 		{
@@ -125,7 +140,7 @@ public class FileExchanger extends ProcessingElement
 					loadAllData((HashMap<String, HashMap<HybridTime, ?>>) contents.get(FileContent.DATA), comp);
 					break;
 				case SETTINGS:
-					this.setSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
+					environment.loadSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
 					break;
 				}
 			} catch (Exception noEnvironment)
@@ -135,19 +150,19 @@ public class FileExchanger extends ProcessingElement
 		}
 		if (reload_env)
 		{
-			this.processor.loadContents(env);
+			environment.loadContents(env);
 		}
 		//	System.out.println(XMLParser.serializeObject(comp));
 		return comp;
 	}
 
-	private void loadAllData(HashMap<String, HashMap<HybridTime, ?>> data, Component component)
+	private static void loadAllData(HashMap<String, HashMap<HybridTime, ?>> data, Component component)
 	{
 		ArrayList<Data> datas = new ArrayList<Data>();
 		datas.addAll(component.getContents().getObjects(State.class, true));
 		datas.addAll(component.getContents().getObjects(Data.class, true));
-		System.out.println(XMLParser.serializeObject(datas));
-		for (Data id : datas)
+		System.out.println(XMLParser.serializeObject(data));
+		for (Data id : component.getContents().getObjects(State.class, true))
 		{
 			DataOperator.getOperator(id).loadStoredValues(data.get(id.getActions().getAddress()));
 		}
@@ -193,9 +208,7 @@ public class FileExchanger extends ProcessingElement
 	public static <T extends Component> T loadComponent(File file)
 	{
 
-		HashMap<FileContent, Object> stuff = packager.loadContents(file, FileContent.values());
-		Component component = (Component) stuff.get(FileContent.COMPONENT);
-		return (T) component;
+		return (T) load(null, file, false);
 
 	}
 

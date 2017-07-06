@@ -12,6 +12,7 @@ import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
+import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
@@ -100,7 +101,7 @@ public class ContentOperator extends ComponentOperator
 	{
 		// this.initializeContentMappings(true);
 		linkEnvironment();
-		initializeComponents(Data.class);
+		initializeComponents(Data.class, State.class);
 		initializeComponents();
 		generateAddresses();
 		linkEnvironment();

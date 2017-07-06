@@ -9,6 +9,8 @@ import java.util.Map;
 
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
+import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.State;
 
 /*
  * This class contains structures that define the hierarchy of additional
@@ -79,14 +81,15 @@ public class ComponentOrganizer
 	{
 		ArrayList<Component> ret = new ArrayList<Component>();
 
-		T initialClone = (T) ObjectCloner.xmlClone(component);
+		T initialClone = component;//(T) ObjectCloner.xmlClone(component);
 		// T initialClone = ObjectCloner.cloner.deepClone(component);
 		for (Integer ind = 0; ind < quantity; ind++)
 		{
 			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-			storeComponent(clonedComponent, true);
-			ret.add(clonedComponent);
+			storeComponent(initialClone, true);
+			ret.add(initialClone);
 			initialClone = clonedComponent;
+			// clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
 		}
 		addAllUndeclaredComponents(ret);
 
@@ -142,6 +145,26 @@ public class ComponentOrganizer
 			descendants.put(desc.toString(), desc);
 		}
 		return descendants;
+	}
+
+	/*
+	 * Get any objects that match the search criteria defined by the inputs
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<Data> getData(boolean include_children)
+	{
+		ArrayList<Data> data = new ArrayList<Data>();
+		data.addAll(getObjects(State.class, include_children));
+		{
+			for (Data dat : getObjects(Data.class, include_children))
+			{
+				if (!data.contains(dat))
+				{
+					data.add(dat);
+				}
+			}
+		}
+		return data;
 	}
 
 	/*
@@ -424,13 +447,13 @@ public class ComponentOrganizer
 			{
 				descendantComponentList.add(component);
 			}
-			if (!descendantComponentMap.containsKey(component.getLabels().getClass()))
+			if (!descendantComponentMap.containsKey(component.getClass()))
 			{
-				descendantComponentMap.put(component.getLabels().getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
+				descendantComponentMap.put(component.getClass(), new ArrayList<Component>());// ..getProperties().getClassification()).add(allCurrent))));
 			}
-			if (!descendantComponentMap.get(component.getLabels().getClass()).contains(component))
+			if (!descendantComponentMap.get(component.getClass()).contains(component))
 			{
-				descendantComponentMap.get(component.getLabels().getClass()).add(component);
+				descendantComponentMap.get(component.getClass()).add(component);
 			}
 		}
 	}

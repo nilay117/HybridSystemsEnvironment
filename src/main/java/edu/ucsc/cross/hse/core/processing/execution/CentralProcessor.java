@@ -148,12 +148,11 @@ public class CentralProcessor
 		{
 			if (!resume)
 			{
-				systemConsole.print("Environment Started");
+
 				prepareEnvironment(
 				(EnvironmentContent) ContentOperator.getOperator(environmentInterface.getContents()).getNewInstance());
 			} else
 			{
-				systemConsole.print("Environment Resumed");
 				prepareEnvironment(environmentInterface.getContents());
 			}
 			executeEnvironment();
@@ -164,9 +163,6 @@ public class CentralProcessor
 			running = running || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
 			&& !interruptResponder.isOutsideDomainError();
 		}
-		systemConsole
-		.print("Environment Stopped - Simulation Time: " + environmentInterface.getContents().getEnvironmentTime()
-		+ " sec - Run Time : " + integrationMonitor.getRunTime() + "sec");
 	}
 
 	protected void resetEnvironment()
@@ -177,6 +173,10 @@ public class CentralProcessor
 	protected void resetEnvironment(boolean reinitialize)
 	{
 		EnvironmentContent content = environmentInterface.getContents();
+		for (Data data : environmentInterface.content.getContents().getData(true))
+		{
+			data.getActions().getStoredValues().clear();
+		}
 		if (!(environmentInterface.getContents().getEnvironmentTime() > 0.0))
 		{
 			prepareEnvironment(content);
@@ -197,13 +197,12 @@ public class CentralProcessor
 	 */
 	public void executeEnvironment()
 	{
+
 		contentAdmin = ContentOperator.getOperator(environmentInterface.getContents());
-		//		while (this.contentAdmin.isJumpOccurring())
-		//		{
-		//			this.componentAdmin.performAllTasks(true);
-		//			contentAdmin.getEnvironmentHybridTime().incrementJumpIndex();
-		//		}
-		//		this.contentAdmin.performTasks(false);
+		contentAdmin.storeData();
+		componentAdmin.performAllTasks(true);
+		componentAdmin.getEnvironmentOperator().getEnvironmentHybridTime().setTime(Double.MIN_VALUE);
+		contentAdmin.storeData();
 		integrationMonitor.launchEnvironment();
 	}
 
@@ -257,6 +256,42 @@ public class CentralProcessor
 		{
 			environmentInterface.getSettings().getDataSettings().dataStoreIncrement = environmentInterface.getSettings()
 			.getComputationSettings().odeMinStep;
+		}
+	}
+
+	public static void refreshIfDataPresent(HybridEnvironment env, Component component)
+	{
+		boolean loadData = false;
+		for (Component comp : env.content.getContents().getComponents(true))
+		{
+			System.out.println(comp.toString());
+			try
+			{
+
+				for (Data data : comp.getContents().getData(true))
+				{
+					if (data.getActions().getStoredValues().size() > 0)
+					{
+						loadData = true;
+						break;
+					}
+				}
+				if (loadData)
+				{
+					//processor = new CentralProcessor(this);
+					break;
+					//processor.dataHandler.loadStoreStates();
+				}
+			} catch (Exception noStates)
+			{
+				noStates.printStackTrace();
+			}
+		}
+		if (loadData)
+		{
+			//processor = new CentralProcessor(this);
+			env.processor.prepareEnvironment(env.getContents());
+			//processor.dataHandler.loadStoreStates();
 		}
 	}
 

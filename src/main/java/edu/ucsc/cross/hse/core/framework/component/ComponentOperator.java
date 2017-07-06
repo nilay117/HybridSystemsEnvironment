@@ -187,9 +187,8 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public void storeData()
 	{
-		for (Data data : component.getContents().getObjects(Data.class, true))
+		for (Data data : component.getContents().getData(true))
 		{
-
 			DataOperator.getOperator(data).storeValue(component.getEnvironment().getEnvironmentTime(), true);
 		}
 	}
