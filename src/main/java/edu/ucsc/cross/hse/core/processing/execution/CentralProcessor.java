@@ -6,7 +6,7 @@ import com.be3short.data.cloning.ObjectCloner;
 
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
@@ -34,7 +34,7 @@ public class CentralProcessor
 											// global environment
 											// component
 
-	protected ComponentAdministrator componentAdmin; // controls all components
+	protected ComponentController componentAdmin; // controls all components
 
 	protected DataHandler dataHandler; // handles the storage and access of data
 
@@ -88,11 +88,11 @@ public class CentralProcessor
 		{
 
 		}
-		contentAdmin = ContentOperator.getOperator(environmentInterface.getE());
+		contentAdmin = ContentOperator.getOperator(environmentInterface.getEnvironment());
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
 		systemConsole = new SystemConsole(this);
-		componentAdmin = new ComponentAdministrator(this);
+		componentAdmin = new ComponentController(this);
 		fileExchanger = new FileExchanger(this);
 		jumpEvaluator = new JumpEvaluator(this);
 		interruptResponder = new InterruptResponder(this);
@@ -164,7 +164,7 @@ public class CentralProcessor
 		repeat = repeat || interruptResponder.isPauseTemporary();
 		repeat = repeat || interruptResponder.isTerminatedEarly();
 		repeat = repeat || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-		repeat = repeat || ComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+		repeat = repeat || FullComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
 		&& !interruptResponder.isOutsideDomainError();
 		return repeat;
 	}
@@ -199,7 +199,7 @@ public class CentralProcessor
 		{
 			DataOperator.getOperator(data).resetData();
 			data.component().configure()
-			.setInitialized(ComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
+			.setInitialized(FullComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
 		}
 	}
 
@@ -208,7 +208,7 @@ public class CentralProcessor
 	 */
 	public void startExecution()
 	{
-		contentAdmin = ContentOperator.getOperator(environmentInterface.getE());
+		contentAdmin = ContentOperator.getOperator(environmentInterface.getEnvironment());
 		if (this.contentAdmin.isJumpOccurring())
 		{
 			contentAdmin.storeData();
@@ -257,10 +257,10 @@ public class CentralProcessor
 	 */
 	protected void storeConfigurations()
 	{
-		ComponentOperator.getOperator(this.environmentInterface.getE()).storeConfiguration();
-		for (Component component : this.environmentInterface.getE().component().getContent().getComponents(true))
+		FullComponentOperator.getOperator(this.environmentInterface.getEnvironment()).storeConfiguration();
+		for (Component component : this.environmentInterface.getEnvironment().component().getContent().getComponents(true))
 		{
-			ComponentOperator.getOperator(component).storeConfiguration();
+			FullComponentOperator.getOperator(component).storeConfiguration();
 		}
 	}
 
@@ -319,7 +319,7 @@ public class CentralProcessor
 		// if (loadData)
 		{
 			// env.processor = new CentralProcessor(env);
-			env.processor.prepareEnvironment(env.content);
+			env.processor.prepareEnvironment();
 			// env.processor.dataHandler.loadStoreStates();
 		}
 	}

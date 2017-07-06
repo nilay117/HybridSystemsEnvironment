@@ -7,9 +7,9 @@ import com.be3short.data.info.SystemInfo;
 import bs.commons.objects.access.CallerRetriever;
 import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
-public class SystemConsole extends ProcessingElement
+public class SystemConsole extends ProcessingConnector
 {
 
 	static SystemInfo info = new SystemInfo();

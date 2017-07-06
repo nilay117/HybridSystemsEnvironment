@@ -26,7 +26,7 @@ import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
  * sub-components. The parent and the environment of this particular are also
  * available within this structure.
  */
-public class ComponentOrganizer
+public class ComponentContent
 {
 
 	// Mapping of all declared components indexed by class
@@ -511,7 +511,7 @@ public class ComponentOrganizer
 	 * 
 	 * @param base_class - base class of the component
 	 */
-	public ComponentOrganizer(Component self)
+	public ComponentContent(Component self)
 	{
 		this.self = self;
 		setup();
@@ -599,7 +599,7 @@ public class ComponentOrganizer
 	 */
 	public void constructTree()
 	{
-		ComponentOrganizer hierarchy = self.component().getContent();
+		ComponentContent hierarchy = self.component().getContent();
 		hierarchy.loadHierarchyComponents();
 		ArrayList<Component> init = new ArrayList<Component>();
 		init.addAll(hierarchy.getComponents(true));

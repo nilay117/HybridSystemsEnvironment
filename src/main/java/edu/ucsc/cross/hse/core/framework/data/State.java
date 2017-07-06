@@ -9,7 +9,7 @@ import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.exceptions.UnitException;
 import bs.commons.unitvars.units.NoUnit;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
@@ -86,7 +86,7 @@ public class State extends Data<Double>
 	@Override
 	public void setValue(Double val)
 	{
-		if (!ComponentOperator.getOperator(this).isInitialized())
+		if (!FullComponentOperator.getOperator(this).isInitialized())
 		{
 			elementDomain.setFixedValue(val);
 		}

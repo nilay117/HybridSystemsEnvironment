@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
@@ -13,7 +14,6 @@ import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 public class ComponentConfigurer
 {
 
-	private boolean isEnvironment;
 	private Component co; // wpointer to own component
 
 	protected static HashMap<Component, ComponentConfigurer> components = new HashMap<Component, ComponentConfigurer>();
@@ -21,8 +21,6 @@ public class ComponentConfigurer
 	public ComponentConfigurer(Component self)
 	{
 		co = self;
-		isEnvironment = (FieldFinder.containsSuper(co, EnvironmentContent.class));
-
 		// TODO Auto-generated constructor stub
 	}
 
@@ -73,7 +71,7 @@ public class ComponentConfigurer
 	 */
 	public void loadComponentFromFile(File file)
 	{
-		loadComponentsFromFile(file, 1);
+		loadComponentsFromFile(file, 1, false);
 	}
 
 	/*
@@ -81,7 +79,24 @@ public class ComponentConfigurer
 	 */
 	public void loadComponentsFromFile(File file, Integer quantity)
 	{
-		Component component = FileProcessor.load(file, FileContent.COMPONENT, FileContent.DATA);
+		loadComponentsFromFile(file, quantity, false);
+	}
+
+	/*
+	 * Load contents from a file
+	 */
+	public void loadComponentFromFile(File file, boolean reinitialize_data)
+	{
+		loadComponentsFromFile(file, 1, reinitialize_data);
+	}
+
+	/*
+	 * Load contents from a file
+	 */
+	public void loadComponentsFromFile(File file, Integer quantity, boolean reinitialize_data)
+	{
+		Component component = FileProcessor.load(file, FileContent.COMPONENT);
+		component.component().configure().setInitialized(false, reinitialize_data);
 		addComponent(component, quantity);
 	}
 
@@ -110,7 +125,23 @@ public class ComponentConfigurer
 	 */
 	public void setInitialized(Boolean initialized)
 	{
-		ComponentOperator.getOperator(co).getStatus().setInitialized(initialized);
+		setInitialized(initialized, false);
+	}
+
+	/*
+	 * Indicate whetehre or not this component should be initialized
+	 */
+	public void setInitialized(Boolean initialized, Boolean include_data)
+	{
+		ArrayList<Data> data = co.component().getContent().getData(true);
+		for (Component comp : co.component().getContent().getComponents(true))
+		{
+			if (!data.contains(comp) || include_data)
+			{
+				comp.component().configure().setInitialized(initialized);
+			}
+		}
+		FullComponentOperator.getOperator(co).getStatus().setInitialized(initialized);
 	}
 
 	/*
@@ -118,6 +149,6 @@ public class ComponentConfigurer
 	 */
 	public void setSimulated(boolean simulated)
 	{
-		ComponentOperator.getOperator(co).getStatus().setSimulated(simulated);
+		FullComponentOperator.getOperator(co).getStatus().setSimulated(simulated);
 	}
 }

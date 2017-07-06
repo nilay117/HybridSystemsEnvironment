@@ -22,8 +22,8 @@ public abstract class Component // implements Initializer
 
 	ComponentLabel labels; // specific information describing this component
 
-	ComponentOrganizer contents; // component access hierarchy of this
-									// component
+	ComponentContent contents; // component access hierarchy of this
+								// component
 
 	/*
 	 * Constructor that defines the name of the component with this class
@@ -37,7 +37,7 @@ public abstract class Component // implements Initializer
 	 */
 	public Component(String classification, String name)
 	{
-		ComponentOperator.getOperator(this).setup(classification, this.getClass());
+		FullComponentOperator.getOperator(this).setup(classification, this.getClass());
 		this.labels.setName(name);
 
 	}
@@ -52,7 +52,7 @@ public abstract class Component // implements Initializer
 	 */
 	public Component(String classification)
 	{
-		ComponentOperator.getOperator(this).setup(classification, this.getClass());
+		FullComponentOperator.getOperator(this).setup(classification, this.getClass());
 
 	}
 
@@ -65,63 +65,19 @@ public abstract class Component // implements Initializer
 	 */
 	public Component()
 	{
-		ComponentOperator.getOperator(this).setup(this.getClass().getSimpleName(), this.getClass());
+		FullComponentOperator.getOperator(this).setup(this.getClass().getSimpleName(), this.getClass());
 
 	}
 
-	//
-	// /*
-	// * Accesses the global environment containing all other components and the
-	// * time domains
-	// *
-	// * @return global environment component
-	// */
-	// public EnvironmentContent getEnvironment()
-	// {
-	// return ContentOperator.getGlobalSystem(this);
-	// }
-	//
-	// /*
-	// * Accesses information about this component for naming conventions
-	// *
-	// * @return component information
-	// */
-	// public ComponentLabel getLabels()
-	// {
-	// return labels;
-	// }
-	//
-	// /*
-	// * Accesses an organized data structure for accessing objects within this
-	// * components hierarchy
-	// *
-	// * @return component organizer
-	// */
-	// public ComponentOrganizer getContent()
-	// {
-	// return contents;
-	// }
-	//
-	// /*
-	// * Accesses an organized data structure for accessing objects within this
-	// * components hierarchy
-	// *
-	// * @return component organizer
-	// */
-	// public ComponentConfigurer getConfiguration()
-	// {
-	// return ComponentConfigurer.getOperator(this);
-	// }
-	//
-	// /*
-	// * Accesses a set of actions that are user friendly, meaning they will not
-	// * interfere with the functionality of the environment
-	// *
-	// * @return component operator
-	// */
-	public ComponentWorker component()
+	/*
+	 * Access to the component API for content access, component configuration,
+	 * and general tasks
+	 *
+	 * @return component operator
+	 */
+	public UserComponentOperator component()
 	{
-		return ComponentOperator.getOperator(this);
+		return FullComponentOperator.getOperator(this);
 	}
 
 	/*
@@ -129,18 +85,9 @@ public abstract class Component // implements Initializer
 	 * environment starts. This method is intentionally empty to save space and
 	 * time as many components do not require it.
 	 */
-	// @Override
 	protected void initialize()
 	{
 
 	}
 
-	// /*
-	// * Accesses the environment setting in case they are needed
-	// */
-	// public SettingConfigurer getSettings()
-	// {
-	// return
-	// HybridEnvironment.getEnvironment(getActions().getEnvironmentKey()).getSettings();
-	// }
 }

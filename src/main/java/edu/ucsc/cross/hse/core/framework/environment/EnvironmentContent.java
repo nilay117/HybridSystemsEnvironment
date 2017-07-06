@@ -6,11 +6,11 @@ import java.util.HashMap;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.framework.component.ComponentContent;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 
 /*
  * This is the main root system of the environment that contains all of the
@@ -20,10 +20,6 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
  */
 public class EnvironmentContent extends Component// implements Serializable
 {
-
-	/**
-	 * 
-	 */
 
 	protected HybridTime environmentTime; // time relative to when the
 											// environment

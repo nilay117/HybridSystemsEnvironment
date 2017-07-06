@@ -13,18 +13,18 @@ import com.be3short.data.cloning.ObjectCloner;
 
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
-public class ExecutionMonitor extends ProcessingElement
+public class ExecutionMonitor extends ProcessingConnector
 {
 
-	Double runTime;
+	private Double runTime;
 
 	public Double getRunTime()
 	{

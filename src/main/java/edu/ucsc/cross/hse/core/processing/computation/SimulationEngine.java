@@ -10,13 +10,13 @@ import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
 /*
  * his class provides the computations and organization necessary to run a
@@ -26,7 +26,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
  */
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
-public class SimulationEngine extends ProcessingElement implements FirstOrderDifferentialEquations
+public class SimulationEngine extends ProcessingConnector implements FirstOrderDifferentialEquations
 {
 
 	/*

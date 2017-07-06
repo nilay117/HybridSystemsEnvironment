@@ -6,7 +6,7 @@ import java.util.HashMap;
 import bs.commons.unitvars.core.UnitData.Unit;
 import bs.commons.unitvars.core.UnitValue;
 import bs.commons.unitvars.exceptions.UnitException;
-import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
+import edu.ucsc.cross.hse.core.framework.component.UserComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
@@ -17,7 +17,7 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
  * of your system though, if a component does not store data it should not have
  * access to it.
  */
-public class DataWorker<T> extends ComponentWorker
+public class DataWorker<T> extends UserComponentOperator
 {
 
 	// Mapping of all data workers keeping them completely separate from the

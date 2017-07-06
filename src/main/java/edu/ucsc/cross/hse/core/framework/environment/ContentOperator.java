@@ -10,13 +10,13 @@ import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
-public class ContentOperator extends ComponentOperator
+public class ContentOperator extends FullComponentOperator
 {
 
 	// currently
@@ -68,7 +68,7 @@ public class ContentOperator extends ComponentOperator
 
 	public static EnvironmentContent getGlobalSystem(Component component)
 	{
-		return globalSystems.get(ComponentOperator.getOperator(component).getEnvironmentKey()).globalSystem;
+		return globalSystems.get(FullComponentOperator.getOperator(component).getEnvironmentKey()).globalSystem;
 	}
 
 	public HybridTime getEnvironmentHybridTime()
@@ -133,7 +133,7 @@ public class ContentOperator extends ComponentOperator
 			}
 			if (initialize)
 			{
-				ComponentOperator.getOperator(component).protectedInitialize();
+				FullComponentOperator.getOperator(component).protectedInitialize();
 			}
 		}
 
@@ -145,7 +145,7 @@ public class ContentOperator extends ComponentOperator
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
-			ComponentOperator.getOperator(component).generateAddress();
+			FullComponentOperator.getOperator(component).generateAddress();
 		}
 	}
 
@@ -155,8 +155,8 @@ public class ContentOperator extends ComponentOperator
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
-			ComponentOperator.getOperator(component)
-			.setEnvironmentKey(ComponentOperator.getOperator(globalSystem).getEnvironmentKey());
+			FullComponentOperator.getOperator(component)
+			.setEnvironmentKey(FullComponentOperator.getOperator(globalSystem).getEnvironmentKey());
 		}
 	}
 

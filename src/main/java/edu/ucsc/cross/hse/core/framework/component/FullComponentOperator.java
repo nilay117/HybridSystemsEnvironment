@@ -15,7 +15,7 @@ import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
-import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.processing.execution.ComponentController;
 
 /*
  * This class contains the methods that are used by processing modules to
@@ -25,16 +25,16 @@ import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
  * be defined here. Use caution when using them as they can disrupt
  * functionality of the environment.
  */
-public class ComponentOperator extends ComponentWorker
+public class FullComponentOperator extends UserComponentOperator
 {
 
 	private Component configuration; // wpointer to own component
 
-	protected static HashMap<Component, ComponentOperator> components = new HashMap<Component, ComponentOperator>();
+	protected static HashMap<Component, FullComponentOperator> components = new HashMap<Component, FullComponentOperator>();
 
 	// relative compoents
 
-	public ComponentOperator(Component component)
+	public FullComponentOperator(Component component)
 	{
 		super(component);
 		// this.component = component;
@@ -97,7 +97,7 @@ public class ComponentOperator extends ComponentWorker
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring((HybridSystem) localBehavior, true);
+				Boolean jumpOccurring = ComponentController.jumpOccurring((HybridSystem) localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					if (jumpOccurring) // add component to list if jump is
@@ -158,7 +158,7 @@ public class ComponentOperator extends ComponentWorker
 				// {
 				//
 				// }
-				jumpOccurred = ComponentAdministrator.applyDynamics(localBehavior, true, jump_occurring);
+				jumpOccurred = ComponentController.applyDynamics(localBehavior, true, jump_occurring);
 
 				if (jumpOccurred)
 				{
@@ -201,8 +201,8 @@ public class ComponentOperator extends ComponentWorker
 	 */
 	public boolean outOfAllDomains(Component component)
 	{
-		return !(ComponentOperator.getOperator(component).isJumpOccurring()
-		|| ComponentOperator.getOperator(component).isFlowOccurring());
+		return !(FullComponentOperator.getOperator(component).isJumpOccurring()
+		|| FullComponentOperator.getOperator(component).isFlowOccurring());
 	}
 
 	/*
@@ -255,7 +255,7 @@ public class ComponentOperator extends ComponentWorker
 	/*
 	 * Load a hierarchy from an external source
 	 */
-	public void loadHierarchy(ComponentOrganizer hierarchy)
+	public void loadHierarchy(ComponentContent hierarchy)
 	{
 		component.contents = hierarchy;
 	}
@@ -309,7 +309,7 @@ public class ComponentOperator extends ComponentWorker
 		// ComponentAdministrator.getConfigurer(this);
 		component.status = new ComponentStatus();
 		component.labels = new ComponentLabel(title);
-		component.contents = new ComponentOrganizer(component);
+		component.contents = new ComponentContent(component);
 
 		// ComponentCoordinator.constructTree(hierarchy);
 	}
@@ -327,7 +327,7 @@ public class ComponentOperator extends ComponentWorker
 	 * Indirect access to the operator to keep it disconnected from the
 	 * component itself
 	 */
-	public static ComponentOperator getOperator(Component component)
+	public static FullComponentOperator getOperator(Component component)
 	{
 		if (components.containsKey(component))
 		{
@@ -336,7 +336,7 @@ public class ComponentOperator extends ComponentWorker
 		} else
 		{
 
-			ComponentOperator config = new ComponentOperator(component);
+			FullComponentOperator config = new FullComponentOperator(component);
 			components.put(component, config);
 			return config;
 
@@ -356,7 +356,7 @@ public class ComponentOperator extends ComponentWorker
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentAdministrator.jumpOccurring(localBehavior, true);
+				Boolean jumpOccurring = ComponentController.jumpOccurring(localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					try
@@ -388,7 +388,7 @@ public class ComponentOperator extends ComponentWorker
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentAdministrator.flowOccurring(localBehavior, true);
+				Boolean jumpOccurring = ComponentController.flowOccurring(localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					try

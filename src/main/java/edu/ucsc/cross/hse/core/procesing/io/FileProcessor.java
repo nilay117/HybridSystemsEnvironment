@@ -23,7 +23,7 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
@@ -33,9 +33,9 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
-public class FileProcessor extends ProcessingElement
+public class FileProcessor extends ProcessingConnector
 {
 
 	private Kryo kryo = new Kryo();
@@ -113,13 +113,13 @@ public class FileProcessor extends ProcessingElement
 		String xmlSettings = XMLParser.serializeObject(settings);
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
 
-		ObjectSerializer.store(location.getAbsolutePath() + "/" + ComponentOperator.generateInstanceAddress(settings),
+		ObjectSerializer.store(location.getAbsolutePath() + "/" + FullComponentOperator.generateInstanceAddress(settings),
 		compressed);
 	}
 
 	private static void storeComponent(File location, Component component)
 	{
-		String xmlSettings = XMLParser.serializeObject(ComponentOperator.getOperator(component).getNewInstance());
+		String xmlSettings = XMLParser.serializeObject(FullComponentOperator.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
 		String suffix = component.component().getLabels().getFullDescription() + " Component";
 		if (FieldFinder.containsSuper(component, EnvironmentContent.class))
@@ -133,8 +133,8 @@ public class FileProcessor extends ProcessingElement
 
 	public HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
-		ArrayList<FileContent> content = new ArrayList<FileContent>();
-		content.addAll(Arrays.asList(contents));
+		ArrayList<FileContent> contentz = new ArrayList<FileContent>();
+		contentz.addAll(Arrays.asList(contents));
 		HashMap<FileContent, Object> loadedContent = new HashMap<FileContent, Object>();
 		try
 		{
@@ -148,19 +148,18 @@ public class FileProcessor extends ProcessingElement
 			{
 				try
 				{
-					this.getConsole().print("Loading data from file : " + entry.getName());
+					// this.getConsole().print("Loading data from file : " +
+					// entry.getName());
 					Object readIn = kryo.readClassAndObject(input);
 					FileContent inputElement = FileContent.getFileContentType(entry.getName());
-					if (content.contains(inputElement))
+					this.getConsole().print("Loading data from file : " + entry.getName() + inputElement.name());
+					if (contentz.contains(inputElement))
 					{
 						switch (inputElement)
 						{
 
 						case DATA:
-							if (content.contains(FileContent.DATA))
-							{
-								datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
-							}
+							datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
 							break;
 						case SETTINGS:
 							loadedContent.put(FileContent.SETTINGS, ((SettingConfigurer) XMLParser
@@ -241,7 +240,7 @@ public class FileProcessor extends ProcessingElement
 				}
 			} catch (Exception noEnvironment)
 			{
-
+				noEnvironment.printStackTrace();
 			}
 		}
 		return component;
@@ -297,21 +296,6 @@ public class FileProcessor extends ProcessingElement
 	@SuppressWarnings("unchecked")
 	public static <T extends Component> T load(File file, FileContent... contents)
 	{
-		return (T) load(null, file, FileContent.COMPONENT);
-	}
-
-	public static FileContent[] getContentArray(boolean load_data, boolean load_settings)
-	{
-		ArrayList<FileContent> content = new ArrayList<FileContent>();
-		content.add(FileContent.COMPONENT);
-		if (load_data)
-		{
-			content.add(FileContent.DATA);
-		}
-		if (load_settings)
-		{
-			content.add(FileContent.SETTINGS);
-		}
-		return content.toArray(new FileContent[content.size()]);
+		return (T) load(null, file, contents);
 	}
 }

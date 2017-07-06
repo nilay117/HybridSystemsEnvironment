@@ -13,11 +13,10 @@ import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileElement;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.execution.ComponentAdministrator;
+import edu.ucsc.cross.hse.core.processing.execution.ComponentController;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 
 /*
@@ -25,13 +24,13 @@ import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
  * tasks. These methods are safe to use whenever needed as they do not interfere
  * with the processor, though most are for preparing components.
  */
-public class ComponentWorker
+public class UserComponentOperator
 {
 
 	protected Component component; // component this class works for
 
-	public ComponentWorker(Component component) // constructor assigning a
-												// component
+	public UserComponentOperator(Component component) // constructor assigning a
+													// component
 	{
 		this.component = component;
 	}
@@ -52,7 +51,7 @@ public class ComponentWorker
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap<HybridTime, T>> tempValues = new HashMap<Data, HashMap<HybridTime, T>>();
-		ComponentOrganizer h = component.component().getContent();
+		ComponentContent h = component.component().getContent();
 
 		if (!include_data)
 		{
@@ -63,12 +62,12 @@ public class ComponentWorker
 		}
 		if (!include_hierarchy)
 		{
-			ComponentOperator.getOperator(component).loadHierarchy(null);
+			FullComponentOperator.getOperator(component).loadHierarchy(null);
 		} // environment = null;
 		T copy = (T) ObjectCloner.xmlClone(component);// ComponentOperator.cloner.deepClone(component);
 		if (!include_hierarchy)
 		{
-			ComponentOperator.getOperator(component).loadHierarchy(h);
+			FullComponentOperator.getOperator(component).loadHierarchy(h);
 		}
 		if (!include_data)
 		{
@@ -82,76 +81,6 @@ public class ComponentWorker
 		return copy;
 
 	}
-
-	// /*
-	// * Determines whether or not a jump is occurring in any component within
-	// the
-	// * hybrid system
-	// *
-	// * @return true if a jump is occurring, false otherwise
-	// */
-	// public Boolean isJumpOccurring()
-	// {
-	// Boolean jumpOccurred = false;
-	// for (HybridSystem localBehavior :
-	// component.getContent().getObjects(HybridSystem.class, true))
-	// {
-	// try
-	// {
-	// Boolean jumpOccurring =
-	// ComponentAdministrator.jumpOccurring(localBehavior, true);
-	// if (jumpOccurring != null)
-	// {
-	// try
-	// {
-	// jumpOccurred = jumpOccurred || jumpOccurring;
-	// } catch (Exception outOfDomain)
-	// {
-	// outOfDomain.printStackTrace();
-	// }
-	// }
-	// } catch (Exception behaviorFail)
-	// {
-	// behaviorFail.printStackTrace();
-	// }
-	// }
-	// return jumpOccurred;
-	// }
-	//
-	// /*
-	// * Determines whether or not a jump is occurring in any component within
-	// the
-	// * hybrid system
-	// *
-	// * @return true if a jump is occurring, false otherwise
-	// */
-	// public Boolean isFlowOccurring()
-	// {
-	// Boolean jumpOccurred = false;
-	// for (HybridSystem localBehavior :
-	// component.getContent().getObjects(HybridSystem.class, true))
-	// {
-	// try
-	// {
-	// Boolean jumpOccurring =
-	// ComponentAdministrator.flowOccurring(localBehavior, true);
-	// if (jumpOccurring != null)
-	// {
-	// try
-	// {
-	// jumpOccurred = jumpOccurred || jumpOccurring;
-	// } catch (Exception outOfDomain)
-	// {
-	// outOfDomain.printStackTrace();
-	// }
-	// }
-	// } catch (Exception behaviorFail)
-	// {
-	// behaviorFail.printStackTrace();
-	// }
-	// }
-	// return jumpOccurred;
-	// }
 
 	/*
 	 * Accesses the global environment containing all other components and the
@@ -180,7 +109,7 @@ public class ComponentWorker
 	 * 
 	 * @return component organizer
 	 */
-	public ComponentOrganizer getContent()
+	public ComponentContent getContent()
 	{
 		return component.contents;
 	}
@@ -201,7 +130,8 @@ public class ComponentWorker
 	 */
 	public void save(File file)
 	{
-		save(file, false);
+		save(file, getSettings().getDataSettings().saveDataToFileDefault,
+		getSettings().getDataSettings().saveSettingsToFileDefault);
 	}
 
 	/*
@@ -209,13 +139,18 @@ public class ComponentWorker
 	 */
 	public void save(File file, boolean save_data)
 	{
-		if (save_data)
-		{
-			FileProcessor.saveComponent(component, file, FileContent.COMPONENT, FileContent.DATA);
-		} else
-		{
-			FileProcessor.saveComponent(component, file, FileContent.COMPONENT);
-		}
+		save(file, save_data, getSettings().getDataSettings().saveSettingsToFileDefault);
+	}
+
+	/*
+	 * Save the current component to a file
+	 */
+	public void save(File file, boolean save_data, boolean save_settings)
+	{
+		FileContent[] contents = FileContent.getContentArray(save_data, save_settings);
+
+		FileProcessor.saveComponent(component, file, contents);
+
 	}
 
 	/*
@@ -225,7 +160,7 @@ public class ComponentWorker
 	{
 		if (component.labels.address == null)
 		{
-			ComponentOperator.getOperator(component).generateAddress();
+			FullComponentOperator.getOperator(component).generateAddress();
 		}
 		return component.labels.address;
 	}

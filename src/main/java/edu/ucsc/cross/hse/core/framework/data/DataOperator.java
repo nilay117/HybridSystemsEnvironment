@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import bs.commons.objects.access.FieldFinder;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
@@ -19,7 +19,7 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
  * users should be defined here. Use caution when using them as they can disrupt
  * functionality of the environment.
  */
-public class DataOperator<T> extends ComponentOperator
+public class DataOperator<T> extends FullComponentOperator
 {
 
 	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
@@ -81,7 +81,7 @@ public class DataOperator<T> extends ComponentOperator
 	 */
 	public void storeValue(Double time, boolean override_save)
 	{
-		if (!ComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
+		if (!FullComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
 		{
 			element.storeValue(time, override_save);
 		}

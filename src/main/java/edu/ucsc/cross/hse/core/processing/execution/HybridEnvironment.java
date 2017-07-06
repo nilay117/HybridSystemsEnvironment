@@ -17,14 +17,13 @@ import bs.commons.objects.manipulation.XMLParser;
 import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentConfigurer;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.framework.component.ComponentContent;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
@@ -98,7 +97,7 @@ public class HybridEnvironment// implements Serializable
 	public void stop()
 	{
 		processor.interruptResponder.killEnv();
-		processor.systemConsole.print("Environment Stopped - Simulation Time: " + getE().getEnvironmentTime()
+		processor.systemConsole.print("Environment Stopped - Simulation Time: " + getEnvironment().getEnvironmentTime()
 		+ " sec - Run Time : " + processor.integrationMonitor.getRunTime() + "sec");
 	}
 
@@ -108,7 +107,7 @@ public class HybridEnvironment// implements Serializable
 	public void pause()
 	{
 		processor.interruptResponder.pauseSim();
-		processor.systemConsole.print("Environment Paused - Simulation Time: " + getE().getEnvironmentTime()
+		processor.systemConsole.print("Environment Paused - Simulation Time: " + getEnvironment().getEnvironmentTime()
 		+ " sec - Run Time : " + processor.integrationMonitor.getRunTime() + "sec");
 	}
 
@@ -117,7 +116,7 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void resume()
 	{
-		processor.systemConsole.print("Environment Resumed - Simulation Time: " + getE().getEnvironmentTime() + " sec");
+		processor.systemConsole.print("Environment Resumed - Simulation Time: " + getEnvironment().getEnvironmentTime() + " sec");
 		processor.launchEnvironment(true);
 	}
 
@@ -163,7 +162,7 @@ public class HybridEnvironment// implements Serializable
 	/*
 	 * Access the environment contents
 	 */
-	public EnvironmentContent getE()
+	public EnvironmentContent getEnvironment()
 	{
 		return content;
 	}
@@ -171,7 +170,7 @@ public class HybridEnvironment// implements Serializable
 	/*
 	 * Access the environment contents
 	 */
-	public ComponentOrganizer getContent()
+	public ComponentContent getContent()
 	{
 		return content.component().getContent();
 	}
@@ -197,7 +196,7 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void save(File file, boolean save_data, boolean save_settings)
 	{
-		FileContent[] contents = FileProcessor.getContentArray(save_data, save_settings);
+		FileContent[] contents = FileContent.getContentArray(save_data, save_settings);
 		processor.fileExchanger.store(file, content, contents);
 	}
 
@@ -215,7 +214,7 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void load(File file, boolean load_data, boolean load_settings)
 	{
-		FileContent[] content = FileProcessor.getContentArray(load_data, load_settings);
+		FileContent[] content = FileContent.getContentArray(load_data, load_settings);
 		load((EnvironmentContent) processor.fileExchanger.load(file, content));
 	}
 
@@ -231,132 +230,6 @@ public class HybridEnvironment// implements Serializable
 	{
 		return settings;
 	}
-	//
-	// /*
-	// * Load a different set of contents
-	// */
-	// public void loadContents(EnvironmentContent content)
-	// {
-	//
-	// processor.prepareEnvironment(content);
-	// }
-	//
-	// /*
-	// * Load contents from a file
-	// */
-	// public void loadContentsFromFile(File file, boolean load_data, boolean
-	// load_settings)
-	// {
-	// FileContent[] content = FileProcessor.getContentArray(load_data,
-	// load_settings);
-	// loadContents((EnvironmentContent) processor.fileExchanger.load(file,
-	// content));
-	// }
-	//
-	// public void loadContentsFromFile(File file)
-	// {
-	// processor.fileExchanger.load(file, FileContent.values());
-	// }
-	//
-	// /*
-	// * Save the contents of the environment to a file
-	// */
-	// public void saveEnvironment(File file)
-	// {
-	// saveEnvironment(file, true, true);
-	// }
-	//
-	// /*
-	// * Save the contents of the environment to a file
-	// */
-	// public void saveEnvironment(File file, boolean save_data, boolean
-	// save_settings)
-	// {
-	// FileContent[] contents = FileProcessor.getContentArray(save_data,
-	// save_settings);
-	// this.processor.fileExchanger.store(file, this.content, contents);
-	// }
-	//
-	// /*
-	// * Get the current settings
-	// */
-	// public SettingConfigurer getSettings()
-	// {
-	// return settings;
-	// }
-	//
-	// /*
-	// * Load settings from a file
-	// */
-	// public void loadSettingsFromXMLFile(File file)
-	// {
-	//
-	// SettingConfigurer loaded = null;
-	// if (file == null)
-	// {
-	// loaded = FileProcessor.loadXMLSettings();
-	// } else
-	// {
-	// loaded = FileProcessor.loadXMLSettings(file);
-	// }
-	// for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
-	// {
-	// settings.loadSettings(set);
-	// }
-	// }
-	//
-	// /*
-	// * Save the settings to a file
-	// */
-	// public void saveSettingsToXMLFile(File file)
-	// {
-	// processor.fileExchanger.store(file, this.content, FileContent.SETTINGS);
-	// }
-
-	// /*
-	// * Add components to the environment
-	// */
-	// public void addComponents(Component... components)
-	// {
-	// for (Component component : components)
-	// {
-	// addComponents(component, 1);
-	// }
-	// }
-	//
-	// /*
-	// * Add components to the environment in bulk
-	// */
-	// public void addComponents(Component component, Integer quantity)
-	// {
-	//
-	// content.getConfiguration().addComponent(component, quantity);
-	// }
-	//
-	// /*
-	// * Load contents from a file
-	// */
-	// public void loadComponentFromFile(File file)
-	// {
-	// loadComponentsFromFile(file, 1);
-	// }
-	//
-	// /*
-	// * Load contents from a file
-	// */
-	// public void loadComponentsFromFile(File file, Integer quantity)
-	// {
-	//
-	// Component component = this.processor.fileExchanger.load(file,
-	// FileContent.COMPONENT, FileContent.DATA);
-	// addComponents(component, quantity);
-	//
-	// }
-
-	// public EnvironmentConfiguration getActions()
-	// {
-	// return EnvironmentConfiguration.getOperator(this);
-	// }
 
 	/*
 	 * Access this environment statically using the key generated by the content

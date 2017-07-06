@@ -2,13 +2,13 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
-public class JumpEvaluator extends ProcessingElement implements EventHandler
+public class JumpEvaluator extends ProcessingConnector implements EventHandler
 {
 
 	public Integer toggles = 0; // toggle index to eliminate the error within
@@ -41,7 +41,7 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 		} else
 		{
 			getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-			if (ComponentOperator.getOperator(getEnv()).outOfAllDomains())
+			if (FullComponentOperator.getOperator(getEnv()).outOfAllDomains())
 			{
 				getData().storeData(t, true);
 			} else
@@ -90,7 +90,7 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 	{
 		getComputationEngine().updateValues(y); // load new ode values
 
-		ComponentOperator.getOperator(getEnv()).storeData(); // store pre-jump
+		FullComponentOperator.getOperator(getEnv()).storeData(); // store pre-jump
 																// data
 
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); // store
@@ -104,7 +104,7 @@ public class JumpEvaluator extends ProcessingElement implements EventHandler
 		//																						// jump
 		//																						// index
 		//
-		ComponentOperator.getOperator(getEnv()).storeData(); // store post-jump
+		FullComponentOperator.getOperator(getEnv()).storeData(); // store post-jump
 		//																// data
 
 		getComputationEngine().setODEValueVector(y); // update the ode vector

@@ -33,6 +33,15 @@ public class DataSettings
 												// variety of trials multiple
 												// times
 
+	public Boolean saveDataToFileDefault; // flag indicating if data should be
+											// saved in an output file when not
+											// specified by the user
+
+	public Boolean saveSettingsToFileDefault; // flag indicating if settings
+												// should be saved in an output
+												// file when not specified by
+												// the user
+
 	/*
 	 * Default value constructor
 	 */
@@ -45,6 +54,8 @@ public class DataSettings
 		dataStoreIncrement = .05;
 		resultAutoStoreDirectory = defaultResultsDirectory;
 		createResultSubDirectory = true;
+		saveDataToFileDefault = true;
+		saveSettingsToFileDefault = false;
 
 	}
 

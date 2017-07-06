@@ -23,6 +23,21 @@ public enum FileContent
 
 	private ArrayList<String> identifiers;;
 
+	public static FileContent[] getContentArray(boolean load_data, boolean load_settings)
+	{
+		ArrayList<FileContent> content = new ArrayList<FileContent>();
+		content.add(COMPONENT);
+		if (load_data)
+		{
+			content.add(DATA);
+		}
+		if (load_settings)
+		{
+			content.add(SETTINGS);
+		}
+		return content.toArray(new FileContent[content.size()]);
+	}
+
 	private FileContent(String... identifiers)
 	{
 		this.identifiers = new ArrayList<String>();

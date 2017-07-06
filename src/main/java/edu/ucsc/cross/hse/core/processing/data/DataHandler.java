@@ -16,11 +16,11 @@ import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataHandler extends ProcessingElement implements DataAccessor
+public class DataHandler extends ProcessingConnector implements DataAccessor
 {
 
 	private Double lastStoreTime = -10.0; // time since last data was stored,

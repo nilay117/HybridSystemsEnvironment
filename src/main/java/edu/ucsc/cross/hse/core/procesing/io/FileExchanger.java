@@ -34,14 +34,14 @@ import com.rits.cloning.Cloner;
 
 import bs.commons.objects.manipulation.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
+import edu.ucsc.cross.hse.core.framework.component.ComponentContent;
 import edu.ucsc.cross.hse.core.framework.data.State;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingElement;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
 
-public class FileExchanger extends ProcessingElement
+public class FileExchanger extends ProcessingConnector
 {
 
 	static FileProcessor packager;

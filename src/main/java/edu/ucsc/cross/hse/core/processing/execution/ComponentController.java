@@ -7,8 +7,8 @@ import java.util.List;
 
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOrganizer;
-import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentContent;
+import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
@@ -21,12 +21,12 @@ import edu.ucsc.cross.hse.core.processing.data.DataHandler;
  */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class ComponentAdministrator extends ProcessingElement
+public class ComponentController extends ProcessingConnector
 {
 
 	HashMap<String, Data> initialData;
 
-	ComponentAdministrator(CentralProcessor processor)
+	ComponentController(CentralProcessor processor)
 	{
 		super(processor);
 		initialData = new HashMap<String, Data>();
@@ -57,14 +57,14 @@ public class ComponentAdministrator extends ProcessingElement
 			// this.getComponents().setEnvTime(getEnvTime() + .000000001);
 		} else
 		{
-			ComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
+			FullComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
 		}
 	}
 
 	private void executeAllOccurringJumps()
 	{
 
-		ArrayList<Component> jumpComponents = ComponentOperator.getOperator(getEnv()).jumpingComponents();
+		ArrayList<Component> jumpComponents = FullComponentOperator.getOperator(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		// this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
