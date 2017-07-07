@@ -71,6 +71,7 @@ public class CentralProcessor
 	protected CentralProcessor(HybridEnvironment processor)
 	{
 		environmentInterface = processor;
+		systemConsole = new SystemConsole(this);
 		initializeProcessingElements();
 	}
 
@@ -91,7 +92,8 @@ public class CentralProcessor
 		contentAdmin = ContentOperator.getOperator(environmentInterface.getEnvironment());
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
-		systemConsole = new SystemConsole(this);
+		systemConsole.initialize();
+		//systemConsole = new SystemConsole(this);
 		componentAdmin = new ComponentController(this);
 		fileExchanger = new FileExchanger(this);
 		jumpEvaluator = new JumpEvaluator(this);
@@ -258,7 +260,8 @@ public class CentralProcessor
 	protected void storeConfigurations()
 	{
 		FullComponentOperator.getOperator(this.environmentInterface.getEnvironment()).storeConfiguration();
-		for (Component component : this.environmentInterface.getEnvironment().component().getContent().getComponents(true))
+		for (Component component : this.environmentInterface.getEnvironment().component().getContent()
+		.getComponents(true))
 		{
 			FullComponentOperator.getOperator(component).storeConfiguration();
 		}

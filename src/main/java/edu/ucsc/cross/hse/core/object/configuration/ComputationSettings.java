@@ -85,12 +85,12 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
-		odeMinStep = .00005;
+		odeMinStep = .0005;
 		odeMaxStep = .1;
-		odeScalAbsoluteTolerance = 1.0e-6;
-		odeScalRelativeTolerance = 1.0e-6;
-		ehMaxCheckInterval = .000001;
-		ehConvergence = .00001;
+		odeScalAbsoluteTolerance = 1.0e-4;
+		odeScalRelativeTolerance = 1.0e-4;
+		ehMaxCheckInterval = .001;
+		ehConvergence = .001;
 		ehMaxIterationCount = 10;
 		jumpPriority = true;
 		maxRecursiveStackSize = 1000;

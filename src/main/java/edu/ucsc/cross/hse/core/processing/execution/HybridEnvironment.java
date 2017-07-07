@@ -24,6 +24,7 @@ import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
+import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
@@ -116,7 +117,8 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void resume()
 	{
-		processor.systemConsole.print("Environment Resumed - Simulation Time: " + getEnvironment().getEnvironmentTime() + " sec");
+		processor.systemConsole
+		.print("Environment Resumed - Simulation Time: " + getEnvironment().getEnvironmentTime() + " sec");
 		processor.launchEnvironment(true);
 	}
 
@@ -181,6 +183,11 @@ public class HybridEnvironment// implements Serializable
 	public ComponentConfigurer configure()
 	{
 		return ComponentConfigurer.getOperator(content);
+	}
+
+	public SystemConsole console()
+	{
+		return processor.systemConsole;
 	}
 
 	/*

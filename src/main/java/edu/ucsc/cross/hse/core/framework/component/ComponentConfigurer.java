@@ -31,6 +31,23 @@ public class ComponentConfigurer
 	 *
 	 * @param component - component to be added
 	 */
+	public <T extends Component> ArrayList<Component> addComponent(T... components)
+	{
+		for (T component : components)
+		{
+			addComponent(component, 1);
+
+		}
+		return null;
+	}
+
+	/*
+	 * Adds a single sub-component to this component. This is used to add
+	 * components that are not explicitly defined in the main class, which
+	 * allows for variations without modifying the main component code itself
+	 *
+	 * @param component - component to be added
+	 */
 	public <T extends Component> ArrayList<Component> addComponent(T component)
 	{
 		return addComponent(component, 1);

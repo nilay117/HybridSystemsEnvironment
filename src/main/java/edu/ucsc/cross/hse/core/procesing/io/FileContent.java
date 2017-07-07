@@ -18,24 +18,25 @@ public enum FileContent
 	SETTINGS(
 		SettingConfigurer.class.getSimpleName()),
 	COMPONENT(
-		Component.class.getSimpleName()),
+		Component.class.getSimpleName(),
+		EnvironmentContent.class.getSimpleName()),
 	UNKNOWN();
 
 	private ArrayList<String> identifiers;;
 
 	public static FileContent[] getContentArray(boolean load_data, boolean load_settings)
 	{
-		ArrayList<FileContent> content = new ArrayList<FileContent>();
-		content.add(COMPONENT);
+		ArrayList<FileContent> contentz = new ArrayList<FileContent>();
+		contentz.add(COMPONENT);
 		if (load_data)
 		{
-			content.add(DATA);
+			contentz.add(DATA);
 		}
 		if (load_settings)
 		{
-			content.add(SETTINGS);
+			contentz.add(SETTINGS);
 		}
-		return content.toArray(new FileContent[content.size()]);
+		return contentz.toArray(new FileContent[contentz.size()]);
 	}
 
 	private FileContent(String... identifiers)

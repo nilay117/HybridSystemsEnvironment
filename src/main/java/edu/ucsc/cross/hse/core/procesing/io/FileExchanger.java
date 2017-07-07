@@ -55,12 +55,12 @@ public class FileExchanger extends ProcessingConnector
 
 	public void store(File file_path, Component component)
 	{
-		FileProcessor.store(file_path, component, FileContent.values());
+		store(file_path, component, FileContent.values());
 	}
 
 	public void store(File file_path, Component component, FileContent... contents)
 	{
-		FileProcessor.store(file_path, component, contents);
+		packager.store(file_path, component, contents);
 	}
 
 	public Component load(File file)

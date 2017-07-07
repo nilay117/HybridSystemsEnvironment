@@ -51,15 +51,25 @@ public class FileProcessor extends ProcessingConnector
 		kryo = new Kryo();
 	}
 
-	public static void store(File location, Component component, FileContent... contents)
+	public void store(File location, Component component, FileContent... contents)
+	{
+		store(location, this.getProcessor(), component, contents);
+	}
+
+	public static void store(File location, HybridEnvironment env, Component component, FileContent... contents)
 	{
 		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
-		createFiles(location, component, contents);
+		createFiles(location, env, component, contents);
 		consolidateFile(location);
 
 	}
 
 	private static void createFiles(File location, Component component, FileContent... contents)
+	{
+		createFiles(location, null, component, contents);
+	}
+
+	private static void createFiles(File location, HybridEnvironment env, Component component, FileContent... contents)
 	{
 		for (FileContent content : contents)
 		{
@@ -71,7 +81,7 @@ public class FileProcessor extends ProcessingConnector
 					storeData(location, component);
 					break;
 				case SETTINGS:
-					storeSettings(location, component.component().getSettings());
+					storeSettings(location, env.getSettings());
 					break;
 				case COMPONENT:
 					storeComponent(location, component);
@@ -113,8 +123,7 @@ public class FileProcessor extends ProcessingConnector
 		String xmlSettings = XMLParser.serializeObject(settings);
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
 
-		ObjectSerializer.store(location.getAbsolutePath() + "/" + FullComponentOperator.generateInstanceAddress(settings),
-		compressed);
+		ObjectSerializer.store(location.getAbsolutePath() + "/" + settings.getClass().getName(), compressed);
 	}
 
 	private static void storeComponent(File location, Component component)
@@ -148,17 +157,22 @@ public class FileProcessor extends ProcessingConnector
 			{
 				try
 				{
-					// this.getConsole().print("Loading data from file : " +
-					// entry.getName());
-					Object readIn = kryo.readClassAndObject(input);
 					FileContent inputElement = FileContent.getFileContentType(entry.getName());
-					this.getConsole().print("Loading data from file : " + entry.getName() + inputElement.name());
+
 					if (contentz.contains(inputElement))
 					{
+						// this.getConsole().print("Loading data from file : " +
+						// entry.getName());
+						Object readIn = kryo.readClassAndObject(input);
+						//FileContent inputElement = FileContent.getFileContentType(entry.getName());
+						this.getConsole().print("Loading data from file : " + entry.getName() + inputElement.name());
+						//if (contentz.contains(inputElement))
+
 						switch (inputElement)
 						{
 
 						case DATA:
+							this.getConsole().print("Loading data file : " + entry.getName() + inputElement.name());
 							datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
 							break;
 						case SETTINGS:
@@ -181,7 +195,10 @@ public class FileProcessor extends ProcessingConnector
 			}
 			if (datas.size() > 0)
 			{
-				loadedContent.put(FileContent.DATA, datas);
+				if (contentz.contains(FileContent.DATA))
+				{
+					loadedContent.put(FileContent.DATA, datas);
+				}
 			}
 		} catch (Exception ee)
 		{
@@ -220,6 +237,19 @@ public class FileProcessor extends ProcessingConnector
 		}
 	}
 
+	public static void saveXMLSettingsWithAdditions(File file, Object... additions)
+	{
+		try
+		{
+			SettingConfigurer settings = new SettingConfigurer();
+			settings.loadSettings(additions);
+			FileSystemOperator.createOutputFile(file, XMLParser.serializeObject(settings));
+		} catch (Exception badFile)
+		{
+			badFile.printStackTrace();
+		}
+	}
+
 	public static Component load(HybridEnvironment environment, File file, FileContent... content)
 	{
 
@@ -235,7 +265,7 @@ public class FileProcessor extends ProcessingConnector
 					loadAllData(contents, component);
 					break;
 				case SETTINGS:
-					environment.getSettings().loadSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
+					environment.getSettings().setSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
 					break;
 				}
 			} catch (Exception noEnvironment)
@@ -289,7 +319,7 @@ public class FileProcessor extends ProcessingConnector
 
 	public static <T extends Component> void saveComponent(T component, File file, FileContent... contents)
 	{
-		store(file, component, contents);
+		store(file, null, component, contents);
 
 	}
 

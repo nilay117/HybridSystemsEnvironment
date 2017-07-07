@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.procesing.io;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 import com.be3short.data.info.SystemInfo;
@@ -16,11 +18,19 @@ public class SystemConsole extends ProcessingConnector
 	private static CallerRetriever classRetriever = new CallerRetriever();
 	private Double nextPrintTime;
 	private Double printInterval;
+	private OutputStream alternatePrintLocation;
 
 	public SystemConsole(CentralProcessor processor)
 	{
 		super(processor);
+		alternatePrintLocation = null;
 		nextPrintTime = 0.0;
+		initialize();
+
+	}
+
+	public void initialize()
+	{
 		printInterval = getSettings().getExecutionSettings().simDuration
 		/ getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
 	}
@@ -72,14 +82,31 @@ public class SystemConsole extends ProcessingConnector
 		// getCallingClassName(1) + "] " + message);
 		if (message != null)
 		{
-			System.out.println(
-			// "[" + StringFormatter.getMemoryUsageInfoString() + "]" + "[" +
-			// getCallingClassName(1) + "] " + message);
-			"[" + StringFormatter.getAbsoluteHHMMSS() + "][" + System.currentTimeMillis() / 1000 + "]["
-			+ Math.round(info.usedMem() / Math.pow(1024, 2)) + "/" + Math.round(info.totalMem() / Math.pow(1024, 2))
-			+ "]" + "[" + getCallingClassName(1) + "] " + message);
+			String appendedMsg = "[" + StringFormatter.getAbsoluteHHMMSS() + "][" + System.currentTimeMillis() / 1000
+			+ "][" + Math.round(info.usedMem() / Math.pow(1024, 2)) + "/"
+			+ Math.round(info.totalMem() / Math.pow(1024, 2)) + "]" + "[" + getCallingClassName(1) + "] " + message;
 
+			if (alternatePrintLocation != null)
+			{
+				try
+				{
+					alternatePrintLocation.write(appendedMsg.getBytes());
+					//	alternatePrintLocation.flush();
+				} catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else
+			{
+				System.out.println(appendedMsg);
+			}
 		}
+	}
+
+	public void setAlternatePrintLocation(OutputStream alternatePrintLocation)
+	{
+		this.alternatePrintLocation = alternatePrintLocation;
 	}
 
 	public void printStartMessage()

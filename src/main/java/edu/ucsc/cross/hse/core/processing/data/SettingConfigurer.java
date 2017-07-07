@@ -63,6 +63,14 @@ public class SettingConfigurer
 		}
 	}
 
+	public void setSettings(SettingConfigurer setting)
+	{
+		for (Object set : SettingConfigurer.getSettingsMap(setting).values())
+		{
+			loadSettings(set);
+		}
+	}
+
 	public <T> T getSetting(Class<T> setting_class)
 	{
 		T returnSetting = null;
