@@ -10,6 +10,17 @@ public class ValueDomain
 
 	private Double value; // fixed value
 	private Double min; // minimum value of the range
+
+	public Double getMin()
+	{
+		return min;
+	}
+
+	public Double getMax()
+	{
+		return max;
+	}
+
 	private Double max; // maximum value of the range
 
 	/*
@@ -86,4 +97,8 @@ public class ValueDomain
 		value = val;
 	}
 
+	public boolean isRange()
+	{
+		return min != max;
+	}
 }

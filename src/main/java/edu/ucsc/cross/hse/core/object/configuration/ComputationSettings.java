@@ -34,7 +34,7 @@ public class ComputationSettings
 
 	public IntegratorType integrator; // Integrator to be used
 
-	public double handlingThresholdReductionFactor = 1.0; // the amount that the
+	public double handlingReduction = 1.0; // the amount that the
 															// event handling
 															// threshold will be
 															// changed upon each
@@ -44,7 +44,7 @@ public class ComputationSettings
 															// number only makes
 															// things worse.
 
-	public double stepSizeReductionFactor = 1.3; // the fraction that the step
+	public double stepSizeReduction = 1.3; // the fraction that the step
 													// size will be reduced when
 													// integerator errors occur
 													// due to the step size

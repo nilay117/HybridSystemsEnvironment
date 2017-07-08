@@ -159,7 +159,7 @@ public class ExecutionMonitor extends ProcessingConnector
 			// this.getSettings().getComputationSettings().stepSizeReductionFactor;
 			this.getSettings()
 			.getComputationSettings().odeMinStep = this.getSettings().getComputationSettings().odeMinStep
-			/ (5 * (this.getSettings().getComputationSettings().stepSizeReductionFactor));
+			/ (5 * (this.getSettings().getComputationSettings().stepSizeReduction));
 			handledIssue = true;
 		}
 		return handledIssue;
@@ -175,9 +175,9 @@ public class ExecutionMonitor extends ProcessingConnector
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
 			getSettings()
 			.getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
-			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
+			/ getSettings().getComputationSettings().handlingReduction;
 			getSettings().getComputationSettings().ehConvergence = getSettings().getComputationSettings().ehConvergence
-			/ getSettings().getComputationSettings().handlingThresholdReductionFactor;
+			/ getSettings().getComputationSettings().handlingReduction;
 			handledIssue = true;
 		}
 		return handledIssue;

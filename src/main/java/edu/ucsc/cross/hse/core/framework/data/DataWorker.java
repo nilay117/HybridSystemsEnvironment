@@ -67,6 +67,11 @@ public class DataWorker<T> extends UserComponentOperator
 		data.save = store;
 	}
 
+	public ValueDomain getValueDomain()
+	{
+		return data.elementDomain;
+	}
+
 	/*
 	 * Access to this worker
 	 */

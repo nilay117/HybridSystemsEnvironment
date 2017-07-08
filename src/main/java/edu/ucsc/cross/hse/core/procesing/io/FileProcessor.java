@@ -113,6 +113,8 @@ public class FileProcessor extends ProcessingConnector
 		for (Data dat : component.component().getContent().getData(true))
 		{
 			data.put(dat.component().getAddress(), dat.component().getStoredValues());
+			//ObjectSerializer.store(location.getAbsolutePath() + "/" + dat.component().getAddress(),
+			//dat.component().getStoredValues());//location.getAbsolutePath());
 		}
 		ObjectSerializer.store(data, location.getAbsolutePath());
 

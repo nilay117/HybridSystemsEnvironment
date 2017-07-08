@@ -35,6 +35,7 @@ public class HybridEnvironment// implements Serializable
 	static HashMap<String, HybridEnvironment> environments = new HashMap<String, HybridEnvironment>();
 
 	protected EnvironmentContent content; // all elements that make up the
+
 	// environment
 	// itself such as data, components, systems
 	// etc
@@ -140,6 +141,9 @@ public class HybridEnvironment// implements Serializable
 		processor.resetEnvironment(re_initialize);
 	}
 
+	/*
+	 * Reloads all data present within the environment
+	 */
 	public void refresh()
 	{
 		CentralProcessor.refreshIfDataPresent(this, content);
@@ -150,7 +154,15 @@ public class HybridEnvironment// implements Serializable
 	 */
 	public void clear()
 	{
-		initialize(new EnvironmentContent(content.component().getLabels().getName()), false);
+		clear(false);
+	}
+
+	/*
+	 * Clear the contents of the environment
+	 */
+	public void clear(boolean clear_settings)
+	{
+		initialize(new EnvironmentContent(content.component().getLabels().getName()), false, clear_settings);
 	}
 
 	/*
@@ -185,6 +197,9 @@ public class HybridEnvironment// implements Serializable
 		return ComponentConfigurer.getOperator(content);
 	}
 
+	/*
+	 * Access the system console
+	 */
 	public SystemConsole console()
 	{
 		return processor.systemConsole;
@@ -217,7 +232,7 @@ public class HybridEnvironment// implements Serializable
 	}
 
 	/*
-	 * Load contents from a file
+	 * Load specified contents from a file based on input flags
 	 */
 	public void load(File file, boolean load_data, boolean load_settings)
 	{
@@ -225,6 +240,9 @@ public class HybridEnvironment// implements Serializable
 		load((EnvironmentContent) processor.fileExchanger.load(file, content));
 	}
 
+	/*
+	 * Load contents from a file including data and settings
+	 */
 	public void load(File file)
 	{
 		load((EnvironmentContent) processor.fileExchanger.load(file, FileContent.values()));
@@ -252,13 +270,34 @@ public class HybridEnvironment// implements Serializable
 		}
 	}
 
+	/*
+	 * initialize the environment content, specifying if content contains data
+	 */
 	private void initialize(EnvironmentContent content, boolean pre_loaded_content)
 	{
+		initialize(content, pre_loaded_content, true);
+	}
+
+	/*
+	 * initialize the environment content, specifying if content contains data
+	 * and if settings should be reinitialized
+	 */
+	private void initialize(EnvironmentContent content, boolean pre_loaded_content, boolean re_initialize_settings)
+	{
 		this.content = content;
-		settings = new SettingConfigurer();
 		environments.put(this.toString(), this);
-		settings.loadSettingsFromXMLFile(null);
-		processor = new CentralProcessor(this);
+		if (re_initialize_settings)
+		{
+			settings = new SettingConfigurer();
+			settings.loadSettingsFromXMLFile(null);
+		}
+		if (processor == null)
+		{
+			processor = new CentralProcessor(this);
+		} else
+		{
+			// processor.initializeProcessingElements();
+		}
 		if (pre_loaded_content)
 		{
 			processor.dataHandler.loadStoreStates();

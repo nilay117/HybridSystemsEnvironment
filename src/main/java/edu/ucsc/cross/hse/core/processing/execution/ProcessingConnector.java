@@ -24,20 +24,29 @@ public abstract class ProcessingConnector
 {
 
 	protected HybridEnvironment processor; // environment interface
-	private CentralProcessor proc; // central process or
+	private CentralProcessor proc; // central processor
 
+	/*
+	 * Constructor using the hybrid environment
+	 */
 	protected ProcessingConnector(HybridEnvironment processor)
 	{
 		this.processor = processor;
 		this.proc = processor.processor;
 	}
 
+	/*
+	 * Constructor using the central processor
+	 */
 	protected ProcessingConnector(CentralProcessor processor)
 	{
 		proc = processor;
 		this.processor = processor.environmentInterface;
 	}
 
+	/*
+	 * The following methods allow access to each of the processing modules
+	 */
 	protected SimulationEngine getComputationEngine()
 	{
 		return proc.simulationEngine;
@@ -114,8 +123,4 @@ public abstract class ProcessingConnector
 		return DataOperator.getOperator(component);
 	}
 
-	protected void setSettings(SettingConfigurer settings)
-	{
-		proc.environmentInterface.settings.loadSettings(settings);
-	}
 }

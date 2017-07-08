@@ -104,8 +104,10 @@ public class ContentOperator extends FullComponentOperator
 		linkEnvironment();
 		initializeComponents(Data.class, State.class);
 		initializeComponents();
+		//	storeConfiguration();
 		generateAddresses();
 		linkEnvironment();
+		//storeConfiguration();
 	}
 
 	protected void preinitializeContent()
@@ -134,10 +136,12 @@ public class ContentOperator extends FullComponentOperator
 			if (initialize)
 			{
 				FullComponentOperator.getOperator(component).protectedInitialize();
+				FullComponentOperator.getOperator(component).storeConfiguration();
+
 			}
 		}
 
-		storeConfiguration();
+		//storeConfiguration();
 	}
 
 	private void generateAddresses()

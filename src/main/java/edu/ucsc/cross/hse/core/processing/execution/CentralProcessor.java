@@ -93,7 +93,7 @@ public class CentralProcessor
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
 		systemConsole.initialize();
-		//systemConsole = new SystemConsole(this);
+		// systemConsole = new SystemConsole(this);
 		componentAdmin = new ComponentController(this);
 		fileExchanger = new FileExchanger(this);
 		jumpEvaluator = new JumpEvaluator(this);
@@ -189,6 +189,7 @@ public class CentralProcessor
 
 	protected void resetEnvironment(boolean reinitialize_data)
 	{
+		this.contentAdmin.initializeTimeDomains();
 		ArrayList<Data> dat = environmentInterface.content.component().getContent().getData(true);
 		for (Component data : environmentInterface.content.component().getContent().getComponents(true))
 		{
@@ -201,8 +202,9 @@ public class CentralProcessor
 		{
 			DataOperator.getOperator(data).resetData();
 			data.component().configure()
-			.setInitialized(FullComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
+			.setInitialized(!FullComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
 		}
+
 	}
 
 	/*

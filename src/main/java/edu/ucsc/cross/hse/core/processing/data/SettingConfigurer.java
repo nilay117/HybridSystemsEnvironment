@@ -106,6 +106,11 @@ public class SettingConfigurer
 		}
 	}
 
+	public static SettingConfigurer getSettingsFromFile()
+	{
+		return FileProcessor.loadXMLSettings();
+	}
+
 	/*
 	 * Save the settings to a file
 	 */

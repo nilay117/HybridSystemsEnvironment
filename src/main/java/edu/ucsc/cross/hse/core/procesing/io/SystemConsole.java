@@ -31,6 +31,7 @@ public class SystemConsole extends ProcessingConnector
 
 	public void initialize()
 	{
+		nextPrintTime = 0.0;
 		printInterval = getSettings().getExecutionSettings().simDuration
 		/ getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
 	}
@@ -91,7 +92,7 @@ public class SystemConsole extends ProcessingConnector
 				try
 				{
 					alternatePrintLocation.write(appendedMsg.getBytes());
-					//	alternatePrintLocation.flush();
+					// alternatePrintLocation.flush();
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block

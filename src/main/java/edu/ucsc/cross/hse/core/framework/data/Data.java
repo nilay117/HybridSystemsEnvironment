@@ -217,6 +217,7 @@ public class Data<T> extends Component
 	@Override
 	public void initialize()
 	{
+		// setValue(0.0);
 		if (savedHybridValues == null)
 		{
 			savedHybridValues = new HashMap<HybridTime, T>();
@@ -228,9 +229,22 @@ public class Data<T> extends Component
 				setValue((T) elementDomain.getValue(true));
 			} catch (Exception e)
 			{
-				setValue(element);
+				try
+				{
+					setValue(element);
+				} catch (Exception ee)
+				{
+					setValue(null);
+				}
 			}
-			initialValue = (T) ObjectCloner.xmlClone(element);
+			try
+			{
+				initialValue = (T) ObjectCloner.xmlClone(element);
+			} catch (Exception ee)
+			{
+				initialValue = null;
+			}
+			// initialValue = (T) ObjectCloner.xmlClone(element);
 		}
 	}
 }
