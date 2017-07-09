@@ -4,18 +4,14 @@ import java.io.File;
 import java.util.HashMap;
 
 import bs.commons.objects.manipulation.ObjectCloner;
-import bs.commons.objects.manipulation.XMLParser;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
-import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.execution.ComponentDirector;
 import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 
 /*
@@ -47,6 +43,8 @@ public class UserComponentOperator
 	 * Copy the component with the option of including the hierarchy or saved
 	 * data is necessary
 	 */
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
 	{
 		HashMap<Data, HashMap<HybridTime, T>> tempValues = new HashMap<Data, HashMap<HybridTime, T>>();
@@ -153,7 +151,7 @@ public class UserComponentOperator
 	}
 
 	/*
-	 * Get the address of the component, which is unique for every instance
+	 * Access the address of the component, which is unique for every instance
 	 */
 	public String getAddress()
 	{

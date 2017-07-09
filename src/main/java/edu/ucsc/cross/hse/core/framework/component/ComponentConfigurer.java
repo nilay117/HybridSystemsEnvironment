@@ -4,10 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
@@ -21,7 +19,7 @@ public class ComponentConfigurer
 	public ComponentConfigurer(Component self)
 	{
 		co = self;
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/*
@@ -31,6 +29,7 @@ public class ComponentConfigurer
 	 *
 	 * @param component - component to be added
 	 */
+	@SuppressWarnings("unchecked")
 	public <T extends Component> ArrayList<Component> addComponent(T... components)
 	{
 		for (T component : components)
@@ -148,6 +147,7 @@ public class ComponentConfigurer
 	/*
 	 * Indicate whetehre or not this component should be initialized
 	 */
+	@SuppressWarnings("rawtypes")
 	public void setInitialized(Boolean initialized, Boolean include_data)
 	{
 		ArrayList<Data> data = co.component().getContent().getData(true);

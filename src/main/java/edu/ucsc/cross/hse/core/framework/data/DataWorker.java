@@ -3,9 +3,6 @@ package edu.ucsc.cross.hse.core.framework.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import bs.commons.unitvars.core.UnitData.Unit;
-import bs.commons.unitvars.core.UnitValue;
-import bs.commons.unitvars.exceptions.UnitException;
 import edu.ucsc.cross.hse.core.framework.component.UserComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
@@ -67,6 +64,9 @@ public class DataWorker<T> extends UserComponentOperator
 		data.save = store;
 	}
 
+	/*
+	 * Access the value domainof the data element
+	 */
 	public ValueDomain getValueDomain()
 	{
 		return data.elementDomain;
@@ -75,6 +75,7 @@ public class DataWorker<T> extends UserComponentOperator
 	/*
 	 * Access to this worker
 	 */
+	@SuppressWarnings("unchecked")
 	public static <S> DataWorker<S> getConfigurer(Data<S> component)
 	{
 		if (dataActions.containsKey(component))

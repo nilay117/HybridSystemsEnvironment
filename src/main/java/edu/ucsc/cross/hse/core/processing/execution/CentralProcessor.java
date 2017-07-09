@@ -2,9 +2,6 @@ package edu.ucsc.cross.hse.core.processing.execution;
 
 import java.util.ArrayList;
 
-import com.be3short.data.cloning.ObjectCloner;
-
-import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
@@ -214,6 +211,8 @@ public class CentralProcessor
 	 * reset the environment to its initial state and also reinitialize the
 	 * components
 	 */
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	protected void resetEnvironment(boolean reinitialize_data)
 	{
 		this.contentAdmin.initializeTimeDomains();
@@ -334,6 +333,7 @@ public class CentralProcessor
 	 * Refresh the data processing components of an environment if new data is
 	 * detected
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void refreshIfDataPresent(EnvironmentManager env, Component component)
 	{
 		boolean loadData = false;

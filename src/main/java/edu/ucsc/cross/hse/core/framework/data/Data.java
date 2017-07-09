@@ -3,7 +3,6 @@ package edu.ucsc.cross.hse.core.framework.data;
 import java.util.HashMap;
 
 import bs.commons.objects.manipulation.ObjectCloner;
-import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
@@ -55,6 +54,7 @@ public class Data<T> extends Component
 	/*
 	 * Safely access element and randomize if domain permits
 	 */
+	@SuppressWarnings("unchecked")
 	public T getValue(boolean randomize_from_domain)
 	{
 		try
@@ -84,6 +84,7 @@ public class Data<T> extends Component
 	/*
 	 * Safely store elements
 	 */
+	@SuppressWarnings("unchecked")
 	public void setValue(T min, T max)
 	{
 		// if (FieldFinder.containsSuper(min, Double.class))
@@ -169,6 +170,7 @@ public class Data<T> extends Component
 	 * Optional: Description is just extra information you want to include, and
 	 * the save flag is just if you want to save your car
 	 */
+	@SuppressWarnings("unchecked")
 	public Data(String name, T obj, String description, Boolean save_default)
 	{
 		super(name, description);
@@ -176,6 +178,7 @@ public class Data<T> extends Component
 		init(save_default, obj);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Data(String name, T obj, Boolean save_default)
 	{
 		super(name, "");
@@ -183,6 +186,7 @@ public class Data<T> extends Component
 		init(save_default, obj);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Data(String name, T obj)
 	{
 		super(name, "");
@@ -190,6 +194,7 @@ public class Data<T> extends Component
 		init(false, obj);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Data(String name, T min, T max)
 	{
 		super(name, "");
@@ -197,6 +202,7 @@ public class Data<T> extends Component
 		init(false, min, max);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void init(Boolean save_default, T... obj)
 	{
 		element = obj[0];
@@ -214,6 +220,7 @@ public class Data<T> extends Component
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize()
 	{

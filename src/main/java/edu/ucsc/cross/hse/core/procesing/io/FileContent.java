@@ -20,8 +20,12 @@ public enum FileContent
 		HybridEnvironment.class.getSimpleName()),
 	UNKNOWN();
 
-	private ArrayList<String> identifiers;;
+	private ArrayList<String> identifiers; // Strings that identify the contents
+											// of a file
 
+	/*
+	 * Get File Content array from boolean input
+	 */
 	public static FileContent[] getContentArray(boolean load_data, boolean load_settings)
 	{
 		ArrayList<FileContent> contentz = new ArrayList<FileContent>();
@@ -37,15 +41,9 @@ public enum FileContent
 		return contentz.toArray(new FileContent[contentz.size()]);
 	}
 
-	private FileContent(String... identifiers)
-	{
-		this.identifiers = new ArrayList<String>();
-		for (String identifier : identifiers)
-		{
-			this.identifiers.add(identifier);
-		}
-	}
-
+	/*
+	 * Get the file type from the file name
+	 */
 	public static FileContent getFileContentType(String file_name)
 	{
 		FileContent element = FileContent.UNKNOWN;
@@ -61,5 +59,17 @@ public enum FileContent
 			}
 		}
 		return element;
+	}
+
+	/*
+	 * Constructor
+	 */
+	private FileContent(String... identifiers)
+	{
+		this.identifiers = new ArrayList<String>();
+		for (String identifier : identifiers)
+		{
+			this.identifiers.add(identifier);
+		}
 	}
 }

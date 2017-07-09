@@ -1,10 +1,5 @@
 package edu.ucsc.cross.hse.core.object.domain;
 
-import bs.commons.unitvars.core.UnitData.Unit;
-import bs.commons.unitvars.core.UnitValue;
-import bs.commons.unitvars.exceptions.UnitException;
-import bs.commons.unitvars.units.NoUnit;
-
 public class ValueDomain
 {
 
@@ -40,7 +35,6 @@ public class ValueDomain
 	/*
 	 * Constructor that implements a domain that is ranged
 	 */
-	@SuppressWarnings("unchecked")
 	public ValueDomain(Double min, Double max)
 	{
 		setFixedValue(min);
@@ -50,7 +44,6 @@ public class ValueDomain
 	/*
 	 * Set range of values to select random values from
 	 */
-	@SuppressWarnings("unchecked")
 	public void setRandomValues(Double min, Double max)
 	{
 		this.min = min;
@@ -61,7 +54,7 @@ public class ValueDomain
 	/*
 	 * Set a fixed value as the domain
 	 */
-	@SuppressWarnings("unchecked")
+
 	public void setFixedValue(Double val)
 	{
 		value = min = max = val;
@@ -79,7 +72,6 @@ public class ValueDomain
 	/*
 	 * Get a value from the domain, can select if randomized
 	 */
-	@SuppressWarnings("unchecked")
 	public Double getValue(boolean regenerate)
 	{
 		Double generatedValue = value;

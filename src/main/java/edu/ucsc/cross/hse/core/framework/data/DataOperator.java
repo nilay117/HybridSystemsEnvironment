@@ -7,7 +7,6 @@ import java.util.HashMap;
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
-import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
 /*
  * The purpose of this class is to protect all of the methods that should not be
@@ -35,6 +34,7 @@ public class DataOperator<T> extends FullComponentOperator
 	 * when a new value is stored. This list below contains general classes that
 	 * not need to be cloned to save
 	 */
+	@SuppressWarnings("rawtypes")
 	static public final ArrayList<Class> changableClasses = new ArrayList<Class>(Arrays.asList(new Class[]
 	{ Double.class, String.class, Integer.class, Long.class, Number.class, Boolean.class, Enum.class }));
 
@@ -53,6 +53,8 @@ public class DataOperator<T> extends FullComponentOperator
 	/*
 	 * Access the operator using the specified data
 	 */
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
 	public static <S> DataOperator<S> getOperator(Data<S> data)
 	{
 		if (dataOperators.containsKey(data))
@@ -145,6 +147,11 @@ public class DataOperator<T> extends FullComponentOperator
 		return true;
 	}
 
+	/*
+	 * Reset all data for the current data element
+	 */
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public void resetData()
 	{
 		((Data) component).component().getStoredValues().clear();

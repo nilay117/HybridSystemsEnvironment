@@ -10,7 +10,6 @@ import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
 import edu.ucsc.cross.hse.core.object.configuration.PrintSettings;
-import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 public class SettingConfigurer

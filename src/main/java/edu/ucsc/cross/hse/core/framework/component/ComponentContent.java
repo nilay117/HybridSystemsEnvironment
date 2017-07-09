@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,11 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import bs.commons.objects.access.FieldFinder;
-import bs.commons.objects.manipulation.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
-import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 /*
  * This class contains structures that define the hierarchy of additional
@@ -152,6 +148,7 @@ public class ComponentContent
 	/*
 	 * Gets components of a certain class, can also include dependents as well
 	 */
+	@SuppressWarnings("rawtypes")
 	public ArrayList<Component> getComponents(boolean include_children, Class... classes)
 	{
 		return getObjects(Component.class, include_children, classes);
@@ -173,7 +170,8 @@ public class ComponentContent
 	/*
 	 * Get any objects that match the search criteria defined by the inputs
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(
+	{ "rawtypes" })
 	public ArrayList<Data> getData(boolean include_children)
 	{
 		ArrayList<Data> data = new ArrayList<Data>();
@@ -193,7 +191,8 @@ public class ComponentContent
 	/*
 	 * Get any objects that match the search criteria defined by the inputs
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public <T> ArrayList<T> getObjects(Class<T> component_class, boolean include_children, Class<?>... classes)
 	{
 		ArrayList<T> allComponents = new ArrayList<T>();
@@ -313,6 +312,7 @@ public class ComponentContent
 	/*
 	 * get maps that define the scope of the hierarchies
 	 */
+	@SuppressWarnings("unused")
 	private HashMap<Class<?>, ArrayList<Component>> getScopeMap(boolean global)
 	{
 		if (global)
@@ -332,6 +332,7 @@ public class ComponentContent
 	private void loadHierarchyComponents()
 	{
 		Object sysObj = self;
+		@SuppressWarnings("rawtypes")
 		Class superClass = sysObj.getClass();
 		// System.out.println(self.getClass());
 		ArrayList<Object> allFields = new ArrayList<Object>();
@@ -520,6 +521,7 @@ public class ComponentContent
 	/*
 	 * Extracts the objects out of many different types of containers
 	 */
+	@SuppressWarnings("rawtypes")
 	public static ArrayList<Object> getContainerContents(Object container)
 	{
 		ArrayList<Object> components = new ArrayList<Object>();
@@ -553,6 +555,8 @@ public class ComponentContent
 
 	}
 
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public static ArrayList<Object> getMapOrListElements(Object obj)
 	{
 		ArrayList<Object> values = new ArrayList<Object>();

@@ -1,7 +1,5 @@
 package edu.ucsc.cross.hse.core.object.domain;
 
-import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
-
 /*
  * Holds a small adjustable value that can be used in situations where a
  * condition is something equals zero. Instead of integrating with insanely

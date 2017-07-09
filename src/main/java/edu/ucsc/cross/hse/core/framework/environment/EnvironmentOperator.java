@@ -4,16 +4,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.be3short.data.cloning.ObjectCloner;
-
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
-import bs.commons.unitvars.values.Time;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
-import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
 /*
@@ -22,6 +18,7 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 public class EnvironmentOperator extends FullComponentOperator
 {
 
+	// EnvironmentOperator instances in the current JVM
 	@CoreComponent // mapping of all open global systems
 	public static final HashMap<String, EnvironmentOperator> globalSystems = new HashMap<String, EnvironmentOperator>();
 

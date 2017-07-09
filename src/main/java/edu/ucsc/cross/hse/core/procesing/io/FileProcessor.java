@@ -2,7 +2,6 @@ package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,14 +18,11 @@ import com.be3short.data.serialization.ObjectSerializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 
-import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.data.State;
-import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
@@ -66,6 +62,7 @@ public class FileProcessor extends ProcessorAccess
 
 	}
 
+	@SuppressWarnings("unused")
 	private static void createFiles(File location, Component component, FileContent... contents)
 	{
 		createFiles(location, null, component, contents);
@@ -87,6 +84,8 @@ public class FileProcessor extends ProcessorAccess
 					break;
 				case COMPONENT:
 					storeComponent(location, component);
+					break;
+				default:
 					break;
 				}
 			} catch (Exception fileCreationFail)
@@ -112,7 +111,7 @@ public class FileProcessor extends ProcessorAccess
 	private static void storeData(File location, Component component)
 	{
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
-		for (Data dat : component.component().getContent().getData(true))
+		for (Data<?> dat : component.component().getContent().getData(true))
 		{
 			data.put(dat.component().getAddress(), dat.component().getStoredValues());
 			// ObjectSerializer.store(location.getAbsolutePath() + "/" +
@@ -140,6 +139,7 @@ public class FileProcessor extends ProcessorAccess
 		ObjectSerializer.store(location.getAbsolutePath() + "/" + suffix, compressed);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
 		ArrayList<FileContent> contentz = new ArrayList<FileContent>();
@@ -148,7 +148,6 @@ public class FileProcessor extends ProcessorAccess
 		try
 		{
 			ZipInputStream in = new ZipInputStream(new FileInputStream(location));
-			ArrayList<File> filess = new ArrayList<File>();
 			ZipEntry entry = in.getNextEntry();
 			HashMap<String, HashMap<HybridTime, ?>> datas = new HashMap<String, HashMap<HybridTime, ?>>();
 			Input input = new Input(in);
@@ -181,6 +180,8 @@ public class FileProcessor extends ProcessorAccess
 						case COMPONENT:
 							loadedContent.put(FileContent.COMPONENT, ((Component) XMLParser
 							.getObjectFromString((String) DataDecompressor.decompressDataGZipString((byte[]) readIn))));
+							break;
+						default:
 							break;
 
 						}
@@ -239,7 +240,7 @@ public class FileProcessor extends ProcessorAccess
 	public static Component load(EnvironmentManager environment, File file, FileContent... content)
 	{
 
-		HashMap<FileContent, Object> contents = FileExchanger.packager.loadContents(file, content);
+		HashMap<FileContent, Object> contents = FileProcessor.loadContents(file, content);
 		Component component = getComponent(contents);
 		for (FileContent conten : contents.keySet())
 		{
@@ -252,6 +253,8 @@ public class FileProcessor extends ProcessorAccess
 					break;
 				case SETTINGS:
 					environment.getSettings().setSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
+					break;
+				default:
 					break;
 				}
 			} catch (Exception noEnvironment)
@@ -276,6 +279,7 @@ public class FileProcessor extends ProcessorAccess
 		return fileName;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void loadAllData(HashMap<FileContent, Object> contents, Component component)
 	{
 		if (component != null)
@@ -283,7 +287,8 @@ public class FileProcessor extends ProcessorAccess
 			HashMap<String, HashMap<HybridTime, ?>> data = (HashMap<String, HashMap<HybridTime, ?>>) contents
 			.get(FileContent.DATA);
 
-			for (Data id : component.component().getContent().getData(true))
+			for (@SuppressWarnings("rawtypes")
+			Data id : component.component().getContent().getData(true))
 			{
 				DataOperator.getOperator(id).loadStoredValues(data.get(id.component().getAddress()));
 			}

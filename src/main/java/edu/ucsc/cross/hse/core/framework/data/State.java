@@ -1,20 +1,7 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
-import java.util.HashMap;
-
-import bs.commons.objects.access.FieldFinder;
-import bs.commons.objects.manipulation.ObjectCloner;
-import bs.commons.unitvars.core.UnitValue;
-import bs.commons.unitvars.core.UnitData.Unit;
-import bs.commons.unitvars.exceptions.UnitException;
-import bs.commons.unitvars.units.NoUnit;
-import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
-import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
-import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
-import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 
 /*
  * This class is very general description of a state variable, and is used to

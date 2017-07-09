@@ -2,9 +2,6 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
-import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 

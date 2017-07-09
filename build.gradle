@@ -27,7 +27,7 @@ dependencies {
 		
 		  
     	compile 'com.github.kostaskougios:cloning:1.7.9'
-  
+  compile 'com.github.be3short:ObjectTools:v0.2.2'
     	compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.0'
     	// https://mvnrepository.com/artifact/commons-io/commons-io
 compile group: 'commons-io', name: 'commons-io', version: '2.4'

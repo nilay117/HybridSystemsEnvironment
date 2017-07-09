@@ -1,14 +1,13 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import com.be3short.data.cloning.ObjectCloner;
 
-import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.execution.ComponentDirector;
 
@@ -172,6 +171,8 @@ public class FullComponentOperator extends UserComponentOperator
 	/*
 	 * Attempt to store all data point of the component and any descndents
 	 */
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public void storeData()
 	{
 		for (Data data : component.component().getContent().getData(true))

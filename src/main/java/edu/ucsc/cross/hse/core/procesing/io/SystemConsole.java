@@ -2,7 +2,6 @@ package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 
 import com.be3short.data.info.SystemInfo;
 
@@ -17,10 +16,9 @@ public class SystemConsole extends ProcessorAccess
 	private static SystemInfo info = new SystemInfo(); // information about the
 														// system such as memory
 														// usage
-	private static CallerRetriever classRetriever = new CallerRetriever(); // method
-																			// call
-																			// class
-																			// detector
+														// call
+														// class
+														// detector
 
 	private Double nextPrintTime; // time that the next progress update should
 									// be printed
@@ -103,7 +101,7 @@ public class SystemConsole extends ProcessorAccess
 	 */
 	public static String getCallingClassName(Integer increment)
 	{
-		return classRetriever.retriever.getCallingClasses()[2 + increment].getSimpleName();
+		return CallerRetriever.retriever.getCallingClasses()[2 + increment].getSimpleName();
 	}
 
 	/*

@@ -1,11 +1,5 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import bs.commons.objects.execution.Initializer;
-import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
-import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
-
 /*
  * This class is the foundation of all components to ensures proper
  * compatibility. Anything that is an extension of this class can be used with
