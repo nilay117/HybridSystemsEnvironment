@@ -4,8 +4,8 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
-import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
@@ -20,16 +20,16 @@ import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
  * easier for them to coordinate. These Elements are all declared within the
  * central processor and are for operational usse only
  */
-public abstract class ProcessingConnector
+public abstract class ProcessorAccess
 {
 
-	protected HybridEnvironment processor; // environment interface
+	protected EnvironmentManager processor; // environment interface
 	private CentralProcessor proc; // central processor
 
 	/*
 	 * Constructor using the hybrid environment
 	 */
-	protected ProcessingConnector(HybridEnvironment processor)
+	protected ProcessorAccess(EnvironmentManager processor)
 	{
 		this.processor = processor;
 		this.proc = processor.processor;
@@ -38,7 +38,7 @@ public abstract class ProcessingConnector
 	/*
 	 * Constructor using the central processor
 	 */
-	protected ProcessingConnector(CentralProcessor processor)
+	protected ProcessorAccess(CentralProcessor processor)
 	{
 		proc = processor;
 		this.processor = processor.environmentInterface;
@@ -67,14 +67,14 @@ public abstract class ProcessingConnector
 		return proc.jumpEvaluator;
 	}
 
-	public EnvironmentContent getEnv()
+	public HybridEnvironment getEnv()
 	{
 		return processor.getEnvironment();
 	}
 
-	protected ContentOperator getEnvironmentOperator()
+	protected EnvironmentOperator getEnvironmentOperator()
 	{
-		return ContentOperator.getOperator(getEnv().toString());
+		return EnvironmentOperator.getOperator(getEnv().toString());
 	}
 
 	protected SystemConsole getConsole()
@@ -92,7 +92,7 @@ public abstract class ProcessingConnector
 		return proc.dataHandler;
 	}
 
-	protected ComponentController getComponents()
+	protected ComponentDirector getComponents()
 	{
 		return proc.componentAdmin;
 	}
@@ -102,7 +102,7 @@ public abstract class ProcessingConnector
 		return proc;
 	}
 
-	protected HybridEnvironment getProcessor()
+	protected EnvironmentManager getProcessor()
 	{
 		// TODO Auto-generated method stub
 		return proc.environmentInterface;

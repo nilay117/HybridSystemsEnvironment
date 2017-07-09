@@ -6,7 +6,7 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
@@ -153,7 +153,7 @@ public class Data<T> extends Component
 		{
 			T storeValue = getStoreValue();
 			savedHybridValues
-			.put(ContentOperator.getOperator(component().getEnvironment()).getEnvironmentHybridTime().getCurrent(),
+			.put(EnvironmentOperator.getOperator(component().getEnvironment()).getEnvironmentHybridTime().getCurrent(),
 			storeValue);
 
 		}

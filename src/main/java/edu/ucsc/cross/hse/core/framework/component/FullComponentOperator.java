@@ -11,11 +11,11 @@ import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
-import edu.ucsc.cross.hse.core.processing.execution.ComponentController;
+import edu.ucsc.cross.hse.core.processing.execution.ComponentDirector;
 
 /*
  * This class contains the methods that are used by processing modules to
@@ -97,7 +97,7 @@ public class FullComponentOperator extends UserComponentOperator
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentController.jumpOccurring((HybridSystem) localBehavior, true);
+				Boolean jumpOccurring = ComponentDirector.jumpOccurring((HybridSystem) localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					if (jumpOccurring) // add component to list if jump is
@@ -158,7 +158,7 @@ public class FullComponentOperator extends UserComponentOperator
 				// {
 				//
 				// }
-				jumpOccurred = ComponentController.applyDynamics(localBehavior, true, jump_occurring);
+				jumpOccurred = ComponentDirector.applyDynamics(localBehavior, true, jump_occurring);
 
 				if (jumpOccurred)
 				{
@@ -356,7 +356,7 @@ public class FullComponentOperator extends UserComponentOperator
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentController.jumpOccurring(localBehavior, true);
+				Boolean jumpOccurring = ComponentDirector.jumpOccurring(localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					try
@@ -388,7 +388,7 @@ public class FullComponentOperator extends UserComponentOperator
 		{
 			try
 			{
-				Boolean jumpOccurring = ComponentController.flowOccurring(localBehavior, true);
+				Boolean jumpOccurring = ComponentDirector.flowOccurring(localBehavior, true);
 				if (jumpOccurring != null)
 				{
 					try

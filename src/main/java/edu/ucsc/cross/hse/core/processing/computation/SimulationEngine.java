@@ -16,7 +16,7 @@ import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 /*
  * his class provides the computations and organization necessary to run a
@@ -26,7 +26,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
  */
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
-public class SimulationEngine extends ProcessingConnector implements FirstOrderDifferentialEquations
+public class SimulationEngine extends ProcessorAccess implements FirstOrderDifferentialEquations
 {
 
 	/*

@@ -21,26 +21,29 @@ import edu.ucsc.cross.hse.core.processing.data.DataHandler;
  */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class ComponentController extends ProcessingConnector
+public class ComponentDirector extends ProcessorAccess
 {
 
-	HashMap<String, Data> initialData;
-
-	ComponentController(CentralProcessor processor)
+	/*
+	 * Constructor that links the processor and components
+	 */
+	ComponentDirector(CentralProcessor processor)
 	{
 		super(processor);
-		initialData = new HashMap<String, Data>();
 	}
 
+	/*
+	 * Perform jumps or flows depending on the state of the global system
+	 * 
+	 * @param jump_occurred - flag indicating that the integrator is paused and
+	 * jumps can be executed
+	 */
 	public void performAllTasks(boolean jump_occurred)
 	{
 		if (jump_occurred)
 		{
 			boolean jumpOccurred = false;
-			// \
-			// getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
-			// (true && getSettings().getDataSettings().storeAtEveryJump));
-			// this.getEnvironmentOperator().storeData();
+
 			while (this.getComponentOperator(getEnv()).isJumpOccurring())
 			{
 				jumpOccurred = true;
@@ -50,33 +53,33 @@ public class ComponentController extends ProcessingConnector
 			{
 				this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 			}
-			// this.getComponentOperator(getEnv()).storeData();
-			// getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime()
-			// + .000000001,
-			// (true && getSettings().getDataSettings().storeAtEveryJump));
-			// this.getComponents().setEnvTime(getEnvTime() + .000000001);
+
 		} else
 		{
 			FullComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
 		}
 	}
 
+	/*
+	 * Execute jumps in all components where a jump is occurring
+	 */
 	private void executeAllOccurringJumps()
 	{
-
 		ArrayList<Component> jumpComponents = FullComponentOperator.getOperator(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
-		getEnvironmentOperator().setJumpOccurring(true);
-		// this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		for (Component component : jumpComponents)
 		{
 			HybridSystem dynamics = ((HybridSystem) component);
 			dynamics.jumpMap();
 		}
-
-		getEnvironmentOperator().setJumpOccurring(false);
 	}
 
+	/*
+	 * Store all state values before the jump occurs to make sure that the
+	 * correct value is accessed
+	 * 
+	 * @param jump_components - components where a jump is occurring
+	 */
 	private void storeRelavantPreJumpData(ArrayList<Component> jump_components)
 	{
 

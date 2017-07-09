@@ -12,15 +12,15 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
-public class DataHandler extends ProcessingConnector implements DataAccessor
+public class DataHandler extends ProcessorAccess implements DataAccessor
 {
 
 	private Double lastStoreTime = -10.0; // time since last data was stored,

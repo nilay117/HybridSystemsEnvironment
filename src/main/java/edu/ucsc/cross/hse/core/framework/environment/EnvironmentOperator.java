@@ -16,25 +16,28 @@ import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
-public class ContentOperator extends FullComponentOperator
+/*
+ * This
+ */
+public class EnvironmentOperator extends FullComponentOperator
 {
 
 	// currently
 	// occurring
 	@CoreComponent
-	public static final HashMap<String, ContentOperator> globalSystems = new HashMap<String, ContentOperator>();
-	private EnvironmentContent globalSystem;
+	public static final HashMap<String, EnvironmentOperator> globalSystems = new HashMap<String, EnvironmentOperator>();
+	private HybridEnvironment globalSystem;
 
-	private ContentOperator(EnvironmentContent global_system)
+	private EnvironmentOperator(HybridEnvironment global_system)
 	{
 		super(global_system);
 		globalSystem = global_system;
 
 	}
 
-	public static ContentOperator getOperator(String id)
+	public static EnvironmentOperator getOperator(String id)
 	{
-		ContentOperator admin = null;
+		EnvironmentOperator admin = null;
 		// return systems.get(id);
 		try
 		{
@@ -48,15 +51,15 @@ public class ContentOperator extends FullComponentOperator
 		return admin;
 	}
 
-	public static ContentOperator getOperator(EnvironmentContent sys)
+	public static EnvironmentOperator getOperator(HybridEnvironment sys)
 	{
-		ContentOperator admin = null;//
+		EnvironmentOperator admin = null;//
 		if (globalSystems.containsKey(sys.toString()))
 		{
 			admin = globalSystems.get(sys.toString());
 		} else
 		{
-			admin = new ContentOperator(sys);
+			admin = new EnvironmentOperator(sys);
 			if (!globalSystems.containsKey(sys.toString()))
 			{
 				globalSystems.put(sys.toString(), admin);
@@ -66,7 +69,7 @@ public class ContentOperator extends FullComponentOperator
 		return admin;
 	}
 
-	public static EnvironmentContent getGlobalSystem(Component component)
+	public static HybridEnvironment getGlobalSystem(Component component)
 	{
 		return globalSystems.get(FullComponentOperator.getOperator(component).getEnvironmentKey()).globalSystem;
 	}
@@ -76,18 +79,18 @@ public class ContentOperator extends FullComponentOperator
 		return globalSystem.environmentTime;
 	}
 
-	public void setJumpOccurring(boolean jumpOccurring)
-	{
-		globalSystem.jumpOccurring = jumpOccurring;
-	}
-
-	// Preparation Methods
+	/*
+	 * Initializes the environment for
+	 */
 	public void initializeEnvironmentContent()
 	{
 		prepareComponents();
 		initializeTimeDomains();
 	}
 
+	/*
+	 * Initializes the time domain components of the environment
+	 */
 	public void initializeTimeDomains()
 	{
 		globalSystem.jumpOccurring = false;
@@ -98,18 +101,25 @@ public class ContentOperator extends FullComponentOperator
 
 	}
 
+	/*
+	 * Prepares all components for execution by linking the environment,
+	 * intializing all components, and generating addresses
+	 */
 	void prepareComponents()
 	{
 		// this.initializeContentMappings(true);
 		linkEnvironment();
 		initializeComponents(Data.class, State.class);
 		initializeComponents();
-		//	storeConfiguration();
+		// storeConfiguration();
 		generateAddresses();
 		linkEnvironment();
-		//storeConfiguration();
+		// storeConfiguration();
 	}
 
+	/*
+	 * Prepares a newly initialized environment
+	 */
 	protected void preinitializeContent()
 	{
 
@@ -123,6 +133,12 @@ public class ContentOperator extends FullComponentOperator
 		// ComponentAdministrator.getConfigurer(this).setEnvironmentKey(globalSystem.toString());
 	}
 
+	/*
+	 * Initializes components of the selected classes, or initializes all
+	 * components if no classes are specified
+	 * 
+	 * @param components_to_initialize - component classes to be initialized
+	 */
 	private void initializeComponents(Class<?>... components_to_initialize)
 	{
 		List<Class<?>> initializeList = Arrays.asList(components_to_initialize);
@@ -141,9 +157,12 @@ public class ContentOperator extends FullComponentOperator
 			}
 		}
 
-		//storeConfiguration();
+		// storeConfiguration();
 	}
 
+	/*
+	 * Generates and stores a unique address for each component
+	 */
 	private void generateAddresses()
 	{
 		for (Component component : globalSystem.component().getContent().getComponents(true))
@@ -153,6 +172,10 @@ public class ContentOperator extends FullComponentOperator
 		}
 	}
 
+	/*
+	 * Loads every component with the environment address to allow access to the
+	 * environment from each component
+	 */
 	private void linkEnvironment()
 	{
 		this.initializeContentMappings();

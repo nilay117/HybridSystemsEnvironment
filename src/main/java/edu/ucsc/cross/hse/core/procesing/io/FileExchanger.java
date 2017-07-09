@@ -37,11 +37,11 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.ComponentContent;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
-public class FileExchanger extends ProcessingConnector
+public class FileExchanger extends ProcessorAccess
 {
 
 	static FileProcessor packager;

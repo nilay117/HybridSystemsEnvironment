@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.State;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import javafx.scene.chart.PieChart.Data;
 
@@ -19,7 +19,7 @@ public enum FileContent
 		SettingConfigurer.class.getSimpleName()),
 	COMPONENT(
 		Component.class.getSimpleName(),
-		EnvironmentContent.class.getSimpleName()),
+		HybridEnvironment.class.getSimpleName()),
 	UNKNOWN();
 
 	private ArrayList<String> identifiers;;

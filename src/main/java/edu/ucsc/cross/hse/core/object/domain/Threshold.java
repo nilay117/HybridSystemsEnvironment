@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.object.domain;
 
-import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 
 /*
  * Holds a small adjustable value that is for a slightly rounded version of 0.

@@ -14,18 +14,24 @@ import com.be3short.data.cloning.ObjectCloner;
 import bs.commons.objects.access.Protected;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
-import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
-public class ExecutionMonitor extends ProcessingConnector
+public class ExecutionMonitor extends ProcessorAccess
 {
 
-	private Double runTime;
+	private Double runTime; // total time that the environment has been running
+							// (excluding pauses and errors)
 
+	/*
+	 * get the total run time
+	 * 
+	 * @return total run time
+	 */
 	public Double getRunTime()
 	{
 		return runTime;

@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.object.configuration;
 public class PrintSettings
 {
 
-	public boolean printProgressUpdates; // flag indicating if progress
+	public Boolean printProgressUpdates; // flag indicating if progress
 											// updates should be printed,
 											// which display the current
 											// environment time and
@@ -13,7 +13,7 @@ public class PrintSettings
 											// will be printed (if progress
 											// printing is enabled)
 
-	public boolean printDiscreteEventIndicator; // flag to print notifications
+	public Boolean printDiscreteEventIndicator; // flag to print notifications
 												// when discrete events occur
 
 	public boolean printCallingClass; // flag to include the calling class in
@@ -31,9 +31,9 @@ public class PrintSettings
 										// ie "[16:24:12][2250/11776
 										// Mb][EventMonitor] Integrator failure
 										// bla bla bla..."
-										/*
-										 * Default constructor
-										 */
+	/*
+	 * Default constructor
+	 */
 
 	public PrintSettings()
 	{

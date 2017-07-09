@@ -4,11 +4,11 @@ import org.apache.commons.math3.ode.events.EventHandler;
 
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
-import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
-public class JumpEvaluator extends ProcessingConnector implements EventHandler
+public class JumpEvaluator extends ProcessorAccess implements EventHandler
 {
 
 	public Integer toggles = 0; // toggle index to eliminate the error within

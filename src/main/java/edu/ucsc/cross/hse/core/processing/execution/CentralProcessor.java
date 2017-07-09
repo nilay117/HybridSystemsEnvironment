@@ -9,8 +9,8 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.computation.SimulationEngine;
@@ -28,13 +28,13 @@ import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
 public class CentralProcessor
 {
 
-	protected HybridEnvironment environmentInterface; // main user interface
+	protected EnvironmentManager environmentInterface; // main user interface
 
-	protected ContentOperator contentAdmin; // operates the main
+	protected EnvironmentOperator contentAdmin; // operates the main
 											// global environment
 											// component
 
-	protected ComponentController componentAdmin; // controls all components
+	protected ComponentDirector componentAdmin; // controls all components
 
 	protected DataHandler dataHandler; // handles the storage and access of data
 
@@ -68,7 +68,7 @@ public class CentralProcessor
 	/*
 	 * Constructor called by the main user interface
 	 */
-	protected CentralProcessor(HybridEnvironment processor)
+	protected CentralProcessor(EnvironmentManager processor)
 	{
 		environmentInterface = processor;
 		systemConsole = new SystemConsole(this);
@@ -89,12 +89,12 @@ public class CentralProcessor
 		{
 
 		}
-		contentAdmin = ContentOperator.getOperator(environmentInterface.getEnvironment());
+		contentAdmin = EnvironmentOperator.getOperator(environmentInterface.getEnvironment());
 		simulationEngine = new SimulationEngine(this);
 		dataHandler = new DataHandler(this);
 		systemConsole.initialize();
 		// systemConsole = new SystemConsole(this);
-		componentAdmin = new ComponentController(this);
+		componentAdmin = new ComponentDirector(this);
 		fileExchanger = new FileExchanger(this);
 		jumpEvaluator = new JumpEvaluator(this);
 		interruptResponder = new InterruptResponder(this);
@@ -212,7 +212,7 @@ public class CentralProcessor
 	 */
 	public void startExecution()
 	{
-		contentAdmin = ContentOperator.getOperator(environmentInterface.getEnvironment());
+		contentAdmin = EnvironmentOperator.getOperator(environmentInterface.getEnvironment());
 		if (this.contentAdmin.isJumpOccurring())
 		{
 			contentAdmin.storeData();
@@ -227,7 +227,7 @@ public class CentralProcessor
 	/*
 	 * Gets the environment ready for execution
 	 */
-	public void prepareEnvironment(EnvironmentContent content)
+	public void prepareEnvironment(HybridEnvironment content)
 	{
 		if (content != null)
 		{
@@ -243,7 +243,7 @@ public class CentralProcessor
 
 	public void prepareEnvironment(boolean reset_content)
 	{
-		contentAdmin = ContentOperator.getOperator(environmentInterface.content);
+		contentAdmin = EnvironmentOperator.getOperator(environmentInterface.content);
 		initializeProcessingElements();
 		if (reset_content)
 		{
@@ -293,7 +293,7 @@ public class CentralProcessor
 		}
 	}
 
-	public static void refreshIfDataPresent(HybridEnvironment env, Component component)
+	public static void refreshIfDataPresent(EnvironmentManager env, Component component)
 	{
 		boolean loadData = false;
 		for (Component comp : env.content.component().getContent().getComponents(true))

@@ -27,15 +27,15 @@ import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
-import edu.ucsc.cross.hse.core.processing.execution.ProcessingConnector;
+import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
+import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
-public class FileProcessor extends ProcessingConnector
+public class FileProcessor extends ProcessorAccess
 {
 
 	private Kryo kryo = new Kryo();
@@ -56,7 +56,7 @@ public class FileProcessor extends ProcessingConnector
 		store(location, this.getProcessor(), component, contents);
 	}
 
-	public static void store(File location, HybridEnvironment env, Component component, FileContent... contents)
+	public static void store(File location, EnvironmentManager env, Component component, FileContent... contents)
 	{
 		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
 		createFiles(location, env, component, contents);
@@ -69,7 +69,7 @@ public class FileProcessor extends ProcessingConnector
 		createFiles(location, null, component, contents);
 	}
 
-	private static void createFiles(File location, HybridEnvironment env, Component component, FileContent... contents)
+	private static void createFiles(File location, EnvironmentManager env, Component component, FileContent... contents)
 	{
 		for (FileContent content : contents)
 		{
@@ -133,7 +133,7 @@ public class FileProcessor extends ProcessingConnector
 		String xmlSettings = XMLParser.serializeObject(FullComponentOperator.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
 		String suffix = component.component().getLabels().getFullDescription() + " Component";
-		if (FieldFinder.containsSuper(component, EnvironmentContent.class))
+		if (FieldFinder.containsSuper(component, HybridEnvironment.class))
 		{
 			// suffix = component.component().getLabels().getFullDescription() +
 			// " " + component.component().getAddress();
@@ -252,7 +252,7 @@ public class FileProcessor extends ProcessingConnector
 		}
 	}
 
-	public static Component load(HybridEnvironment environment, File file, FileContent... content)
+	public static Component load(EnvironmentManager environment, File file, FileContent... content)
 	{
 
 		HashMap<FileContent, Object> contents = FileExchanger.packager.loadContents(file, content);

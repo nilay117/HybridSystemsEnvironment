@@ -7,8 +7,8 @@ import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.environment.ContentOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentContent;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
+import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
@@ -16,8 +16,8 @@ import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.execution.ComponentController;
-import edu.ucsc.cross.hse.core.processing.execution.HybridEnvironment;
+import edu.ucsc.cross.hse.core.processing.execution.ComponentDirector;
+import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 
 /*
  * This class contains the methods available to users that perform a variety of
@@ -88,9 +88,9 @@ public class UserComponentOperator
 	 * 
 	 * @return global environment component
 	 */
-	public EnvironmentContent getEnvironment()
+	public HybridEnvironment getEnvironment()
 	{
-		return ContentOperator.getGlobalSystem(component);
+		return EnvironmentOperator.getGlobalSystem(component);
 	}
 
 	/*
@@ -170,7 +170,7 @@ public class UserComponentOperator
 	 */
 	public SettingConfigurer getSettings()
 	{
-		return HybridEnvironment.getEnvironment(component.component().getEnvironmentKey()).getSettings();
+		return EnvironmentManager.getEnvironment(component.component().getEnvironmentKey()).getSettings();
 	}
 
 	/*
