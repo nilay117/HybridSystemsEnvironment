@@ -90,7 +90,7 @@ public class EnvironmentManager
 	{
 		processor.systemConsole.print("Environment Started");
 		settings.getExecutionSettings().simDuration = duration;
-		processor.launchEnvironment();
+		processor.startEnvironment();
 	}
 
 	/*
@@ -108,7 +108,7 @@ public class EnvironmentManager
 	 */
 	public void pause()
 	{
-		processor.interruptResponder.pauseSim();
+		processor.interruptResponder.pauseEnv();
 		processor.systemConsole.print("Environment Paused - Simulation Time: " + getEnvironment().getEnvironmentTime()
 		+ " sec - Run Time : " + processor.integrationMonitor.getRunTime() + "sec");
 	}
@@ -120,7 +120,7 @@ public class EnvironmentManager
 	{
 		processor.systemConsole
 		.print("Environment Resumed - Simulation Time: " + getEnvironment().getEnvironmentTime() + " sec");
-		processor.launchEnvironment(true);
+		processor.startEnvironment(true);
 	}
 
 	/*

@@ -53,6 +53,9 @@ public class FileExchanger extends ProcessorAccess
 		packager = new FileProcessor(processor);
 	}
 
+	/*
+	 * Store all contents of the component
+	 */
 	public void store(File file_path, Component component)
 	{
 		store(file_path, component, FileContent.values());

@@ -37,16 +37,25 @@ public class ComponentStatus
 		return initialized;
 	}
 
+	/*
+	 * Set if the component has been initialized
+	 */
 	void setInitialized(Boolean initialized)
 	{
 		this.initialized = initialized;
 	}
 
+	/*
+	 * Check if the component is simulated
+	 */
 	boolean isSimulated()
 	{
 		return simulated;
 	}
 
+	/*
+	 * Set whether or not the component is stimulated
+	 */
 	void setSimulated(boolean simulated)
 	{
 

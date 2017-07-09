@@ -19,7 +19,7 @@ import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 /*
- * his class provides the computations and organization necessary to run a
+ * This class provides the computations and organization necessary to run a
  * simulation. It has been modified to support hybrid systems without requiring
  * pre-specified thresholds to detect discrete events. This is an improvement
  * from having to explicetly define each condition that triggers a jump.
@@ -86,7 +86,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 		updateValues(y);
 		getConsole().printUpdates();
 
-		zeroAllDerivatives();
+		nullAllDerivatives();
 
 		this.getComponents().performAllTasks(false);
 
@@ -213,7 +213,11 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 
 	}
 
-	public void zeroAllDerivatives()
+	/*
+	 * Set all derivatives to null to ensure that systems are not able to flow
+	 * if not in the flow set. Derivatives are reset at each integrator step
+	 */
+	public void nullAllDerivatives()
 	{
 		for (State data : odeVectorMap.values())
 		{

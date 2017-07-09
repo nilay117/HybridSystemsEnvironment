@@ -67,11 +67,13 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		ArrayList<Component> jumpComponents = FullComponentOperator.getOperator(getEnv()).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
+		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
 		{
 			HybridSystem dynamics = ((HybridSystem) component);
 			dynamics.jumpMap();
 		}
+		getEnvironmentOperator().setJumpOccurring(false);
 	}
 
 	/*
@@ -218,11 +220,17 @@ public class ComponentDirector extends ProcessorAccess
 		return dom;
 	}
 
+	/*
+	 * Get the data handling processor module
+	 */
 	public DataHandler getDataHandler()
 	{
 		return this.getData();
 	}
 
+	/*
+	 * Reload mapping of states that are stored
+	 */
 	public void reloadStoreStates()
 	{
 		this.getData().loadStoreStates();

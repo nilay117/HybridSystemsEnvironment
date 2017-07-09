@@ -19,7 +19,6 @@ import com.be3short.data.serialization.ObjectSerializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 
-import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.framework.component.Component;
@@ -38,22 +37,25 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class FileProcessor extends ProcessorAccess
 {
 
-	private Kryo kryo = new Kryo();
+	private static Kryo kryo = new Kryo(); // Optimized serializer
 
+	/*
+	 * Constructor that links to the processor interface
+	 */
 	public FileProcessor(CentralProcessor processor)
 	{
 		super(processor);
-		initialize();
+
 	}
 
-	private void initialize()
+	/*
+	 * Store data from component at location. Data to store is specified by
+	 * contents
+	 */
+	public static void store(File location, Component component, FileContent... contents)
 	{
-		kryo = new Kryo();
-	}
-
-	public void store(File location, Component component, FileContent... contents)
-	{
-		store(location, this.getProcessor(), component, contents);
+		component.component().getSettings();
+		store(location, component, contents);
 	}
 
 	public static void store(File location, EnvironmentManager env, Component component, FileContent... contents)
@@ -113,8 +115,9 @@ public class FileProcessor extends ProcessorAccess
 		for (Data dat : component.component().getContent().getData(true))
 		{
 			data.put(dat.component().getAddress(), dat.component().getStoredValues());
-			//ObjectSerializer.store(location.getAbsolutePath() + "/" + dat.component().getAddress(),
-			//dat.component().getStoredValues());//location.getAbsolutePath());
+			// ObjectSerializer.store(location.getAbsolutePath() + "/" +
+			// dat.component().getAddress(),
+			// dat.component().getStoredValues());//location.getAbsolutePath());
 		}
 		ObjectSerializer.store(data, location.getAbsolutePath());
 
@@ -133,16 +136,11 @@ public class FileProcessor extends ProcessorAccess
 		String xmlSettings = XMLParser.serializeObject(FullComponentOperator.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
 		String suffix = component.component().getLabels().getFullDescription() + " Component";
-		if (FieldFinder.containsSuper(component, HybridEnvironment.class))
-		{
-			// suffix = component.component().getLabels().getFullDescription() +
-			// " " + component.component().getAddress();
-		}
 		System.out.println(suffix);
 		ObjectSerializer.store(location.getAbsolutePath() + "/" + suffix, compressed);
 	}
 
-	public HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
+	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
 		ArrayList<FileContent> contentz = new ArrayList<FileContent>();
 		contentz.addAll(Arrays.asList(contents));
@@ -166,15 +164,14 @@ public class FileProcessor extends ProcessorAccess
 						// this.getConsole().print("Loading data from file : " +
 						// entry.getName());
 						Object readIn = kryo.readClassAndObject(input);
-						//FileContent inputElement = FileContent.getFileContentType(entry.getName());
-						this.getConsole().print("Loading data from file : " + entry.getName() + inputElement.name());
-						//if (contentz.contains(inputElement))
+						// FileContent inputElement =
+						// FileContent.getFileContentType(entry.getName());
+						// if (contentz.contains(inputElement))
 
 						switch (inputElement)
 						{
 
 						case DATA:
-							this.getConsole().print("Loading data file : " + entry.getName() + inputElement.name());
 							datas.put(entry.getName(), (HashMap<HybridTime, ?>) readIn);
 							break;
 						case SETTINGS:
@@ -232,20 +229,7 @@ public class FileProcessor extends ProcessorAccess
 	{
 		try
 		{
-			FileSystemOperator.createOutputFile(file, XMLParser.serializeObject(settings));
-		} catch (Exception badFile)
-		{
-			badFile.printStackTrace();
-		}
-	}
-
-	public static void saveXMLSettingsWithAdditions(File file, Object... additions)
-	{
-		try
-		{
-			SettingConfigurer settings = new SettingConfigurer();
-			settings.loadSettings(additions);
-			FileSystemOperator.createOutputFile(file, XMLParser.serializeObject(settings));
+			FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(settings));
 		} catch (Exception badFile)
 		{
 			badFile.printStackTrace();

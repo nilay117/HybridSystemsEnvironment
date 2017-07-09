@@ -22,12 +22,15 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 public class EnvironmentOperator extends FullComponentOperator
 {
 
-	// currently
-	// occurring
-	@CoreComponent
+	@CoreComponent // mapping of all open global systems
 	public static final HashMap<String, EnvironmentOperator> globalSystems = new HashMap<String, EnvironmentOperator>();
-	private HybridEnvironment globalSystem;
 
+	private HybridEnvironment globalSystem; // environment this operator is
+											// responsible for
+
+	/*
+	 * Constructor that links an environment to its operator
+	 */
 	private EnvironmentOperator(HybridEnvironment global_system)
 	{
 		super(global_system);
@@ -35,6 +38,9 @@ public class EnvironmentOperator extends FullComponentOperator
 
 	}
 
+	/*
+	 * Access a components operator using its ID
+	 */
 	public static EnvironmentOperator getOperator(String id)
 	{
 		EnvironmentOperator admin = null;
@@ -51,6 +57,9 @@ public class EnvironmentOperator extends FullComponentOperator
 		return admin;
 	}
 
+	/*
+	 * Access a components operator using the global environment
+	 */
 	public static EnvironmentOperator getOperator(HybridEnvironment sys)
 	{
 		EnvironmentOperator admin = null;//
@@ -69,14 +78,28 @@ public class EnvironmentOperator extends FullComponentOperator
 		return admin;
 	}
 
+	/*
+	 * Get the HybridEnvironment that contains the specified component
+	 */
 	public static HybridEnvironment getGlobalSystem(Component component)
 	{
 		return globalSystems.get(FullComponentOperator.getOperator(component).getEnvironmentKey()).globalSystem;
 	}
 
+	/*
+	 * Get the current environment hybrid time
+	 */
 	public HybridTime getEnvironmentHybridTime()
 	{
 		return globalSystem.environmentTime;
+	}
+
+	/*
+	 * set a flag indicating that a jump is in progress
+	 */
+	public void setJumpOccurring(boolean jump)
+	{
+		globalSystem.jumpOccurring = jump;
 	}
 
 	/*

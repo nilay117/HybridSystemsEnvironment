@@ -14,16 +14,25 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class InterruptResponder extends ProcessorAccess implements EventHandler
 {
 
-	public boolean isOutsideDomainError()
+	/*
+	 * Did the termination occur due to an error
+	 */
+	public boolean isErrorTermination()
 	{
 		return errorTermination;
 	}
 
+	/*
+	 * Is the execution attempt terminating
+	 */
 	public boolean isTerminating()
 	{
 		return killFlag;
 	}
 
+	/*
+	 * Is the execution attempt terminating early
+	 */
 	public boolean isTerminatedEarly()
 	{
 		return envStopped;
@@ -32,13 +41,18 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 	private boolean killFlag; // flag that indactes it is wile to kill the
 								// process
 
-	private boolean errorTermination;
+	private boolean errorTermination; // flag indicating that the termination is
+										// due to an error
 
-	private boolean envPaused;
+	private boolean envPaused; // flag indicating that the environment is paused
 
-	private boolean envStopped;
+	private boolean envStopped;// flag indicating that the environment is
+								// stopped
 
-	public boolean isPauseTemporary()
+	/*
+	 * Is the environment paused
+	 */
+	public boolean isPaused()
 	{
 		return envPaused;
 	}
@@ -108,7 +122,7 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 	}
 
 	/*
-	 * Terminates the simulation
+	 * Interrupt the environment
 	 */
 	public void interruptEnv()
 	{
@@ -116,7 +130,7 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 	}
 
 	/*
-	 * Terminates the simulation
+	 * Interrupt the environment and flag if the interrupt is due to an error
 	 */
 	public void interruptEnv(boolean terminated_by_error)
 	{
@@ -124,19 +138,28 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 		interruptEnv();
 	}
 
+	/*
+	 * Terminate the simulation
+	 */
 	public void killEnv()
 	{
 		envStopped = true;
 		interruptEnv();
 	}
 
-	public void pauseSim()
+	/*
+	 * Pause the environment
+	 */
+	public void pauseEnv()
 	{
 		envPaused = true;
 		interruptEnv();
 	}
 
-	public void resumeSim()
+	/*
+	 * Resume the environment
+	 */
+	public void resumeEnv()
 	{
 		envPaused = false;
 		killFlag = false;

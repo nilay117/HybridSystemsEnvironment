@@ -3,7 +3,6 @@ package edu.ucsc.cross.hse.core.framework.component;
 import java.io.File;
 import java.util.HashMap;
 
-import bs.commons.io.file.FileSystemOperator;
 import bs.commons.objects.manipulation.ObjectCloner;
 import bs.commons.objects.manipulation.XMLParser;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
@@ -30,7 +29,7 @@ public class UserComponentOperator
 	protected Component component; // component this class works for
 
 	public UserComponentOperator(Component component) // constructor assigning a
-													// component
+														// component
 	{
 		this.component = component;
 	}

@@ -14,12 +14,22 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class SystemConsole extends ProcessorAccess
 {
 
-	static SystemInfo info = new SystemInfo();
-	private static CallerRetriever classRetriever = new CallerRetriever();
-	private Double nextPrintTime;
-	private Double printInterval;
-	private OutputStream alternatePrintLocation;
+	private static SystemInfo info = new SystemInfo(); // information about the
+														// system such as memory
+														// usage
+	private static CallerRetriever classRetriever = new CallerRetriever(); // method
+																			// call
+																			// class
+																			// detector
 
+	private Double nextPrintTime; // time that the next progress update should
+									// be printed
+	private Double printInterval; // interval between progress update print outs
+	private OutputStream alternatePrintLocation; // alternate print location
+
+	/*
+	 * Constructor that links the processor
+	 */
 	public SystemConsole(CentralProcessor processor)
 	{
 		super(processor);
@@ -29,6 +39,9 @@ public class SystemConsole extends ProcessorAccess
 
 	}
 
+	/*
+	 * initialize the console components
+	 */
 	public void initialize()
 	{
 		nextPrintTime = 0.0;
@@ -36,11 +49,18 @@ public class SystemConsole extends ProcessorAccess
 		/ getSettings().getConsolePrintSettings().totalSimTimePrintOuts;
 	}
 
+	/*
+	 * Print updates if there are any
+	 */
 	public void printUpdates()
 	{
 		progressUpdate();
 	}
 
+	/*
+	 * Print out a progress update message indicating how far along the
+	 * environment execution is
+	 */
 	public void progressUpdate()
 	{
 		if (getSettings().getConsolePrintSettings().printProgressUpdates)
@@ -56,6 +76,9 @@ public class SystemConsole extends ProcessorAccess
 		}
 	}
 
+	/*
+	 * Compile a message indicating a discrete event occurrance
+	 */
 	public String getDiscreteEventIndication()
 	{
 		String string = null;
@@ -67,20 +90,29 @@ public class SystemConsole extends ProcessorAccess
 		return string;
 	}
 
+	/*
+	 * Get the name of the class that has called a method
+	 */
 	public static String getCallingClassName()
 	{
 		return getCallingClassName(0);
 	}
 
+	/*
+	 * Get the name of the class that has called a method, if the index is known
+	 */
 	public static String getCallingClassName(Integer increment)
 	{
 		return classRetriever.retriever.getCallingClasses()[2 + increment].getSimpleName();
 	}
 
+	/*
+	 * Print a message through the system console with additional information
+	 * included depending on settings
+	 */
 	public void print(String message)
 	{
-		// System.out.println("[" + StringFormatter.getAbsoluteHHMMSS() + "][" +
-		// getCallingClassName(1) + "] " + message);
+
 		if (message != null)
 		{
 			String appendedMsg = "[" + StringFormatter.getAbsoluteHHMMSS() + "][" + System.currentTimeMillis() / 1000
@@ -105,18 +137,12 @@ public class SystemConsole extends ProcessorAccess
 		}
 	}
 
+	/*
+	 * Set an alternate location to print to
+	 */
 	public void setAlternatePrintLocation(OutputStream alternatePrintLocation)
 	{
 		this.alternatePrintLocation = alternatePrintLocation;
 	}
 
-	public void printStartMessage()
-	{
-
-	}
-
-	public void printInterruptMessage()
-	{
-
-	}
 }

@@ -26,7 +26,7 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 	private Double lastStoreTime = -10.0; // time since last data was stored,
 											// used to store data at specified
 											// interval
-	private ArrayList<Data> dataElementsToStore; // list of all data elements
+	private ArrayList<Data<?>> dataElementsToStore; // list of all data elements
 													// that are to be stored
 
 	ArrayList<Double> storeTimes;
@@ -34,7 +34,7 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 	public DataHandler(CentralProcessor processor)
 	{
 		super(processor);
-		dataElementsToStore = new ArrayList<Data>();
+		dataElementsToStore = new ArrayList<Data<?>>();
 		storeTimes = new ArrayList<Double>();
 	}
 
@@ -44,7 +44,7 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 	}
 
 	@Override
-	public ArrayList<Data> getAllStateData()
+	public ArrayList<Data<?>> getAllStateData()
 	{
 		return dataElementsToStore;
 	}
@@ -65,9 +65,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 	}
 
 	@Override
-	public ArrayList<Data> getDataByTitle(String title)
+	public ArrayList<Data<?>> getDataByTitle(String title)
 	{
-		ArrayList<Data> datas = new ArrayList<Data>();
+		ArrayList<Data<?>> datas = new ArrayList<Data<?>>();
 		for (Data element : dataElementsToStore)
 		{
 			if (element.component().getLabels().getClassification().equals(title))
@@ -79,9 +79,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 	}
 
 	@Override
-	public HashMap<Data, ArrayList<Double[]>> getData(String title)
+	public HashMap<Data<?>, ArrayList<Double[]>> getData(String title)
 	{
-		HashMap<Data, ArrayList<Double[]>> data = new HashMap<Data, ArrayList<Double[]>>();
+		HashMap<Data<?>, ArrayList<Double[]>> data = new HashMap<Data<?>, ArrayList<Double[]>>();
 		for (Data dat : getDataByTitle(title))
 		{
 			ArrayList<Double[]> values = new ArrayList<Double[]>();
@@ -91,41 +91,6 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 				Double[] vals = new Double[]
 				{ timez.getTime(), (Double) dat.component().getStoredValue(timez) };
 				values.add(vals);
-			}
-			data.put(dat, values);
-		}
-		return data;
-	}
-
-	public HashMap<Data, ArrayList<Double[]>> getDatazz(String title)
-	{
-		HashMap<Data, ArrayList<Double[]>> data = new HashMap<Data, ArrayList<Double[]>>();
-		for (Data dat : getDataByTitle(title))
-		{
-			ArrayList<Double[]> values = new ArrayList<Double[]>();
-			Set<HybridTime> tim = dat.component().getStoredValues().keySet();
-			HashMap<Integer, ArrayList<HybridTime>> orderedTimes = new HashMap<Integer, ArrayList<HybridTime>>();
-			for (HybridTime timez : tim)
-			{
-				if (!orderedTimes.containsKey(timez.getJumpIndex()))
-				{
-					orderedTimes.put(timez.getJumpIndex(), new ArrayList<HybridTime>());
-				}
-
-				orderedTimes.get(timez.getJumpIndex()).add(timez);
-			}
-			ArrayList<Integer> times = new ArrayList<Integer>(
-			Arrays.asList(orderedTimes.keySet().toArray(new Integer[orderedTimes.size()])));
-			Collections.sort(times);
-			for (Integer timei : times)
-			{
-				ArrayList<HybridTime> timezz = orderedTimes.get(timei);
-				for (HybridTime timez : timezz)
-				{
-					Double[] vals = new Double[]
-					{ timez.getTime(), (Double) dat.component().getStoredValue(timez) };
-					values.add(vals);
-				}
 			}
 			data.put(dat, values);
 		}

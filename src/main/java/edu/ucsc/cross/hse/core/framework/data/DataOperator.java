@@ -22,6 +22,7 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 public class DataOperator<T> extends FullComponentOperator
 {
 
+	// All data operators within the current JVM
 	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
 	Data<T> element;
 	/*
@@ -49,6 +50,9 @@ public class DataOperator<T> extends FullComponentOperator
 
 	}
 
+	/*
+	 * Access the operator using the specified data
+	 */
 	public static <S> DataOperator<S> getOperator(Data<S> data)
 	{
 		if (dataOperators.containsKey(data))

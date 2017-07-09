@@ -31,8 +31,8 @@ public class CentralProcessor
 	protected EnvironmentManager environmentInterface; // main user interface
 
 	protected EnvironmentOperator contentAdmin; // operates the main
-											// global environment
-											// component
+	// global environment
+	// component
 
 	protected ComponentDirector componentAdmin; // controls all components
 
@@ -105,7 +105,7 @@ public class CentralProcessor
 	 * Get a runnable version of the integration task for use when running
 	 * threadded
 	 */
-	private Runnable getEnvironmentTask(boolean resume)
+	private Runnable getRunnableExecution(boolean resume)
 	{
 		Runnable task = new Runnable()
 		{
@@ -122,16 +122,22 @@ public class CentralProcessor
 
 	}
 
-	protected void launchEnvironment()
+	/*
+	 * Start up a new environment execution
+	 */
+	protected void startEnvironment()
 	{
-		launchEnvironment(false);
+		startEnvironment(false);
 	}
 
-	protected void launchEnvironment(boolean resume)
+	/*
+	 * Start up or resume an environment execution
+	 */
+	protected void startEnvironment(boolean resume)
 	{
 		if (environmentInterface.getSettings().getExecutionSettings().runThreadded)
 		{
-			environmentThread = new Thread(getEnvironmentTask(resume));
+			environmentThread = new Thread(getRunnableExecution(resume));
 			environmentThread.start();
 		} else
 		{
@@ -139,42 +145,56 @@ public class CentralProcessor
 		}
 	}
 
+	/*
+	 * Run the environment and adjust to correct any errors until the execution
+	 * completes or is interrupted
+	 */
 	protected void runEnvironment(boolean resume)
 	{
 		Boolean running = false;
 		while (!running)
 		{
-			runExecution(resume);
-			running = repeatRun();
+			attemptExecution(resume);
+			running = repeatAttempt();
 		}
 		adknowledgeSuccess();
 	}
 
-	private void runExecution(boolean resume)
+	/*
+	 * Attempt to execute the environment processing
+	 */
+	private void attemptExecution(boolean resume)
 	{
 		if (!resume)
 		{
 			resetEnvironment();
 		}
 		prepareEnvironment(!resume);
-		startExecution();
+		runExecution();
 	}
 
-	private boolean repeatRun()
+	/*
+	 * Determine if the last execution attempt was successful or needs to be
+	 * repeated
+	 */
+	private boolean repeatAttempt()
 	{
 		Boolean repeat = !interruptResponder.isTerminating();
-		repeat = repeat || interruptResponder.isPauseTemporary();
+		repeat = repeat || interruptResponder.isPaused();
 		repeat = repeat || interruptResponder.isTerminatedEarly();
 		repeat = repeat || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
 		repeat = repeat || FullComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
-		&& !interruptResponder.isOutsideDomainError();
+		&& !interruptResponder.isErrorTermination();
 		return repeat;
 	}
 
+	/*
+	 * Print an output if an execution has completed succesfully
+	 */
 	private void adknowledgeSuccess()
 	{
 		if (!interruptResponder.isTerminating() && !interruptResponder.isTerminatedEarly()
-		&& !interruptResponder.isPauseTemporary())
+		&& !interruptResponder.isPaused())
 		{
 			systemConsole.print(
 			"Environment Execution Completed - Simulation Time: " + environmentInterface.content.getEnvironmentTime()
@@ -182,11 +202,18 @@ public class CentralProcessor
 		}
 	}
 
+	/*
+	 * reset the environment to its initial state
+	 */
 	protected void resetEnvironment()
 	{
 		resetEnvironment(false);
 	}
 
+	/*
+	 * reset the environment to its initial state and also reinitialize the
+	 * components
+	 */
 	protected void resetEnvironment(boolean reinitialize_data)
 	{
 		this.contentAdmin.initializeTimeDomains();
@@ -210,7 +237,7 @@ public class CentralProcessor
 	/*
 	 * Gets the environment ready for execution
 	 */
-	public void startExecution()
+	public void runExecution()
 	{
 		contentAdmin = EnvironmentOperator.getOperator(environmentInterface.getEnvironment());
 		if (this.contentAdmin.isJumpOccurring())
@@ -236,11 +263,18 @@ public class CentralProcessor
 		prepareEnvironment(true);
 	}
 
+	/*
+	 * Prepare the environment for a new execution
+	 */
 	public void prepareEnvironment()
 	{
 		prepareEnvironment(true);
 	}
 
+	/*
+	 * Prepare the environment for a new execution but reset content depending
+	 * on the input flag
+	 */
 	public void prepareEnvironment(boolean reset_content)
 	{
 		contentAdmin = EnvironmentOperator.getOperator(environmentInterface.content);
@@ -269,6 +303,9 @@ public class CentralProcessor
 		}
 	}
 
+	/*
+	 * Correct any setting issues that would interfere with performance
+	 */
 	protected void correctPotentialSettingErrors()
 	{
 		// Double ehInterval =
@@ -293,6 +330,10 @@ public class CentralProcessor
 		}
 	}
 
+	/*
+	 * Refresh the data processing components of an environment if new data is
+	 * detected
+	 */
 	public static void refreshIfDataPresent(EnvironmentManager env, Component component)
 	{
 		boolean loadData = false;

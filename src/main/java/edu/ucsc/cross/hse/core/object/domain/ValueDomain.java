@@ -11,11 +11,17 @@ public class ValueDomain
 	private Double value; // fixed value
 	private Double min; // minimum value of the range
 
+	/*
+	 * Get minimum value of domain
+	 */
 	public Double getMin()
 	{
 		return min;
 	}
 
+	/*
+	 * Get maximum value of domain
+	 */
 	public Double getMax()
 	{
 		return max;
@@ -24,27 +30,26 @@ public class ValueDomain
 	private Double max; // maximum value of the range
 
 	/*
-	 * Constructor that implements a value domain with a fixed range
+	 * Constructor that implements a value domain with a fixed value
 	 */
-	@SuppressWarnings("unchecked")
 	public ValueDomain(Double value)
 	{
-		assignInitialValue(value);
+		setFixedValue(value);
 	}
 
+	/*
+	 * Constructor that implements a domain that is ranged
+	 */
 	@SuppressWarnings("unchecked")
 	public ValueDomain(Double min, Double max)
 	{
-		assignInitialValue(min);
+		setFixedValue(min);
 		setRandomValues(min, max);
 	}
 
-	private void assignInitialValue(Double val)
-	{
-		value = val;
-
-	}
-
+	/*
+	 * Set range of values to select random values from
+	 */
 	@SuppressWarnings("unchecked")
 	public void setRandomValues(Double min, Double max)
 	{
@@ -53,19 +58,27 @@ public class ValueDomain
 
 	}
 
+	/*
+	 * Set a fixed value as the domain
+	 */
 	@SuppressWarnings("unchecked")
 	public void setFixedValue(Double val)
 	{
 		value = min = max = val;
 	}
 
-	@SuppressWarnings("unchecked")
+	/*
+	 * Get a value from the domain, will be random is domain is ranged
+	 */
 	public Double getValue()
 	{
 		return getValue(true);
 
 	}
 
+	/*
+	 * Get a value from the domain, can select if randomized
+	 */
 	@SuppressWarnings("unchecked")
 	public Double getValue(boolean regenerate)
 	{
@@ -83,20 +96,17 @@ public class ValueDomain
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public Double getNumberValue()
-	{
-		Double numVal = (max - min) * Math.random() + min;
-		return numVal;//
-		// return Double.class.cast(((max - min) * Math.random()) + min);
-
-	}
-
+	/*
+	 * Set the value only
+	 */
 	public void setValue(Double val)
 	{
 		value = val;
 	}
 
+	/*
+	 * Check if the domain is a range
+	 */
 	public boolean isRange()
 	{
 		return min != max;

@@ -45,7 +45,8 @@ public abstract class ProcessorAccess
 	}
 
 	/*
-	 * The following methods allow access to each of the processing modules
+	 * The following methods allow access to each of the processing modules, see
+	 * central processor comments for details about each element
 	 */
 	protected SimulationEngine getComputationEngine()
 	{

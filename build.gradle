@@ -24,12 +24,10 @@ configurations.all {
 dependencies {
      	compile 'org.apache.commons:commons-math3:3.6.1'
 		testCompile 'junit:junit:4.12'
-		compile 'com.github.be3short:UnitValues:v0.3.1'
-		compile 'com.github.be3short:ObjectTools:v0.2.2'
-		   compile 'com.github.be3short:IOTools:-SNAPSHOT'
-		  // compile 'com.github.be3short:DataManagementToolbox:-SNAPSHOT'
+		
+		  
     	compile 'com.github.kostaskougios:cloning:1.7.9'
-    	// https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+  
     	compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.0'
     	// https://mvnrepository.com/artifact/commons-io/commons-io
 compile group: 'commons-io', name: 'commons-io', version: '2.4'
