@@ -33,6 +33,7 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class FileProcessor extends ProcessorAccess
 {
 
+	public static Boolean multiThread = true;
 	private static Kryo kryo = new Kryo(); // Optimized serializer
 
 	/*
@@ -60,9 +61,13 @@ public class FileProcessor extends ProcessorAccess
 	@SuppressWarnings("unchecked")
 	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
+		HashMap<FileContent, Object> readContent = null;
+		Component component = null;
 
-		HashMap<FileContent, Object> readContent = readContents(location, contents);
-		Component component = getComponent(readContent);
+		readContent = readContents(location, contents);
+
+		component = getComponent(readContent);
+
 		SettingConfigurer settings = (SettingConfigurer) readContent.get(FileContent.SETTINGS);
 		HashMap<FileContent, Object> loadedContent = new HashMap<FileContent, Object>();
 		loadedContent.put(FileContent.COMPONENT, component);
@@ -74,7 +79,7 @@ public class FileProcessor extends ProcessorAccess
 	public static Component loadComponent(File file, FileContent... content)
 	{
 		HashMap<FileContent, Object> contents = FileProcessor.loadContents(file, content);
-		return getComponent(contents);
+		return (Component) contents.get(FileContent.COMPONENT);
 	}
 
 	private static Component getComponent(HashMap<FileContent, Object> contents)
@@ -128,6 +133,7 @@ public class FileProcessor extends ProcessorAccess
 		{
 			ZipInputStream in = new ZipInputStream(new FileInputStream(location));
 			ZipEntry entry = in.getNextEntry();
+
 			HashMap<String, HashMap<HybridTime, ?>> datas = new HashMap<String, HashMap<HybridTime, ?>>();
 			Input input = new Input(in);
 
@@ -238,10 +244,12 @@ public class FileProcessor extends ProcessorAccess
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
 		for (Data<?> dat : component.component().getContent().getData(true))
 		{
-			data.put(dat.component().getAddress(), dat.component().getStoredValues());
-			// ObjectSerializer.store(location.getAbsolutePath() + "/" +
-			// dat.component().getAddress(),
-			// dat.component().getStoredValues());//location.getAbsolutePath());
+			if (DataOperator.getOperator(dat).isDataStored())
+			{
+				data.put(dat.component().getAddress(), dat.component().getStoredValues());
+			} // ObjectSerializer.store(location.getAbsolutePath() + "/" +
+				// dat.component().getAddress(),
+				// dat.component().getStoredValues());//location.getAbsolutePath());
 		}
 		ObjectSerializer.store(data, location.getAbsolutePath());
 

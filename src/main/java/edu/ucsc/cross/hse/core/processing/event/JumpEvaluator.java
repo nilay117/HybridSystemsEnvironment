@@ -88,30 +88,43 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 	public void resetState(double t, double[] y)
 	{
 		getComputationEngine().updateValues(y); // load new ode values
-
 		HybridTime preJumpTime = getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-
-		// FullComponentOperator.getOperator(getEnv()).storeData(); // store
-		// pre-jump
-		// data
-
+		getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
+		// HybridTime preJumpTime =
+		// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
+		// HybridTime preJumpTime =
+		// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); // store
 																		// new
 																		// step
 																		// time
+		// HybridTime preJumpTime =
+		// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
+		// HybridTime preJumpTime =
+		// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
+		getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+		// HybridTime preJumpTime =
+		// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
 
-		getComponents().performAllTasks(true); // execute all jumps
+		while (getEnvironmentOperator().isJumpOccurring())
+		{
 
-		// this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-		// // increment
-		// // jump
-		// // index
-		//
-		getData().storeJumpData(preJumpTime);
-		// FullComponentOperator.getOperator(getEnv()).storeData(); // store
-		// post-jump
-		// // data
-		this.getComponents().clearPreJumpData();
+			getComponents().performAllTasks(true); // execute all jumps
+			getData().storeJumpData(preJumpTime);
+			this.getComponents().clearPreJumpData();
+			if (getEnvironmentOperator().isJumpOccurring())
+			{
+				getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+				preJumpTime = new HybridTime(preJumpTime.getTime(), preJumpTime.getJumpIndex() + 1);// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
+
+				//
+				getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+				getEnvironmentOperator().getEnvironmentHybridTime()
+				.setTime(getEnvironmentOperator().getEnvironmentHybridTime().getTime() + Double.MIN_VALUE);
+
+			}
+		}
+		// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 		getComputationEngine().setODEValueVector(y); // update the ode vector
 
 	}

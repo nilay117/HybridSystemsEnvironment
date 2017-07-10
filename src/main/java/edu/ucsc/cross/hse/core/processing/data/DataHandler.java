@@ -140,22 +140,35 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 
 	public void storeJumpData(HybridTime pre_jump_time)
 	{
-		HybridTime postJumpTime = this.getEnvironmentOperator().getEnvironmentHybridTime();
+		HybridTime postJumpTime = this.getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
 		storeTimes.add(pre_jump_time.getTime());
 		storeTimes.add(postJumpTime.getTime());
 		for (Data element : dataElementsToStore)
 		{
 			if (getDataOperator(element).isDataStored())
 			{
-				if (FieldFinder.containsSuper(element, State.class))
+				// if (FieldFinder.containsSuper(element, State.class))
 				{
-					State state = (State) element;
-					Double preJump = DataOperator.getOperator(state).getPreJumpValue();
-					Double postJump = state.getValue();
-					if (!postJump.equals(preJump) && preJump != null)
+					Data state = element;
+					DataOperator.getOperator(state).getPreJumpValue();
+					state.getValue();
+					if (DataOperator.getOperator(state).getPreJumpValue() != null)
 					{
-						getDataOperator(state).storeValue(pre_jump_time, preJump);
-						getDataOperator(state).storeValue(postJumpTime, postJump);
+						if (!DataOperator.getOperator(state).getPreJumpValue().equals(state.getValue()))
+						{
+							getDataOperator(state).storeValue(DataOperator.getOperator(state).getPreJumpValue(),
+							pre_jump_time);
+							// if (pre_jump_time.equals(obj))
+							// getDataOperator(state).storeValue(DataOperator.getOperator(state).getPreJumpValue(),
+							// new HybridTime(postJumpTime.getTime() -
+							// Double.MIN_VALUE,
+							// postJumpTime.getJumpIndex()));
+							// getDataOperator(state).storeValue(state.getValue(),
+							// new HybridTime(pre_jump_time.getTime() +
+							// Double.MIN_VALUE,
+							// postJumpTime.getJumpIndex()));
+							getDataOperator(state).storeValue(state.getValue(), postJumpTime);
+						}
 					}
 				}
 			}
@@ -196,8 +209,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 	{
 		dataElementsToStore.clear();
 		ArrayList<Data> storeStates = new ArrayList<Data>();
-		storeStates.addAll(super.getEnv().component().getContent().getObjects(State.class, true));
-		for (Data data : super.getEnv().component().getContent().getObjects(Data.class, true))
+		// storeStates.addAll(super.getEnv().component().getContent().getObjects(State.class,
+		// true));
+		for (Data data : super.getEnv().component().getContent().getData(true))
 		{
 			if (!storeStates.contains(data))
 			{

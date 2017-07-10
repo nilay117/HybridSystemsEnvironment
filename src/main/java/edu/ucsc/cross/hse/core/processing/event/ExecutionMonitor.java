@@ -170,6 +170,8 @@ public class ExecutionMonitor extends ProcessorAccess
 		{
 			this.getConsole().print(
 			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
+			getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
+			// this.getData().storeData(getEnv().getEnvironmentTime(), true);
 			getSettings()
 			.getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
 			/ getSettings().getComputationSettings().handlingReduction;

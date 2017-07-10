@@ -26,8 +26,9 @@ public class State extends Data<Double>
 									// changes
 									// continuously)
 
-	protected Double prejump; // pre-jump value stored immediately before jump
-								// occurs
+	// protected Double prejump; // pre-jump value stored immediately before
+	// jump
+	// // occurs
 
 	/*
 	 * Gets the current state value
@@ -42,30 +43,30 @@ public class State extends Data<Double>
 	 * Gets the state value after being randomized within a specified domain if
 	 * desired. For example a random transmission time in an unreliable network.
 	 */
-	@Override
-	public Double getValue(boolean randomize_from_domain)
-	{
-		try
-		{
-			if (randomize_from_domain)
-			{
-				element = elementDomain.getValue();
-
-				return element;
-			} else if (component().getEnvironment().isJumpOccurring())
-			{
-				return prejump;
-			} else
-			{
-
-				return element;
-			}
-		} catch (Exception e)
-		{
-			return element;
-		}
-
-	}
+	// @Override
+	// public Double getValue(boolean randomize_from_domain)
+	// {
+	// try
+	// {
+	// if (randomize_from_domain)
+	// {
+	// element = elementDomain.getValue();
+	//
+	// return element;
+	// } else if (component().getEnvironment().isJumpOccurring())
+	// {
+	// return prejump;
+	// } else
+	// {
+	//
+	// return element;
+	// }
+	// } catch (Exception e)
+	// {
+	// return element;
+	// }
+	//
+	// }
 
 	/*
 	 * Sets the state value to a fixed number
@@ -178,13 +179,13 @@ public class State extends Data<Double>
 		prejump = element;
 	}
 
-	/*
-	 * Store a copy of a value immediately before a jump occurs allowing
-	 * pre=jump value access even if the value is changed by another component
-	 */
-	void storePreJumpValue()
-	{
-		prejump = element;
-	}
+	// /*
+	// * Store a copy of a value immediately before a jump occurs allowing
+	// * pre=jump value access even if the value is changed by another component
+	// */
+	// void storePreJumpValue()
+	// {
+	// prejump = element;
+	// }
 
 }

@@ -51,13 +51,21 @@ public class FileExchanger extends ProcessorAccess
 	 */
 	public Component load(File file, FileContent... contents)
 	{
-		if (Arrays.asList(contents).contains(FileContent.SETTINGS))
+		Component component = null;
 		{
-			HashMap<FileContent, Object> content = FileProcessor.loadContents(file, contents);
-			this.getSettings().setSettings((SettingConfigurer) content.get(FileContent.SETTINGS));
-			return (Component) content.get(FileContent.COMPONENT);
+			try
+			{
+				HashMap<FileContent, Object> content = FileProcessor.loadContents(file, contents);
+				component = (Component) content.get(FileContent.COMPONENT);
+				this.getSettings().setSettings((SettingConfigurer) content.get(FileContent.SETTINGS));
+
+			} catch (Exception badFile)
+			{
+
+			}
 		}
-		return FileProcessor.loadComponent(file, contents);
+		return component;
+
 	}
 
 	/*

@@ -99,9 +99,25 @@ public class DataOperator<T> extends FullComponentOperator
 	 */
 	public void storeValue(HybridTime time, T value)
 	{
-		if (!FullComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
+		// if
+		// (!FullComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
 		{
 			element.storeValue(time, value);
+		}
+	}
+
+	/*
+	 * Same as the above but with the option to overwrite the save time step
+	 * increment
+	 */
+	public void storeValue(Object value, HybridTime time)
+	{
+		try
+		{
+			storeValue(time, (T) value);
+		} catch (Exception badVal)
+		{
+
 		}
 	}
 
@@ -128,11 +144,12 @@ public class DataOperator<T> extends FullComponentOperator
 	 */
 	public void storePrejumpData()
 	{
-		if (isDataStored())
+		// if (isDataStored())
 		{
-			if (FieldFinder.containsSuper(element, State.class))
+			// if (FieldFinder.containsSuper(element, State.class))
 			{
-				((State) component).storePreJumpValue();
+				// ((State) component).storePreJumpValue();
+				element.storePreJumpValue();
 			}
 		}
 	}
@@ -143,21 +160,22 @@ public class DataOperator<T> extends FullComponentOperator
 	 */
 	public void clearPrejumpData()
 	{
-		if (isDataStored())
+		// if (isDataStored())
 		{
-			if (FieldFinder.containsSuper(element, State.class))
+			// if (FieldFinder.containsSuper(element, State.class))
 			{
-				((State) component).prejump = null;
+				element.prejump = null;
+				// ((State) component).prejump = null;
 			}
 		}
 	}
 
-	public Double getPreJumpValue()
+	public T getPreJumpValue()
 	{
-		Double val = null;
-		if (FieldFinder.containsSuper(element, State.class))
+		T val = null;
+		// if (FieldFinder.containsSuper(element, State.class))
 		{
-			val = ((State) component).prejump;
+			val = element.prejump;
 		}
 		return val;
 	}

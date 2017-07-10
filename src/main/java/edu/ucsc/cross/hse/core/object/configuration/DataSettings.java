@@ -40,9 +40,12 @@ public class DataSettings
 												// file when not specified by
 												// the user
 
+	public Boolean multiThreadInput; // flag indicating if input data should be
+										// read in on multiple threads
 	/*
 	 * Default value constructor
 	 */
+
 	public DataSettings()
 	{
 		loadSettingsFromFile = true;

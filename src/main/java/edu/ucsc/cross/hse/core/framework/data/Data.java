@@ -42,6 +42,9 @@ public class Data<T> extends Component
 
 	protected T initialValue;
 
+	protected T prejump; // pre-jump value stored immediately before jump
+	// occurs
+
 	/*
 	 * Safely access element
 	 */
@@ -63,7 +66,15 @@ public class Data<T> extends Component
 			{
 				element = (T) elementDomain.getValue();
 
+			} else if (component().getEnvironment().isJumpOccurring())
+			{
+				return prejump;
+			} else
+			{
+
+				return element;
 			}
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -213,6 +224,15 @@ public class Data<T> extends Component
 		super(name, "");
 		cloneToStore = !DataOperator.isCopyRequiredOnSave(min);
 		init(false, min, max);
+	}
+
+	/*
+	 * Store a copy of a value immediately before a jump occurs allowing
+	 * pre=jump value access even if the value is changed by another component
+	 */
+	void storePreJumpValue()
+	{
+		prejump = element;
 	}
 
 	@SuppressWarnings("unchecked")

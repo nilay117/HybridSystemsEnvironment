@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
@@ -35,14 +36,14 @@ public class ComponentDirector extends ProcessorAccess
 		{
 			boolean jumpOccurred = false;
 
-			while (this.getComponentOperator(getEnv()).isJumpOccurring())
+			// while (this.getComponentOperator(getEnv()).isJumpOccurring())
 			{
 				jumpOccurred = true;
 				executeAllOccurringJumps();
 			}
 			if (jumpOccurred)
 			{
-				this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+				// this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 			}
 
 		} else
@@ -64,6 +65,7 @@ public class ComponentDirector extends ProcessorAccess
 			HybridSystem dynamics = ((HybridSystem) component);
 			dynamics.jumpMap();
 		}
+
 		getEnvironmentOperator().setJumpOccurring(false);
 	}
 
@@ -78,9 +80,10 @@ public class ComponentDirector extends ProcessorAccess
 
 		for (Component component : jump_components)
 		{
-			for (State data : component.component().getContent().getObjects(State.class, true))
+			for (Data data : component.component().getContent().getData(true))
 			{
-				if (getDataOperator(data).isState())
+				if (getDataOperator(data).isDataStored())
+				// if (getDataOperator(data).isState())
 				{
 					getDataOperator(data).storePrejumpData();
 
@@ -98,9 +101,9 @@ public class ComponentDirector extends ProcessorAccess
 	public void clearPreJumpData()
 	{
 
-		for (State data : getEnv().component().getContent().getObjects(State.class, true))
+		for (Data data : getEnv().component().getContent().getData(true))
 		{
-			if (getDataOperator(data).isState())
+			// if (getDataOperator(data).isState())
 			{
 				getDataOperator(data).clearPrejumpData();
 
