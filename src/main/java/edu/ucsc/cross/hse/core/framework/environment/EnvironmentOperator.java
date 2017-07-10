@@ -11,6 +11,7 @@ import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 
 /*
  * This
@@ -24,6 +25,8 @@ public class EnvironmentOperator extends FullComponentOperator
 
 	private HybridEnvironment globalSystem; // environment this operator is
 											// responsible for
+	private String managerAddress; // address of the manager operating the
+									// environment
 
 	/*
 	 * Constructor that links an environment to its operator
@@ -32,7 +35,7 @@ public class EnvironmentOperator extends FullComponentOperator
 	{
 		super(global_system);
 		globalSystem = global_system;
-
+		preinitializeContent();
 	}
 
 	/*
@@ -69,7 +72,7 @@ public class EnvironmentOperator extends FullComponentOperator
 			if (!globalSystems.containsKey(sys.toString()))
 			{
 				globalSystems.put(sys.toString(), admin);
-				admin.preinitializeContent();
+
 			}
 		}
 		return admin;
@@ -185,6 +188,7 @@ public class EnvironmentOperator extends FullComponentOperator
 	 */
 	private void generateAddresses()
 	{
+		generateAddress();
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
@@ -203,8 +207,24 @@ public class EnvironmentOperator extends FullComponentOperator
 		{
 
 			FullComponentOperator.getOperator(component)
-			.setEnvironmentKey(FullComponentOperator.getOperator(globalSystem).getEnvironmentKey());
+			.setEnvironmentKey(globalSystem.component().getEnvironmentKey());// toString());//
+																				// FullComponentOperator.getOperator(globalSystem).getEnvironmentKey());
 		}
 	}
 
+	/*
+	 * Stores the address of the manager operating the environment
+	 */
+	public void linkManager(EnvironmentManager manager)
+	{
+		managerAddress = manager.toString();
+	}
+
+	/*
+	 * Gets the manager operating the environment
+	 */
+	public EnvironmentManager getManager()
+	{
+		return EnvironmentManager.getManager(managerAddress);
+	}
 }

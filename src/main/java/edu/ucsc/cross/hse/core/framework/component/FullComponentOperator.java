@@ -282,7 +282,7 @@ public class FullComponentOperator extends UserComponentOperator
 		if (component.labels.address == null)
 		{
 			String[] packageName = component.toString().split(Pattern.quote("."));
-			component.labels.address = packageName[packageName.length - 1];
+			component.labels.address = packageName[packageName.length - 1] + "_" + System.currentTimeMillis();
 		}
 	}
 

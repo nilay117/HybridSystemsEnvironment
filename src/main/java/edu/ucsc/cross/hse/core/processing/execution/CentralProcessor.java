@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
@@ -62,9 +63,14 @@ public class CentralProcessor
 										// running on (if the environment is
 										// running on a thread)
 
+	protected File pendingOutput; // pending output file where environment
+									// content will be saved once an execution
+									// is completed if an output file was
+									// specified upon starting the environment
 	/*
 	 * Constructor called by the main user interface
 	 */
+
 	protected CentralProcessor(EnvironmentManager processor)
 	{
 		environmentInterface = processor;
@@ -102,7 +108,7 @@ public class CentralProcessor
 	 * Get a runnable version of the integration task for use when running
 	 * threadded
 	 */
-	private Runnable getRunnableExecution(boolean resume)
+	private Runnable getRunnableExecution(boolean resume, File save_location)
 	{
 		Runnable task = new Runnable()
 		{
@@ -111,20 +117,32 @@ public class CentralProcessor
 			public void run()
 			{
 
-				runEnvironment(resume);
+				runEnvironmentTask(resume, save_location);
 			}
 
 		};
 		return task;
+	}
 
+	private void runEnvironmentTask(boolean resume, File save_location)
+	{
+		if (!resume)
+		{
+			pendingOutput = save_location;
+		}
+		runEnvironment(resume);
+		if (!interruptResponder.isPaused() && pendingOutput != null)
+		{
+			fileExchanger.store(pendingOutput, environmentInterface.getEnvironment());
+		}
 	}
 
 	/*
 	 * Start up a new environment execution
 	 */
-	protected void startEnvironment()
+	protected void startEnvironment(File save_location)
 	{
-		startEnvironment(false);
+		startEnvironment(false, save_location);
 	}
 
 	/*
@@ -132,13 +150,22 @@ public class CentralProcessor
 	 */
 	protected void startEnvironment(boolean resume)
 	{
+		runEnvironmentTask(resume, pendingOutput);
+	}
+
+	/*
+	 * Start up or resume an environment execution
+	 */
+	protected void startEnvironment(boolean resume, File save_location)
+	{
 		if (environmentInterface.getSettings().getExecutionSettings().runThreadded)
 		{
-			environmentThread = new Thread(getRunnableExecution(resume));
+			environmentThread = new Thread(getRunnableExecution(resume, save_location));
 			environmentThread.start();
+
 		} else
 		{
-			runEnvironment(resume);
+			runEnvironmentTask(resume, save_location);
 		}
 	}
 
@@ -276,8 +303,8 @@ public class CentralProcessor
 	 */
 	public void prepareEnvironment(boolean reset_content)
 	{
-		contentAdmin = EnvironmentOperator.getOperator(environmentInterface.content);
 		initializeProcessingElements();
+		contentAdmin.linkManager(environmentInterface);
 		if (reset_content)
 		{
 			contentAdmin.initializeEnvironmentContent();

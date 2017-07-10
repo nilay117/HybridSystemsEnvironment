@@ -8,6 +8,10 @@ import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import javafx.scene.chart.PieChart.Data;
 
+/*
+ * This enumeration defines the types of file contents and identifiers for such
+ * contents
+ */
 public enum FileContent
 {
 	DATA(

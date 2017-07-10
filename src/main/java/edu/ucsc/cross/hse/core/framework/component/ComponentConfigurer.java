@@ -111,7 +111,7 @@ public class ComponentConfigurer
 	 */
 	public void loadComponentsFromFile(File file, Integer quantity, boolean reinitialize_data)
 	{
-		Component component = FileProcessor.load(file, FileContent.COMPONENT);
+		Component component = FileProcessor.loadComponent(file, FileContent.COMPONENT);
 		component.component().configure().setInitialized(false, reinitialize_data);
 		addComponent(component, quantity);
 	}

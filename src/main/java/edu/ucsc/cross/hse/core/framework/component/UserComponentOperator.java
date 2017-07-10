@@ -146,7 +146,7 @@ public class UserComponentOperator
 	{
 		FileContent[] contents = FileContent.getContentArray(save_data, save_settings);
 
-		FileProcessor.saveComponent(component, file, contents);
+		FileProcessor.store(file, component, contents);
 
 	}
 
@@ -167,7 +167,7 @@ public class UserComponentOperator
 	 */
 	public SettingConfigurer getSettings()
 	{
-		return EnvironmentManager.getEnvironment(component.component().getEnvironmentKey()).getSettings();
+		return EnvironmentOperator.getOperator(component.component().getEnvironment()).getManager().getSettings();
 	}
 
 	/*

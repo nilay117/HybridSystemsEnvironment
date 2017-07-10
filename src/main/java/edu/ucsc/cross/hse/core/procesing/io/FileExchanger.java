@@ -1,10 +1,13 @@
 package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import com.rits.cloning.Cloner;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
+import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
@@ -12,6 +15,7 @@ public class FileExchanger extends ProcessorAccess
 {
 
 	static FileProcessor packager;
+
 	public static Cloner cloner = new Cloner();
 
 	public FileExchanger(CentralProcessor processor)
@@ -47,7 +51,13 @@ public class FileExchanger extends ProcessorAccess
 	 */
 	public Component load(File file, FileContent... contents)
 	{
-		return FileProcessor.load(this.getProcessor(), file, contents);
+		if (Arrays.asList(contents).contains(FileContent.SETTINGS))
+		{
+			HashMap<FileContent, Object> content = FileProcessor.loadContents(file, contents);
+			this.getSettings().setSettings((SettingConfigurer) content.get(FileContent.SETTINGS));
+			return (Component) content.get(FileContent.COMPONENT);
+		}
+		return FileProcessor.loadComponent(file, contents);
 	}
 
 	/*

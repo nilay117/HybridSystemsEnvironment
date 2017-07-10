@@ -10,7 +10,6 @@ import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
 import edu.ucsc.cross.hse.core.object.configuration.PrintSettings;
-import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 public class SettingConfigurer
 {
@@ -94,10 +93,10 @@ public class SettingConfigurer
 		SettingConfigurer loaded = null;
 		if (file == null)
 		{
-			loaded = FileProcessor.loadXMLSettings();
+			loaded = SettingConfigurer.loadDefaultSettingsFile();
 		} else
 		{
-			loaded = FileProcessor.loadXMLSettings(file);
+			loaded = SettingConfigurer.loadXMLSettings(file);
 		}
 		for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
 		{
@@ -107,7 +106,7 @@ public class SettingConfigurer
 
 	public static SettingConfigurer getSettingsFromFile()
 	{
-		return FileProcessor.loadXMLSettings();
+		return SettingConfigurer.loadDefaultSettingsFile();
 	}
 
 	/*
@@ -116,5 +115,40 @@ public class SettingConfigurer
 	public void saveSettingsToXMLFile(File file)
 	{
 		FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(this));
+	}
+
+	public static SettingConfigurer loadDefaultSettingsFile()
+	{
+		return loadXMLSettings(new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName));
+	}
+
+	public static SettingConfigurer loadXMLSettings(File file)
+	{
+		SettingConfigurer settings = null;
+		if (file.exists())
+		{
+			settings = (SettingConfigurer) XMLParser.getObject(file);
+		} else
+		{
+			settings = new SettingConfigurer();
+			saveXMLSettings(file, settings);
+		}
+		if (settings == null)
+		{
+			settings = new SettingConfigurer();
+		}
+		return settings;
+	
+	}
+
+	public static void saveXMLSettings(File file, SettingConfigurer settings)
+	{
+		try
+		{
+			FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(settings));
+		} catch (Exception badFile)
+		{
+			badFile.printStackTrace();
+		}
 	}
 }

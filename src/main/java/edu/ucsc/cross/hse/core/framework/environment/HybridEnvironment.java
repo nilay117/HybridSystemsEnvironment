@@ -23,7 +23,8 @@ public class HybridEnvironment extends Component// implements Serializable
 										// in
 										// any component in the environment
 	/*
-	 * Flag indicating that a jump is currently occuring
+	 * Flag indicating that a jump is currently occuring in any component in the
+	 * environment
 	 */
 
 	public boolean isJumpOccurring()

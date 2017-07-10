@@ -23,7 +23,7 @@ import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
+import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
@@ -51,96 +51,75 @@ public class FileProcessor extends ProcessorAccess
 	public static void store(File location, Component component, FileContent... contents)
 	{
 		component.component().getSettings();
-		store(location, component, contents);
-	}
-
-	public static void store(File location, EnvironmentManager env, Component component, FileContent... contents)
-	{
 		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
-		createFiles(location, env, component, contents);
+		createFiles(location, component, contents);
 		consolidateFile(location);
 
 	}
 
-	@SuppressWarnings("unused")
-	private static void createFiles(File location, Component component, FileContent... contents)
+	@SuppressWarnings("unchecked")
+	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
-		createFiles(location, null, component, contents);
+
+		HashMap<FileContent, Object> readContent = readContents(location, contents);
+		Component component = getComponent(readContent);
+		SettingConfigurer settings = (SettingConfigurer) readContent.get(FileContent.SETTINGS);
+		HashMap<FileContent, Object> loadedContent = new HashMap<FileContent, Object>();
+		loadedContent.put(FileContent.COMPONENT, component);
+		loadedContent.put(FileContent.SETTINGS, component);
+		return loadedContent;
+
 	}
 
-	private static void createFiles(File location, EnvironmentManager env, Component component, FileContent... contents)
+	public static Component loadComponent(File file, FileContent... content)
 	{
-		for (FileContent content : contents)
+		HashMap<FileContent, Object> contents = FileProcessor.loadContents(file, content);
+		return getComponent(contents);
+	}
+
+	private static Component getComponent(HashMap<FileContent, Object> contents)
+	{
+		Component component = (Component) contents.get(FileContent.COMPONENT);
+		for (FileContent conten : contents.keySet())
 		{
 			try
 			{
-				switch (content)
+				switch (conten)
 				{
 				case DATA:
-					storeData(location, component);
+					fillComponentData(contents, component);
 					break;
 				case SETTINGS:
-					storeSettings(location, env.getSettings());
-					break;
-				case COMPONENT:
-					storeComponent(location, component);
 					break;
 				default:
 					break;
 				}
-			} catch (Exception fileCreationFail)
+			} catch (Exception noEnvironment)
 			{
+				noEnvironment.printStackTrace();
+			}
+		}
+		return component;
+	}
 
+	@SuppressWarnings("unchecked")
+	private static void fillComponentData(HashMap<FileContent, Object> contents, Component component)
+	{
+		if (component != null)
+		{
+			HashMap<String, HashMap<HybridTime, ?>> data = (HashMap<String, HashMap<HybridTime, ?>>) contents
+			.get(FileContent.DATA);
+
+			for (@SuppressWarnings("rawtypes")
+			Data id : component.component().getContent().getData(true))
+			{
+				DataOperator.getOperator(id).loadStoredValues(data.get(id.component().getAddress()));
 			}
 		}
 	}
 
-	private static void consolidateFile(File location)
-	{
-		try
-		{
-			DataCompressor.zipDirectory(location.getAbsolutePath(), location.getAbsolutePath() + ".hse");
-			FileUtils.deleteDirectory(location);
-		} catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private static void storeData(File location, Component component)
-	{
-		HashMap<String, Object> data = new HashMap<String, Object>(); // new
-		for (Data<?> dat : component.component().getContent().getData(true))
-		{
-			data.put(dat.component().getAddress(), dat.component().getStoredValues());
-			// ObjectSerializer.store(location.getAbsolutePath() + "/" +
-			// dat.component().getAddress(),
-			// dat.component().getStoredValues());//location.getAbsolutePath());
-		}
-		ObjectSerializer.store(data, location.getAbsolutePath());
-
-	}
-
-	private static void storeSettings(File location, SettingConfigurer settings)
-	{
-		String xmlSettings = XMLParser.serializeObject(settings);
-		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
-
-		ObjectSerializer.store(location.getAbsolutePath() + "/" + settings.getClass().getName(), compressed);
-	}
-
-	private static void storeComponent(File location, Component component)
-	{
-		String xmlSettings = XMLParser.serializeObject(FullComponentOperator.getOperator(component).getNewInstance());
-		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
-		String suffix = component.component().getLabels().getFullDescription() + " Component";
-		System.out.println(suffix);
-		ObjectSerializer.store(location.getAbsolutePath() + "/" + suffix, compressed);
-	}
-
 	@SuppressWarnings("unchecked")
-	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
+	private static HashMap<FileContent, Object> readContents(File location, FileContent... contents)
 	{
 		ArrayList<FileContent> contentz = new ArrayList<FileContent>();
 		contentz.addAll(Arrays.asList(contents));
@@ -207,116 +186,82 @@ public class FileProcessor extends ProcessorAccess
 		return loadedContent;
 	}
 
-	public static SettingConfigurer loadXMLSettings(File file)
+	private static void createFiles(File location, Component component, FileContent... contents)
 	{
-		SettingConfigurer settings = null;
-		if (file.exists())
-		{
-			settings = (SettingConfigurer) XMLParser.getObject(file);
-		} else
-		{
-			settings = new SettingConfigurer();
-			saveXMLSettings(file, settings);
-		}
-		if (settings == null)
-		{
-			settings = new SettingConfigurer();
-		}
-		return settings;
-
-	}
-
-	public static void saveXMLSettings(File file, SettingConfigurer settings)
-	{
-		try
-		{
-			FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(settings));
-		} catch (Exception badFile)
-		{
-			badFile.printStackTrace();
-		}
-	}
-
-	public static Component load(EnvironmentManager environment, File file, FileContent... content)
-	{
-
-		HashMap<FileContent, Object> contents = FileProcessor.loadContents(file, content);
-		Component component = getComponent(contents);
-		for (FileContent conten : contents.keySet())
+		for (FileContent content : contents)
 		{
 			try
 			{
-				switch (conten)
+				switch (content)
 				{
 				case DATA:
-					loadAllData(contents, component);
+					storeData(location, component);
 					break;
 				case SETTINGS:
-					environment.getSettings().setSettings((SettingConfigurer) contents.get(FileContent.SETTINGS));
+
+					try
+					{
+						storeSettings(location, component.component().getSettings());
+					} catch (Exception noComponentSettings)
+					{
+					}
+
+					break;
+				case COMPONENT:
+					storeComponent(location, component);
 					break;
 				default:
 					break;
 				}
-			} catch (Exception noEnvironment)
+			} catch (Exception fileCreationFail)
 			{
-				noEnvironment.printStackTrace();
-			}
-		}
-		return component;
-	}
 
-	public static SettingConfigurer loadXMLSettings()
-	{
-		return FileProcessor
-		.loadXMLSettings(new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName));
-	}
-
-	public static String generateRandomTimeBasedAppendedFileName(String file_description)
-	{
-		String fileName = file_description + "_"
-		+ StringFormatter.getCurrentDateString(System.currentTimeMillis() / 1000, "_", false) + "@"
-		+ StringFormatter.getAbsoluteHHMMSS("_", false) + ".xml";
-		return fileName;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static void loadAllData(HashMap<FileContent, Object> contents, Component component)
-	{
-		if (component != null)
-		{
-			HashMap<String, HashMap<HybridTime, ?>> data = (HashMap<String, HashMap<HybridTime, ?>>) contents
-			.get(FileContent.DATA);
-
-			for (@SuppressWarnings("rawtypes")
-			Data id : component.component().getContent().getData(true))
-			{
-				DataOperator.getOperator(id).loadStoredValues(data.get(id.component().getAddress()));
 			}
 		}
 	}
 
-	private static Component getComponent(HashMap<FileContent, Object> contents)
+	private static void consolidateFile(File location)
 	{
-		Component component = null;
 		try
 		{
-			component = (Component) contents.get(FileContent.COMPONENT);
-		} catch (Exception noEnvironment)
+			DataCompressor.zipDirectory(location.getAbsolutePath(), location.getAbsolutePath() + ".hse");
+			FileUtils.deleteDirectory(location);
+		} catch (Exception e)
 		{
-
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return component;
 	}
 
-	public static <T extends Component> void saveComponent(T component, File file, FileContent... contents)
+	private static void storeData(File location, Component component)
 	{
-		store(file, null, component, contents);
+		HashMap<String, Object> data = new HashMap<String, Object>(); // new
+		for (Data<?> dat : component.component().getContent().getData(true))
+		{
+			data.put(dat.component().getAddress(), dat.component().getStoredValues());
+			// ObjectSerializer.store(location.getAbsolutePath() + "/" +
+			// dat.component().getAddress(),
+			// dat.component().getStoredValues());//location.getAbsolutePath());
+		}
+		ObjectSerializer.store(data, location.getAbsolutePath());
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T extends Component> T load(File file, FileContent... contents)
+	private static void storeSettings(File location, SettingConfigurer settings)
 	{
-		return (T) load(null, file, contents);
+		String xmlSettings = XMLParser.serializeObject(settings);
+		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
+
+		ObjectSerializer.store(location.getAbsolutePath() + "/" + settings.getClass().getName(), compressed);
 	}
+
+	private static void storeComponent(File location, Component component)
+	{
+		String xmlSettings = XMLParser.serializeObject(FullComponentOperator.getOperator(component).getNewInstance());
+		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
+		String suffix = component.component().getLabels().getFullDescription() + " Component";
+		System.out.println(suffix);
+		ObjectSerializer.store(location.getAbsolutePath() + "/" + suffix, compressed);
+	}
+
 }
