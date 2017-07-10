@@ -66,7 +66,7 @@ public class FileProcessor extends ProcessorAccess
 		SettingConfigurer settings = (SettingConfigurer) readContent.get(FileContent.SETTINGS);
 		HashMap<FileContent, Object> loadedContent = new HashMap<FileContent, Object>();
 		loadedContent.put(FileContent.COMPONENT, component);
-		loadedContent.put(FileContent.SETTINGS, component);
+		loadedContent.put(FileContent.SETTINGS, settings);
 		return loadedContent;
 
 	}

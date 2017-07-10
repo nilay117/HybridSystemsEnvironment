@@ -94,6 +94,18 @@ public class DataOperator<T> extends FullComponentOperator
 	}
 
 	/*
+	 * Same as the above but with the option to overwrite the save time step
+	 * increment
+	 */
+	public void storeValue(HybridTime time, T value)
+	{
+		if (!FullComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
+		{
+			element.storeValue(time, value);
+		}
+	}
+
+	/*
 	 * Flag indicating is data values are being stored over time for this
 	 * element
 	 */
@@ -116,10 +128,38 @@ public class DataOperator<T> extends FullComponentOperator
 	 */
 	public void storePrejumpData()
 	{
+		if (isDataStored())
+		{
+			if (FieldFinder.containsSuper(element, State.class))
+			{
+				((State) component).storePreJumpValue();
+			}
+		}
+	}
+
+	/*
+	 * Flag indicating that this data should be stored before every jump, which
+	 * is the default in states
+	 */
+	public void clearPrejumpData()
+	{
+		if (isDataStored())
+		{
+			if (FieldFinder.containsSuper(element, State.class))
+			{
+				((State) component).prejump = null;
+			}
+		}
+	}
+
+	public Double getPreJumpValue()
+	{
+		Double val = null;
 		if (FieldFinder.containsSuper(element, State.class))
 		{
-			((State) component).storePreJumpValue();
+			val = ((State) component).prejump;
 		}
+		return val;
 	}
 
 	/*

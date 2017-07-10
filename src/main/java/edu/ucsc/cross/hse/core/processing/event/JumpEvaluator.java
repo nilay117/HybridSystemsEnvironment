@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.processing.event;
 import org.apache.commons.math3.ode.events.EventHandler;
 
 import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
@@ -88,9 +89,11 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 	{
 		getComputationEngine().updateValues(y); // load new ode values
 
-		FullComponentOperator.getOperator(getEnv()).storeData(); // store
-																	// pre-jump
-																	// data
+		HybridTime preJumpTime = getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
+
+		// FullComponentOperator.getOperator(getEnv()).storeData(); // store
+		// pre-jump
+		// data
 
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); // store
 																		// new
@@ -104,10 +107,11 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 		// // jump
 		// // index
 		//
-		FullComponentOperator.getOperator(getEnv()).storeData(); // store
-																	// post-jump
+		getData().storeJumpData(preJumpTime);
+		// FullComponentOperator.getOperator(getEnv()).storeData(); // store
+		// post-jump
 		// // data
-
+		this.getComponents().clearPreJumpData();
 		getComputationEngine().setODEValueVector(y); // update the ode vector
 
 	}

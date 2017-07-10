@@ -90,6 +90,26 @@ public class ComponentDirector extends ProcessorAccess
 	}
 
 	/*
+	 * Store all state values before the jump occurs to make sure that the
+	 * correct value is accessed
+	 * 
+	 * @param jump_components - components where a jump is occurring
+	 */
+	public void clearPreJumpData()
+	{
+
+		for (State data : getEnv().component().getContent().getObjects(State.class, true))
+		{
+			if (getDataOperator(data).isState())
+			{
+				getDataOperator(data).clearPrejumpData();
+
+			}
+		}
+
+	}
+
+	/*
 	 * Apply the defined dynamics depending on whether a jump is occurring
 	 * globally or not
 	 * 

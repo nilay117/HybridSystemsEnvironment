@@ -7,8 +7,10 @@ import java.util.Set;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 
+import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
 import edu.ucsc.cross.hse.core.framework.data.Data;
+import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
@@ -131,6 +133,31 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 			if (getDataOperator(element).isDataStored())
 			{
 				getDataOperator(element).storeValue(time);
+			}
+		}
+
+	}
+
+	public void storeJumpData(HybridTime pre_jump_time)
+	{
+		HybridTime postJumpTime = this.getEnvironmentOperator().getEnvironmentHybridTime();
+		storeTimes.add(pre_jump_time.getTime());
+		storeTimes.add(postJumpTime.getTime());
+		for (Data element : dataElementsToStore)
+		{
+			if (getDataOperator(element).isDataStored())
+			{
+				if (FieldFinder.containsSuper(element, State.class))
+				{
+					State state = (State) element;
+					Double preJump = DataOperator.getOperator(state).getPreJumpValue();
+					Double postJump = state.getValue();
+					if (!postJump.equals(preJump) && preJump != null)
+					{
+						getDataOperator(state).storeValue(pre_jump_time, preJump);
+						getDataOperator(state).storeValue(postJumpTime, postJump);
+					}
+				}
 			}
 		}
 

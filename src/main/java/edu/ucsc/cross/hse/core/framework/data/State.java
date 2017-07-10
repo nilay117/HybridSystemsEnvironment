@@ -22,12 +22,12 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 public class State extends Data<Double>
 {
 
-	private Double derivative; // current derivative of the data (if the data
-								// changes
-								// continuously)
+	protected Double derivative; // current derivative of the data (if the data
+									// changes
+									// continuously)
 
-	private Double prejump; // pre-jump value stored immediately before jump
-							// occurs
+	protected Double prejump; // pre-jump value stored immediately before jump
+								// occurs
 
 	/*
 	 * Gets the current state value

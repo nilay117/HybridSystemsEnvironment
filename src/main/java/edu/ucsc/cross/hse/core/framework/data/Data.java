@@ -161,6 +161,19 @@ public class Data<T> extends Component
 	}
 
 	/*
+	 * Store the double overriding the same time increment
+	 */
+	void storeValue(HybridTime time, T value)
+	{
+
+		if (save)
+		{
+			savedHybridValues.put(time, value);
+
+		}
+	}
+
+	/*
 	 * Instantiate the data class however fits your needs.
 	 * 
 	 * Mandatory: initialValue
