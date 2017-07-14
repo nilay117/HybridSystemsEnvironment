@@ -183,7 +183,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	{
 		odeVectorMap.clear();
 		Integer odeIndex = 0;
-
+		this.getConsole().print("ODE Vector Initialization");
 		for (State component : getEnv().component().getContent().getObjects(State.class, true))// .loadComponents();//.getSpecificComponent(Data.class,
 			try
 			{

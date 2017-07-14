@@ -51,22 +51,18 @@ public class Data<T> extends Component
 	public T getValue()
 	{
 
-		return element;
+		return getValue(false);
 	}
 
 	/*
 	 * Safely access element and randomize if domain permits
 	 */
 	@SuppressWarnings("unchecked")
-	public T getValue(boolean randomize_from_domain)
+	public T getValue(boolean jump_protection)
 	{
 		try
 		{
-			if (randomize_from_domain)
-			{
-				element = (T) elementDomain.getValue();
-
-			} else if (component().getEnvironment().isJumpOccurring())
+			if (jump_protection && component().getEnvironment().isJumpOccurring())
 			{
 				return prejump;
 			} else
@@ -80,6 +76,15 @@ public class Data<T> extends Component
 			e.printStackTrace();
 		}
 		return element;
+
+	}
+
+	/*
+	 * Safely store element
+	 */
+	public void setValue()
+	{
+		this.element = element;
 
 	}
 

@@ -49,32 +49,42 @@ public class UserComponentOperator
 	{
 		HashMap<Data, HashMap<HybridTime, T>> tempValues = new HashMap<Data, HashMap<HybridTime, T>>();
 		ComponentContent h = component.component().getContent();
-
-		if (!include_data)
+		try
 		{
-			for (Data data : component.component().getContent().getObjects(Data.class, true))
+			if (!include_data)
 			{
-				tempValues.put(data, data.component().getStoredValues());
+				for (Data data : h.getObjects(Data.class, true))
+				{
+					tempValues.put(data, data.component().getStoredValues());
+				}
 			}
-		}
-		if (!include_hierarchy)
+			if (!include_hierarchy)
+			{
+				FullComponentOperator.getOperator(component).loadHierarchy(null);
+			} // environment = null;
+		} catch (Exception e)
 		{
-			FullComponentOperator.getOperator(component).loadHierarchy(null);
-		} // environment = null;
+
+		}
 		T copy = (T) ObjectCloner.xmlClone(component);// ComponentOperator.cloner.deepClone(component);
-		if (!include_hierarchy)
-		{
-			FullComponentOperator.getOperator(component).loadHierarchy(h);
-		}
-		if (!include_data)
-		{
-			for (Data data : component.component().getContent().getObjects(Data.class, true))
+		try
+		{// FullComponentOperator.getOperator(component).loadHierarchy(h);
+			if (!include_hierarchy)
 			{
-				// tempValues.put(data, Data.getStoredValues(data));
-				DataOperator.getOperator(data).loadStoredValues(tempValues.get(data));
+				FullComponentOperator.getOperator(component).loadHierarchy(h);
 			}
-		}
+			if (!include_data)
+			{
+				for (Data data : component.component().getContent().getObjects(Data.class, true))
+				{
+					// tempValues.put(data, Data.getStoredValues(data));
+					DataOperator.getOperator(data).loadStoredValues(tempValues.get(data));
+				}
+			}
+		} catch (Exception e)
+		{
 
+		}
 		return copy;
 
 	}

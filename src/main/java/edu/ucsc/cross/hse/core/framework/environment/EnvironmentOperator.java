@@ -203,6 +203,7 @@ public class EnvironmentOperator extends FullComponentOperator
 	private void linkEnvironment()
 	{
 		this.initializeContentMappings();
+
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 

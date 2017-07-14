@@ -251,11 +251,11 @@ public class CentralProcessor
 				data.component().configure().setInitialized(false);
 			}
 		}
-		for (Data data : dat)
+		for (Data dataz : dat)
 		{
-			DataOperator.getOperator(data).resetData();
-			data.component().configure()
-			.setInitialized(!FullComponentOperator.getOperator(data).isInitialized() || reinitialize_data);
+			DataOperator.getOperator(dataz).resetData();
+			dataz.component().configure()
+			.setInitialized(!FullComponentOperator.getOperator(dataz).isInitialized() || reinitialize_data);
 		}
 
 	}
@@ -312,7 +312,7 @@ public class CentralProcessor
 		storeConfigurations();
 		dataHandler.loadStoreStates();
 		simulationEngine.initialize();
-		// storeConfigurations();
+		storeConfigurations();
 	}
 
 	/*

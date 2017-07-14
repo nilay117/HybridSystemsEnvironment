@@ -167,6 +167,8 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 							// new HybridTime(pre_jump_time.getTime() +
 							// Double.MIN_VALUE,
 							// postJumpTime.getJumpIndex()));
+							// getDataOperator(state).storeValue(state.getValue(),
+							// postJumpTime);
 							getDataOperator(state).storeValue(state.getValue(), postJumpTime);
 						}
 					}

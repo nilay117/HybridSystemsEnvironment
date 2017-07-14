@@ -35,17 +35,18 @@ public class ComponentDirector extends ProcessorAccess
 		if (jump_occurred)
 		{
 			boolean jumpOccurred = false;
-
-			// while (this.getComponentOperator(getEnv()).isJumpOccurring())
+			ArrayList<Component> jumpComponents = getEnv().component().getContent().getComponents(true);// ,
+			// classes).jumpingComponents();
+			while (this.getComponentOperator(getEnv()).isJumpOccurring())
 			{
 				jumpOccurred = true;
 				executeAllOccurringJumps();
-			}
-			if (jumpOccurred)
-			{
-				// this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-			}
 
+				if (jumpOccurred)
+				{
+					this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+				}
+			}
 		} else
 		{
 			FullComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
@@ -57,13 +58,22 @@ public class ComponentDirector extends ProcessorAccess
 	 */
 	private void executeAllOccurringJumps()
 	{
-		ArrayList<Component> jumpComponents = FullComponentOperator.getOperator(getEnv()).jumpingComponents();
+		ArrayList<Component> jumpComponents = getEnv().component().getContent().getComponents(true);// ,
+																									// classes).jumpingComponents();
 		storeRelavantPreJumpData(jumpComponents);
 		getEnvironmentOperator().setJumpOccurring(true);
 		for (Component component : jumpComponents)
 		{
-			HybridSystem dynamics = ((HybridSystem) component);
-			dynamics.jumpMap();
+			try
+			{
+				HybridSystem dynamics = ((HybridSystem) component);
+				System.out.println(
+				getEnvironmentOperator().getEnvironmentHybridTime().getJumpIndex() + " " + component.toString());
+				applyDynamics(dynamics, true, true);
+			} catch (Exception e)
+			{
+
+			}
 		}
 
 		getEnvironmentOperator().setJumpOccurring(false);
@@ -78,9 +88,10 @@ public class ComponentDirector extends ProcessorAccess
 	private void storeRelavantPreJumpData(ArrayList<Component> jump_components)
 	{
 
-		for (Component component : jump_components)
+		// for (Component component :
+		// getEnv().component().getContent().getData(true))//cgetjump_components)
 		{
-			for (Data data : component.component().getContent().getData(true))
+			for (Data data : getEnv().component().getContent().getData(true))// component.component().getContent().getData(true))
 			{
 				if (getDataOperator(data).isDataStored())
 				// if (getDataOperator(data).isState())

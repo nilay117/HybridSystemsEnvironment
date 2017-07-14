@@ -125,7 +125,7 @@ public class ComponentContent
 		HashMap<String, S> componentMap = new HashMap<String, S>();
 		for (S component : components)
 		{
-			componentMap.put(component.component().getLabels().name, component);
+			componentMap.put(component.component().getLabels().getClassification(), component);
 		}
 		return componentMap;
 	}
