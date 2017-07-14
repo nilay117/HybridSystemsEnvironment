@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.framework.data;
 
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
 /*
@@ -74,7 +74,7 @@ public class State extends Data<Double>
 	@Override
 	public void setValue(Double val)
 	{
-		if (!FullComponentOperator.getOperator(this).isInitialized())
+		if (!ComponentWorker.getOperator(this).isInitialized())
 		{
 			elementDomain.setFixedValue(val);
 		}

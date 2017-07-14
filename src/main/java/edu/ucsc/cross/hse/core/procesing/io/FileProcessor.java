@@ -18,16 +18,13 @@ import com.be3short.data.serialization.ObjectSerializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 
-import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
-import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
-import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 public class FileProcessor extends ProcessorAccess
@@ -58,7 +55,6 @@ public class FileProcessor extends ProcessorAccess
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
 		HashMap<FileContent, Object> readContent = null;
@@ -265,7 +261,7 @@ public class FileProcessor extends ProcessorAccess
 
 	private static void storeComponent(File location, Component component)
 	{
-		String xmlSettings = XMLParser.serializeObject(FullComponentOperator.getOperator(component).getNewInstance());
+		String xmlSettings = XMLParser.serializeObject(ComponentWorker.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
 		String suffix = component.component().getLabels().getFullDescription() + " Component";
 		System.out.println(suffix);

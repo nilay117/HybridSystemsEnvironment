@@ -12,19 +12,18 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
-import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 
 /*
  * This class contains the methods available to users that perform a variety of
  * tasks. These methods are safe to use whenever needed as they do not interfere
  * with the processor, though most are for preparing components.
  */
-public class UserComponentOperator
+public class ComponentOperator
 {
 
 	protected Component component; // component this class works for
 
-	public UserComponentOperator(Component component) // constructor assigning a
+	public ComponentOperator(Component component) // constructor assigning a
 														// component
 	{
 		this.component = component;
@@ -60,7 +59,7 @@ public class UserComponentOperator
 			}
 			if (!include_hierarchy)
 			{
-				FullComponentOperator.getOperator(component).loadHierarchy(null);
+				ComponentWorker.getOperator(component).loadHierarchy(null);
 			} // environment = null;
 		} catch (Exception e)
 		{
@@ -71,7 +70,7 @@ public class UserComponentOperator
 		{// FullComponentOperator.getOperator(component).loadHierarchy(h);
 			if (!include_hierarchy)
 			{
-				FullComponentOperator.getOperator(component).loadHierarchy(h);
+				ComponentWorker.getOperator(component).loadHierarchy(h);
 			}
 			if (!include_data)
 			{
@@ -167,7 +166,7 @@ public class UserComponentOperator
 	{
 		if (component.labels.address == null)
 		{
-			FullComponentOperator.getOperator(component).generateAddress();
+			ComponentWorker.getOperator(component).generateAddress();
 		}
 		return component.labels.address;
 	}

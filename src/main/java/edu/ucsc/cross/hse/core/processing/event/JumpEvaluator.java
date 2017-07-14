@@ -2,8 +2,7 @@ package edu.ucsc.cross.hse.core.processing.event;
 
 import org.apache.commons.math3.ode.events.EventHandler;
 
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
-import edu.ucsc.cross.hse.core.object.domain.HybridTime;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
@@ -40,7 +39,7 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 		} else
 		{
 			getEnvironmentOperator().getEnvironmentHybridTime().setTime(t);
-			if (FullComponentOperator.getOperator(getEnv()).outOfAllDomains())
+			if (ComponentWorker.getOperator(getEnv()).outOfAllDomains())
 			{
 				getData().storeData(t, true);
 			} else
@@ -90,160 +89,29 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 		}
 	}
 
+	/*
+	 * Performs actions necessary to reset the state after a jump has occurred
+	 */
+
 	@Override
 	public void resetState(double t, double[] y)
 	{
 		getComputationEngine().updateValues(y); // load new ode values
-		getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
+
+		getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0); // refresh
+
 		getData().storeData(getEnvironmentOperator().getEnvironmentHybridTime().getTime(), true);
-		// pre-jump
-		// data
-		// this.getData().storeData(this.getEnvironmentOperator().getEnvironmentHybridTime().getTime(),
-		// true);
+
 		getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); // store
-																		// new
-																		// step
+																		// most
+																		// recent
 																		// time
 
 		getComponents().performAllTasks(true); // execute all jumps
 
-		// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-		// // increment
-		// // jump
-		// // index
-		//
-
-		// getData().storeData(t, true);
-		// FullComponentOperator.getOperator(getEnv()).storeData(); // store
-		// post-jump
-		// // data
-
 		getComputationEngine().setODEValueVector(y); // update the ode vector
 
 	}
-	/*
-	 * Performs actions necessary to reset the state after a jump has occurred
-	 */
-	// @Override
-	// public void resetState(double t, double[] y)
-	// {
-	// // getComputationEngine().updateValues(y); // load new ode values
-	// // this.getData().storeData(getEnv().getEnvironmentTime(), true);
-	//
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); //
-	// // this.getData().storeData(getEnv().getEnvironmentTime(), true);
-	// // store
-	// // new
-	// // step
-	// // time
-	// HybridTime preJumpTime =
-	// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // getEnvironmentOperator().getEnvironmentHybridTime()
-	// // .setTime(getEnvironmentOperator().getEnvironmentHybridTime().getTime()
-	// // + Double.MIN_VALUE);
-	// // // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// while (getEnvironmentOperator().isJumpOccurring())
-	// {
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// getComponents().performAllTasks(true); // execute all jumps
-	// getData().storeJumpData(preJumpTime);
-	// //
-	// // getEnvironmentOperator().getEnvironmentHybridTime()
-	// // .setTime(getEnvironmentOperator().getEnvironmentHybridTime().getTime()
-	// // + .0001);// ;.incrementJumpIndex();
-	// // preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // // if (getEnvironmentOperator().isJumpOccurring())
-	// // // {
-	// //
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// // preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// /// preJumpTime = new HybridTime(preJumpTime.getTime() + .000001,
-	// /// preJumpTime.getJumpIndex() + 1);//
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// //
-	// // //
-	// //
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// // getEnvironmentOperator().getEnvironmentHybridTime()
-	// // .setTime(getEnvironmentOperator().getEnvironmentHybridTime().getTime()
-	// // + Double.MIN_VALUE);
-	// //
-	// // }
-	// }
-	// // this.getData().storeData(getEnv().getEnvironmentTime(), true);
-	// //
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// getComputationEngine().setODEValueVector(y); // update the ode vector
-	//
-	// }
-	/*
-	 * Performs actions necessary to reset the state after a jump has occurred
-	 */
-	// @Override
-	// public void resetState(double t, double[] y)
-	// {
-	// getComputationEngine().updateValues(y); // load new ode values
-	// HybridTime preJumpTime =
-	// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// getEnvironmentOperator().getEnvironmentHybridTime().setTime(t); // store
-	// // new
-	// // step
-	// // time
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// // HybridTime preJumpTime =
-	// // getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	//
-	// while (getEnvironmentOperator().isJumpOccurring())
-	// {
-	//
-	// getComponents().performAllTasks(true); // execute all jumps
-	// getData().storeJumpData(preJumpTime);
-	// this.getComponents().clearPreJumpData();
-	// if (getEnvironmentOperator().isJumpOccurring())
-	// {
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// preJumpTime = new HybridTime(preJumpTime.getTime(),
-	// preJumpTime.getJumpIndex() + 1);//
-	// getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
-	//
-	// //
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// getEnvironmentOperator().getEnvironmentHybridTime()
-	// .setTime(getEnvironmentOperator().getEnvironmentHybridTime().getTime() +
-	// Double.MIN_VALUE);
-	//
-	// }
-	// }
-	// //
-	// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-	// getComputationEngine().setODEValueVector(y); // update the ode vector
-	//
-	// }
 
 	/*
 	 * initializes the event handler

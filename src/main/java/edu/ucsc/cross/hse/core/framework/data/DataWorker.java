@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.framework.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.ucsc.cross.hse.core.framework.component.UserComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 
@@ -14,7 +14,7 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
  * of your system though, if a component does not store data it should not have
  * access to it.
  */
-public class DataWorker<T> extends UserComponentOperator
+public class DataWorker<T> extends ComponentOperator
 {
 
 	// Mapping of all data workers keeping them completely separate from the

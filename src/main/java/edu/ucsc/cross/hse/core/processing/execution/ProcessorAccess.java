@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
@@ -114,9 +114,9 @@ public abstract class ProcessorAccess
 		return proc.fileExchanger;
 	}
 
-	protected FullComponentOperator getComponentOperator(Component component)
+	protected ComponentWorker getComponentOperator(Component component)
 	{
-		return FullComponentOperator.getOperator(component);
+		return ComponentWorker.getOperator(component);
 	}
 
 	protected <S> DataOperator<S> getDataOperator(Data<S> component)

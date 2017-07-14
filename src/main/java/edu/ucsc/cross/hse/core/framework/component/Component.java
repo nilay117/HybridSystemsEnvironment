@@ -31,7 +31,7 @@ public abstract class Component // implements Initializer
 	 */
 	public Component(String classification, String name)
 	{
-		FullComponentOperator.getOperator(this).setup(classification, this.getClass());
+		ComponentWorker.getOperator(this).setup(classification, this.getClass());
 		this.labels.setName(name);
 
 	}
@@ -46,7 +46,7 @@ public abstract class Component // implements Initializer
 	 */
 	public Component(String classification)
 	{
-		FullComponentOperator.getOperator(this).setup(classification, this.getClass());
+		ComponentWorker.getOperator(this).setup(classification, this.getClass());
 
 	}
 
@@ -59,7 +59,7 @@ public abstract class Component // implements Initializer
 	 */
 	public Component()
 	{
-		FullComponentOperator.getOperator(this).setup(this.getClass().getSimpleName(), this.getClass());
+		ComponentWorker.getOperator(this).setup(this.getClass().getSimpleName(), this.getClass());
 
 	}
 
@@ -69,9 +69,9 @@ public abstract class Component // implements Initializer
 	 *
 	 * @return component operator
 	 */
-	public UserComponentOperator component()
+	public ComponentOperator component()
 	{
-		return FullComponentOperator.getOperator(this);
+		return ComponentWorker.getOperator(this);
 	}
 
 	/*

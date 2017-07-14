@@ -1,7 +1,6 @@
 package edu.ucsc.cross.hse.core.procesing.io;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import com.rits.cloning.Cloner;

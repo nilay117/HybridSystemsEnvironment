@@ -7,7 +7,7 @@ import java.util.List;
 import bs.commons.objects.access.CoreComponent;
 import bs.commons.objects.access.FieldFinder;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
@@ -16,7 +16,7 @@ import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 /*
  * This
  */
-public class EnvironmentOperator extends FullComponentOperator
+public class EnvironmentOperator extends ComponentWorker
 {
 
 	// EnvironmentOperator instances in the current JVM
@@ -83,7 +83,7 @@ public class EnvironmentOperator extends FullComponentOperator
 	 */
 	public static HybridEnvironment getGlobalSystem(Component component)
 	{
-		return globalSystems.get(FullComponentOperator.getOperator(component).getEnvironmentKey()).globalSystem;
+		return globalSystems.get(ComponentWorker.getOperator(component).getEnvironmentKey()).globalSystem;
 	}
 
 	/*
@@ -174,8 +174,8 @@ public class EnvironmentOperator extends FullComponentOperator
 			}
 			if (initialize)
 			{
-				FullComponentOperator.getOperator(component).protectedInitialize();
-				FullComponentOperator.getOperator(component).storeConfiguration();
+				ComponentWorker.getOperator(component).protectedInitialize();
+				ComponentWorker.getOperator(component).storeConfiguration();
 
 			}
 		}
@@ -192,7 +192,7 @@ public class EnvironmentOperator extends FullComponentOperator
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
-			FullComponentOperator.getOperator(component).generateAddress();
+			ComponentWorker.getOperator(component).generateAddress();
 		}
 	}
 
@@ -207,7 +207,7 @@ public class EnvironmentOperator extends FullComponentOperator
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
-			FullComponentOperator.getOperator(component)
+			ComponentWorker.getOperator(component)
 			.setEnvironmentKey(globalSystem.component().getEnvironmentKey());// toString());//
 																				// FullComponentOperator.getOperator(globalSystem).getEnvironmentKey());
 		}

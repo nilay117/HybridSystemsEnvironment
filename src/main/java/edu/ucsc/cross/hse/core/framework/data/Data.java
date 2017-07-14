@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import bs.commons.objects.manipulation.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
@@ -57,7 +57,6 @@ public class Data<T> extends Component
 	/*
 	 * Safely access element and randomize if domain permits
 	 */
-	@SuppressWarnings("unchecked")
 	public T getValue(boolean jump_protection)
 	{
 		try
@@ -82,9 +81,16 @@ public class Data<T> extends Component
 	/*
 	 * Safely store element
 	 */
+	@SuppressWarnings("unchecked")
 	public T setValue()
 	{
-		this.element = (T) elementDomain.getValue();
+		try
+		{
+			this.element = (T) elementDomain.getValue();
+		} catch (Exception badDomain)
+		{
+
+		}
 		return element;
 
 	}
@@ -268,7 +274,7 @@ public class Data<T> extends Component
 		{
 			savedHybridValues = new HashMap<HybridTime, T>();
 		}
-		if (!FullComponentOperator.getOperator(this).isInitialized())
+		if (!ComponentWorker.getOperator(this).isInitialized())
 		{
 			try
 			{

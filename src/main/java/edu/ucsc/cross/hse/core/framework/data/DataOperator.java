@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import bs.commons.objects.access.FieldFinder;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 
 /*
@@ -18,7 +18,7 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
  * users should be defined here. Use caution when using them as they can disrupt
  * functionality of the environment.
  */
-public class DataOperator<T> extends FullComponentOperator
+public class DataOperator<T> extends ComponentWorker
 {
 
 	// All data operators within the current JVM
@@ -87,7 +87,7 @@ public class DataOperator<T> extends FullComponentOperator
 	 */
 	public void storeValue(Double time, boolean override_save)
 	{
-		if (!FullComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
+		if (!ComponentWorker.getOperator(component.component().getEnvironment()).outOfAllDomains())
 		{
 			element.storeValue(time, override_save);
 		}
@@ -99,17 +99,16 @@ public class DataOperator<T> extends FullComponentOperator
 	 */
 	public void storeValue(HybridTime time, T value)
 	{
-		// if
-		// (!FullComponentOperator.getOperator(component.component().getEnvironment()).outOfAllDomains())
-		{
-			element.storeValue(time, value);
-		}
+
+		element.storeValue(time, value);
+
 	}
 
 	/*
 	 * Same as the above but with the option to overwrite the save time step
 	 * increment
 	 */
+	@SuppressWarnings("unchecked")
 	public void storeValue(Object value, HybridTime time)
 	{
 		try

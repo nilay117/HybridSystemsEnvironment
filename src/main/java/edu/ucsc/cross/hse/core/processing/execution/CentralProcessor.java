@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
@@ -207,7 +207,7 @@ public class CentralProcessor
 		repeat = repeat || interruptResponder.isPaused();
 		repeat = repeat || interruptResponder.isTerminatedEarly();
 		repeat = repeat || !environmentInterface.getSettings().getExecutionSettings().rerunOnFatalErrors;
-		repeat = repeat || FullComponentOperator.getOperator(environmentInterface.content).outOfAllDomains()
+		repeat = repeat || ComponentWorker.getOperator(environmentInterface.content).outOfAllDomains()
 		&& !interruptResponder.isErrorTermination();
 		return repeat;
 	}
@@ -255,7 +255,7 @@ public class CentralProcessor
 		{
 			DataOperator.getOperator(dataz).resetData();
 			dataz.component().configure()
-			.setInitialized(!FullComponentOperator.getOperator(dataz).isInitialized() || reinitialize_data);
+			.setInitialized(!ComponentWorker.getOperator(dataz).isInitialized() || reinitialize_data);
 		}
 
 	}
@@ -321,11 +321,11 @@ public class CentralProcessor
 	 */
 	protected void storeConfigurations()
 	{
-		FullComponentOperator.getOperator(this.environmentInterface.getEnvironment()).storeConfiguration();
+		ComponentWorker.getOperator(this.environmentInterface.getEnvironment()).storeConfiguration();
 		for (Component component : this.environmentInterface.getEnvironment().component().getContent()
 		.getComponents(true))
 		{
-			FullComponentOperator.getOperator(component).storeConfiguration();
+			ComponentWorker.getOperator(component).storeConfiguration();
 		}
 	}
 

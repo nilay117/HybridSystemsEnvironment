@@ -19,16 +19,16 @@ import edu.ucsc.cross.hse.core.processing.execution.ComponentDirector;
  * be defined here. Use caution when using them as they can disrupt
  * functionality of the environment.
  */
-public class FullComponentOperator extends UserComponentOperator
+public class ComponentWorker extends ComponentOperator
 {
 
 	private Component configuration; // wpointer to own component
 
-	protected static HashMap<Component, FullComponentOperator> components = new HashMap<Component, FullComponentOperator>();
+	protected static HashMap<Component, ComponentWorker> components = new HashMap<Component, ComponentWorker>();
 
 	// relative compoents
 
-	public FullComponentOperator(Component component)
+	public ComponentWorker(Component component)
 	{
 		super(component);
 		// this.component = component;
@@ -197,8 +197,8 @@ public class FullComponentOperator extends UserComponentOperator
 	 */
 	public boolean outOfAllDomains(Component component)
 	{
-		return !(FullComponentOperator.getOperator(component).isJumpOccurring()
-		|| FullComponentOperator.getOperator(component).isFlowOccurring());
+		return !(ComponentWorker.getOperator(component).isJumpOccurring()
+		|| ComponentWorker.getOperator(component).isFlowOccurring());
 	}
 
 	/*
@@ -323,7 +323,7 @@ public class FullComponentOperator extends UserComponentOperator
 	 * Indirect access to the operator to keep it disconnected from the
 	 * component itself
 	 */
-	public static FullComponentOperator getOperator(Component component)
+	public static ComponentWorker getOperator(Component component)
 	{
 		if (components.containsKey(component))
 		{
@@ -332,7 +332,7 @@ public class FullComponentOperator extends UserComponentOperator
 		} else
 		{
 
-			FullComponentOperator config = new FullComponentOperator(component);
+			ComponentWorker config = new ComponentWorker(component);
 			components.put(component, config);
 			return config;
 

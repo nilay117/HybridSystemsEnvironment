@@ -3,9 +3,8 @@ package edu.ucsc.cross.hse.core.processing.execution;
 import java.util.ArrayList;
 
 import edu.ucsc.cross.hse.core.framework.component.Component;
-import edu.ucsc.cross.hse.core.framework.component.FullComponentOperator;
+import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.framework.data.State;
 import edu.ucsc.cross.hse.core.framework.models.HybridSystem;
 import edu.ucsc.cross.hse.core.processing.data.DataHandler;
 
@@ -34,23 +33,19 @@ public class ComponentDirector extends ProcessorAccess
 	{
 		if (jump_occurred)
 		{
-			boolean jumpOccurred = false;
-			ArrayList<Component> jumpComponents = getEnv().component().getContent().getComponents(true);// ,
-			// classes).jumpingComponents();
+
 			while (this.getComponentOperator(getEnv()).isJumpOccurring())
 			{
 				getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
-				jumpOccurred = true;
+
 				executeAllOccurringJumps();
 
-				if (jumpOccurred)
-				{
-					getData().storeData(this.getEnvironmentOperator().getEnvironmentHybridTime().getTime(), true);
-				}
+				getData().storeData(this.getEnvironmentOperator().getEnvironmentHybridTime().getTime(), true);
+
 			}
 		} else
 		{
-			FullComponentOperator.getOperator(getEnv()).performTasks(jump_occurred);
+			ComponentWorker.getOperator(getEnv()).performTasks(jump_occurred);
 		}
 	}
 
@@ -68,9 +63,9 @@ public class ComponentDirector extends ProcessorAccess
 			try
 			{
 				HybridSystem dynamics = ((HybridSystem) component);
-				System.out.println(
-				getEnvironmentOperator().getEnvironmentHybridTime().getJumpIndex() + " " + component.toString());
+
 				applyDynamics(dynamics, true, true);
+
 			} catch (Exception e)
 			{
 
@@ -86,20 +81,18 @@ public class ComponentDirector extends ProcessorAccess
 	 * 
 	 * @param jump_components - components where a jump is occurring
 	 */
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	private void storeRelavantPreJumpData(ArrayList<Component> jump_components)
 	{
 
-		// for (Component component :
-		// getEnv().component().getContent().getData(true))//cgetjump_components)
+		for (Data data : getEnv().component().getContent().getData(true))// component.component().getContent().getData(true))
 		{
-			for (Data data : getEnv().component().getContent().getData(true))// component.component().getContent().getData(true))
+			if (getDataOperator(data).isDataStored())
+			// if (getDataOperator(data).isState())
 			{
-				if (getDataOperator(data).isDataStored())
-				// if (getDataOperator(data).isState())
-				{
-					getDataOperator(data).storePrejumpData();
+				getDataOperator(data).storePrejumpData();
 
-				}
 			}
 		}
 	}
@@ -110,12 +103,13 @@ public class ComponentDirector extends ProcessorAccess
 	 * 
 	 * @param jump_components - components where a jump is occurring
 	 */
+	@SuppressWarnings(
+	{ "rawtypes", "unchecked" })
 	public void clearPreJumpData()
 	{
 
 		for (Data data : getEnv().component().getContent().getData(true))
 		{
-			// if (getDataOperator(data).isState())
 			{
 				getDataOperator(data).clearPrejumpData();
 

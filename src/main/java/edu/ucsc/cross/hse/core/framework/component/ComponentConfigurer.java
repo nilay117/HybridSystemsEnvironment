@@ -158,7 +158,7 @@ public class ComponentConfigurer
 				comp.component().configure().setInitialized(initialized);
 			}
 		}
-		FullComponentOperator.getOperator(co).getStatus().setInitialized(initialized);
+		ComponentWorker.getOperator(co).getStatus().setInitialized(initialized);
 	}
 
 	/*
@@ -166,6 +166,6 @@ public class ComponentConfigurer
 	 */
 	public void setSimulated(boolean simulated)
 	{
-		FullComponentOperator.getOperator(co).getStatus().setSimulated(simulated);
+		ComponentWorker.getOperator(co).getStatus().setSimulated(simulated);
 	}
 }
