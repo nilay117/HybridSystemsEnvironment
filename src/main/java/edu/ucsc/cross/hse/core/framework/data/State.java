@@ -175,7 +175,7 @@ public class State extends Data<Double>
 			elementDomain.setRandomValues(vals[0], vals[1]);
 		}
 		element = elementDomain.getValue();
-		derivative = null;
+		// derivative = null;
 		prejump = element;
 	}
 

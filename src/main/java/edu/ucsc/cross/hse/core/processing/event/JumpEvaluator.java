@@ -113,7 +113,7 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 		// // index
 		//
 
-		getData().storeData(t, true);
+		// getData().storeData(t, true);
 		// FullComponentOperator.getOperator(getEnv()).storeData(); // store
 		// post-jump
 		// // data

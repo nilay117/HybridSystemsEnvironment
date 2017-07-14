@@ -82,9 +82,10 @@ public class Data<T> extends Component
 	/*
 	 * Safely store element
 	 */
-	public void setValue()
+	public T setValue()
 	{
-		this.element = element;
+		this.element = (T) elementDomain.getValue();
+		return element;
 
 	}
 

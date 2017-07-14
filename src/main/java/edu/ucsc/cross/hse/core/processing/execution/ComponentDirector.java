@@ -39,12 +39,13 @@ public class ComponentDirector extends ProcessorAccess
 			// classes).jumpingComponents();
 			while (this.getComponentOperator(getEnv()).isJumpOccurring())
 			{
+				getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
 				jumpOccurred = true;
 				executeAllOccurringJumps();
 
 				if (jumpOccurred)
 				{
-					this.getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex();
+					getData().storeData(this.getEnvironmentOperator().getEnvironmentHybridTime().getTime(), true);
 				}
 			}
 		} else
