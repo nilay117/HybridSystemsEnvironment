@@ -11,21 +11,20 @@ import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
 /*
- * This class provides the computations and organization necessary to run a
- * simulation. It has been modified to support hybrid systems without requiring
- * pre-specified thresholds to detect discrete events. This is an improvement
- * from having to explicetly define each condition that triggers a jump.
+ * Provides the computations and organization necessary to run a simulation. It
+ * has been modified to support hybrid systems without requiring pre-specified
+ * thresholds to detect discrete events. This is an improvement from having to
+ * explicetly define each condition that triggers a jump.
  */
-
 public class SimulationEngine extends ProcessorAccess implements FirstOrderDifferentialEquations
 {
 
 	/*
-	 * This is a mapping of all state elements used by the ode with keys that
-	 * correspond to the ode state vector index. The ode state vector is made up
-	 * of all data elements that can change dynamically. This structure allows
-	 * for state values and be adjusted from their respective components and
-	 * always be ready for use in the ode
+	 * Mapping of all state elements used by the ode with keys that correspond
+	 * to the ode state vector index. The ode state vector is made up of all
+	 * data elements that can change dynamically. This structure allows for
+	 * state values and be adjusted from their respective components and always
+	 * be ready for use in the ode
 	 */
 	private HashMap<Integer, State> odeVectorMap;
 
@@ -140,7 +139,7 @@ public class SimulationEngine extends ProcessorAccess implements FirstOrderDiffe
 	}
 
 	/*
-	 * Aquires the ode value vector
+	 * Acquires the ode value vector
 	 * 
 	 * @return double array with the ode values
 	 */

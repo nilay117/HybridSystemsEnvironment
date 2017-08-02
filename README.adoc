@@ -1,0 +1,103 @@
+== Overview
+This software is a virtual environment capable of operating user defined components of any scale and complexity. The framework included in this package provides a set of elements that are used to develop dynamical systems with no structural requirements.  The environment is a platform that supports any system, or collection of systems, defined using this framework with an API that makes it easy to operate and manage results. 
+
+== Usage
+Using the environment is fairly straightforward; simply create a new HybridEnvironment instance, add components, configure the settings, and execute. How to define components and configure the settings are documented in later sections.  
+
+The code below illustrates how to configure the environment with a single component "componentA" and run a trial with the results being saved in the file "resultFile".
+
+[source,java]
+----
+EnvironmentManager environment = new EnvironmentManager(); // instantiate environment
+
+ComponentA componentA = new ComponentA(); // instantiate component
+
+environment.configure().addComponent(componentA); // add component to environment
+
+environment.start(); // start environment
+
+environment.save(resultFile); // save the results to a file
+----
+
+Any combination of components can be added to the environment, as well as multiple instances of a component. The code below illustrates how to configure the environment with multiple components, "componentA" and 5 of "componentB",  and run a trial with the results being saved in the file "resultFile".
+
+[source,java]
+----
+EnvironmentManager environment = new EnvironmentManager(); // instantiate environment 
+
+ComponentA componentA = new ComponentA(); // instantiate component A
+
+ComponentB componentB = new ComponentB(); // instantiate component B
+
+environment.configure().addComponent(componentA); // add componentA to environment
+
+environment.configure().addComponent(componentB, 5); // add 5 componentB's to environment
+
+environment.start(); // start environment
+
+environment.save(resultFile); // save the results to a file
+----
+
+
+== Defining Components
+A universal base component class "Component" is expanded to develop new elements that are supported and inherit a general purpose API.  Any class that is an extension of the Component class can be operated by the environment because it identifies all elements used by the processor.  Components can contain other components to create complex structures that are completely modular.  For example, a sensor model, storage model, network model, and vehicle model can be combined to implement a multi-sensing vehicle with storage and network capabilities.  This concept can be applied to much larger systems such as networks, making it easier to study complex multi-agent systems.
+
+Models and components are designed by extending the Component class and using the base components where necessary.  Extending the Component class does not require any code in the new class, but provides an interface to easily access data and allows the environment to identify the new component and its contents.  In addition to the Component class, there are three main elements that define the data and dynamics that are used by the environment. 
+
+image::https://be3short.files.wordpress.com/2017/08/basedatadescription.png[width=100%]
+
+The following code illustrates how to define a Bouncing Ball component, which is a dynamical system describing the trajectory of a ball bouncing on a surface.
+
+[source,java]
+----
+public class BouncingBall extends Component implements HybridSystem
+{
+	
+	public State xVel; // X velocity state
+	public State yVel; // Y velocity
+	public State xPos;
+	public State yPos;
+	public Data<Double> gravity;
+	public Data<Double> restitution;
+	
+	public BouncingBall()
+	{
+		super("Bouncing Ball");
+		xPos = new State("X Position", 0.0);
+		yPos = new State("Y Position", 10.0);
+		xVel = new State("X Velocity", 0.0);
+		yVel = new State("Y Velocity", 0.0);
+		gravity = new Data<Double>("Gravity Constant", 9.81);
+		restitution = new Data<Double>("Restitution Coefficient", .9);
+	}
+	
+	@Override
+	public boolean jumpSet()
+	{
+		return yPos.getValue() <= 0.0 && yVel.getValue() <= 0.0;
+	}
+	
+	@Override
+	public boolean flowSet()
+	{
+		return yPos.getValue() >= 0.0;
+	}
+	
+	@Override
+	public void flowMap()
+	{
+		yVel.setDerivative(-gravity.getValue());
+		xVel.setDerivative(0.0);
+		xPos.setDerivative(xVel.getValue());
+		yPos.setDerivative(yVel.getValue());
+	}
+	
+	@Override
+	public void jumpMap()
+	{
+		yVel.setValue(-yVel.getValue() * restitution.getValue());
+		yPos.setValue(0.0);
+	}
+	
+}
+----

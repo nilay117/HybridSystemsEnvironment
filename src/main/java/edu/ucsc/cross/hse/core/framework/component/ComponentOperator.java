@@ -24,7 +24,7 @@ public class ComponentOperator
 	protected Component component; // component this class works for
 
 	public ComponentOperator(Component component) // constructor assigning a
-														// component
+													// component
 	{
 		this.component = component;
 	}
@@ -52,7 +52,7 @@ public class ComponentOperator
 		{
 			if (!include_data)
 			{
-				for (Data data : h.getObjects(Data.class, true))
+				for (Data data : component.component().getContent().getObjects(Data.class, true))
 				{
 					tempValues.put(data, data.component().getStoredValues());
 				}
@@ -63,7 +63,7 @@ public class ComponentOperator
 			} // environment = null;
 		} catch (Exception e)
 		{
-
+			e.printStackTrace();
 		}
 		T copy = (T) ObjectCloner.xmlClone(component);// ComponentOperator.cloner.deepClone(component);
 		try

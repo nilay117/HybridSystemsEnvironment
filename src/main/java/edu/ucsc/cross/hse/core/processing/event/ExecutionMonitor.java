@@ -12,6 +12,14 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
+/*
+ * Executes and monitors an instance of the Hybrid Environment. Errors are
+ * caught and handled accordingly to keep environment running and protect result
+ * data if a fatal error occurs. Also adjusts settings to reduce future errors
+ * and can automatically restart environment when errors that may effect results
+ * occur. Allowing adjustments to be made eventually leads to a configuration
+ * that does not result in any errors, which can be saved for future use
+ */
 public class ExecutionMonitor extends ProcessorAccess
 {
 
@@ -46,6 +54,9 @@ public class ExecutionMonitor extends ProcessorAccess
 		runTime = run_time;
 	}
 
+	/*
+	 * Starts an execution of the current environment
+	 */
 	public void launchEnvironment()
 	{
 		long startTime = System.currentTimeMillis();
@@ -57,6 +68,9 @@ public class ExecutionMonitor extends ProcessorAccess
 		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
 	}
 
+	/*
+	 * Instantiates the simulation integrator based on the current settings
+	 */
 	protected FirstOrderIntegrator getSimulationIntegrator()
 	{
 		FirstOrderIntegrator integrator = null;
@@ -82,6 +96,11 @@ public class ExecutionMonitor extends ProcessorAccess
 		return integrator;
 	}
 
+	/*
+	 * Loads the jump evaluator and interrupt responder to an integrator
+	 * 
+	 * @param integrator - integrator instance to contain the event handlers
+	 */
 	private void loadEventHandlers(FirstOrderIntegrator integrator)
 	{
 		integrator.addEventHandler(getJumpEvaluator(), getSettings().getComputationSettings().ehMaxCheckInterval,
@@ -92,6 +111,22 @@ public class ExecutionMonitor extends ProcessorAccess
 		getSettings().getComputationSettings().ehMaxIterationCount);
 	}
 
+	/*
+	 * Starts the specified integrator for the specified dynamics, start time,
+	 * and duration
+	 * 
+	 * @param integrator - integrator to be used
+	 * 
+	 * @param ode - set of differential equations that define the dynamical
+	 * system
+	 * 
+	 * @param start_time - initial time when integration will start
+	 * 
+	 * @param duration - final time when integration will be complete
+	 * 
+	 * @param ode_vector - initial values of all variables associated with the
+	 * ode
+	 */
 	private Double runIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
 	Double start_time, Double duration, double[] ode_vector)
 	{
@@ -107,6 +142,19 @@ public class ExecutionMonitor extends ProcessorAccess
 
 	}
 
+	/*
+	 * Executes the integrator recursively, calling itself after an error occurs
+	 * or returning the end time if the maximum recursion level has been
+	 * reached.
+	 * 
+	 * @param integrator - integrator to be used
+	 * 
+	 * @param ode - set of differential equations that define the dynamical
+	 * system
+	 * 
+	 * @param recursion_level - number of times that the method has been called
+	 * by itself
+	 */
 	private Double recursiveIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
 	Integer recursion_level)
 	{
@@ -148,15 +196,13 @@ public class ExecutionMonitor extends ProcessorAccess
 		if (exc.getClass().equals(NumberIsTooSmallException.class))
 		{
 			this.getConsole()
-			.print("Integrator failure due to large step size - adjusting step size and restarting integrator");
-			// this.getSettings()
-			// .getComputationSettings().odeMaxStep =
-			// this.getSettings().getComputationSettings().odeMaxStep
-			// /
-			// this.getSettings().getComputationSettings().stepSizeReductionFactor;
+			.print("Integrator failure - step size too large - adjusting step size and restarting integrator");
+			this.getSettings()
+			.getComputationSettings().odeMaxStep = this.getSettings().getComputationSettings().odeMaxStep
+			* this.getSettings().getComputationSettings().stepSizeReduction;
 			this.getSettings()
 			.getComputationSettings().odeMinStep = this.getSettings().getComputationSettings().odeMinStep
-			/ (5 * (this.getSettings().getComputationSettings().stepSizeReduction));
+			* (this.getSettings().getComputationSettings().minStepSizeReduction);
 			handledIssue = true;
 		}
 		return handledIssue;
@@ -169,14 +215,13 @@ public class ExecutionMonitor extends ProcessorAccess
 		if (exc.getClass().equals(NoBracketingException.class))
 		{
 			this.getConsole().print(
-			"Integrator failure due to large exception handling thresholds - adjusting thresholds and restarting integrator");
+			"Integrator failure - exception handling thresholds too large  - adjusting intervals and restarting integrator");
 			getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
-			// this.getData().storeData(getEnv().getEnvironmentTime(), true);
 			getSettings()
 			.getComputationSettings().ehMaxCheckInterval = getSettings().getComputationSettings().ehMaxCheckInterval
-			/ getSettings().getComputationSettings().handlingReduction;
+			* getSettings().getComputationSettings().eventHandlingIntervalReduction;
 			getSettings().getComputationSettings().ehConvergence = getSettings().getComputationSettings().ehConvergence
-			/ getSettings().getComputationSettings().handlingReduction;
+			* getSettings().getComputationSettings().eventHandlingConvergenceReduction;
 			handledIssue = true;
 		}
 		return handledIssue;
@@ -188,7 +233,7 @@ public class ExecutionMonitor extends ProcessorAccess
 		if (exc.getClass().equals(TooManyEvaluationsException.class))
 		{
 			this.getConsole().print(
-			"Integrator failure due to maximal event iterations - adjusting thresholds and restarting integrator");
+			"Integrator failure - maximum event handler iterations reached - adjusting maximum iterations and restarting integrator");
 			getSettings()
 			.getComputationSettings().ehMaxIterationCount = getSettings().getComputationSettings().ehMaxIterationCount
 			* 2;

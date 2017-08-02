@@ -9,7 +9,7 @@ import com.be3short.data.file.xml.XMLParser;
 import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
-import edu.ucsc.cross.hse.core.object.configuration.PrintSettings;
+import edu.ucsc.cross.hse.core.object.configuration.ConsoleSettings;
 
 public class SettingConfigurer
 {
@@ -24,7 +24,7 @@ public class SettingConfigurer
 	private void initialize()
 	{
 		settings = new HashMap<Class<?>, Object>();
-		settings.put(PrintSettings.class, new PrintSettings());
+		settings.put(ConsoleSettings.class, new ConsoleSettings());
 		settings.put(ComputationSettings.class, new ComputationSettings());
 		settings.put(DataSettings.class, new DataSettings());
 		settings.put(ExecutionSettings.class, new ExecutionSettings());
@@ -36,9 +36,9 @@ public class SettingConfigurer
 		return (ComputationSettings) settings.get(ComputationSettings.class);
 	}
 
-	public PrintSettings getConsolePrintSettings()
+	public ConsoleSettings getConsolePrintSettings()
 	{
-		return (PrintSettings) settings.get(PrintSettings.class);
+		return (ConsoleSettings) settings.get(ConsoleSettings.class);
 	}
 
 	public DataSettings getDataSettings()
@@ -117,9 +117,13 @@ public class SettingConfigurer
 		FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(this));
 	}
 
+	/*
+	 * Loads the default settings from the default settings file
+	 */
 	public static SettingConfigurer loadDefaultSettingsFile()
 	{
-		return loadXMLSettings(new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName));
+		return loadXMLSettings(
+		new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName));
 	}
 
 	public static SettingConfigurer loadXMLSettings(File file)
@@ -138,7 +142,7 @@ public class SettingConfigurer
 			settings = new SettingConfigurer();
 		}
 		return settings;
-	
+
 	}
 
 	public static void saveXMLSettings(File file, SettingConfigurer settings)

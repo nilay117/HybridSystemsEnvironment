@@ -89,10 +89,10 @@ public class ComponentLabel
 	 */
 	public String getFullDescription()
 	{
-		String desc = name;
-		if (!name.equals(classification))
+		String desc = classification;
+		if (!name.equals(classification) && name.length() > 0)
 		{
-			desc = classification + " : " + desc;
+			desc = desc + " : " + name;
 		}
 		return desc;
 	}
