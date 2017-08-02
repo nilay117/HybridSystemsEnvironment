@@ -9,6 +9,8 @@ import com.be3short.data.file.xml.XMLParser;
 import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
+import edu.ucsc.cross.hse.core.procesing.io.FileContent;
+import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.object.configuration.ConsoleSettings;
 
 public class SettingConfigurer
@@ -87,20 +89,36 @@ public class SettingConfigurer
 	/*
 	 * Load settings from a file
 	 */
-	public void loadSettingsFromXMLFile(File file)
+	public void loadSettingsFromFile(String file_path)
 	{
 
-		SettingConfigurer loaded = null;
+		loadSettingsFromFile(new File(file_path));
+	}
+
+	/*
+	 * Load settings from a file
+	 */
+	public void loadSettingsFromFile(File file)
+	{
 		if (file == null)
 		{
-			loaded = SettingConfigurer.loadDefaultSettingsFile();
-		} else
+			SettingConfigurer.loadDefaultSettingsFile();
+		} else if (file.exists())
 		{
-			loaded = SettingConfigurer.loadXMLSettings(file);
-		}
-		for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
+			if (file.getName().contains(".xml"))
+			{
+				SettingConfigurer loaded = SettingConfigurer.getSettingsFromFile(file);
+
+				for (Object set : SettingConfigurer.getSettingsMap(loaded).values())
+				{
+					loadSettings(set);
+				}
+			}
+		} else if (file.getName().contains(".hse"))
 		{
-			loadSettings(set);
+			SettingConfigurer settings = (SettingConfigurer) FileProcessor.loadContents(file, FileContent.SETTINGS)
+			.get(FileContent.SETTINGS);
+			setSettings(settings);
 		}
 	}
 
@@ -112,7 +130,7 @@ public class SettingConfigurer
 	/*
 	 * Save the settings to a file
 	 */
-	public void saveSettingsToXMLFile(File file)
+	public void saveSettingsToFile(File file)
 	{
 		FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(this));
 	}
@@ -122,30 +140,32 @@ public class SettingConfigurer
 	 */
 	public static SettingConfigurer loadDefaultSettingsFile()
 	{
-		return loadXMLSettings(
+		return getSettingsFromFile(
 		new File(DataSettings.defaultSettingDirectory + "/" + DataSettings.defaultSettingFileName));
 	}
 
-	public static SettingConfigurer loadXMLSettings(File file)
+	/*
+	 * Loads
+	 */
+	public static SettingConfigurer getSettingsFromFile(File file)
 	{
 		SettingConfigurer settings = null;
 		if (file.exists())
 		{
-			settings = (SettingConfigurer) XMLParser.getObject(file);
+			settings = new SettingConfigurer();
+			settings.loadSettingsFromFile(file);
+
 		} else
 		{
 			settings = new SettingConfigurer();
-			saveXMLSettings(file, settings);
+			saveSettingsToFile(file, settings);
 		}
-		if (settings == null)
-		{
-			settings = new SettingConfigurer();
-		}
+
 		return settings;
 
 	}
 
-	public static void saveXMLSettings(File file, SettingConfigurer settings)
+	public static void saveSettingsToFile(File file, SettingConfigurer settings)
 	{
 		try
 		{

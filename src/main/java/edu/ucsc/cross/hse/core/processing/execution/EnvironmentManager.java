@@ -290,7 +290,7 @@ public class EnvironmentManager
 		if (re_initialize_settings)
 		{
 			settings = new SettingConfigurer();
-			settings.loadSettingsFromXMLFile(null);
+			settings.loadSettingsFromFile("");
 		}
 		if (processor == null)
 		{

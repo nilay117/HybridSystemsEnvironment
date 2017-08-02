@@ -20,14 +20,26 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class DataHandler extends ProcessorAccess implements DataAccessor
 {
 
-	private Double lastStoreTime = -10.0; // time since last data was stored,
-											// used to store data at specified
-											// interval
-	private ArrayList<Data<?>> dataElementsToStore; // list of all data elements
-													// that are to be stored
+	/*
+	 * Time since last data was stored, used to store data at specified interval
+	 */
+	private Double lastStoreTime = -10.0;
 
+	/*
+	 * List of all data elements that are to be stored
+	 */
+	private ArrayList<Data<?>> dataElementsToStore;
+
+	/*
+	 * List of all times corresponding to stored data
+	 */
 	ArrayList<Double> storeTimes;
 
+	/*
+	 * Constructor that links central processor
+	 * 
+	 * @param processor - central processor that this data handler is a part of
+	 */
 	public DataHandler(CentralProcessor processor)
 	{
 		super(processor);
@@ -35,17 +47,30 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		storeTimes = new ArrayList<Double>();
 	}
 
+	/*
+	 * Gets a data element by its index in the list
+	 * 
+	 * @param index - index of data element
+	 * 
+	 * @return data element corresponding to the index
+	 */
 	public Data getDataByIndex(Integer index)
 	{
 		return dataElementsToStore.get(index);
 	}
 
+	/*
+	 * Get list of all state data
+	 */
 	@Override
 	public ArrayList<Data<?>> getAllStateData()
 	{
 		return dataElementsToStore;
 	}
 
+	/*
+	 * Get list of all state names
+	 */
 	@Override
 	public ArrayList<String> getAllStateNames()
 	{
@@ -61,6 +86,13 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		return stateElements;
 	}
 
+	/*
+	 * Gets data that matches a given title
+	 * 
+	 * @param - title - title of data element
+	 * 
+	 * @return list of data elements corresponding to the specified title
+	 */
 	@Override
 	public ArrayList<Data<?>> getDataByTitle(String title)
 	{
@@ -75,6 +107,14 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		return datas;
 	}
 
+	/*
+	 * Gets all data points for data elements that matches a given title
+	 * 
+	 * @param - title - title of data element
+	 * 
+	 * @return mapping of data elements to the list of it's data points for
+	 * elements corresponding to the specified title
+	 */
 	@Override
 	public HashMap<Data<?>, ArrayList<Double[]>> getData(String title)
 	{
@@ -146,33 +186,22 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		{
 			if (getDataOperator(element).isDataStored())
 			{
-				// if (FieldFinder.containsSuper(element, State.class))
+
+				Data state = element;
+				DataOperator.getOperator(state).getPreJumpValue();
+				state.getValue();
+				if (DataOperator.getOperator(state).getPreJumpValue() != null)
 				{
-					Data state = element;
-					DataOperator.getOperator(state).getPreJumpValue();
-					state.getValue();
-					if (DataOperator.getOperator(state).getPreJumpValue() != null)
+					if (!DataOperator.getOperator(state).getPreJumpValue().equals(state.getValue()))
 					{
-						if (!DataOperator.getOperator(state).getPreJumpValue().equals(state.getValue()))
-						{
-							getDataOperator(state).storeValue(DataOperator.getOperator(state).getPreJumpValue(),
-							pre_jump_time);
-							// if (pre_jump_time.equals(obj))
-							// getDataOperator(state).storeValue(DataOperator.getOperator(state).getPreJumpValue(),
-							// new HybridTime(postJumpTime.getTime() -
-							// Double.MIN_VALUE,
-							// postJumpTime.getJumpIndex()));
-							// getDataOperator(state).storeValue(state.getValue(),
-							// new HybridTime(pre_jump_time.getTime() +
-							// Double.MIN_VALUE,
-							// postJumpTime.getJumpIndex()));
-							// getDataOperator(state).storeValue(state.getValue(),
-							// postJumpTime);
-							getDataOperator(state).storeValue(state.getValue(), postJumpTime);
-						}
+						getDataOperator(state).storeValue(DataOperator.getOperator(state).getPreJumpValue(),
+						pre_jump_time);
+
+						getDataOperator(state).storeValue(state.getValue(), postJumpTime);
 					}
 				}
 			}
+
 		}
 
 	}

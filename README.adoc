@@ -1,6 +1,50 @@
 == Overview
 This software is a virtual environment capable of operating user defined components of any scale and complexity. The framework included in this package provides a set of elements that are used to develop dynamical systems with no structural requirements.  The environment is a platform that supports any system, or collection of systems, defined using this framework with an API that makes it easy to operate and manage results. 
 
+A universal base component class "Component" is expanded to develop new elements that are supported and inherit a general purpose API.  Any class that is an extension of the Component class can be operated by the environment because it identifies all elements used by the processor.  Components can contain other components to create complex structures that are completely modular.  For example, a sensor model, storage model, network model, and vehicle model can be combined to implement a multi-sensing vehicle with storage and network capabilities.  This concept can be applied to much larger systems such as networks, making it easier to study complex multi-agent systems.
+
+This package is the hybrid systems environment core, which contains only the classes that operate the environment and make up the development framework.  It is separated from other hybrid systems environment packages, which can be found in the additional packages section below, for robustness purposes.  The core package (this package) is not intended to change other than bug fixes and additional functionality where absolutely necessary to ensure that compatibility is maintained.  All other packages are intended to be expanded over time as new components and tools are developed.  
+
+== Installation
+In order to use the Hybrid Systems Environment in a project, it must be included in the build path as a dependency.  The recommended way to do this is by using dependency management tools such as Maven or Gradle to include the package by adding the following code to the build script.
+
+Maven:
+
+[source,xml]
+----
+<!-- Add repository (if not already included) -->
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+
+<!-- Add dependency -->
+<dependency>
+    <groupId>com.github.be3short</groupId>
+    <artifactId>HybridSystemsEnvironment</artifactId>
+    <version>1.0.0</version>
+</dependency>
+----
+
+Gradle:
+
+[source,java]
+----
+//Add repository (if not already included):
+repositories {
+     ...
+     maven { url "https://jitpack.io" }
+}
+
+//Add dependency:
+dependencies {
+    ...
+    compile 'com.github.be3short:HybridSystemsEnvironment:1.0.0'
+}
+----
+
+Alternatively, the binaries can be downloaded for each release and the jar file can be included in the project build path manually.
+
 == Usage
 Using the environment is fairly straightforward; simply create a new HybridEnvironment instance, add components, configure the settings, and execute. How to define components and configure the settings are documented in later sections.  
 
@@ -40,64 +84,171 @@ environment.save(resultFile); // save the results to a file
 
 
 == Defining Components
-A universal base component class "Component" is expanded to develop new elements that are supported and inherit a general purpose API.  Any class that is an extension of the Component class can be operated by the environment because it identifies all elements used by the processor.  Components can contain other components to create complex structures that are completely modular.  For example, a sensor model, storage model, network model, and vehicle model can be combined to implement a multi-sensing vehicle with storage and network capabilities.  This concept can be applied to much larger systems such as networks, making it easier to study complex multi-agent systems.
-
 Models and components are designed by extending the Component class and using the base components where necessary.  Extending the Component class does not require any code in the new class, but provides an interface to easily access data and allows the environment to identify the new component and its contents.  In addition to the Component class, there are three main elements that define the data and dynamics that are used by the environment. 
 
 image::https://be3short.files.wordpress.com/2017/08/basedatadescription.png[width=100%]
 
+The Hybrid
 The following code illustrates how to define a Bouncing Ball component, which is a dynamical system describing the trajectory of a ball bouncing on a surface.
 
 [source,java]
 ----
 public class BouncingBall extends Component implements HybridSystem
 {
-	
-	public State xVel; // X velocity state
-	public State yVel; // Y velocity
-	public State xPos;
-	public State yPos;
-	public Data<Double> gravity;
-	public Data<Double> restitution;
-	
+
+	public State horizontalVelocity; // horizontal velocity state
+	public State verticalVelocity; // vertical velocity state
+	public State horizontalPosition; // horizontal position state
+	public State verticalPosition; // vertical position state
+	public Data<Double> gravity; // gravity constant
+	public Data<Double> restitution; // restitution coefficient
+
+	// Constructor initializing state and data elements
 	public BouncingBall()
 	{
-		super("Bouncing Ball");
-		xPos = new State("X Position", 0.0);
-		yPos = new State("Y Position", 10.0);
-		xVel = new State("X Velocity", 0.0);
-		yVel = new State("Y Velocity", 0.0);
-		gravity = new Data<Double>("Gravity Constant", 9.81);
-		restitution = new Data<Double>("Restitution Coefficient", .9);
+		super("Bouncing Ball"); // name the component
+		horizontalPosition = new State("Horizontal Position", 0.0); // define horizontal position
+		verticalPosition = new State("Vertical Position", 10.0);// define vertical position
+		horizontalVelocity = new State("Horizontal Velocity", 0.0); // define horizontal velocity
+		verticalVelocity = new State("Vertical Velocity", 0.0); // define vertical velocity
+		gravity = new Data<Double>("Gravity Constant", 9.81); // define gravity constant
+		restitution = new Data<Double>("Restitution Coefficient", .9); // define restitution
 	}
-	
+
+	// Set of states where falling ball is in contact with surface
 	@Override
 	public boolean jumpSet()
 	{
-		return yPos.getValue() <= 0.0 && yVel.getValue() <= 0.0;
+		// jump when position is 0 (contact with surface) & vertical velocity <= 0 (towards surface)
+		return verticalPosition.getValue() <= 0.0 && verticalVelocity.getValue() <= 0.0;
 	}
-	
+
+	// Set of states where ball is moving continuously
 	@Override
 	public boolean flowSet()
 	{
-		return yPos.getValue() >= 0.0;
+		// flow when position >= 0 (above or at surface)
+		return verticalPosition.getValue() >= 0.0;
 	}
-	
+
+	// Continuous dynamics mapping describing continuous change when ball traveling through the air
 	@Override
 	public void flowMap()
 	{
-		yVel.setDerivative(-gravity.getValue());
-		xVel.setDerivative(0.0);
-		xPos.setDerivative(xVel.getValue());
-		yPos.setDerivative(yVel.getValue());
+		// vertical velocity derivative equal -gravity (falling)
+		verticalVelocity.setDerivative(-gravity.getValue());
+
+		// horizontal velocity derivative equal zero (not changing)
+		horizontalVelocity.setDerivative(0.0);
+
+		// horizontal position derivative equal horizontal velocity (moving horizontally)
+		horizontalPosition.setDerivative(horizontalVelocity.getValue());
+
+		// vertical position derivative equal vertical velocity (moving vertically)
+		verticalPosition.setDerivative(verticalVelocity.getValue());
 	}
-	
+
+	// Discrete dynamics mapping describing instantaneous change when ball impacts surface
 	@Override
 	public void jumpMap()
 	{
-		yVel.setValue(-yVel.getValue() * restitution.getValue());
-		yPos.setValue(0.0);
+		// Velocity sign flip and reduction (impact with energy lost - restitution)
+		verticalVelocity.setValue(-verticalVelocity.getValue() * restitution.getValue());
+
+		// Vertical position equal zero (in contact with surface)
+		verticalPosition.setValue(0.0);
 	}
-	
+
 }
 ----
+
+== Configuring Settings
+A collection of settings define how the processor elements will operate during an execution. These settings are grouped into four categories: 
+
+* Computation - contains computational specifications such as the step size and tolerance of the integrator used by the simulation engine. 
+
+* Execution - defines environment execution specifications such as the duration of the trial and the maximum number of jumps allowed.
+
+* Console - defines print specifications such as the format of console messages and which notifications to display
+
+* Data - defines data storage specifications such as the interval between saved points and the structure of output files created.
+
+
+There are several ways to configure the environment settings:
+
+* Implement Software - Edit the settings manually within the code.
+
+* Edit Defaults - Edit the default settings file, which defines the settings that are loaded when the environment is initialized.  This file "defaultSettings.xml" is located in the "settings" subfolder in project home directory
+
+* Load File - Specify a file to load that contains the desired settings.  Setting files can be created by making copies of the default setting file.
+
+The following code illustrates how to change the simulation duration and maximum ode step size using each of the above methods:
+
+Implement Software:
+
+[source,java]
+----
+EnvironmentManager environment = new EnvironmentManager(); // instantiate environment
+
+environment.getSettings().getExecutionSettings().simDuration = 100.0; // set duration to 100 seconds
+
+environment.getSettings().getComputationSettings().odeMaxStep = .01; // set ode max step size to .01 seconds
+----
+
+Edit Defaults:
+
+[source,xml]
+----
+./setings/defaultSettings.xml
+
+<edu.ucsc.cross.hse.core.processing.data.SettingConfigurer>
+  <settings>
+    <entry>
+     ...
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings</java-class>
+      <edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings>
+        ...
+        <simDuration>100.0</simDuration>
+        ...
+      </edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings>
+    </entry>
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.object.configuration.ComputationSettings</java-class>
+      <edu.ucsc.cross.hse.core.object.configuration.ComputationSettings>
+       	...
+        <odeMaxStep>0.01</odeMaxStep>
+        ...
+    </entry>
+    <entry>
+      ...
+    </entry>
+  </settings>
+</edu.ucsc.cross.hse.core.processing.data.SettingConfigurer>
+----
+
+Load File:
+
+[source,java]
+----
+EnvironmentManager environment = new EnvironmentManager(); // instantiate environment
+																	
+environment.getSettings().loadSettingsFromFile("settings/defaultSettings.xml"); // load settings file
+----
+
+
+
+== Examples
+An example project with additional component definitions and environment executions can be found at https://github.com/be3short/HybridSystemsEnvironmentExample
+
+
+== Additional Packages
+Currently, there are two additional packages containing tools and a base component library. They can be found at the following locations:
+
+Hybrid Systems Environment Toolbox : https://github.com/be3short/HybridSystemsEnvironmentToolbox
+
+Hybrid Systems Environment Base Library: https://github.com/be3short/HybridSystemsEnvironmentLibrary
+
+== Adknowledgements
+Thank you to the Center for Research in Open Source Software (CROSS) for supporting this project (https://cross.soe.ucsc.edu/CROSS/Home/Home.html).
+Additional thanks to Toshiba and Micron for their contributions to this project.  And last but not least thank you to my Advisor, Professor Ricardo Sanfelice (https://hybrid.soe.ucsc.edu), this project would have never happened without him.
