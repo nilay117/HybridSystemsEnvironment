@@ -53,68 +53,6 @@ public class ComponentContent
 	// Pointer to this component
 	private Component self;
 
-	// /*
-	// * Adds a single sub-component to this component. This is used to add
-	// * components that are not explicitly defined in the main class, which
-	// * allows for variations without modifying the main component code itself
-	// *
-	// * @param component - component to be added
-	// */
-	// public <T extends Component> ArrayList<Component> addComponent(T
-	// component)
-	// {
-	// return addComponent(component, 1);
-	// }
-	//
-	// /*
-	// * Adds a number of sub-components to this component. This is used to add
-	// * components that are not explicitly defined in the main class, which
-	// * allows for variations without modifying the main component code itself.
-	// * This method allows any number of duplicate components to be added
-	// *
-	// * @param component - component to be added
-	// *
-	// * @param quantity - number of components to be added
-	// */
-	// @SuppressWarnings("unchecked")
-	// public <T extends Component> ArrayList<Component> addComponent(T
-	// component, Integer quantity)
-	// {
-	// ArrayList<Component> ret = new ArrayList<Component>();
-	//
-	// T initialClone = (T) ObjectCloner.xmlClone(component);
-	// // T initialClone = ObjectCloner.cloner.deepClone(component);
-	// for (Integer ind = 0; ind < quantity; ind++)
-	// {
-	// T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-	// storeComponent(clonedComponent, true);
-	// ret.add(clonedComponent);
-	// initialClone = clonedComponent;
-	// // clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-	// }
-	// addAllUndeclaredComponents(ret);
-	//
-	// return ret;
-	// }
-	//
-	// /*
-	// * Load contents from a file
-	// */
-	// public void loadComponentFromFile(File file)
-	// {
-	// loadComponentsFromFile(file, 1);
-	// }
-	//
-	// /*
-	// * Load contents from a file
-	// */
-	// public void loadComponentsFromFile(File file, Integer quantity)
-	// {
-	// Component component = FileProcessor.load(file, FileContent.COMPONENT,
-	// FileContent.DATA);
-	// addComponent(component, quantity);
-	// }
-
 	/*
 	 * Get a mapping of components indexed by their names
 	 */
@@ -519,14 +457,13 @@ public class ComponentContent
 	}
 
 	/*
-	 * Extracts the objects out of many different types of containers
+	 * Extracts the objects out of either arraylist or hashmap
 	 */
 	@SuppressWarnings("rawtypes")
 	public static ArrayList<Object> getContainerContents(Object container)
 	{
 		ArrayList<Object> components = new ArrayList<Object>();
 
-		// if (!FieldFinder.containsSuper(container, CoreComponent.class))
 		{
 			try
 			{
@@ -537,7 +474,7 @@ public class ComponentContent
 
 			} catch (Exception notMap)
 			{
-				// notMap.printStackTrace();
+
 				try
 				{
 					for (Object entry : (HashMap.class.cast(container)).values())
@@ -546,7 +483,7 @@ public class ComponentContent
 					}
 				} catch (Exception ee)
 				{
-					// ee.printStackTrace();
+
 				}
 			}
 		}
@@ -555,6 +492,9 @@ public class ComponentContent
 
 	}
 
+	/*
+	 * Extracts the objects out of many different types of containers
+	 */
 	@SuppressWarnings(
 	{ "unchecked", "rawtypes" })
 	public static ArrayList<Object> getMapOrListElements(Object obj)

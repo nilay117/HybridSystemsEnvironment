@@ -269,6 +269,14 @@ public class EnvironmentManager
 	}
 
 	/*
+	 * Access the processor of an environment statically
+	 */
+	public static CentralProcessor getProcessor(EnvironmentManager env_manager)
+	{
+		return env_manager.processor;
+	}
+
+	/*
 	 * initialize the environment content, specifying if content contains data
 	 */
 	private void initialize(HybridEnvironment content, boolean pre_loaded_content)

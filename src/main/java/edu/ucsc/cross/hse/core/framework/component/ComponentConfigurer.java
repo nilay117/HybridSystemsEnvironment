@@ -9,16 +9,26 @@ import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
+/*
+ * Component configurer that allows custom components to be created dyamically.
+ * Contains all methods pertaining to modifying the specified component
+ */
 public class ComponentConfigurer
 {
 
-	private Component co; // wpointer to own component
+	/*
+	 * Component being configured
+	 */
+	private Component componen;
 
+	/*
+	 * Mapping of all components to their corresponding configurers
+	 */
 	protected static HashMap<Component, ComponentConfigurer> components = new HashMap<Component, ComponentConfigurer>();
 
 	public ComponentConfigurer(Component self)
 	{
-		co = self;
+		componen = self;
 
 	}
 
@@ -68,16 +78,14 @@ public class ComponentConfigurer
 		ArrayList<Component> ret = new ArrayList<Component>();
 
 		T initialClone = (T) ObjectCloner.xmlClone(component);
-		// T initialClone = ObjectCloner.cloner.deepClone(component);
 		for (Integer ind = 0; ind < quantity; ind++)
 		{
 			T clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
-			co.contents.storeComponent(clonedComponent, true);
+			componen.contents.storeComponent(clonedComponent, true);
 			ret.add(clonedComponent);
 			initialClone = clonedComponent;
-			// clonedComponent = (T) ObjectCloner.xmlClone(initialClone);
 		}
-		co.contents.addAllUndeclaredComponents(ret);
+		componen.contents.addAllUndeclaredComponents(ret);
 
 		return ret;
 	}
@@ -150,15 +158,15 @@ public class ComponentConfigurer
 	@SuppressWarnings("rawtypes")
 	public void setInitialized(Boolean initialized, Boolean include_data)
 	{
-		ArrayList<Data> data = co.component().getContent().getData(true);
-		for (Component comp : co.component().getContent().getComponents(true))
+		ArrayList<Data> data = componen.component().getContent().getData(true);
+		for (Component comp : componen.component().getContent().getComponents(true))
 		{
 			if (!data.contains(comp) || include_data)
 			{
 				comp.component().configure().setInitialized(initialized);
 			}
 		}
-		ComponentWorker.getOperator(co).getStatus().setInitialized(initialized);
+		ComponentWorker.getOperator(componen).getStatus().setInitialized(initialized);
 	}
 
 	/*
@@ -166,6 +174,6 @@ public class ComponentConfigurer
 	 */
 	public void setSimulated(boolean simulated)
 	{
-		ComponentWorker.getOperator(co).getStatus().setSimulated(simulated);
+		ComponentWorker.getOperator(componen).getStatus().setSimulated(simulated);
 	}
 }

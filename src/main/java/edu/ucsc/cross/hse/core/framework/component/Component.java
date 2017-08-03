@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
 /*
- * This class is the foundation of all components to ensures proper
+ * Foundation of all components that provides API and ensures proper
  * compatibility. Anything that is an extension of this class can be used with
  * the hybrid systems environment as standalone components or pieces of another
  * component. The hierarchical structure allows these extensions to be accessed
@@ -12,12 +12,20 @@ package edu.ucsc.cross.hse.core.framework.component;
 public abstract class Component // implements Initializer
 {
 
+	/*
+	 * Current status of this component
+	 */
 	ComponentStatus status; // current status of this component
 
-	ComponentLabel labels; // specific information describing this component
+	/*
+	 * specific information describing this component
+	 */
+	ComponentLabel labels;
 
-	ComponentContent contents; // component access hierarchy of this
-								// component
+	/*
+	 * component access hierarchy of this component
+	 */
+	ComponentContent contents;
 
 	/*
 	 * Constructor that defines the name of the component with this class

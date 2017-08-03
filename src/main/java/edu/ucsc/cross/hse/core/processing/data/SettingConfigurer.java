@@ -16,13 +16,22 @@ import edu.ucsc.cross.hse.core.object.configuration.ConsoleSettings;
 public class SettingConfigurer
 {
 
+	/*
+	 * Mapping of all setting components
+	 */
 	private HashMap<Class<?>, Object> settings;
 
+	/*
+	 * Constructor for default settings
+	 */
 	public SettingConfigurer()
-	{// settings = new HashMap<Class<?>, Object>();
+	{
 		initialize();
 	}
 
+	/*
+	 * initialize default settings and mapping
+	 */
 	private void initialize()
 	{
 		settings = new HashMap<Class<?>, Object>();
@@ -38,17 +47,32 @@ public class SettingConfigurer
 		return (ComputationSettings) settings.get(ComputationSettings.class);
 	}
 
+	/*
+	 * Gets console print settings
+	 * 
+	 * @return console print settings
+	 */
 	public ConsoleSettings getConsolePrintSettings()
 	{
 		return (ConsoleSettings) settings.get(ConsoleSettings.class);
 	}
 
+	/*
+	 * Gets data settings
+	 * 
+	 * @return data settings
+	 */
 	public DataSettings getDataSettings()
 	{
 		return (DataSettings) settings.get(DataSettings.class);
 		// return data;
 	}
 
+	/*
+	 * Gets execution settings
+	 * 
+	 * @return execution settings
+	 */
 	public ExecutionSettings getExecutionSettings()
 	{
 		return (ExecutionSettings) settings.get(ExecutionSettings.class);
@@ -63,6 +87,11 @@ public class SettingConfigurer
 		}
 	}
 
+	/*
+	 * Store new setting configuration components
+	 * 
+	 * @param setting - settings configuration to be loaded from
+	 */
 	public void setSettings(SettingConfigurer setting)
 	{
 		for (Object set : SettingConfigurer.getSettingsMap(setting).values())
@@ -71,6 +100,11 @@ public class SettingConfigurer
 		}
 	}
 
+	/*
+	 * Get a setting component corresponding to specified class
+	 * 
+	 * @return setting component
+	 */
 	public <T> T getSetting(Class<T> setting_class)
 	{
 		T returnSetting = null;
@@ -79,11 +113,6 @@ public class SettingConfigurer
 			returnSetting = setting_class.cast(settings.get(setting_class));
 		}
 		return returnSetting;
-	}
-
-	public static HashMap<Class<?>, Object> getSettingsMap(SettingConfigurer setting)
-	{
-		return setting.settings;
 	}
 
 	/*
@@ -122,17 +151,24 @@ public class SettingConfigurer
 		}
 	}
 
-	public static SettingConfigurer getSettingsFromFile()
-	{
-		return SettingConfigurer.loadDefaultSettingsFile();
-	}
-
 	/*
 	 * Save the settings to a file
 	 */
 	public void saveSettingsToFile(File file)
 	{
 		FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(this));
+	}
+
+	/*
+	 * Gets the setting component map for the specified settings configuration
+	 * 
+	 * @param setting - settings to fetch map from
+	 * 
+	 * @return mapping of all setting components
+	 */
+	public static HashMap<Class<?>, Object> getSettingsMap(SettingConfigurer setting)
+	{
+		return setting.settings;
 	}
 
 	/*
@@ -145,7 +181,12 @@ public class SettingConfigurer
 	}
 
 	/*
-	 * Loads
+	 * Gets setting configurer instance from file
+	 * 
+	 * @param file - file to load instance from
+	 * 
+	 * @return setting configurer instance from file, or default settings if
+	 * load failed
 	 */
 	public static SettingConfigurer getSettingsFromFile(File file)
 	{
@@ -165,6 +206,13 @@ public class SettingConfigurer
 
 	}
 
+	/*
+	 * Saves settings to xml file
+	 * 
+	 * @param file - location to save settings to
+	 * 
+	 * @param settings - settings configuration to be saved
+	 */
 	public static void saveSettingsToFile(File file, SettingConfigurer settings)
 	{
 		try

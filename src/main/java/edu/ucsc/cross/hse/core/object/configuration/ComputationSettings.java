@@ -1,7 +1,5 @@
 package edu.ucsc.cross.hse.core.object.configuration;
 
-import bs.commons.objects.labeling.ChoiceName;
-
 /*
  * Collection of computational configurations that defines how computation
  * elements will operate

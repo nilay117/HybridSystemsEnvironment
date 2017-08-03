@@ -23,7 +23,7 @@ import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
  * interface for the processing elements to interact in order to run the
  * environment and complete user requests.
  */
-public class CentralProcessor
+public class CentralProcessor extends ProcessorAccess
 {
 
 	protected EnvironmentManager environmentInterface; // main user interface
@@ -73,6 +73,7 @@ public class CentralProcessor
 
 	protected CentralProcessor(EnvironmentManager processor)
 	{
+		super(processor.processor);
 		environmentInterface = processor;
 		systemConsole = new SystemConsole(this);
 		initializeProcessingElements();

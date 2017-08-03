@@ -13,14 +13,17 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class FileExchanger extends ProcessorAccess
 {
 
-	static FileProcessor packager;
-
+	/*
+	 * Object cloner instance
+	 */
 	public static Cloner cloner = new Cloner();
 
+	/*
+	 * Constructor that links the file exchanger to the processor
+	 */
 	public FileExchanger(CentralProcessor processor)
 	{
 		super(processor);
-		packager = new FileProcessor(processor);
 	}
 
 	/*
@@ -40,6 +43,9 @@ public class FileExchanger extends ProcessorAccess
 		FileProcessor.store(file_path, component, contents);
 	}
 
+	/*
+	 * Loads a component and all additional contents from a file
+	 */
 	public Component load(File file)
 	{
 		return load(file, FileContent.values());
