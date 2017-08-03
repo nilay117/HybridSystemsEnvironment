@@ -25,36 +25,54 @@ import edu.ucsc.cross.hse.core.framework.data.State;
 public class ComponentContent
 {
 
-	// Mapping of all declared components indexed by class
+	/*
+	 * Mapping of all declared components indexed by class
+	 */
 	private HashMap<Class<?>, ArrayList<Component>> declaredComponentMap;
 
-	// Mapping of all components from all descendants indexed by class
+	/*
+	 * Mapping of all components from all descendants indexed by class
+	 */
 	private HashMap<Class<?>, ArrayList<Component>> descendantComponentMap;
 
-	// List of all components from all descendants
+	/*
+	 * List of all components from all descendants
+	 */
 	private ArrayList<Component> declaredAdjunctComponentList;
 
-	// List of all components from all descendants
+	/*
+	 * List of all components from all descendants
+	 */
 	private ArrayList<Component> declaredAdjunctDescendantComponentList;
 
-	// List of all declared components
+	/*
+	 * List of all declared components
+	 */
 	private ArrayList<Component> declaredComponentList;
-	// List of all components from all descendants
+	/*
+	 * List of all components from all descendants
+	 */
 	private ArrayList<Component> descendantComponentList;
 
-	// key that links the component to the global environment that it is
-	// contained in. This keeps the component size smaller when being copied or
-	// saved, and allows for multiple environments to be running simultaneously
+	/*
+	 * Key that links the component to the global environment that it is
+	 * contained in. This keeps the component size smaller when being copied or
+	 * saved, and allows for multiple environments to be running simultaneously
+	 */
 	protected String environmentKey;
 
-	// The parent that declared this component
+	/*
+	 * The parent that declared this component
+	 */
 	private Component parentComponent;
 
-	// Pointer to this component
+	/*
+	 * Pointer to this component
+	 */
 	private Component self;
 
 	/*
-	 * Get a mapping of components indexed by their names
+	 * Gets a mapping of components indexed by their names
 	 */
 	public <S extends Component> HashMap<String, S> getComponentMapByName(Class<S> component_class,
 	boolean include_children)

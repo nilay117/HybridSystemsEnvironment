@@ -7,54 +7,63 @@ public class DataSettings
 {
 
 	/*
-	 * flag to load settings from the default files
+	 * Flag to load settings from the default files
 	 */
 	public boolean loadSettingsFromFile;
+
 	/*
-	 * flag to store results automatically
+	 * Flag to store results automatically
 	 */
 	public boolean automaticallyStoreResults;
+
 	/*
-	 * flag to determine whether data is stored at a specified increment,
+	 * Flag to determine whether data is stored at a specified increment,
 	 */
 	public boolean storeDataAtIncrements;
+
 	/*
-	 * flag to always store data when a jump occurs regardless of the specified
+	 * Flag to always store data when a jump occurs regardless of the specified
 	 * store interval
 	 */
 	public boolean storeAtEveryJump;
+
 	/*
-	 * time interval between stored data points
+	 * Time interval between stored data points
 	 */
 	public Double dataStoreIncrement;
+
 	/*
-	 * location where trial results will be automatically stored (if auto
+	 * Location where trial results will be automatically stored (if auto
 	 * storage is enabled)
 	 */
 	public String resultAutoStoreDirectory;
+
 	/*
-	 * flag to create a subdirectory with the name of the environment to keep
+	 * Flag to create a subdirectory with the name of the environment to keep
 	 * results organized when running a variety of trials multiple times
 	 */
 	public boolean createResultSubDirectory;
+
 	/*
-	 * flag indicating if data should be saved in an output file when not
+	 * Flag indicating if data should be saved in an output file when not
 	 * specified by the user
 	 */
 	public Boolean saveDataToFileDefault;
+
 	/*
-	 * flag indicating if settings should be saved in an output file when not
+	 * Flag indicating if settings should be saved in an output file when not
 	 * specified by the user
 	 */
 	public Boolean saveSettingsToFileDefault;
+
 	/*
-	 * flag indicating if input data should be read in on multiple threads
+	 * Flag indicating if input data should be read in on multiple threads
 	 */
 	public Boolean multiThreadInput;
+
 	/*
 	 * Default value constructor
 	 */
-
 	public DataSettings()
 	{
 		loadSettingsFromFile = true;

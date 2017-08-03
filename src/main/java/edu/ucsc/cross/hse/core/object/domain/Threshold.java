@@ -8,9 +8,15 @@ package edu.ucsc.cross.hse.core.object.domain;
 public class Threshold
 {
 
-	public static Double nonZeroThresholdSize = 0.001; // default value for the
-														// threshold
-	public static Double zeroRoundThreshold = 0.01; // threshold
+	/*
+	 * Default value for the threshold
+	 */
+	public static Double nonZeroThresholdSize = 0.001;
+
+	/*
+	 * Default zero rounding threshold
+	 */
+	public static Double zeroRoundThreshold = 0.01;
 
 	/*
 	 * Check if equal zero

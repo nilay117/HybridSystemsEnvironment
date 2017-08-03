@@ -23,11 +23,14 @@ import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 public class ExecutionMonitor extends ProcessorAccess
 {
 
-	private Double runTime; // total time that the environment has been running
-							// (excluding pauses and errors)
+	/*
+	 * Total time that the environment has been running (excluding pauses and
+	 * errors)
+	 */
+	private Double runTime;
 
 	/*
-	 * get the total run time
+	 * Get the total run time
 	 * 
 	 * @return total run time
 	 */
@@ -190,6 +193,11 @@ public class ExecutionMonitor extends ProcessorAccess
 
 	}
 
+	/*
+	 * Catches halts in the integrator due to step size errors, and makes
+	 * adjustments before restarting the integrator to reduce the chance of
+	 * similar errors in the future
+	 */
 	private boolean handleStepSizeIssues(Exception exc)
 	{
 		boolean handledIssue = false;
@@ -209,6 +217,11 @@ public class ExecutionMonitor extends ProcessorAccess
 
 	}
 
+	/*
+	 * Catches halts in the integrator due to bracketing issues (minimum check
+	 * inverval too high), and makes adjustments before restarting the
+	 * integrator to reduce the chance of similar errors in the future
+	 */
 	private boolean handleBracketingIssues(Exception exc)
 	{
 		boolean handledIssue = false;
@@ -227,6 +240,12 @@ public class ExecutionMonitor extends ProcessorAccess
 		return handledIssue;
 	}
 
+	/*
+	 * Catches halts in the integrator due to the maximum number of event
+	 * handling iterations being reached, and makes adjustments before
+	 * restarting the integrator to reduce the chance of similar errors in the
+	 * future
+	 */
 	private boolean handleEhCountIssues(Exception exc)
 	{
 		boolean handledIssue = false;
@@ -242,6 +261,12 @@ public class ExecutionMonitor extends ProcessorAccess
 		return handledIssue;
 	}
 
+	/*
+	 * Determines what to do when a fatal error occurs depending on the settings
+	 * defined. These errors don't necessarly mean the data is inacurate, and
+	 * most likely won't effect the outcome much, however the system can be
+	 * enabled to restart a trial upon such errors if desired.
+	 */
 	private void handleFatalError(Exception exc)
 	{
 		if (this.getSettings().getExecutionSettings().rerunOnFatalErrors)
@@ -256,6 +281,10 @@ public class ExecutionMonitor extends ProcessorAccess
 		}
 	}
 
+	/*
+	 * Displays information about an error that occured that the monitor was not
+	 * able to address.
+	 */
 	private void printOutUnresolvedIssues(Exception exc, boolean resolved)
 	{
 		if (!resolved)

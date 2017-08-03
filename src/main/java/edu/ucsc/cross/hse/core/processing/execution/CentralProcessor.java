@@ -26,51 +26,71 @@ import edu.ucsc.cross.hse.core.processing.event.JumpEvaluator;
 public class CentralProcessor
 {
 
-	protected EnvironmentManager environmentInterface; // main user interface
-
-	protected EnvironmentOperator contentAdmin; // operates the main
-	// global environment
-	// component
-
-	protected ComponentDirector componentAdmin; // controls all components
-
-	protected DataHandler dataHandler; // handles the storage and access of data
-
-	protected SimulationEngine simulationEngine; // performs the computations
-													// necessary for the ode to
-													// produce simulated
-													// solutions
-
-	protected ExecutionMonitor integrationMonitor; // monitors and resolves any
-													// issues that arise while
-													// the environment is
-													// running
-
-	protected JumpEvaluator jumpEvaluator; // continuously detects and handles
-											// discrete events
-
-	protected InterruptResponder interruptResponder; // reacts to user or system
-	// interruptions to keep the
-	// system from crashing
-
-	protected FileExchanger fileExchanger; // manages all file input and output
-											// tasks
-
-	protected SystemConsole systemConsole; // prints system notifications and
-											// any user defined outputs
-
-	protected Thread environmentThread; // thread that the environment is
-										// running on (if the environment is
-										// running on a thread)
-
-	protected File pendingOutput; // pending output file where environment
-									// content will be saved once an execution
-									// is completed if an output file was
-									// specified upon starting the environment
 	/*
-	 * Constructor called by the main user interface
+	 * Main user interface to configure and run the environment
 	 */
+	protected EnvironmentManager environmentInterface;
 
+	/*
+	 * Operates the environment processing components
+	 */
+	protected EnvironmentOperator contentAdmin;
+
+	/*
+	 * Controls all components
+	 */
+	protected ComponentDirector componentAdmin;
+
+	/*
+	 * Handles the storage and access of data
+	 */
+	protected DataHandler dataHandler;
+
+	/*
+	 * Performs the computations necessary for the ode to produce simulated
+	 * solutions
+	 */
+	protected SimulationEngine simulationEngine;
+
+	/*
+	 * Monitors and resolves any issues that arise while the environment is
+	 * running
+	 */
+	protected ExecutionMonitor integrationMonitor;
+	/*
+	 * Continuously detects and handles discrete events
+	 */
+	protected JumpEvaluator jumpEvaluator;
+
+	/*
+	 * Reacts to user or system interruptions to keep the system from crashing
+	 */
+	protected InterruptResponder interruptResponder;
+
+	/*
+	 * Manages all file input and output tasks
+	 */
+	protected FileExchanger fileExchanger;
+
+	/*
+	 * Prints system notifications and any user defined outputs
+	 */
+	protected SystemConsole systemConsole;
+	/*
+	 * Thread that the environment is running on (if the environment is running
+	 * on a thread)
+	 */
+	protected Thread environmentThread;
+	/*
+	 * Pending output file where environment content will be saved once an
+	 * execution is completed if an output file was specified upon starting the
+	 * environment
+	 */
+	protected File pendingOutput;
+
+	/*
+	 * Constructor linking the environment manager
+	 */
 	protected CentralProcessor(EnvironmentManager processor)
 	{
 
@@ -125,6 +145,9 @@ public class CentralProcessor
 		return task;
 	}
 
+	/*
+	 * Task responsible for running the environment
+	 */
 	private void runEnvironmentTask(boolean resume, File save_location)
 	{
 		if (!resume)
@@ -228,7 +251,7 @@ public class CentralProcessor
 	}
 
 	/*
-	 * reset the environment to its initial state
+	 * Reset the environment to its initial state
 	 */
 	protected void resetEnvironment()
 	{
@@ -236,7 +259,7 @@ public class CentralProcessor
 	}
 
 	/*
-	 * reset the environment to its initial state and also reinitialize the
+	 * Reset the environment to its initial state and also reinitialize the
 	 * components
 	 */
 	@SuppressWarnings(

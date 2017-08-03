@@ -21,11 +21,14 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 public class DataOperator<T> extends ComponentWorker
 {
 
-	// All data operators within the current JVM
+	/*
+	 * All data operators within the current JVM
+	 */
 	protected static HashMap<Data<?>, DataOperator<?>> dataOperators = new HashMap<Data<?>, DataOperator<?>>();
 	Data<T> element;
+
 	/*
-	 * This list determines what elements will need to be cloned before being
+	 * List that determines what elements will need to be cloned before being
 	 * saved to ensure the right values are stored. For example, a list would
 	 * need to be copied because a list of some sort that was saved without
 	 * being copied will reflect any changes made in the future unless the list
@@ -169,6 +172,9 @@ public class DataOperator<T> extends ComponentWorker
 		}
 	}
 
+	/*
+	 * Gets the value stored before a jump occurred
+	 */
 	public T getPreJumpValue()
 	{
 		T val = null;

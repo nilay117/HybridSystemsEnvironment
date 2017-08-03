@@ -22,12 +22,19 @@ import edu.ucsc.cross.hse.core.processing.execution.ComponentDirector;
 public class ComponentWorker extends ComponentOperator
 {
 
-	private Component configuration; // wpointer to own component
+	/*
+	 * Component being serviced by this worker
+	 */
+	private Component configuration;
 
+	/*
+	 * Mapping of all components to their corresponding workers
+	 */
 	protected static HashMap<Component, ComponentWorker> components = new HashMap<Component, ComponentWorker>();
 
-	// relative compoents
-
+	/*
+	 * Constructor linking a component to this worker
+	 */
 	public ComponentWorker(Component component)
 	{
 		super(component);

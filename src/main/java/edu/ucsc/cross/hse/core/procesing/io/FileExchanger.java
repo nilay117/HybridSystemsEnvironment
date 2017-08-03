@@ -10,6 +10,10 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
+/*
+ * Stores and loads data directly from/to the processor. Used to load or store
+ * smaller sections of data such as a component definition.
+ */
 public class FileExchanger extends ProcessorAccess
 {
 

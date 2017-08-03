@@ -26,6 +26,9 @@ public class ComponentConfigurer
 	 */
 	protected static HashMap<Component, ComponentConfigurer> components = new HashMap<Component, ComponentConfigurer>();
 
+	/*
+	 * Constructor linking a component to the configurer
+	 */
 	public ComponentConfigurer(Component self)
 	{
 		componen = self;
@@ -119,7 +122,8 @@ public class ComponentConfigurer
 	 */
 	public void loadComponentsFromFile(File file, Integer quantity, boolean reinitialize_data)
 	{
-		Component component = FileProcessor.loadComponent(file, FileContent.COMPONENT);
+		Component component = (Component) FileProcessor.loadContents(file, FileContent.COMPONENT)
+		.get(FileContent.COMPONENT);
 		component.component().configure().setInitialized(false, reinitialize_data);
 		addComponent(component, quantity);
 	}

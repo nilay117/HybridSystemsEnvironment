@@ -7,9 +7,18 @@ package edu.ucsc.cross.hse.core.object.domain;
 public class HybridTime
 {
 
-	private HybridTime current; // the current hybrid time instance
-	private Double time; // the current time
-	private Integer jumpIndex; // the current jump index
+	/*
+	 * the current hybrid time instance
+	 */
+	private HybridTime current;
+	/*
+	 * the current time
+	 */
+	private Double time;
+	/*
+	 * the jump index
+	 */
+	private Integer jumpIndex;
 
 	/*
 	 * Constructor with zero time and jump index wuth no current time instance

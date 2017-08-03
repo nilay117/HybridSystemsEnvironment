@@ -27,23 +27,40 @@ import edu.ucsc.cross.hse.core.procesing.io.FileExchanger;
 public class Data<T> extends Component
 {
 
-	protected boolean save; // flag indicating if object should be stored
+	/*
+	 * Flag indicating if object should be stored
+	 */
+	protected boolean save;
 
-	private final boolean cloneToStore; // flag indicating if object needs to be
-										// cloned to be stored correctly
+	/*
+	 * Flag indicating if object needs to be cloned to be stored correctly
+	 */
+	private final boolean cloneToStore;
 
-	protected HashMap<HybridTime, T> savedHybridValues; // mapping of saved
-														// values
+	/*
+	 * Mapping of stored values to their corresponding hybrid times
+	 */
+	protected HashMap<HybridTime, T> savedHybridValues;
 
-	protected T element; // currently stored data object
+	/*
+	 * Current data element
+	 */
+	protected T element;
 
-	protected ValueDomain elementDomain;// domain of the data object in case it
-										// can assume random values
+	/*
+	 * Domain of the data object in case it can assume random values
+	 */
+	protected ValueDomain elementDomain;
 
+	/*
+	 * Initial value of the data element
+	 */
 	protected T initialValue;
 
-	protected T prejump; // pre-jump value stored immediately before jump
-	// occurs
+	/*
+	 * Pre-jump value stored immediately before jump occurs
+	 */
+	protected T prejump;
 
 	/*
 	 * Safely access element
@@ -247,6 +264,10 @@ public class Data<T> extends Component
 		prejump = element;
 	}
 
+	/*
+	 * Initialization that defines if the data will be stored, and a range of
+	 * values can be specified
+	 */
 	@SuppressWarnings("unchecked")
 	private void init(Boolean save_default, T... obj)
 	{
@@ -265,6 +286,9 @@ public class Data<T> extends Component
 		}
 	}
 
+	/*
+	 * Setup of initial values and components for the data element
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize()

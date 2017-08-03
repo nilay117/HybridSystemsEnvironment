@@ -3,8 +3,19 @@ package edu.ucsc.cross.hse.core.object.domain;
 public class ValueDomain
 {
 
-	private Double value; // fixed value
-	private Double min; // minimum value of the range
+	/*
+	 * Fixed Value
+	 */
+	private Double value;
+	/*
+	 * Minimum value of the range
+	 */
+	private Double min;
+
+	/*
+	 * Maxmimum value of the range
+	 */
+	private Double max; // maximum value of the range
 
 	/*
 	 * Get minimum value of domain
@@ -21,8 +32,6 @@ public class ValueDomain
 	{
 		return max;
 	}
-
-	private Double max; // maximum value of the range
 
 	/*
 	 * Constructor that implements a value domain with a fixed value

@@ -15,6 +15,11 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
+/*
+ * Continuously saves all state data and any other data that needs to be stored
+ * in the background. Can also locate any data within the environment and
+ * assemble it however best suits the application.
+ */
 @SuppressWarnings(
 { "unchecked", "rawtypes" })
 public class DataHandler extends ProcessorAccess implements DataAccessor
@@ -134,6 +139,10 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		return data;
 	}
 
+	/*
+	 * Gets a data element matching the given title from the same source as the
+	 * speficied data element
+	 */
 	@Override
 	public Data getDifferentDataFromSameDataSet(Data data, String title)
 	{
@@ -163,6 +172,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		return null;
 	}
 
+	/*
+	 * Stores data for all elements where data is being collected
+	 */
 	public void storeData(Double time)
 	{
 
@@ -177,6 +189,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 
 	}
 
+	/*
+	 * Stores the data points that occur right before a jump
+	 */
 	public void storeJumpData(HybridTime pre_jump_time)
 	{
 		HybridTime postJumpTime = this.getEnvironmentOperator().getEnvironmentHybridTime().getCurrent();
@@ -206,6 +221,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 
 	}
 
+	/*
+	 * Mapping of data element names to the corresponding set of stored data
+	 */
 	public HashMap<String, HashMap<HybridTime, ?>> getAllMaps()
 	{
 		HashMap<String, HashMap<HybridTime, ?>> mapz = new HashMap<String, HashMap<HybridTime, ?>>();
@@ -219,6 +237,11 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		return mapz;
 	}
 
+	/*
+	 * Store data for a given time if the time since the last stored point is
+	 * greater than the interval, or stores the data regardless if the override
+	 * flag is present
+	 */
 	public void storeData(double t, boolean override_store_time)
 	throws MaxCountExceededException, DimensionMismatchException
 	{
@@ -235,6 +258,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		}
 	}
 
+	/*
+	 * Populates the data structures with all data elements that will store data
+	 */
 	public void loadStoreStates()
 	{
 		dataElementsToStore.clear();
@@ -267,6 +293,9 @@ public class DataHandler extends ProcessorAccess implements DataAccessor
 		}
 	}
 
+	/*
+	 * Get a list of the states matching a specified title
+	 */
 	@Override
 	public ArrayList<State> getStatesByTitle(String title)
 	{

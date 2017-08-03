@@ -6,17 +6,27 @@ import edu.ucsc.cross.hse.core.framework.component.ComponentWorker;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
+/*
+ * Continuously monitors the system to interrupt the system upon each jump
+ * detected. This allows the ODE to function smoothly as the discontinuities are
+ * addressed discretely while the solver is paused
+ */
 public class JumpEvaluator extends ProcessorAccess implements EventHandler
 {
 
-	public Integer toggles = 0; // toggle index to eliminate the error within
-								// the apache event handler that sometimes
-								// crashes if the value is the same as before
-								// the jump
-	public Double flag; // flag indicating a jump is pending
+	/*
+	 * Toggle value to avoid an error that can occur when the sign of a value is
+	 * the same before and after a jump
+	 */
+	public Integer toggles = 0;
 
 	/*
-	 * constructor to link the environment
+	 * Flag indicating that a jump is pending
+	 */
+	public Double flag;
+
+	/*
+	 * Constructor to link the environment
 	 */
 	public JumpEvaluator(CentralProcessor processor)
 	{
@@ -92,7 +102,6 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 	/*
 	 * Performs actions necessary to reset the state after a jump has occurred
 	 */
-
 	@Override
 	public void resetState(double t, double[] y)
 	{
@@ -114,7 +123,7 @@ public class JumpEvaluator extends ProcessorAccess implements EventHandler
 	}
 
 	/*
-	 * initializes the event handler
+	 * Initializes the event handler
 	 */
 	@Override
 	public void init(double t0, double[] y0, double t)

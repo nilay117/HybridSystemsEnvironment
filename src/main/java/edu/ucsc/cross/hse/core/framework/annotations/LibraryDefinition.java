@@ -11,11 +11,15 @@ import java.lang.annotation.Target;
  * ssome of the foundations for models. Functions with these annotations are
  * automatically scanned and available in the user library.
  */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(
 { ElementType.METHOD, })
 public @interface LibraryDefinition
 {
 
-	String label(); // name that will appear in libraries for the component
+	/*
+	 * Name that will appear in libraries for the component
+	 */
+	String label();
 }

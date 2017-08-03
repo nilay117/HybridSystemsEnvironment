@@ -11,22 +11,38 @@ import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 
+/*
+ * The main interaction between the user and the system with most functionality
+ * accessible from this very component. Provides access to many modules intended
+ * for users and is capable of running trials with a few straightforward
+ * function calls
+ */
 public class EnvironmentManager
 {
 
+	/*
+	 * Mapping of all currently active environments running in this software
+	 * instance
+	 */
 	static HashMap<String, EnvironmentManager> environments = new HashMap<String, EnvironmentManager>();
 
-	protected HybridEnvironment content; // all elements that make up the
+	/*
+	 * Collection of components that make up the complete hybrid dynamical
+	 * system of the environment
+	 */
+	protected HybridEnvironment content;
 
-	// environment
-	// itself such as data, components, systems
-	// etc
-	protected CentralProcessor processor; // environment processor that handles
-											// events,
-											// computations, maintenance, etc
-	protected SettingConfigurer settings; // collection of settings that
-	// configure the performance of the
-	// environment
+	/*
+	 * Collection of modules that allow the processor to run smoothly in the
+	 * background by handling events, making adjustments, and resolving issues.
+	 */
+	protected CentralProcessor processor;
+
+	/*
+	 * Collection of settings that define how the environment and processor will
+	 * perform
+	 */
+	protected SettingConfigurer settings;
 
 	/*
 	 * Generic environment constructor that initializes an empty system with a

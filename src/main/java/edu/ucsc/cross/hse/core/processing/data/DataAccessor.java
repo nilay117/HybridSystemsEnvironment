@@ -6,6 +6,12 @@ import java.util.HashMap;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 
+/*
+ * Interface to access data in a user friendly way with all of the back and
+ * processor related methods omitted. Although data can be accessed through the
+ * components themselves, this can be used to search through all data within the
+ * environment.
+ */
 public interface DataAccessor
 {
 

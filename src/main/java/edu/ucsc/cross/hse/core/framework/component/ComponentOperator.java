@@ -21,10 +21,15 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 public class ComponentOperator
 {
 
-	protected Component component; // component this class works for
+	/*
+	 * Component this class works for
+	 */
+	protected Component component;
 
-	public ComponentOperator(Component component) // constructor assigning a
-													// component
+	/*
+	 * constructor assigning a component
+	 */
+	public ComponentOperator(Component component)
 	{
 		this.component = component;
 	}
@@ -176,7 +181,16 @@ public class ComponentOperator
 	 */
 	public SettingConfigurer getSettings()
 	{
-		return EnvironmentOperator.getOperator(component.component().getEnvironment()).getManager().getSettings();
+		SettingConfigurer settings = null;
+		try
+		{
+			settings = EnvironmentOperator.getOperator(component.component().getEnvironment()).getManager()
+			.getSettings();
+		} catch (Exception noSettings)
+		{
+
+		}
+		return settings;
 	}
 
 	/*

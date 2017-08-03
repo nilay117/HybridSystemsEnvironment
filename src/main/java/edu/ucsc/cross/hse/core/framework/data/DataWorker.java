@@ -17,14 +17,20 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 public class DataWorker<T> extends ComponentOperator
 {
 
-	// Mapping of all data workers keeping them completely separate from the
-	// data elements themselves
+	/*
+	 * Mapping of all data workers keeping them completely separate from the
+	 * data elements themselves
+	 */
 	protected static HashMap<Data<?>, DataWorker<?>> dataActions = new HashMap<Data<?>, DataWorker<?>>();
 
-	// Mapping of all stored data times
+	/*
+	 * Mapping of all stored data times
+	 */
 	public HashMap<Double, ArrayList<HybridTime>> storedTimes;
 
-	// The data element being serviced by this worker
+	/*
+	 * The data element being serviced by this worker
+	 */
 	public Data<T> data;
 
 	/*

@@ -2,17 +2,22 @@ package edu.ucsc.cross.hse.core.processing.data;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import com.be3short.data.file.general.FileSystemInteractor;
 import com.be3short.data.file.xml.XMLParser;
 
 import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
+import edu.ucsc.cross.hse.core.object.configuration.ConsoleSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
 import edu.ucsc.cross.hse.core.procesing.io.FileContent;
 import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
-import edu.ucsc.cross.hse.core.object.configuration.ConsoleSettings;
 
+/*
+ * Accesses and configurers the setting files, and allows for additional custom
+ * settings to be included.
+ */
 public class SettingConfigurer
 {
 
@@ -79,6 +84,9 @@ public class SettingConfigurer
 		// return trial;
 	}
 
+	/*
+	 * Load any type of settings for use within the environment
+	 */
 	public void loadSettings(Object... setting)
 	{
 		for (Object settinG : setting)
@@ -152,6 +160,14 @@ public class SettingConfigurer
 	}
 
 	/*
+	 * Load default settings from the default settings file
+	 */
+	public void loadSettingsFromFile()
+	{
+		setSettings(SettingConfigurer.loadDefaultSettingsFile());
+	}
+
+	/*
 	 * Save the settings to a file
 	 */
 	public void saveSettingsToFile(File file)
@@ -193,8 +209,7 @@ public class SettingConfigurer
 		SettingConfigurer settings = null;
 		if (file.exists())
 		{
-			settings = new SettingConfigurer();
-			settings.loadSettingsFromFile(file);
+			settings = (SettingConfigurer) XMLParser.getObject(file);
 
 		} else
 		{
@@ -217,6 +232,12 @@ public class SettingConfigurer
 	{
 		try
 		{
+			String[] fileNameComponents = file.getName().split(Pattern.quote("."));
+			if (!fileNameComponents[fileNameComponents.length - 1].equals("xml"))
+			{
+				String newPath = file.getAbsolutePath() + ".xml";
+				file = new File(newPath);
+			}
 			FileSystemInteractor.createOutputFile(file, XMLParser.serializeObject(settings));
 		} catch (Exception badFile)
 		{

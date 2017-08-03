@@ -9,21 +9,21 @@ package edu.ucsc.cross.hse.core.framework.component;
  * also provides some additional functionality and access to the environment and
  * components within its hierarchy.
  */
-public abstract class Component // implements Initializer
+public abstract class Component
 {
 
 	/*
 	 * Current status of this component
 	 */
-	ComponentStatus status; // current status of this component
+	ComponentStatus status;
 
 	/*
-	 * specific information describing this component
+	 * Specific information describing this component
 	 */
 	ComponentLabel labels;
 
 	/*
-	 * component access hierarchy of this component
+	 * Component access hierarchy of this component
 	 */
 	ComponentContent contents;
 

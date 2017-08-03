@@ -8,38 +8,38 @@ public class ComputationSettings
 {
 
 	/*
-	 * ode step size if using a fixed step integrator, or minimum ode step size
+	 * Ode step size if using a fixed step integrator, or minimum ode step size
 	 * of a variable step integrator
 	 */
 	public double odeMinStep;
 
 	/*
-	 * maximum step size for variable step integrator
+	 * Maximum step size for variable step integrator
 	 */
 	public double odeMaxStep;
 
 	/*
-	 * absolute tolerance of the ode solver
+	 * Absolute tolerance of the ode solver
 	 */
 	public double odeScalAbsoluteTolerance;
 
 	/*
-	 * relative tolerance of the ode solver
+	 * Relative tolerance of the ode solver
 	 */
 	public double odeScalRelativeTolerance;
 
 	/*
-	 * event handler maximum interval to check for an event
+	 * Event handler maximum interval to check for an event
 	 */
 	public double ehMaxCheckInterval;
 
 	/*
-	 * convergence threshold of an event
+	 * Convergence threshold of an event
 	 */
 	public double ehConvergence;
 
 	/*
-	 * maximum number of iterations
+	 * Maximum number of iterations
 	 */
 	public int ehMaxIterationCount;
 
@@ -61,7 +61,7 @@ public class ComputationSettings
 	public IntegratorType integrator;
 
 	/*
-	 * the amount that the event handling interval will be reduced when an event
+	 * Amount that the event handling interval will be reduced when an event
 	 * handling interval related error occurrs. Value should be between 0 and 1.
 	 * I have found that reducing the event handling interval value increases
 	 * the runtime significantly and would only recommend changing the default
@@ -121,7 +121,7 @@ public class ComputationSettings
 	}
 
 	/*
-	 * available of integrator types for use
+	 * Available of integrator types for use
 	 */
 	public static enum IntegratorType
 	{

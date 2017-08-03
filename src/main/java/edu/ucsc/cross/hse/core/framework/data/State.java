@@ -22,13 +22,11 @@ import edu.ucsc.cross.hse.core.object.domain.ValueDomain;
 public class State extends Data<Double>
 {
 
-	protected Double derivative; // current derivative of the data (if the data
-									// changes
-									// continuously)
-
-	// protected Double prejump; // pre-jump value stored immediately before
-	// jump
-	// // occurs
+	/*
+	 * derivative of the data (if the data changes continuously), must be
+	 * continuously updated by the flow map to work correctlys
+	 */
+	protected Double derivative;
 
 	/*
 	 * Gets the current state value
@@ -38,35 +36,6 @@ public class State extends Data<Double>
 	{
 		return getValue(false);
 	}
-
-	/*
-	 * Gets the state value after being randomized within a specified domain if
-	 * desired. For example a random transmission time in an unreliable network.
-	 */
-	// @Override
-	// public Double getValue(boolean randomize_from_domain)
-	// {
-	// try
-	// {
-	// if (randomize_from_domain)
-	// {
-	// element = elementDomain.getValue();
-	//
-	// return element;
-	// } else if (component().getEnvironment().isJumpOccurring())
-	// {
-	// return prejump;
-	// } else
-	// {
-	//
-	// return element;
-	// }
-	// } catch (Exception e)
-	// {
-	// return element;
-	// }
-	//
-	// }
 
 	/*
 	 * Sets the state value to a fixed number
@@ -118,6 +87,27 @@ public class State extends Data<Double>
 		return DataWorker.getConfigurer(this);
 	}
 
+	/*
+	 * Constructors for a wide variety of parameters depending on what is
+	 * needed. Typically the more information the better, but just a title and
+	 * initial value are sufficient.
+	 *
+	 * The avaible parameters are:
+	 * 
+	 * @param name - the generic name given to the state, ie solid state drive
+	 * 
+	 * @param descripton - the details about the component, ie Micron E500IT
+	 * NAND Flash SSD
+	 * 
+	 * @param obj - fixed initial value for the state
+	 * 
+	 * @param obj_min,obj_max - range of values the initial condition will be
+	 * selected from at random
+	 * 
+	 * @param save_default - flag indicating if data should be stored for the
+	 * state, default value is true
+	 * 
+	 */
 	public State(String name, Double obj)
 	{
 		super(name, obj, true);
@@ -167,6 +157,9 @@ public class State extends Data<Double>
 		init(0.0);
 	}
 
+	/*
+	 * Initialization to a range of values
+	 */
 	private void init(Double... vals)
 	{
 		elementDomain = new ValueDomain(vals[0]);
@@ -178,14 +171,5 @@ public class State extends Data<Double>
 		// derivative = null;
 		prejump = element;
 	}
-
-	// /*
-	// * Store a copy of a value immediately before a jump occurs allowing
-	// * pre=jump value access even if the value is changed by another component
-	// */
-	// void storePreJumpValue()
-	// {
-	// prejump = element;
-	// }
 
 }

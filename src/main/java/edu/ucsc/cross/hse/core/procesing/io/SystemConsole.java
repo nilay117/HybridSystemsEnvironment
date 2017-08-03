@@ -10,20 +10,35 @@ import bs.commons.objects.labeling.StringFormatter;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
+/*
+ * Prints output notifications, messages, warnings, and errors with additional
+ * information such as the time, memory usage, and calling class if needed.
+ * These features can be configured by making changes to the ConsoleSettings in
+ * the SettingConfigurer.
+ */
 public class SystemConsole extends ProcessorAccess
 {
 
-	private static SystemInfo info = new SystemInfo(); // information about the
-														// system such as memory
-														// usage
-														// call
-														// class
-														// detector
+	/*
+	 * Information about the system such as memory usage and calling class of a
+	 * message
+	 */
+	private static SystemInfo info = new SystemInfo();
+	/*
+	 * Time that the next progress update will be printed
+	 */
+	private Double nextPrintTime;
 
-	private Double nextPrintTime; // time that the next progress update should
-									// be printed
-	private Double printInterval; // interval between progress update print outs
-	private OutputStream alternatePrintLocation; // alternate print location
+	/*
+	 * Computed interval between progress print outs
+	 */
+	private Double printInterval;
+
+	/*
+	 * Optional alternate print location specification for using something like
+	 * an external console
+	 */
+	private OutputStream alternatePrintLocation;
 
 	/*
 	 * Constructor that links the processor
@@ -38,7 +53,7 @@ public class SystemConsole extends ProcessorAccess
 	}
 
 	/*
-	 * initialize the console components
+	 * Initialize the console components
 	 */
 	public void initialize()
 	{
@@ -113,9 +128,7 @@ public class SystemConsole extends ProcessorAccess
 
 		if (message != null)
 		{
-			String appendedMsg = "[" + StringFormatter.getAbsoluteHHMMSS() + "][" + System.currentTimeMillis() / 1000
-			+ "][" + Math.round(info.usedMem() / Math.pow(1024, 2)) + "/"
-			+ Math.round(info.totalMem() / Math.pow(1024, 2)) + "]" + "[" + getCallingClassName(1) + "] " + message;
+			String appendedMsg = getMessagePrefix() + message;
 
 			if (alternatePrintLocation != null)
 			{
@@ -143,4 +156,25 @@ public class SystemConsole extends ProcessorAccess
 		this.alternatePrintLocation = alternatePrintLocation;
 	}
 
+	/*
+	 * Compiles the message prefix based on the current settings
+	 */
+	private String getMessagePrefix()
+	{
+		String prefix = "";
+		if (getSettings().getConsolePrintSettings().printCurrentTime)
+		{
+			prefix += "[" + StringFormatter.getAbsoluteHHMMSS() + "]";
+		}
+		if (getSettings().getConsolePrintSettings().printMemoryUsage)
+		{
+			prefix += "[" + Math.round(info.usedMem() / Math.pow(1024, 2)) + "/"
+			+ Math.round(info.totalMem() / Math.pow(1024, 2)) + "]";
+		}
+		if (getSettings().getConsolePrintSettings().printCallingClass)
+		{
+			prefix += "[" + getCallingClassName(1) + "]";
+		}
+		return prefix;
+	}
 }

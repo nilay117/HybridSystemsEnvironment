@@ -10,14 +10,14 @@ package edu.ucsc.cross.hse.core.framework.component;
 public class ComponentStatus
 {
 
-	private Boolean initialized; // flag indicating if component has been
-	// initialized or not
-
-	protected boolean simulated; // flag indicating if contained data is
-	// simulated
-	// or not
-
-	// protected String address; // address of component
+	/*
+	 * Flag indicating if this component has been initialized or not
+	 */
+	private Boolean initialized;
+	/*
+	 * Flag indicating if this component is simulated or not
+	 */
+	protected boolean simulated;
 
 	/*
 	 * Constructor

@@ -14,19 +14,26 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
 import edu.ucsc.cross.hse.core.processing.execution.EnvironmentManager;
 
 /*
- * This
+ * Performs operation on the environment as instructed by the processor, not for
+ * normal use.
  */
 public class EnvironmentOperator extends ComponentWorker
 {
 
-	// EnvironmentOperator instances in the current JVM
+	/*
+	 * EnvironmentOperator instances in the current JVM
+	 */
 	@CoreComponent // mapping of all open global systems
 	public static final HashMap<String, EnvironmentOperator> globalSystems = new HashMap<String, EnvironmentOperator>();
 
-	private HybridEnvironment globalSystem; // environment this operator is
-											// responsible for
-	private String managerAddress; // address of the manager operating the
-									// environment
+	/*
+	 * Environment this operator is responsible for
+	 */
+	private HybridEnvironment globalSystem;
+	/*
+	 * Address of the manager operating the environment
+	 */
+	private String managerAddress;
 
 	/*
 	 * Constructor that links an environment to its operator
@@ -207,9 +214,8 @@ public class EnvironmentOperator extends ComponentWorker
 		for (Component component : globalSystem.component().getContent().getComponents(true))
 		{
 
-			ComponentWorker.getOperator(component)
-			.setEnvironmentKey(globalSystem.component().getEnvironmentKey());// toString());//
-																				// FullComponentOperator.getOperator(globalSystem).getEnvironmentKey());
+			ComponentWorker.getOperator(component).setEnvironmentKey(globalSystem.component().getEnvironmentKey());// toString());//
+																													// FullComponentOperator.getOperator(globalSystem).getEnvironmentKey());
 		}
 	}
 

@@ -24,8 +24,10 @@ public enum FileContent
 		HybridEnvironment.class.getSimpleName()),
 	UNKNOWN();
 
-	private ArrayList<String> identifiers; // Strings that identify the contents
-											// of a file
+	/*
+	 * Strings that identify the contents of a file
+	 */
+	private ArrayList<String> identifiers;
 
 	/*
 	 * Get File Content array from boolean input

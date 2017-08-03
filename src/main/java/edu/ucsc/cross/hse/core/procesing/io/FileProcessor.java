@@ -27,11 +27,19 @@ import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
 
+/*
+ * Compiles and decodes data storage files for organizational and compression
+ * purposes. An output file is a compressed directory containing a collection of
+ * files that store different types of information. This format reduces the file
+ * size and is makes it easy to keep data organized.
+ */
 public class FileProcessor extends ProcessorAccess
 {
 
-	public static Boolean multiThread = true;
-	private static Kryo kryo = new Kryo(); // Optimized serializer
+	/*
+	 * Optimized serializer
+	 */
+	private static Kryo kryo = new Kryo();
 
 	/*
 	 * Constructor that links to the processor interface
@@ -55,6 +63,9 @@ public class FileProcessor extends ProcessorAccess
 
 	}
 
+	/*
+	 * Loads the contents of a file into a mapping
+	 */
 	public static HashMap<FileContent, Object> loadContents(File location, FileContent... contents)
 	{
 		HashMap<FileContent, Object> readContent = null;
@@ -72,12 +83,10 @@ public class FileProcessor extends ProcessorAccess
 
 	}
 
-	public static Component loadComponent(File file, FileContent... content)
-	{
-		HashMap<FileContent, Object> contents = FileProcessor.loadContents(file, content);
-		return (Component) contents.get(FileContent.COMPONENT);
-	}
-
+	/*
+	 * Gets the component and all associated data that is stored in the file
+	 * contents
+	 */
 	private static Component getComponent(HashMap<FileContent, Object> contents)
 	{
 		Component component = (Component) contents.get(FileContent.COMPONENT);
@@ -103,6 +112,9 @@ public class FileProcessor extends ProcessorAccess
 		return component;
 	}
 
+	/*
+	 * Loads file contents into a given component
+	 */
 	@SuppressWarnings("unchecked")
 	private static void fillComponentData(HashMap<FileContent, Object> contents, Component component)
 	{
@@ -119,6 +131,9 @@ public class FileProcessor extends ProcessorAccess
 		}
 	}
 
+	/*
+	 * Uncompresses and decodes the contents of a file into a mapping
+	 */
 	@SuppressWarnings("unchecked")
 	private static HashMap<FileContent, Object> readContents(File location, FileContent... contents)
 	{
@@ -188,6 +203,10 @@ public class FileProcessor extends ProcessorAccess
 		return loadedContent;
 	}
 
+	/*
+	 * Creates the collection out output files that will be compressed into the
+	 * final output file
+	 */
 	private static void createFiles(File location, Component component, FileContent... contents)
 	{
 		for (FileContent content : contents)
@@ -197,20 +216,20 @@ public class FileProcessor extends ProcessorAccess
 				switch (content)
 				{
 				case DATA:
-					storeData(location, component);
+					createDataFiles(location, component);
 					break;
 				case SETTINGS:
 
 					try
 					{
-						storeSettings(location, component.component().getSettings());
+						createSettingsFile(location, component.component().getSettings());
 					} catch (Exception noComponentSettings)
 					{
 					}
 
 					break;
 				case COMPONENT:
-					storeComponent(location, component);
+					createComponentFile(location, component);
 					break;
 				default:
 					break;
@@ -222,6 +241,9 @@ public class FileProcessor extends ProcessorAccess
 		}
 	}
 
+	/*
+	 * Consolidates the collection of output files into a single .hse file
+	 */
 	private static void consolidateFile(File location)
 	{
 		try
@@ -235,7 +257,10 @@ public class FileProcessor extends ProcessorAccess
 		}
 	}
 
-	private static void storeData(File location, Component component)
+	/*
+	 * Creates output files for each data element containing stored values
+	 */
+	private static void createDataFiles(File location, Component component)
 	{
 		HashMap<String, Object> data = new HashMap<String, Object>(); // new
 		for (Data<?> dat : component.component().getContent().getData(true))
@@ -251,7 +276,10 @@ public class FileProcessor extends ProcessorAccess
 
 	}
 
-	private static void storeSettings(File location, SettingConfigurer settings)
+	/*
+	 * Creates an output file containing the current setting configuration
+	 */
+	private static void createSettingsFile(File location, SettingConfigurer settings)
 	{
 		String xmlSettings = XMLParser.serializeObject(settings);
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);
@@ -259,7 +287,10 @@ public class FileProcessor extends ProcessorAccess
 		ObjectSerializer.store(location.getAbsolutePath() + "/" + settings.getClass().getName(), compressed);
 	}
 
-	private static void storeComponent(File location, Component component)
+	/*
+	 * Creates an output file containing the defined component
+	 */
+	private static void createComponentFile(File location, Component component)
 	{
 		String xmlSettings = XMLParser.serializeObject(ComponentWorker.getOperator(component).getNewInstance());
 		byte[] compressed = DataCompressor.compressDataGZip(xmlSettings);

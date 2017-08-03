@@ -8,17 +8,27 @@ package edu.ucsc.cross.hse.core.framework.component;
 public class ComponentLabel
 {
 
-	// Naming
-	protected String classification; // general description of the element -ie
-										// "Storage Device" or "Navigation
-										// Controller"
+	/*
+	 * General description of the element -ie "Storage Device" or
+	 * "Navigation Controller"
+	 */
+	protected String classification;
 
-	protected String name;// specific desciption of the element -ie "WD Blue 1TB
-							// Internal SSD" or "Crazyflie Nano 2.0"
+	/*
+	 * Specific desciption of the element -ie "WD Blue 1TB Internal SSD" or
+	 * "Crazyflie Nano 2.0"
+	 */
+	protected String name;
 
-	protected String information; // any extra information about the component
+	/*
+	 * Any extra information about the component
+	 */
+	protected String information;
 
-	protected String address; // address of component
+	/*
+	 * Address of the component
+	 */
+	protected String address;
 
 	/*
 	 * Constructor that defines the title of the component
@@ -50,7 +60,7 @@ public class ComponentLabel
 	}
 
 	/*
-	 * get the specific name of the element
+	 * Get the specific name of the element
 	 */
 	public String getName()
 	{
@@ -58,7 +68,7 @@ public class ComponentLabel
 	}
 
 	/*
-	 * set the specific name of the element
+	 * Set the specific name of the element
 	 */
 	public void setName(String name)
 	{
@@ -66,7 +76,7 @@ public class ComponentLabel
 	}
 
 	/*
-	 * get any additional information about the element
+	 * Get any additional information about the element
 	 */
 	protected String getInformation()
 	{
@@ -74,7 +84,7 @@ public class ComponentLabel
 	}
 
 	/*
-	 * set any additional information about the element
+	 * Set any additional information about the element
 	 */
 	protected void setInformation(String information)
 	{

@@ -12,7 +12,7 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 {
 
 	/*
-	 * Did the termination occur due to an error
+	 * Flag if the termination occurd due to an error
 	 */
 	public boolean isErrorTermination()
 	{
@@ -20,7 +20,7 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 	}
 
 	/*
-	 * Is the execution attempt terminating
+	 * Flag if the execution attempt terminating
 	 */
 	public boolean isTerminating()
 	{
@@ -28,23 +28,32 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 	}
 
 	/*
-	 * Is the execution attempt terminating early
+	 * Flag if the execution attempt terminating early
 	 */
 	public boolean isTerminatedEarly()
 	{
 		return envStopped;
 	}
 
-	private boolean killFlag; // flag that indactes it is wile to kill the
-								// process
+	/*
+	 * Flag that indactes it is wile to kill the process
+	 */
+	private boolean killFlag;
 
-	private boolean errorTermination; // flag indicating that the termination is
-										// due to an error
+	/*
+	 * Flag indicating that the termination is due to an error
+	 */
+	private boolean errorTermination;
 
-	private boolean envPaused; // flag indicating that the environment is paused
+	/*
+	 * Flag indicating that the environment is paused
+	 */
+	private boolean envPaused;
 
-	private boolean envStopped;// flag indicating that the environment is
-								// stopped
+	/*
+	 * Flag indicating that the environment is stopped
+	 */
+	private boolean envStopped;
 
 	/*
 	 * Is the environment paused
@@ -96,7 +105,7 @@ public class InterruptResponder extends ProcessorAccess implements EventHandler
 	}
 
 	/*
-	 * response to process being terminated
+	 * Response to process being terminated
 	 */
 	@Override
 	public Action eventOccurred(double t, double[] y, boolean increasing)

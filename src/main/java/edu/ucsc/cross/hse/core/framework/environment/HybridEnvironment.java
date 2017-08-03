@@ -9,24 +9,29 @@ import edu.ucsc.cross.hse.core.object.domain.HybridTime;
  * accessed by the processor and any environment components, and also so that
  * they will be saved when this class is exportated.
  */
-public class HybridEnvironment extends Component// implements Serializable
+public class HybridEnvironment extends Component
 {
 
-	protected HybridTime environmentTime; // time relative to when the
-											// environment
-											// was launched
+	/*
+	 * Time relative to when the environment was launched
+	 */
+	protected HybridTime environmentTime;
 
-	protected Double earthStartTime; // epoch time when the environment was
-										// launched
+	/*
+	 * Epoch time when the environment was launched
+	 */
+	protected Double earthStartTime;
 
-	protected boolean jumpOccurring; // flag indicating if a jump is occurring
-										// in
-										// any component in the environment
+	/*
+	 * Flag indicating if a jump is occurring in any component within the
+	 * environment
+	 */
+	protected boolean jumpOccurring;
+
 	/*
 	 * Flag indicating that a jump is currently occuring in any component in the
 	 * environment
 	 */
-
 	public boolean isJumpOccurring()
 	{
 		return jumpOccurring;
