@@ -48,7 +48,7 @@ public class FileProcessor extends ProcessorAccess
 	 */
 	public static void store(File location, Component component, FileContent... contents)
 	{
-		component.component().getSettings();
+		// component.component().getSettings();
 		FileSystemInteractor.checkDirectory(location.getAbsolutePath(), true);
 		createFiles(location, component, contents);
 		consolidateFile(location);
