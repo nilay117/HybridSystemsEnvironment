@@ -57,6 +57,7 @@ public class CentralProcessor
 	 * running
 	 */
 	protected ExecutionMonitor integrationMonitor;
+
 	/*
 	 * Continuously detects and handles discrete events
 	 */
@@ -76,11 +77,13 @@ public class CentralProcessor
 	 * Prints system notifications and any user defined outputs
 	 */
 	protected SystemConsole systemConsole;
+
 	/*
 	 * Thread that the environment is running on (if the environment is running
 	 * on a thread)
 	 */
 	protected Thread environmentThread;
+
 	/*
 	 * Pending output file where environment content will be saved once an
 	 * execution is completed if an output file was specified upon starting the
