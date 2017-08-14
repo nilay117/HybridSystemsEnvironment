@@ -12,15 +12,13 @@ import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.State;
 
 /*
- * This class contains structures that define the hierarchy of additional
- * components that are related to a particular component. The purpose of this
- * class is to make it easy to access components with search specifications, ie
- * find all instances of a specific class in any descendant.
+ * This class contains structures that define the hierarchy of additional components that are related to a particular
+ * component. The purpose of this class is to make it easy to access components with search specifications, ie find all
+ * instances of a specific class in any descendant.
  * 
- * The lists and mappings contain sub-components of this component, which are
- * the components defined within a particular component or any of its
- * sub-components. The parent and the environment of this particular are also
- * available within this structure.
+ * The lists and mappings contain sub-components of this component, which are the components defined within a particular
+ * component or any of its sub-components. The parent and the environment of this particular are also available within
+ * this structure.
  */
 public class ComponentContent
 {
@@ -55,9 +53,8 @@ public class ComponentContent
 	private ArrayList<Component> descendantComponentList;
 
 	/*
-	 * Key that links the component to the global environment that it is
-	 * contained in. This keeps the component size smaller when being copied or
-	 * saved, and allows for multiple environments to be running simultaneously
+	 * Key that links the component to the global environment that it is contained in. This keeps the component size
+	 * smaller when being copied or saved, and allows for multiple environments to be running simultaneously
 	 */
 	protected String environmentKey;
 
@@ -198,8 +195,7 @@ public class ComponentContent
 	}
 
 	/*
-	 * get all components that are not declared in a class, but added later on
-	 * through software
+	 * get all components that are not declared in a class, but added later on through software
 	 */
 	protected void addAllUndeclaredComponents(ArrayList<Component> undeclareds)
 	{
@@ -225,6 +221,7 @@ public class ComponentContent
 			{
 
 			}
+			// undeclared.contents.parentComponent = this.self;
 		}
 	}
 
@@ -281,9 +278,8 @@ public class ComponentContent
 	}
 
 	/*
-	 * This method creates the hierarchy structure used throughout the rest of
-	 * the software. Using a combination of recursion and iteration through all
-	 * superclasses it is possible to find almost all fields
+	 * This method creates the hierarchy structure used throughout the rest of the software. Using a combination of
+	 * recursion and iteration through all superclasses it is possible to find almost all fields
 	 */
 	private void loadHierarchyComponents()
 	{
@@ -316,8 +312,7 @@ public class ComponentContent
 	}
 
 	/*
-	 * Assign a parent and then traverses the system to construct its own
-	 * hierarchy
+	 * Assign a parent and then traverses the system to construct its own hierarchy
 	 */
 	private void processComponent(Component parent, Component field)
 	{
@@ -327,8 +322,7 @@ public class ComponentContent
 	}
 
 	/*
-	 * Attempt to extract the contents from a container such as a hashmap or
-	 * array list to be scannned
+	 * Attempt to extract the contents from a container such as a hashmap or array list to be scannned
 	 */
 	private void processContainer(Component parent, Object container)
 	{
@@ -351,8 +345,7 @@ public class ComponentContent
 	}
 
 	/*
-	 * Process the object accordingly after its classification has been
-	 * determined
+	 * Process the object accordingly after its classification has been determined
 	 */
 	private void processFields(Component parent, Object field)
 	{
@@ -371,8 +364,8 @@ public class ComponentContent
 	}
 
 	/*
-	 * Get a list of components of a certain class by searching through
-	 * everything since items may get mapped by a sub or super class
+	 * Get a list of components of a certain class by searching through everything since items may get mapped by a sub
+	 * or super class
 	 */
 	private <T> ArrayList<Component> scanForComponents(Class<T> scan_class, boolean global)
 	{
@@ -422,6 +415,7 @@ public class ComponentContent
 				{
 					declaredComponentMap.get(component.getClass()).add(component);
 				}
+
 			}
 			if (!descendantComponentList.contains(component))
 			{
@@ -578,8 +572,7 @@ public class ComponentContent
 	}
 
 	/*
-	 * This enum is a very general way of categorizing items to speed up a
-	 * variety of tasks
+	 * This enum is a very general way of categorizing items to speed up a variety of tasks
 	 */
 	private static enum ObjectType
 	{

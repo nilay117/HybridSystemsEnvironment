@@ -273,7 +273,8 @@ public class ExecutionMonitor extends ProcessorAccess
 		{
 
 			if (exc.getClass().equals(NumberIsTooSmallException.class)
-			|| exc.getClass().equals(TooManyEvaluationsException.class))
+			|| exc.getClass().equals(TooManyEvaluationsException.class)
+			|| exc.getClass().equals(NoBracketingException.class))
 			{
 
 				this.getInterruptHandler().interruptEnv(true);
