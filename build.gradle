@@ -27,7 +27,7 @@ configurations.all {
 dependencies {
 	compile 'org.slf4j:slf4j-api:1.7.21'
  	testCompile 'junit:junit:4.12' 
- 	compile 'com.github.be3short:LogTools:-SNAPSHOT'  
+ 	compile 'com.github.be3short:LogTool:-SNAPSHOT'  
     compile 'com.github.kostaskougios:cloning:1.7.9'
   	compile 'com.github.be3short:ObjectTools:v0.2.2'
   	compile 'com.jcabi:jcabi-aspects:0.22.6'
