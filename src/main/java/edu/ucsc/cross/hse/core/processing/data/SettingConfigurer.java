@@ -6,13 +6,12 @@ import java.util.regex.Pattern;
 
 import com.be3short.data.file.general.FileSystemInteractor;
 import com.be3short.data.file.xml.XMLParser;
-
+import edu.ucsc.cross.hse.core.io.file.FileContent;
+import edu.ucsc.cross.hse.core.io.file.FileProcessor;
 import edu.ucsc.cross.hse.core.object.configuration.ComputationSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ConsoleSettings;
 import edu.ucsc.cross.hse.core.object.configuration.DataSettings;
 import edu.ucsc.cross.hse.core.object.configuration.ExecutionSettings;
-import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 
 /*
  * Accesses and configurers the setting files, and allows for additional custom

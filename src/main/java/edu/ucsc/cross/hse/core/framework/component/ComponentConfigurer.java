@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import bs.commons.objects.manipulation.ObjectCloner;
 import edu.ucsc.cross.hse.core.framework.data.Data;
-import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
+import edu.ucsc.cross.hse.core.io.file.FileContent;
+import edu.ucsc.cross.hse.core.io.file.FileProcessor;
 
 /*
  * Component configurer that allows custom components to be created dyamically.

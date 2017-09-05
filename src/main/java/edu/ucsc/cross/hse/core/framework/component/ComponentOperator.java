@@ -1,22 +1,21 @@
 package edu.ucsc.cross.hse.core.framework.component;
 
-import java.io.File;
-import java.util.HashMap;
-
 import bs.commons.objects.manipulation.ObjectCloner;
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.framework.data.Data;
 import edu.ucsc.cross.hse.core.framework.data.DataOperator;
 import edu.ucsc.cross.hse.core.framework.environment.EnvironmentOperator;
 import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
+import edu.ucsc.cross.hse.core.io.file.FileContent;
+import edu.ucsc.cross.hse.core.io.file.FileProcessor;
 import edu.ucsc.cross.hse.core.object.domain.HybridTime;
-import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.FileProcessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
+import java.io.File;
+import java.util.HashMap;
 
 /*
- * This class contains the methods available to users that perform a variety of
- * tasks. These methods are safe to use whenever needed as they do not interfere
- * with the processor, though most are for preparing components.
+ * This class contains the methods available to users that perform a variety of tasks. These methods are safe to use
+ * whenever needed as they do not interfere with the processor, though most are for preparing components.
  */
 public class ComponentOperator
 {
@@ -35,8 +34,7 @@ public class ComponentOperator
 	}
 
 	/*
-	 * Copy the component without including the hierarchy or stored data to save
-	 * space and time
+	 * Copy the component without including the hierarchy or stored data to save space and time
 	 */
 	public <T extends Component> T copy()
 	{
@@ -44,9 +42,9 @@ public class ComponentOperator
 	}
 
 	/*
-	 * Copy the component with the option of including the hierarchy or saved
-	 * data is necessary
+	 * Copy the component with the option of including the hierarchy or saved data is necessary
 	 */
+	@Loggable()
 	@SuppressWarnings(
 	{ "unchecked", "rawtypes" })
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)
@@ -94,8 +92,7 @@ public class ComponentOperator
 	}
 
 	/*
-	 * Accesses the global environment containing all other components and the
-	 * time domains
+	 * Accesses the global environment containing all other components and the time domains
 	 * 
 	 * @return global environment component
 	 */
@@ -115,8 +112,7 @@ public class ComponentOperator
 	}
 
 	/*
-	 * Accesses an organized data structure for accessing objects within this
-	 * components hierarchy
+	 * Accesses an organized data structure for accessing objects within this components hierarchy
 	 * 
 	 * @return component organizer
 	 */
@@ -126,8 +122,7 @@ public class ComponentOperator
 	}
 
 	/*
-	 * Accesses an organized data structure for accessing objects within this
-	 * components hierarchy
+	 * Accesses an organized data structure for accessing objects within this components hierarchy
 	 * 
 	 * @return component organizer
 	 */

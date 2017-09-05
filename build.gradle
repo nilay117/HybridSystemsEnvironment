@@ -10,6 +10,7 @@
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use 'jcenter' for resolving your dependencies.
@@ -17,6 +18,9 @@ repositories {
     jcenter()
        jcenter()
      mavenCentral()  
+     maven {
+      url "https://plugins.gradle.org/m2/"
+    }
  	maven { url "https://jitpack.io" }
 }
 configurations.all {
@@ -26,11 +30,27 @@ configurations.all {
 // In this section you declare the dependencies for your production and test code
 dependencies {
 	compile 'org.slf4j:slf4j-api:1.7.21'
+// https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+//testCompile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.9.0'
+  // https://mvnrepository.com/artifact/com.jcabi/jcabi-aspects
+//compile group: 'com.jcabi', name: 'jcabi-aspects', version: '0.22.6'
+ // https://mvnrepository.com/artifact/org.aspectj/aspectjtools
+//compile group: 'org.aspectj', name: 'aspectjtools', version: '1.6.2'
+ // https://mvnrepository.com/artifact/org.aspectj/aspectjrt
+//compile group: 'org.aspectj', name: 'aspectjrt', version: '1.7.3'
+// https://mvnrepository.com/artifact/com.jcabi/jcabi-maven-plugin
+compile group: 'com.jcabi', name: 'jcabi-maven-plugin', version: '0.12'
+
+    compile "gradle.plugin.aspectj:gradle-aspectj:0.1.6"
  	testCompile 'junit:junit:4.12'
- 	//compile 'com.github.be3short:HSEStockMarketAnalysisLibrary:-SNAPSHOT'  
+ 	//compile 'com.github.be3short:HSEStockMarketAnalysisLibrary:-SNAPSHOT' 
+ 	compile 'com.github.be3short:LogTools:-SNAPSHOT'  
     	compile 'com.github.kostaskougios:cloning:1.7.9'
   		compile 'com.github.be3short:ObjectTools:v0.2.2'
+  		 compile 'com.jcabi:jcabi-aspects:0.22.6'
     	compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.0'
 		compile group: 'commons-io', name: 'commons-io', version: '2.4'
 		compile 'com.github.be3short:DataManagementToolbox:0.1.0'
 }
+   
+

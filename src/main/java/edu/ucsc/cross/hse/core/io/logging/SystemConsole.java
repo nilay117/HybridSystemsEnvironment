@@ -1,27 +1,23 @@
-package edu.ucsc.cross.hse.core.procesing.io;
-
-import java.io.IOException;
-import java.io.OutputStream;
-
-import com.be3short.data.info.SystemInfo;
+package edu.ucsc.cross.hse.core.io.logging;
 
 import bs.commons.objects.access.CallerRetriever;
 import bs.commons.objects.labeling.StringFormatter;
+import com.be3short.data.info.SystemInfo;
 import edu.ucsc.cross.hse.core.processing.execution.CentralProcessor;
 import edu.ucsc.cross.hse.core.processing.execution.ProcessorAccess;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /*
- * Prints output notifications, messages, warnings, and errors with additional
- * information such as the time, memory usage, and calling class if needed.
- * These features can be configured by making changes to the ConsoleSettings in
- * the SettingConfigurer.
+ * Prints output notifications, messages, warnings, and errors with additional information such as the time, memory
+ * usage, and calling class if needed. These features can be configured by making changes to the ConsoleSettings in the
+ * SettingConfigurer.
  */
 public class SystemConsole extends ProcessorAccess
 {
 
 	/*
-	 * Information about the system such as memory usage and calling class of a
-	 * message
+	 * Information about the system such as memory usage and calling class of a message
 	 */
 	private static SystemInfo info = new SystemInfo();
 	/*
@@ -35,8 +31,7 @@ public class SystemConsole extends ProcessorAccess
 	private Double printInterval;
 
 	/*
-	 * Optional alternate print location specification for using something like
-	 * an external console
+	 * Optional alternate print location specification for using something like an external console
 	 */
 	private OutputStream alternatePrintLocation;
 
@@ -71,8 +66,7 @@ public class SystemConsole extends ProcessorAccess
 	}
 
 	/*
-	 * Print out a progress update message indicating how far along the
-	 * environment execution is
+	 * Print out a progress update message indicating how far along the environment execution is
 	 */
 	public void progressUpdate()
 	{
@@ -120,8 +114,7 @@ public class SystemConsole extends ProcessorAccess
 	}
 
 	/*
-	 * Print a message through the system console with additional information
-	 * included depending on settings
+	 * Print a message through the system console with additional information included depending on settings
 	 */
 	public void print(String message)
 	{

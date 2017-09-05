@@ -1,52 +1,47 @@
 package edu.ucsc.cross.hse.core.processing.execution;
 
-import java.io.File;
-import java.util.HashMap;
-
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.framework.component.ComponentConfigurer;
 import edu.ucsc.cross.hse.core.framework.component.ComponentContent;
 import edu.ucsc.cross.hse.core.framework.environment.HybridEnvironment;
-import edu.ucsc.cross.hse.core.procesing.io.FileContent;
-import edu.ucsc.cross.hse.core.procesing.io.SystemConsole;
+import edu.ucsc.cross.hse.core.io.file.FileContent;
+import edu.ucsc.cross.hse.core.io.logging.SystemConsole;
 import edu.ucsc.cross.hse.core.processing.data.DataAccessor;
 import edu.ucsc.cross.hse.core.processing.data.SettingConfigurer;
+import java.io.File;
+import java.util.HashMap;
 
 /*
- * The main interaction between the user and the system with most functionality
- * accessible from this very component. Provides access to many modules intended
- * for users and is capable of running trials with a few straightforward
+ * The main interaction between the user and the system with most functionality accessible from this very component.
+ * Provides access to many modules intended for users and is capable of running trials with a few straightforward
  * function calls
  */
 public class EnvironmentManager
 {
 
 	/*
-	 * Mapping of all currently active environments running in this software
-	 * instance
+	 * Mapping of all currently active environments running in this software instance
 	 */
 	static HashMap<String, EnvironmentManager> environments = new HashMap<String, EnvironmentManager>();
 
 	/*
-	 * Collection of components that make up the complete hybrid dynamical
-	 * system of the environment
+	 * Collection of components that make up the complete hybrid dynamical system of the environment
 	 */
 	protected HybridEnvironment content;
 
 	/*
-	 * Collection of modules that allow the processor to run smoothly in the
-	 * background by handling events, making adjustments, and resolving issues.
+	 * Collection of modules that allow the processor to run smoothly in the background by handling events, making
+	 * adjustments, and resolving issues.
 	 */
 	protected CentralProcessor processor;
 
 	/*
-	 * Collection of settings that define how the environment and processor will
-	 * perform
+	 * Collection of settings that define how the environment and processor will perform
 	 */
 	protected SettingConfigurer settings;
 
 	/*
-	 * Generic environment constructor that initializes an empty system with a
-	 * default name and settings
+	 * Generic environment constructor that initializes an empty system with a default name and settings
 	 */
 	public EnvironmentManager()
 	{
@@ -55,8 +50,7 @@ public class EnvironmentManager
 	}
 
 	/*
-	 * Named environment constructor that initializes an empty system with a
-	 * specified name and default settings
+	 * Named environment constructor that initializes an empty system with a specified name and default settings
 	 */
 	public EnvironmentManager(String name)
 	{
@@ -64,8 +58,7 @@ public class EnvironmentManager
 	}
 
 	/*
-	 * Predefined environment constructor that loads a specified environment and
-	 * default settings
+	 * Predefined environment constructor that loads a specified environment and default settings
 	 */
 	public EnvironmentManager(HybridEnvironment environment)
 	{
@@ -76,6 +69,7 @@ public class EnvironmentManager
 	/*
 	 * Run the environment for the amount of time defined in the settings
 	 */
+	@Loggable(Loggable.INFO)
 	public void start()
 	{
 		start(settings.getExecutionSettings().simDuration);
@@ -146,8 +140,7 @@ public class EnvironmentManager
 	}
 
 	/*
-	 * Reset all data and variables back to their original states and
-	 * re-initialize
+	 * Reset all data and variables back to their original states and re-initialize
 	 */
 	public void reset(boolean re_initialize)
 	{
@@ -301,8 +294,7 @@ public class EnvironmentManager
 	}
 
 	/*
-	 * initialize the environment content, specifying if content contains data
-	 * and if settings should be reinitialized
+	 * initialize the environment content, specifying if content contains data and if settings should be reinitialized
 	 */
 	private void initialize(HybridEnvironment content, boolean pre_loaded_content, boolean re_initialize_settings)
 	{
