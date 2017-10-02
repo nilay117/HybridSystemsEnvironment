@@ -6,9 +6,25 @@
  * For more details take a look at the Java Quickstart chapter in the Gradle
  * user guide available at https://docs.gradle.org/2.14.1/userguide/tutorial_java_projects.html
  */
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
 
+    dependencies {
+        classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
+    }
+    
+}
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
+// Apply the java plugin to add support for Java
+//apply plugin: 'java'
 
 
 // In this section you declare where to find the dependencies of your project
@@ -30,7 +46,11 @@ dependencies {
  	compile 'com.github.be3short:LogTool:-SNAPSHOT'  
     compile 'com.github.kostaskougios:cloning:1.7.9'
   	compile 'com.github.be3short:ObjectTools:v0.2.2'
-  	compile 'com.jcabi:jcabi-aspects:0.22.6'
+  	
+  	 compile "org.aspectj:aspectjrt:1.8.10"
+   compile 'com.jcabi:jcabi-aspects:0.22.3'
+    compile 'org.slf4j:slf4j-simple:1.7.21'
+    compile group: 'com.jcabi', name: 'jcabi-log', version: '0.17.2'
     compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.4'
 	compile 'com.github.be3short:DataManagementToolbox:0.1.0'

@@ -44,7 +44,7 @@ public class ComponentOperator
 	/*
 	 * Copy the component with the option of including the hierarchy or saved data is necessary
 	 */
-	@Loggable()
+	@Loggable(Loggable.TRACE)
 	@SuppressWarnings(
 	{ "unchecked", "rawtypes" })
 	public <T extends Component> T copy(boolean include_data, boolean include_hierarchy)

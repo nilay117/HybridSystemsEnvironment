@@ -72,30 +72,37 @@ public class EnvironmentManager
 	@Loggable(Loggable.INFO)
 	public void start()
 	{
+		System.out.println("YOOO");
 		start(settings.getExecutionSettings().simDuration);
 	}
 
 	/*
 	 * Run the environment for the specified amount of time
 	 */
+	@Loggable(Loggable.INFO)
 	public void start(Double duration)
 	{
+		System.out.println("YOOO");
 		start(duration, null);
 	}
 
 	/*
 	 * Run the environment for the amount of time defined in the settings
 	 */
+	@Loggable(Loggable.INFO)
 	public void start(File save_location)
 	{
+		System.out.println("YOOO");
 		start(settings.getExecutionSettings().simDuration, save_location);
 	}
 
 	/*
 	 * Run the environment for the specified amount of time
 	 */
+	@Loggable(Loggable.INFO)
 	public void start(Double duration, File save_location)
 	{
+
 		processor.systemConsole.print("Environment Started");
 		settings.getExecutionSettings().simDuration = duration;
 		processor.startEnvironment(save_location);
