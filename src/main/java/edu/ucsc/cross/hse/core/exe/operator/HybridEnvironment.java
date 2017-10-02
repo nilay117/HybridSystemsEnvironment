@@ -16,20 +16,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.zip.GZIPOutputStream;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 /*
  * The main class of the hybrid systeme environment, conting the manager, contents, and the setting configurer.
  */
 // @Loggable(Loggable.DEBUG)
-public class HybridEnvironment
+public class HybridEnvironment extends Application
 {
-
-	private EnvironmentManager unRunCopy;
-
-	public EnvironmentManager getManager()
-	{
-		return manager;
-	}
 
 	public EnvironmentManager manager;
 
@@ -38,50 +33,16 @@ public class HybridEnvironment
 		manager = new EnvironmentManager();
 	}
 
-	public SettingInterface settings()
+	public void start(Double run_time)
 	{
-		return manager.getSettings();
-	}
-
-	public EnvironmentContent contents()
-	{
-		return manager.getContents();
-	}
-
-	public void loadNewEnv(HybridEnvironment env)
-	{
-		manager.setSettings(env.getManager().getSettings());
-		manager.setContents(env.getManager().getContents());
-		// manager.createNewEnvironment(false);
-	}
-
-	public void save(String file_path)
-	{
-		manager.save(file_path, this);
+		manager.getSettings().getExecutionParameters().simulationDuration = run_time;
+		start();
 	}
 
 	public void start()
 	{
-		start(false);
-	}
-
-	public void start(Double run_time, boolean plot)
-	{
-
 		manager.start();
-		if (plot)
-		{
-			PlotGenerator.openNewResultWindow(manager.getDataCollector());
-		}
-	}
 
-	public void start(boolean plot)
-	{
-		manager.start();
-		if (plot)
-		{
-			PlotGenerator.openNewResultWindow(manager.getDataCollector());
-		}
 	}
 
 	public void start(ExecutionParameters params)
@@ -89,6 +50,23 @@ public class HybridEnvironment
 		manager.getSettings().setExecutionParameters(params);
 		// manager.getContentManager().loadWorld();
 		manager.getExecutionMonitor().launchEnvironment();
+	}
+
+	public SettingInterface getSettings()
+	{
+		return manager.getSettings();
+	}
+
+	public EnvironmentContent getContents()
+	{
+		return manager.getContents();
+	}
+
+	public void loadNewEnv(HybridEnvironment env)
+	{
+		manager.setSettings(getManager(env).getSettings());
+		manager.setContents(getManager(env).getContents());
+		// manager.createNewEnvironment(false);
 	}
 
 	public void addContent(HybridSystem<?>... systems)
@@ -99,10 +77,39 @@ public class HybridEnvironment
 		}
 	}
 
+	public void save(String file_path)
+	{
+		manager.save(file_path, this);
+	}
+
+	public void loadContent(File file)
+	{
+		HybridEnvironment env = EnvironmentManager.load(file);
+		manager = env.manager;
+	}
+
 	public static HybridEnvironment load(File file)
 	{
 		HybridEnvironment env = EnvironmentManager.load(file);
 		return env;
+	}
+
+	public static EnvironmentManager getManager(HybridEnvironment env)
+	{
+		return env.manager;
+	}
+
+	public void openResultView()
+	{
+
+		PlotGenerator.openNewResultWindow(manager.getDataCollector());
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 }

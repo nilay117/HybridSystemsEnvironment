@@ -35,6 +35,16 @@ public class ResultWindow extends Application
 		{
 			try
 			{
+				if (window == null)
+				{
+					try
+					{
+						window = new ViewWindow(data);
+					} catch (Exception ex)
+					{
+						// ex.printStackTrace();
+					}
+				}
 				pane.setCenter(window.getMainPane());
 			} catch (Exception ex)
 			{

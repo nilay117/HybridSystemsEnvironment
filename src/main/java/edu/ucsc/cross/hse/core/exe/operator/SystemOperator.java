@@ -1,13 +1,11 @@
 package edu.ucsc.cross.hse.core.exe.operator;
 
-import bs.commons.objects.access.FieldFinder;
+import bs.commons.objects.manipulation.XMLParser;
 import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.access.ObjectManipulator;
-import edu.ucsc.cross.hse.core.exe.access.StateFieldMapper;
+import edu.ucsc.cross.hse.core.exe.monitor.Console;
 import edu.ucsc.cross.hse.core.obj.structure.HybridSystem;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
+import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 
 @Loggable(Loggable.DEBUG)
 public class SystemOperator
@@ -26,12 +24,13 @@ public class SystemOperator
 		boolean domain = false;
 		for (HybridSystem<?> hs : content.getContents().getSystems())
 		{
+			ObjectManipulator.updateValues(HybridSystem.getInputState(hs), hs.getState());
 			if (jump)
 			{
-				domain = domain || hs.jumpSet();
+				domain = domain || hs.D();
 			} else
 			{
-				domain = domain || hs.flowSet();
+				domain = domain || hs.C();
 			}
 		}
 		return domain;
@@ -40,62 +39,58 @@ public class SystemOperator
 	public void applyDynamics(boolean jump_occurring)
 	{
 		boolean jump = checkDomain(true);
-		if (!jump)
-		{
-			storeChangeValuez(null);
-		} else
-		{
-			storeChangeValuez(true);
-		}
+		prepareDynamicComponents(jump);
+
 		for (HybridSystem<?> hs : content.getContents().getSystems())
 		{
-			// ObjectManipulator.updateValues(, hs.getState());
-			if (jump && jump_occurring)
+			try
 			{
-				hs.G();
-			} else
-			{
-				// clearChangeValuez();
-				// SystemOperator.clearChangeValues(HybridSystem.getDynamicState(hs));
+				if (jump && jump_occurring)
+				{
+					hs.G();
+				} else
 				{
 					hs.F();
 				}
+			} catch (Exception dynamicsError)
+			{
+				Console.out.error("Apply Dynamics Error on " + hs.getClass() + " with state: \n"
+				+ XMLParser.serializeObject(hs.getState()), dynamicsError);
 			}
 		}
-		processDynamics(jump_occurring);
+		processDynamicComponents(jump);
 	}
 
-	public void processDynamics(boolean jump)
+	public void prepareDynamicComponents(boolean jump)
+	{
+		if (jump)
+		{
+			storeChangeValuez(true);
+		} else
+		{
+			clearChangeValues();
+		}
+	}
+
+	public void processDynamicComponents(boolean jump)
 	{
 		if (jump)
 		{
 			storeChangeValuez(false);
-			// for (HybridSystem<?> hs : content.getContents().getSystems())
-			// {
-			// if (hs.jumpSet())
-			// {
-			// SystemOperator.storeJumpValues(hs.getState(), HybridSystem.getDynamicState(hs), true);
-			// }
-			// }
+			clearChangeValues();
 		}
 	}
 
 	@Loggable(Loggable.TRACE)
-	public static void storeChangeValues(Object state_class, Object change, boolean discrete)
+	public void clearChangeValues()
 	{
-		for (Field field : StateFieldMapper.elements.get(state_class.getClass()))
+		for (ObjectManipulator field : content.getObjControl().getNumericalStateMap().values())
 		{
 			try
 			{
-				if (StateFieldMapper.isState(field.getType()))
+				if (field.getField().getType().equals(Double.class) || field.getField().getType().equals(double.class))
 				{
-					storeChangeValues(field.get(state_class), field.get(change), discrete);
-				} else if (field.getType().equals(Double.class) || field.getType().equals(double.class))
-				{
-					field.set(state_class, field.get(change));
-				} else if (discrete)
-				{
-					field.set(state_class, field.get(change));
+					field.updateObject(0.0, field.getChangeParent());
 				}
 			} catch (Exception e)
 			{
@@ -105,41 +100,25 @@ public class SystemOperator
 	}
 
 	@Loggable(Loggable.TRACE)
-	public void storeChangeValuez(Boolean pre_jump)
+	public void storeChangeValuez(boolean pre_jump)
 	{
 		for (ObjectManipulator field : content.getObjControl().getFieldParentMap().values())
 		{
-
 			try
 			{
-				if (pre_jump == null)
+
+				if (pre_jump)
 				{
-					if (field.getField().getType().equals(Double.class)
-					|| field.getField().getType().equals(double.class))
-					{
-						field.updateObject(0.0, field.getChangeParent());
-					}
+					field.updateObject(field.getObject(), field.getChangeParent());
 				} else
 				{
-					if (pre_jump)
-					{
-						field.updateObject(field.getObject(), field.getChangeParent());
-					} else
-					{
-						field.updateObject(field.getChange());
-					}
+					field.updateObject(field.getChange());
 				}
 			} catch (Exception e)
 			{
 				e.printStackTrace();
 			}
 		}
-
 	}
 
-	@Loggable(Loggable.TRACE)
-	public static void storeJumpValues(Object old_state, Object new_state, boolean pre_jump)
-	{
-		ObjectManipulator.updateValues(old_state, new_state);
-	}
 }

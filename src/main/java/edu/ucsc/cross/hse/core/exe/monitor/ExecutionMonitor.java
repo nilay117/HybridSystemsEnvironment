@@ -135,6 +135,7 @@ public class ExecutionMonitor
 			terminated = manager.getJumpEvaluator().isApproachingTermination();
 
 		}
+		manager.getDataManager().storeNewData();
 		return endTime;
 	}
 

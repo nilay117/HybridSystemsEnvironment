@@ -35,27 +35,25 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 	}
 
 	// @Loggable(Loggable.TRACE)
-	public boolean jumpSet()
+	public boolean D()
 	{
-		return D(HybridSystem.getInputState(this));
+		return D(this.state);
 	}
 
 	// @Loggable(Loggable.TRACE)
-	public boolean flowSet()
+	public boolean C()
 	{
-		return C(HybridSystem.getInputState(this));
+		return C(this.state);
 	}
 
 	public X G()
 	{
 		try
 		{
-
-			if (jumpSet())
+			if (D())
 			{
 				G(this.state, this.dynamicState);
 			}
-
 		} catch (Exception uninit)
 		{
 			System.out.println(XMLParser.serializeObject(getState()));
@@ -71,24 +69,15 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 
 	public X F()
 	{
-		try
-		{
 
-			if (flowSet())
-			{
-				// F(getState(), getDynamicState());
-				F(this.state, this.dynamicState);
-
-			}
-		} catch (Exception uninit)
+		if (C())
 		{
-			System.out.println(XMLParser.serializeObject(getState()));
-			System.out.println(XMLParser.serializeObject(HybridSystem.getDynamicState(this)));
-			uninit.printStackTrace();
-			// StateClass.initializeMap(getState(), getDynamicState());
-			// return F();
+			// F(getState(), getDynamicState());
+			F(this.state, this.dynamicState);
+
 		}
-		return HybridSystem.getDynamicState(this);
+
+		return this.dynamicState;
 
 	}
 

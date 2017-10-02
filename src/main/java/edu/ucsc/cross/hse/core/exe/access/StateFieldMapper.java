@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.exe.access;
 
+//
 import bs.commons.objects.access.FieldFinder;
 import bs.commons.objects.manipulation.XMLParser;
 import com.be3short.data.cloning.ObjectCloner;
@@ -12,6 +13,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
@@ -31,6 +33,7 @@ public class StateFieldMapper
 
 	private static ArrayList<Field> skipFields = getSkipFields();
 	public static Reflections reflections = getReflections();
+	public static HashMap<Class<?>, ArrayList<Field>> elements = getClassFieldsMappingOfType(State.class);
 
 	private static ArrayList<Field> getSkipFields()
 	{
@@ -54,8 +57,6 @@ public class StateFieldMapper
 		return reflections;
 	}
 
-	public static HashMap<Class<? extends State>, ArrayList<Field>> elements = getClassFieldsMapping(true);
-
 	public static boolean isState(Class<?> potential_state)
 	{
 		return elements.containsKey(potential_state);
@@ -66,18 +67,26 @@ public class StateFieldMapper
 		ArrayList<Field> fields = null;
 		try
 		{
-			fields = elements.get(clas);
+			if (elements.containsKey(clas))
+			{
+				fields = elements.get(clas);
+			} else
+			{
+				HashMap<Class<?>, ArrayList<Field>> newStates = getClassFieldsMappingOfType(clas);
+				for (Class<?> object : newStates.keySet())
+				{
+					if (!elements.containsKey(object))
+					{
+						elements.put(object, newStates.get(object));
+					}
+				}
+				System.out.println(XMLParser.serializeObject(elements));
+				fields = elements.get(clas);
+			}
 		} catch (Exception notSearched)
 		{
 			notSearched.printStackTrace();
-			try
-			{
-				elements = getClassFieldsMapping(true);
-				fields = elements.get(clas);
-			} catch (Exception notFound)
-			{
-				notFound.printStackTrace();
-			}
+
 		}
 		return fields;
 	}
@@ -92,7 +101,7 @@ public class StateFieldMapper
 	 * the specified input. This is used to find specific types of classes so that their properties, ie fields and
 	 * methods, can be determined for later use
 	 */
-	public static <T> Set<Class<? extends T>> getPackageClasses(Class<T> clas)
+	public static <T> Set<Class<? extends T>> getPackageClassesOfType(Class<T> clas)
 	{
 		return reflections.getSubTypesOf(clas);
 	}
@@ -101,7 +110,7 @@ public class StateFieldMapper
 	 * Creates a mapping containing all declared fields for every state class included in the project and dependencies.
 	 * This mapping allows for values to be updated without changing pointers.
 	 */
-	public static void makeAllFieldsAccessable()
+	public static void makeAllFieldsAccessable(HashMap<Class<?>, ArrayList<Field>> elements)
 	{
 
 		for (Class<?> clas : elements.keySet())
@@ -114,11 +123,10 @@ public class StateFieldMapper
 		// System.out.println(XMLParser.serializeObject(elements));
 	}
 
-	public static <T> HashMap<Class<? extends State>, ArrayList<Field>> initializeClassFieldMap(
-	Set<Class<? extends State>> search_classes)
+	public static <T> HashMap<Class<?>, ArrayList<Field>> initializeClassFieldMap(Set<Class<?>> search_classes)
 	{
-		HashMap<Class<? extends State>, ArrayList<Field>> elements = new HashMap<Class<? extends State>, ArrayList<Field>>();
-		for (Class<? extends State> clas : search_classes)
+		HashMap<Class<?>, ArrayList<Field>> elements = new HashMap<Class<?>, ArrayList<Field>>();
+		for (Class<?> clas : search_classes)
 		{
 			elements.put(clas, new ArrayList<Field>());
 		}
@@ -129,17 +137,16 @@ public class StateFieldMapper
 	 * Creates a mapping containing all declared fields for every state class included in the project and dependencies.
 	 * This mapping allows for values to be updated without changing pointers.
 	 */
-	public static <T> HashMap<Class<? extends State>, ArrayList<Field>> getClassFieldMapping(
-	Set<Class<? extends State>> search_classes)
+	public static void getClassFieldMapping(HashMap<Class<?>, ArrayList<Field>> elements, Set<Class<?>> search_classes,
+	Class<?> search_class)
 	{
-
-		elements = initializeClassFieldMap(search_classes);
 
 		for (Class<?> clas : search_classes)
 		{
 			for (Field fields : clas.getDeclaredFields())
 			{
-				if (!fields.getName().contains("$SWITCH_TABLE$"))// && !skipFields.contains(fields))
+				if (!fields.getName().contains("$SWITCH_TABLE$") && !fields.getType().equals(search_class))// &&
+				// !skipFields.contains(fields))
 				{
 					if (!elements.get(clas).contains(fields))
 					{
@@ -156,7 +163,8 @@ public class StateFieldMapper
 				{
 					for (Field fi : extendedFields)
 					{
-						if (!fi.getName().contains("$SWITCH_TABLE$"))// && !skipFields.contains(fi))
+						if (!fi.getName().contains("$SWITCH_TABLE$") && !fi.getType().equals(search_class))// &&
+						// !skipFields.contains(fi))
 						{
 							if (!elements.get(clas).contains(fi))
 							{
@@ -173,50 +181,33 @@ public class StateFieldMapper
 			}
 
 		}
-		makeAllFieldsAccessable();
-		// System.out.println(XMLParser.serializeObject(elements));
-		return elements;// getClassFieldMapping(search_classes);
+		makeAllFieldsAccessable(elements);
 
 	}
 
-	public static HashMap<Class<? extends State>, ArrayList<Field>> getClassFieldsMapping(boolean rebuild_file)
+	public static HashMap<Class<?>, ArrayList<Field>> getClassFieldsMappingOfType(Class<?> class_search)
 	{
-		elements = null;
-		HashMap<Class<? extends State>, ArrayList<Field>> eles = null;
-		try
-		{
-			if (rebuild_file)
-			{
-				throw new Exception();
-			}
-			elements = (HashMap<Class<? extends State>, ArrayList<Field>>) XMLParser
-			.getObject(new File(".hse/classFieldMap"));
-			eles = elements;
-			if (elements == null)
-			{
-				throw new Exception();
-			}
-		} catch (Exception e)
-		{
-			// e.printStackTrace();
-			Set<Class<? extends State>> classes = getPackageClasses(State.class);// getPackageClassesAnnotated(StateLabel.class);
-			eles = initializeClassFieldMap(classes);
-			elements = initializeClassFieldMap(classes);
-			getClassFieldMapping(classes);
-			while (fields(eles) < fields(elements))
-			{
+		System.out.println("Init");
+		HashMap<Class<?>, ArrayList<Field>> eles = new HashMap<Class<?>, ArrayList<Field>>();
 
-				getClassFieldMapping(classes);
-				eles = elements;
-			}
-			String outputXML = XMLParser.serializeObject(eles);
-			FileSystemInteractor.createOutputFile(new File(".hse/classFieldMap"), outputXML);
-
+		Set<Class<? extends State>> classes = getPackageClassesOfType(State.class);//
+		// getPackageClassesAnnotated(State.class);
+		HashSet<Class<?>> classSet = new HashSet<Class<?>>();
+		classSet.addAll(classes);
+		classSet.add(class_search);
+		HashMap<Class<?>, ArrayList<Field>> elems = initializeClassFieldMap(classSet);
+		getClassFieldMapping(elems, classSet, class_search);
+		while (fields(eles) < fields(elems))
+		{
+			getClassFieldMapping(elems, classSet, class_search);
+			eles = elems;
 		}
-		return eles;
+		System.out.println(XMLParser.serializeObject(elems));
+		return elems;
+
 	}
 
-	private static Integer fields(HashMap<Class<? extends State>, ArrayList<Field>> test)
+	private static Integer fields(HashMap<Class<?>, ArrayList<Field>> test)
 	{
 		Integer count = 0;
 		for (ArrayList<Field> clas : test.values())
