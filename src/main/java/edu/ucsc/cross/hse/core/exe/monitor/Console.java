@@ -13,7 +13,7 @@ public class Console
 
 	private static Log initializeOutput()
 	{
-		Log out = new MvnLog();
+		//Log out = LoggerSetup
 		StaticLoggerBinder.getSingleton().setMavenLog(out);
 		return out;
 	}

@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class ResultWindow extends Application
+public class ResultApplication extends Application
 {
 
 	public static HashMap<String, DataSet> results = new HashMap<String, DataSet>();
@@ -17,13 +17,13 @@ public class ResultWindow extends Application
 	private DataSet data;
 	private ViewWindow window;
 
-	public ResultWindow(DataSet data)
+	public ResultApplication(DataSet data)
 	{
 		this.data = data;
 		initialize();
 	}
 
-	public ResultWindow()
+	public ResultApplication()
 	{
 
 	}

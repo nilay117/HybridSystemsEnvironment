@@ -1,17 +1,17 @@
 package edu.ucsc.cross.hse.core.exe.interfacing;
 
-import edu.ucsc.cross.hse.core.obj.config.ComputationSettings;
+import edu.ucsc.cross.hse.core.obj.config.ExecutionSettings;
 import edu.ucsc.cross.hse.core.obj.config.DataSettings;
 import edu.ucsc.cross.hse.core.obj.config.ExecutionParameters;
-import edu.ucsc.cross.hse.core.obj.config.LogSettings;
+import edu.ucsc.cross.hse.core.obj.config.PrintSettings;
 
 public class SettingInterface
 {
 
-	private ComputationSettings environmentSettings;
+	private ExecutionSettings environmentSettings;
 	private ExecutionParameters executionParameters;
 	private DataSettings dataSettings;
-	private LogSettings logging;
+	private PrintSettings logging;
 
 	public DataSettings getDataSettings()
 	{
@@ -25,18 +25,18 @@ public class SettingInterface
 
 	public SettingInterface()
 	{
-		setEnvironmentSettings(new ComputationSettings());
+		setEnvironmentSettings(new ExecutionSettings());
 		executionParameters = new ExecutionParameters();
 		dataSettings = new DataSettings();
-		logging = new LogSettings();
+		logging = new PrintSettings();
 	}
 
-	public ComputationSettings getEnvironmentSettings()
+	public ExecutionSettings getEnvironmentSettings()
 	{
 		return environmentSettings;
 	}
 
-	public void setEnvironmentSettings(ComputationSettings environment_settings)
+	public void setEnvironmentSettings(ExecutionSettings environment_settings)
 	{
 		// for (Field field : environment_settings.getClass().getFields())
 		// {
@@ -62,12 +62,12 @@ public class SettingInterface
 		this.executionParameters = executionParameters;
 	}
 
-	public LogSettings getLogging()
+	public PrintSettings getLogging()
 	{
 		return logging;
 	}
 
-	public void setLogging(LogSettings logging)
+	public void setLogging(PrintSettings logging)
 	{
 		this.logging = logging;
 	}

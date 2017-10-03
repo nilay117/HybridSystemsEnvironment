@@ -22,8 +22,8 @@ public class PlotGenerator extends Application
 
 	public static void openNewResultWindow(DataSet env_data)
 	{
-		ResultWindow.results.put(env_data.toString(), env_data);
-		Application.launch(ResultWindow.class, env_data.toString());
+		ResultApplication.results.put(env_data.toString(), env_data);
+		Application.launch(ResultApplication.class, env_data.toString());
 	}
 
 	// }

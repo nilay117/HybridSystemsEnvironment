@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.obj.config;
 
-public class ComputationSettings
+public class ExecutionSettings
 {
 
 	/*
@@ -89,7 +89,7 @@ public class ComputationSettings
 	/*
 	 * Default values constructor
 	 */
-	public ComputationSettings()
+	public ExecutionSettings()
 	{
 		odeMinStep = .000005;
 		odeMaxStep = .1;

@@ -38,7 +38,7 @@ public class StateFieldMapper
 	private static ArrayList<Field> getSkipFields()
 	{
 		ArrayList<Field> fieldz = new ArrayList<Field>();
-		// fieldz.addAll(Arrays.asList(State.class.getDeclaredFields()));
+		fieldz.addAll(Arrays.asList(State.class.getDeclaredFields()));
 		return fieldz;
 	}
 
@@ -145,7 +145,8 @@ public class StateFieldMapper
 		{
 			for (Field fields : clas.getDeclaredFields())
 			{
-				if (!fields.getName().contains("$SWITCH_TABLE$") && !fields.getType().equals(search_class))// &&
+				if (!fields.getName().contains("$SWITCH_TABLE$") && !fields.getType().equals(search_class)
+				&& !skipFields.contains(fields))// &&
 				// !skipFields.contains(fields))
 				{
 					if (!elements.get(clas).contains(fields))
@@ -156,15 +157,14 @@ public class StateFieldMapper
 			}
 			if (search_classes.contains(clas.getSuperclass()))
 			{
-				// System.out.println(clas.getName() + " " + clas.getSuperclass().getName());
 				Class<?> superClass = clas.getSuperclass();
 				ArrayList<Field> extendedFields = new ArrayList<Field>(Arrays.asList(superClass.getDeclaredFields()));
 				while (search_classes.contains(superClass))
 				{
 					for (Field fi : extendedFields)
 					{
-						if (!fi.getName().contains("$SWITCH_TABLE$") && !fi.getType().equals(search_class))// &&
-						// !skipFields.contains(fi))
+						if (!fi.getName().contains("$SWITCH_TABLE$") && !fi.getType().equals(search_class)
+						&& !skipFields.contains(fi))// &&
 						{
 							if (!elements.get(clas).contains(fi))
 							{
