@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.exe.monitor;
 
-import com.be3short.logging.basic.MvnLog;
+import com.be3short.logging.basic.GeneralLogger;
 import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 import org.apache.maven.plugin.logging.Log;
@@ -13,7 +13,7 @@ public class Console
 
 	private static Log initializeOutput()
 	{
-		//Log out = LoggerSetup
+		Log out = new GeneralLogger();
 		StaticLoggerBinder.getSingleton().setMavenLog(out);
 		return out;
 	}
