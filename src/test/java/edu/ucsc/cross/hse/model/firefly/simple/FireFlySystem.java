@@ -61,9 +61,11 @@ public class FireFlySystem extends HybridSystem<FireFlySwarmState>
 		HybridEnvironment env = new HybridEnvironment();
 		FireFlyProperties p = new FireFlyProperties(1.0, .1);
 		FireFlySwarmState s = FireFlySwarmState.getRandomizedSwarm(10, p);
+
 		FireFlySystem sys = new FireFlySystem(s, p);
+		// sys.getState().fireFlies.get(0).setName(s.getClass().getSimpleName());
 		env.addContent(sys);
-		env.start(5.0);
+		env.start(22.0);
 		env.openResultView();
 	}
 

@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.exe.operator;
 
 import com.be3short.data.file.general.FileSystemInteractor;
 import com.be3short.data.file.xml.XMLParser;
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.interfacing.ObjectInterface;
 import edu.ucsc.cross.hse.core.exe.interfacing.SettingInterface;
 import edu.ucsc.cross.hse.core.exe.interfacing.TimeInterface;
@@ -14,9 +15,8 @@ import edu.ucsc.cross.hse.core.obj.data.DataSet;
 import edu.ucsc.cross.hse.core.obj.structure.EnvironmentContent;
 import edu.ucsc.cross.hse.core.obj.structure.HybridTime;
 import java.io.File;
-import org.apache.maven.plugin.logging.Log;
-import org.slf4j.impl.StaticLoggerBinder;
 
+@Loggable(Loggable.TRACE)
 public class EnvironmentManager
 {
 
@@ -81,6 +81,7 @@ public class EnvironmentManager
 		}
 		createNewEnvironment(false);
 		objControl.prepareComponents();
+		systemControl.clearChangeValues();
 		// timeOperator.updateSimulationTime(new HybridTime(0.0, 0));
 		vector.prepareVectors();
 	}

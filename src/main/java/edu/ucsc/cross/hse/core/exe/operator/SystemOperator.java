@@ -7,7 +7,7 @@ import edu.ucsc.cross.hse.core.exe.monitor.Console;
 import edu.ucsc.cross.hse.core.obj.structure.HybridSystem;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 
-@Loggable(Loggable.DEBUG)
+@Loggable(Loggable.TRACE)
 public class SystemOperator
 {
 
@@ -18,7 +18,6 @@ public class SystemOperator
 		this.content = content;
 	}
 
-	@Loggable(Loggable.TRACE)
 	public boolean checkDomain(boolean jump)
 	{
 		boolean domain = false;

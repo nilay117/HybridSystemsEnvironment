@@ -1,10 +1,13 @@
 package edu.ucsc.cross.hse.core.exe.interfacing;
 
 import edu.ucsc.cross.hse.core.obj.config.ExecutionSettings;
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.obj.config.DataSettings;
 import edu.ucsc.cross.hse.core.obj.config.ExecutionParameters;
 import edu.ucsc.cross.hse.core.obj.config.PrintSettings;
 
+
+@Loggable(Loggable.TRACE)
 public class SettingInterface
 {
 

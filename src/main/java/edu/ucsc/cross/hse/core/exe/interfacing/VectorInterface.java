@@ -1,8 +1,10 @@
 package edu.ucsc.cross.hse.core.exe.interfacing;
 
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.access.ObjectManipulator;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 
+@Loggable(Loggable.TRACE)
 public class VectorInterface
 {
 

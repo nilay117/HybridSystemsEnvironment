@@ -1,5 +1,7 @@
 package edu.ucsc.cross.hse.core.obj.config;
 
+import com.jcabi.aspects.Loggable;
+
 public class DataSettings
 {
 

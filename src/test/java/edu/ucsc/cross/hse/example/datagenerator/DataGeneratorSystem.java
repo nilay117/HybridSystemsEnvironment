@@ -42,7 +42,7 @@ public class DataGeneratorSystem extends HybridSystem<DataGeneratorState>
 	public void G(DataGeneratorState x, DataGeneratorState x_plus)
 	{
 		x_plus.dataGenerated = x.dataGenerated + params.dataItemSize;
-		x_plus.timeToNextData = params.generationInterval;
+		x_plus.timeToNextData = (.2 + .8 * Math.random()) * params.generationInterval;
 	}
 
 	public static void main(String args[])
@@ -51,8 +51,8 @@ public class DataGeneratorSystem extends HybridSystem<DataGeneratorState>
 		DataGeneratorProperties p = new DataGeneratorProperties(1.0, 1.0);
 		DataGeneratorState state = new DataGeneratorState(0, 1.0);
 		DataGeneratorSystem sys = new DataGeneratorSystem(state, p);
-		env.addContent(sys);
-		env.start(10.0);
+		env.addContent(sys, 5);
+		env.start(10.0, 500);
 		env.openResultView();
 		env.openResultView();
 	}

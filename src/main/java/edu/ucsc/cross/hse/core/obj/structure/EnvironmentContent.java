@@ -1,7 +1,9 @@
 package edu.ucsc.cross.hse.core.obj.structure;
 
+import com.jcabi.aspects.Loggable;
 import java.util.ArrayList;
 
+@Loggable(Loggable.DEBUG)
 public class EnvironmentContent
 {
 

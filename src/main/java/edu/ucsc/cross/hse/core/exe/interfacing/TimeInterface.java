@@ -1,8 +1,10 @@
 package edu.ucsc.cross.hse.core.exe.interfacing;
 
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 import edu.ucsc.cross.hse.core.obj.structure.HybridTime;
 
+@Loggable(Loggable.TRACE)
 public class TimeInterface
 {
 

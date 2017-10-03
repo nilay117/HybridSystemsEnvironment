@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 /*
  * The main class of the hybrid systeme environment, conting the manager, contents, and the setting configurer.
  */
-// @Loggable(Loggable.DEBUG)
+@Loggable(Loggable.TRACE)
 public class HybridEnvironment extends Application
 {
 
@@ -36,6 +36,13 @@ public class HybridEnvironment extends Application
 	public void start(Double run_time)
 	{
 		manager.getSettings().getExecutionParameters().simulationDuration = run_time;
+		start();
+	}
+
+	public void start(Double run_time, Integer jump_limit)
+	{
+		manager.getSettings().getExecutionParameters().simulationDuration = run_time;
+		manager.getSettings().getExecutionParameters().maximumJumps = jump_limit;
 		start();
 	}
 
@@ -74,6 +81,16 @@ public class HybridEnvironment extends Application
 		for (HybridSystem<?> system : systems)
 		{
 			manager.getContents().addSystems(system);
+		}
+	}
+
+	public void addContent(HybridSystem<?> system, Integer quantity)
+	{
+		addContent(system);
+		for (Integer i = 1; i < quantity; i++)
+		{
+			HybridSystem<?> copy = system.getClass().cast(ObjectCloner.xmlClone(system));
+			addContent(copy);
 		}
 	}
 

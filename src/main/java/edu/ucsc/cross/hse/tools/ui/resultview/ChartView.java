@@ -7,8 +7,6 @@ import com.be3short.data.file.xml.XMLParser;
 import com.be3short.jfx.event.menu.ActionDefinition;
 import com.be3short.jfx.event.menu.ActionEventHandler;
 import com.jcabi.aspects.Loggable;
-import edu.emory.mathcs.backport.java.util.Arrays;
-import edu.emory.mathcs.backport.java.util.Collections;
 import edu.ucsc.cross.hse.core.exe.access.ObjectManipulator;
 import edu.ucsc.cross.hse.core.exe.monitor.Console;
 import edu.ucsc.cross.hse.core.obj.data.DataSeries;
@@ -17,26 +15,20 @@ import edu.ucsc.cross.hse.core.obj.structure.State;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Paint;
 import java.awt.Rectangle;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.regex.Pattern;
-import javafx.application.Application;
+import java.util.List;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import javax.activation.DataHandler;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLabelLocation;
-import org.jfree.chart.axis.AxisSpace;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -48,7 +40,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.ui.HorizontalAlignment;
 
-@Loggable(Loggable.TRACE)
+@Loggable(Loggable.INFO)
 public class ChartView extends ActionEventHandler implements DataView
 {
 
@@ -96,8 +88,8 @@ public class ChartView extends ActionEventHandler implements DataView
 	private JFreeChart createChart(XYDataset dataset)
 	{
 
-		chart = ChartFactory.createXYLineChart(null, "Time(sec)", xLabel, dataset, PlotOrientation.VERTICAL, true, true,
-		true);
+		chart = ChartFactory.createXYLineChart(null, props.getxAxisLabel(), props.getyAxisLabel(), dataset,
+		PlotOrientation.VERTICAL, true, true, true);
 		String fontName = "Times";
 		// chart.getTitle().setFont(new Font(fontName, Font.PLAIN, 18));
 		// chart.addSubtitle(new TextTitle("Source: http://www.ico.org/historical/2010-19/PDF/HIST-PRICES.pdf",
@@ -110,7 +102,7 @@ public class ChartView extends ActionEventHandler implements DataView
 		plot.setDomainGridlinePaint(Color.gray);
 		plot.setRangeGridlinePaint(Color.gray);
 		plot.setDomainGridlinesVisible(true);
-		if (!props.getxFilter().equals(props.simulationTimeVarName))
+		if (props.getxFilter().equals(props.simulationTimeVarName))
 		{
 			plot.getDomainAxis().setRange(0.0, data.getManager().getTimeOperator().getSimulationTime());
 		}
@@ -119,12 +111,12 @@ public class ChartView extends ActionEventHandler implements DataView
 		plot.setBackgroundPaint(null);
 		// plot.getDomainAxis().setLowerMargin(10.0);
 		// plot.getDomainAxis().setLowerMargin(10.0);
-		plot.getDomainAxis().setLabelFont(new Font(fontName, Font.PLAIN, 15));
-		plot.getDomainAxis().setTickLabelFont(new Font(fontName, Font.PLAIN, 15));
-		plot.getRangeAxis().setLabelFont(new Font(fontName, Font.PLAIN, 12));
-		plot.getRangeAxis().setTickLabelFont(new Font(fontName, Font.PLAIN, 15));
+		plot.getDomainAxis().setLabelFont(new Font(fontName, Font.PLAIN, 14));
+		plot.getDomainAxis().setTickLabelFont(new Font(fontName, Font.PLAIN, 14));
+		plot.getRangeAxis().setLabelFont(new Font(fontName, Font.PLAIN, 14));
+		plot.getRangeAxis().setTickLabelFont(new Font(fontName, Font.PLAIN, 14));
 		plot.getRangeAxis().setLabelLocation(AxisLabelLocation.MIDDLE);
-		chart.getLegend().setItemFont(new Font(fontName, Font.PLAIN, 15));
+		chart.getLegend().setItemFont(new Font(fontName, Font.PLAIN, 14));
 		chart.getLegend().setFrame(BlockBorder.NONE);
 		// chart.getLegend().visible = false;
 		chart.setBackgroundPaint(null);
@@ -228,6 +220,7 @@ public class ChartView extends ActionEventHandler implements DataView
 
 	public XYDataset createDataset()
 	{
+		ArrayList<String> names = new ArrayList<String>();
 		// BouncingBallState.stateSTest();
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		Integer i = 0;
@@ -240,8 +233,10 @@ public class ChartView extends ActionEventHandler implements DataView
 			if (props.fufilsFilters(e))
 			{
 				// (e.getField().getName());
+				String label = getLegendLabel(e, names);
+				names.add(label);
 				DataSeries<Double> d = data.getGlobalStateData().get(e);
-				XYSeries s1 = new XYSeries(getLegendLabel(d));
+				XYSeries s1 = new XYSeries(label);
 				DataSeries<Double> xS = null;
 				if (!props.getxFilter().equals(props.simulationTimeVarName))
 				{
@@ -294,17 +289,25 @@ public class ChartView extends ActionEventHandler implements DataView
 		return dataset;
 	}
 
-	public String getLegendLabel(DataSeries<?> data)
+	public String getLegendLabel(ObjectManipulator data, ArrayList<String> names)
 	{
-		String label = data.getElementLocation().getParent().getClass().getSimpleName();
+		String label = data.getParent().getClass().getSimpleName();
 		try
 		{
-			State state = ((State) data.getElementLocation().getParent());
+			State state = ((State) data.getParent());
 			label = state.getName();
 		} catch (Exception notState)
 		{
 
 		}
+		String labelBase = label;
+		int append = 0;
+		while (names.contains(label))
+		{
+			append++;
+			label = labelBase + "_" + append;
+		}
+
 		return label;
 	}
 
@@ -397,7 +400,7 @@ public class ChartView extends ActionEventHandler implements DataView
 	@Override
 	public void handleAction(ActionDefinition action, Object choice)
 	{
-		Console.out.debug(action.toString());
+		// Console.out.debug(action.toString());
 		ChartActions chartAction = getChartAction(action);
 		if (chartAction != null)
 		{
@@ -419,6 +422,7 @@ public class ChartView extends ActionEventHandler implements DataView
 				}
 				case SELECT_Y_AXIS:
 				{
+					props.getyFilters().clear();
 					props.addToYFilter(choice.toString());
 					create();
 					break;

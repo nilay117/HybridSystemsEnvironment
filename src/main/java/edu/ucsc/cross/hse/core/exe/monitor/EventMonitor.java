@@ -8,7 +8,7 @@ import org.apache.commons.math3.ode.events.EventHandler;
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
  * smoothly as the discontinuities are addressed discretely while the solver is paused
  */
-
+@Loggable(Loggable.TRACE)
 public class EventMonitor implements EventHandler
 {
 

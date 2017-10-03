@@ -19,7 +19,7 @@ public class FireFlySwarmState extends State
 		for (int i = 0; i < swarm_size; i++)
 		{
 			FireFlyState fly = new FireFlyState(Math.random() * props.maximumGlowIntensity);
-			fly.setName("Fly " + i);
+			// fly.setName("Fly " + i);
 			flies.add(fly);
 		}
 		return new FireFlySwarmState(flies);

@@ -1,21 +1,18 @@
 package edu.ucsc.cross.hse.core.exe.monitor;
 
-import com.be3short.logging.basic.GeneralLogger;
 import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
-import org.apache.maven.plugin.logging.Log;
-import org.slf4j.impl.StaticLoggerBinder;
+import edu.ucsc.cross.hse.core.logging.GeneralLogger;
 
+@Loggable(Loggable.TRACE)
 public class Console
 {
 
-	public static final Log out = initializeOutput();
+	public static final GeneralLogger out = new GeneralLogger();// initializeOutput();
 
-	private static Log initializeOutput()
+	private static GeneralLogger getLogger()
 	{
-		Log out = new GeneralLogger();
-		StaticLoggerBinder.getSingleton().setMavenLog(out);
-		return out;
+		return new GeneralLogger();
 	}
 
 	private EnvironmentManager manager;

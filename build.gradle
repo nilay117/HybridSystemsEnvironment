@@ -1,21 +1,23 @@
+// Apply the java plugin to add support for Java
+// Apply the java-library plugin to add support for Java Library
 buildscript {
     repositories {
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven { url "https://jitpack.io" }
+        maven { url "https://jitpack.io" }    
     }
-
+    
     dependencies {
         classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
     }
-    
 }
-// Apply the java plugin to add support for Java
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
 
+apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
+weaveClasses.dependsOn compileJava
+classes.dependsOn weaveClasses
+
+apply plugin: 'java'
 repositories {
    		mavenLocal()
         mavenCentral()
@@ -27,22 +29,15 @@ configurations.all {
     // Check for updates every build
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-sourceSets {
-    main {
-        resources {
-            srcDirs "src/main/resources", "src/main/java"
-        }
-    }
-}
+
 
 dependencies {
 
 	// Logging
-	//compile group: 'com.jcabi', name: 'jcabi-maven-plugin', version: '0.14.1'
-	//compile "org.aspectj:aspectjrt:1.8.10"
-	//compile 'com.jcabi:jcabi-aspects:0.22.6'
-	//compile group: 'com.jcabi', name: 'jcabi-log', version: '0.17.2'
-	compile 'com.github.be3short:DynamicLogger:-SNAPSHOT'
+	// compile 'com.github.be3short:DynamicLogger:-SNAPSHOT'
+	compile 'com.jcabi:jcabi-aspects:0.22.6'
+    compile 'log4j:log4j:1.2.17'
+
 
 	// Plotting
 	compile group: 'org.jfree', name: 'jfreechart', version: '1.0.19'
@@ -56,7 +51,6 @@ dependencies {
     implementation 'com.google.guava:guava:21.0'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile 'com.github.be3short:DataManagementToolbox:0.1.0'
-    
    	// Test
     testImplementation 'junit:junit:4.12'
 
@@ -65,7 +59,7 @@ dependencies {
 	
 }
 
-//weaveClasses.dependsOn compileJava
-//classes.dependsOn weaveClasses
+weaveClasses.dependsOn compileJava
+classes.dependsOn weaveClasses
 
 

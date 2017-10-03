@@ -39,6 +39,8 @@ public class ChartProperties
 
 		data = new ArrayList<XYDataset>();
 		yFilters = new ArrayList<String>();
+		xAxisLabel = "Simulation Time (sec)";
+		yAxisLabel = "Value";
 		xFilter = simulationTimeVarName;
 		initializeManipulatorMap();
 	}
@@ -63,7 +65,7 @@ public class ChartProperties
 	public boolean fufilsFilters(ObjectManipulator e)
 	{
 		boolean does = false;
-		if (this.getyFilters().size() == 0 || this.getyFilters().contains(e.getField().getName()))
+		if (this.getyFilters().contains(e.getField().getName()))
 		{
 			if (this.getxFilter().contains(simulationTimeVarName))
 			{
@@ -108,7 +110,7 @@ public class ChartProperties
 
 	public void addToYFilter(String y_filter)
 	{
-
+		yAxisLabel = y_filter;
 		yFilters.add(y_filter);
 	}
 
@@ -165,14 +167,14 @@ public class ChartProperties
 	public void clearYAxis()
 	{
 		this.yFilters.clear();
-		// this.yFilters.addAll(getFieldNames());
-
+		setyAxisLabel("Value");
 	}
 
 	public void clearXAxis()
 	{
-		this.xFilter = simulationTimeVarName;
 
+		this.xFilter = simulationTimeVarName;
+		setxAxisLabel("Simulation Time (sec)");
 	}
 
 	public void clearXYAxis()

@@ -7,7 +7,7 @@ import edu.ucsc.cross.hse.core.exe.interfacing.ObjectInterface;
 import edu.ucsc.cross.hse.core.exe.operator.SystemOperator;
 import edu.ucsc.cross.hse.core.obj.format.HybridDynamics;
 
-// @Loggable
+@Loggable(Loggable.TRACE)
 public abstract class HybridSystem<X> implements HybridDynamics<X>
 {
 
@@ -88,8 +88,8 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 
 	public static <T> void initializeDynamicState(HybridSystem<T> sys)
 	{
-		sys.dynamicState = (T) ObjectCloner.xmlClone(sys.getState());
-		sys.inputState = (T) ObjectCloner.xmlClone(sys.getState());
+		sys.dynamicState = ObjectCloner.deepInstanceClone(sys.getState());
+		sys.inputState = ObjectCloner.deepInstanceClone(sys.getState());
 	}
 
 	// @Loggable(Loggable.TRACE)

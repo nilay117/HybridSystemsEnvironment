@@ -1,10 +1,13 @@
 package edu.ucsc.cross.hse.core.exe.interfacing;
 
+import bs.commons.objects.access.FieldFinder;
 import com.be3short.data.file.xml.XMLParser;
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.access.ObjectManipulator;
 import edu.ucsc.cross.hse.core.exe.access.StateFieldMapper;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 import edu.ucsc.cross.hse.core.obj.structure.HybridSystem;
+import edu.ucsc.cross.hse.core.obj.structure.State;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +15,8 @@ import java.util.HashMap;
 /*
  * Allows objects to be manipulated without disrupting pointers.
  */
+
+@Loggable(Loggable.TRACE)
 public class ObjectInterface
 {
 
@@ -47,7 +52,7 @@ public class ObjectInterface
 
 	public void initializeMap(Object state, Object dynamic)
 	{
-		// System.out.println(state.toString());
+		System.out.println(state.toString());
 		for (Field field : StateFieldMapper.getClassFields(state.getClass()))
 		{
 			try
@@ -64,9 +69,15 @@ public class ObjectInterface
 						{
 							ArrayList<Object> states = (ArrayList<Object>) field.get(state);
 							ArrayList<Object> dynamics = (ArrayList<Object>) field.get(dynamic);
-							for (int i = 0; i < states.size(); i++)
+							if (!states.isEmpty())
 							{
-								initializeMap(states.get(i), dynamics.get(i));
+								if (FieldFinder.containsSuper(states.get(0), State.class))
+								{
+									for (int i = 0; i < states.size(); i++)
+									{
+										initializeMap(states.get(i), dynamics.get(i));
+									}
+								}
 							}
 						}
 

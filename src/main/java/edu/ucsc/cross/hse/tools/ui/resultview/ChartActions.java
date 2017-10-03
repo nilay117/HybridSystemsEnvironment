@@ -75,7 +75,7 @@ public enum ChartActions implements ActionDefinition
 	{
 
 		return new ActionDefinition[]
-		{ AXIS, VIEW, EDIT };
+		{ AXIS, VIEW };
 	}
 
 }

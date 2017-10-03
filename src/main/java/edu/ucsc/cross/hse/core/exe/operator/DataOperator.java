@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.exe.operator;
 
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.access.ObjectManipulator;
 import edu.ucsc.cross.hse.core.exe.monitor.JumpStatus;
 import edu.ucsc.cross.hse.core.obj.data.DataSeries;
@@ -8,6 +9,7 @@ import edu.ucsc.cross.hse.core.obj.structure.EnvironmentContent;
 import edu.ucsc.cross.hse.core.obj.structure.HybridTime;
 import java.util.HashMap;
 
+@Loggable(Loggable.TRACE)
 public class DataOperator
 {
 

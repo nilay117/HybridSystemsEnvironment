@@ -1,11 +1,13 @@
 package edu.ucsc.cross.hse.core.obj.data;
 
+import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.exe.access.ObjectManipulator;
 import edu.ucsc.cross.hse.core.exe.operator.EnvironmentManager;
 import edu.ucsc.cross.hse.core.obj.structure.HybridTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Loggable(Loggable.DEBUG)
 public class DataSet
 {
 

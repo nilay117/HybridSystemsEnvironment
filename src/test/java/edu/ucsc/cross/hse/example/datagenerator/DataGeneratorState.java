@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.example.datagenerator;
 
 import edu.ucsc.cross.hse.core.obj.structure.State;
 
-public class DataGeneratorState
+public class DataGeneratorState extends State
 {
 
 	public double dataGenerated; // total amount of data generated

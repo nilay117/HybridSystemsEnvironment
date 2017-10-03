@@ -1,10 +1,12 @@
 package edu.ucsc.cross.hse.core.exe.access;
 
 import bs.commons.objects.access.FieldFinder;
+import com.jcabi.aspects.Loggable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Loggable(Loggable.TRACE)
 public class ObjectManipulator
 {
 
