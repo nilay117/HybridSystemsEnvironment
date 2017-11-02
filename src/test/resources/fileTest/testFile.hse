@@ -1,0 +1,117 @@
+<edu.ucsc.cross.hse.core.io.file.HSEFile>
+  <fileContents>
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.obj.config.HSESettings</java-class>
+      <list>
+        <edu.ucsc.cross.hse.core.obj.config.HSESettings>
+          <environmentSettings>
+            <odeMinStep>5.0E-6</odeMinStep>
+            <odeMaxStep>0.1</odeMaxStep>
+            <odeScalAbsoluteTolerance>1.0E-4</odeScalAbsoluteTolerance>
+            <odeScalRelativeTolerance>1.0E-4</odeScalRelativeTolerance>
+            <ehMaxCheckInterval>0.001</ehMaxCheckInterval>
+            <ehConvergence>0.001</ehConvergence>
+            <ehMaxIterationCount>10</ehMaxIterationCount>
+            <jumpPriority>true</jumpPriority>
+            <maxRecursiveStackSize>1000</maxRecursiveStackSize>
+            <integrator>DORMAND_PRINCE_853</integrator>
+            <eventHandlingIntervalReduction>1.0</eventHandlingIntervalReduction>
+            <eventHandlingConvergenceReduction>1.0</eventHandlingConvergenceReduction>
+            <minStepSizeReduction>0.25</minStepSizeReduction>
+            <stepSizeReduction>1.0</stepSizeReduction>
+            <eventHandlingMaxIterationMultiplier>2</eventHandlingMaxIterationMultiplier>
+          </environmentSettings>
+          <executionParameters>
+            <simulationDuration>20.0</simulationDuration>
+            <maximumJumps>20</maximumJumps>
+          </executionParameters>
+          <dataSettings>
+            <dataStoreIncrement>1.0</dataStoreIncrement>
+            <defaultStoreDirectory>results</defaultStoreDirectory>
+            <saveToFileByDefault>true</saveToFileByDefault>
+          </dataSettings>
+          <logging>
+            <debugStatusUpdateInterval>5.0</debugStatusUpdateInterval>
+            <numInfoStatusOutputs>10</numInfoStatusOutputs>
+            <printDebug>false</printDebug>
+            <printInfo>false</printInfo>
+            <printWarning>false</printWarning>
+            <printError>false</printError>
+          </logging>
+        </edu.ucsc.cross.hse.core.obj.config.HSESettings>
+      </list>
+    </entry>
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.obj.container.EnvironmentContent</java-class>
+      <list>
+        <edu.ucsc.cross.hse.core.obj.container.EnvironmentContent>
+          <systems/>
+        </edu.ucsc.cross.hse.core.obj.container.EnvironmentContent>
+      </list>
+    </entry>
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.obj.component.HybridSystem</java-class>
+      <list/>
+    </entry>
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.exe.operator.Environment</java-class>
+      <list>
+        <edu.ucsc.cross.hse.core.exe.operator.Environment>
+          <manager>
+            <settings reference="../../../../../entry/list/edu.ucsc.cross.hse.core.obj.config.HSESettings"/>
+            <envContents reference="../../../../../entry[2]/list/edu.ucsc.cross.hse.core.obj.container.EnvironmentContent"/>
+            <exeContent>
+              <simTime>
+                <time>0.0</time>
+                <jumps>0</jumps>
+              </simTime>
+            </exeContent>
+            <dataCollector>
+              <storeTimes/>
+              <globalStateData/>
+              <outputProperties/>
+            </dataCollector>
+            <outputs>
+              <plots/>
+            </outputs>
+            <simEngine>
+              <content reference="../.."/>
+            </simEngine>
+            <jumpEvaluator>
+              <manager reference="../.."/>
+              <approachingJump>false</approachingJump>
+              <running>false</running>
+              <toggleFlag>1.0</toggleFlag>
+            </jumpEvaluator>
+            <executionMonitor>
+              <manager reference="../.."/>
+              <runTime>0.0</runTime>
+            </executionMonitor>
+            <systemControl>
+              <content reference="../.."/>
+            </systemControl>
+            <dataManager>
+              <manager reference="../.."/>
+              <nextStoreTime>0.0</nextStoreTime>
+            </dataManager>
+            <console>
+              <manager reference="../.."/>
+            </console>
+          </manager>
+        </edu.ucsc.cross.hse.core.exe.operator.Environment>
+      </list>
+    </entry>
+    <entry>
+      <java-class>edu.ucsc.cross.hse.core.obj.container.ExecutionData</java-class>
+      <list>
+        <edu.ucsc.cross.hse.core.obj.container.ExecutionData reference="../../../entry[4]/list/edu.ucsc.cross.hse.core.exe.operator.Environment/manager/dataCollector"/>
+      </list>
+    </entry>
+    <entry>
+      <java-class>[Ledu.ucsc.cross.hse.core.obj.component.HybridSystem;</java-class>
+      <list>
+        <edu.ucsc.cross.hse.core.obj.component.HybridSystem-array/>
+      </list>
+    </entry>
+  </fileContents>
+</edu.ucsc.cross.hse.core.io.file.HSEFile>

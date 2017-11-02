@@ -1,0 +1,17 @@
+.border-pane {
+   -fx-background-color: rgb(50, 50, 50);
+   -fx-border-color: rgb(50, 50, 50);
+  -fx-padding: 0 0 0 0;
+}
+.menu-bar {
+  -fx-background-color: rgb(50, 50, 50);
+  -fx-base: rgb(50, 50, 50);
+}
+.menu-bar:focused  {
+  -fx-background-color: rgb(61, 3, 160);
+  -fx-base: rgb(61, 3, 160);
+}
+.tool-bar {  
+    -fx-background-color: rgb(50, 50, 50);
+  -fx-padding: 2 0 2 0;
+} 

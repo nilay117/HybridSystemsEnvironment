@@ -1,0 +1,315 @@
+\documentclass[10pt]{article}\newcommand{\conf}{false}
+\usepackage[usenames]{color} %used for font color
+\usepackage{amssymb} %maths
+\usepackage{amsmath} %maths
+\usepackage[utf8]{inputenc} %useful to type directly diacritic characters
+\usepackage[textwidth=5cm,textheight=5cm]{geometry}
+\input{/Users/beshort/Dropbox/Work/Code/HybridThreeLinkBipedPaper/Paper/Sections/BipedCommands}
+
+
+\usepackage{/Users/beshort/Dropbox/Work/Code/HybridThreeLinkBipedPaper/Paper/Style/hslTR} 
+\usepackage{fullpage}
+
+
+\usepackage{ifthen}
+% Conference commands  
+\newboolean{Conference} 
+% for conference format set this boolean to true
+\setboolean{Conference}{\conf}  
+\newcommand{\NotForConf}[1]{\ifthenelse{\boolean{Conference}}{}{#1}}
+\newcommand{\IfConf}[2]{\ifthenelse{\boolean{Conference}}{#1}{#2}}
+\newcommand{\biped}{plant }
+\newcommand{\reference}{reference system }
+\newcommand{\virtual}{virtual system }
+\usepackage{indentfirst}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% PAGE DIMENSIONS
+%\usepackage{geometry} % to change the page dimensions
+%\geometry{a4paper} % or letterpaper (US) or a5paper or....
+
+%%% PACKAGES
+\usepackage{epsfig,graphicx,amsmath,amsfonts}
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{graphics} % support the \includegraphics fcommand and options
+\usepackage{graphicx} 
+\usepackage{amssymb}
+\usepackage{amsxtra}
+\usepackage{latexsym}
+\usepackage{xcolor,import}
+\usepackage{transparent}
+\usepackage{todonotes}
+\usepackage{amsxtra}
+\usepackage{algorithm}
+\usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{color}
+\usepackage{psfrag}
+\usepackage{subfigure}
+\usepackage{balance}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{setspace}
+\usepackage{resizegather}
+\usepackage[english]{babel}
+\setstretch{1}
+\allowdisplaybreaks[1] %Allows page breaking for equation arrays
+
+%%  Modification Macros !! %%
+\usepackage{xparse}% http://ctan.org/pkg/xparse
+\usepackage{etoolbox}% http://ctan.org/pkg/etoolbox
+
+%% Available Colors : black, blue, brown, cyan, darkgray, gray, green, lightgray, lime, magenta, olive, orange, pink, purple, red, teal, violet, white, yellow.
+\usepackage{xparse}
+
+
+\definecolor{mypink1}{HTML}{174f26}
+\definecolor{mypurp}{HTML}{4d0099}
+\ExplSyntaxOn
+\NewDocumentCommand{\storedata}{mm}
+{
+	\bcp_store_data:nn { #1 } { #2 }
+}
+
+\DeclareExpandableDocumentCommand{\getdata}{O{1}m}
+{
+	\bcp_get_data:nn { #1 } { #2 }
+}
+
+\cs_new_protected:Npn \bcp_store_data:nn #1 #2
+{
+	% create the sequence if it doesn't exist
+	\seq_if_exist:cF { l_bcp_data_#1_seq } { \seq_new:c { l_bcp_data_#1_seq } }
+	% populate the sequence
+	\seq_set_split:cnn { l_bcp_data_#1_seq } { } { #2 }
+}
+\cs_generate_variant:Nn \seq_set_split:Nnn { c }
+
+\cs_new:Npn \bcp_get_data:nn #1 #2
+{
+	% retrieve the requested item
+	\seq_item:cn { l_bcp_data_#2_seq } { #1 }
+}
+\ExplSyntaxOff
+
+
+%\newarray\revColor
+%\newarray\revDate
+%\readarray{revColor}{black&blue&brown&cyan&darkgray&gray&green&lightgray&lime&magenta&olive&orange&pink&purple&red&teal&violet&white&yellow}
+%\readarray{revDate}{1/17/2016&2/2/2016}
+%\NewDocumentCommand{\revDate}{o}{%
+%	\setcounter{listtotal}{0}\setcounter{listcntr}{-1}%
+%	\renewcommand*{\do}[1]{\stepcounter{listtotal}}%
+%	\expandafter\docsvlist\expandafter{\revisionDates}%
+%	\IfNoValueTF{#1}
+%	{\revisionDates}% \names
+%	{% \names[<index>]
+%		\renewcommand*{\do}[1]{\stepcounter{listcntr}\ifnum\value{listcntr}=#1\relax##1\fi}%
+%		\expandafter\docsvlist\expandafter{\revisionDates}}%
+%}
+
+
+% Show revision colors and dates
+\newcommand{\showMods}{true} 
+\newcommand{\dateMods}{true}
+\newcommand{\dateModLegendSection}{true} 
+
+% Revision dates                                 
+\newcommand{\startingRev}{0}
+\newboolean{ShowMods}
+\newboolean{DateMods}
+\setboolean{ShowMods}{\showMods}
+\setboolean{DateMods}{\dateMods}
+\storedata{revColor}{{blue}{mypink1}{mypurp}{brown}{cyan}{darkgray}{gray}{green}{lightgray}{lime}{magenta}{olive}{orange}{pink}{purple}{red}{teal}{violet}{white}{yellow}}
+\newcommand{\rev}[2]{
+	\ifthenelse{\boolean{ShowMods}}{{\color{\getdata[#1]{revColor}}\ifthenelse{\boolean{DateMods}}{[R.#1] #2}{#2}}}{#2}}
+
+
+\newcommand{\revDescriptions}{
+	\rev{1}{Areas Ricardo Skipped from the 1/17/2017 draft}\\
+	\rev{2}{Current draft as of 2/2/2017 revised from feedback on 1/18/2017}  \\ 
+	\rev{3}{Revisions from feedback on 2/3 and 2/4}
+}
+
+\newboolean{LegendSectionMods}
+\setboolean{LegendSectionMods}{\dateModLegendSection}
+\newcommand{\revDescriptionPage}{\ifthenelse{\boolean{LegendSectionMods}}{
+		\begin{titlepage}
+			\newpage\noindent {\large \textbf{Revision Labeling Information}} \bigskip\\ \revDescriptions
+			\thispagestyle{empty}
+	\end{titlepage}}{}}
+%\newcommand{\revisionKey}{\rev{1}{1/17/2016 - Revised Areas Ricardo Skipped}\\ \rev{2}{2/2/2016 - Revised Areas}
+%\newboolean{ShowMods}
+%\newboolean{DateMods}
+%\setboolean{ShowMods}{\showMods}
+%\setboolean{DateMods}{\dateMods}
+%\newcommand{\rev}[2]{\ifthenelse{\boolean{ShowMods}}{{\color{\revColor[#1]} \ifthenelse{\boolean{DateMods} }{(\revDate[#1])}{} #2}}{#2}}
+
+% added macro 
+\def\startmodif{\color{blue}}
+\def\stopmodif{\color{black}\normalcolor}
+\definecolor{mygreen}{RGB}{0,128,0}
+\def\startmodifnew{\color{black}}
+\def\stopmodifnew{\color{black}\normalcolor}
+\newcommand{\ricardo}[1]{{\color{red} #1}}
+\newcommand{\seanrevisit}[1]{{\color{red} #1}}
+\newcommand{\sean}[1]{{\color{blue} #1}}
+\newcommand{\seannew}[1]{{\color{black} #1}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\K}{\mathcal{K}}
+\renewcommand{\v}{\nu}
+\newcommand{\tilA}{\widetilde{\mathcal{A}}}
+\newcommand{\tb}{\bar{\tau}}
+\newcommand{\ton}{\ta\eta_1}
+\newcommand{\ttw}{\ta\eta_2}
+\newcommand{\x}{\xi}
+\newcommand{\z}{\chi}
+\newcommand{\tthr}{\tau_3}
+\newcommand{\atau}{|\ton - \ttw|}
+\newcommand{\xon}{\x_1}
+\newcommand{\xtw}{\x_2}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\FF}{\mathcal{F}}
+\newcommand{\EE}{\mathcal{E}}
+\newcommand{\GG}{\mathcal{G}}
+\newcommand{\NN}{\mathcal{N}}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\e}{\varepsilon} 
+\newcommand{\mat}[1]{\left[\begin{array}{c} #1 \end{array}\right]}
+\newcommand{\R}{\mathcal{R}}
+\renewcommand{\S}{\mathcal{S}}
+\renewcommand{\hbar}{\overline{h}}
+\renewcommand{\cal}{\mathcal}
+\newcommand{\hone}{\frac{(\varepsilon + 1)\tb}{\varepsilon^2+3\varepsilon+3}}
+\newcommand{\htwo}{\frac{(\varepsilon + 1)^{2}\tb}{\varepsilon^2+3\varepsilon+3}}
+\newcommand{\hthree}{\frac{(\varepsilon + 1)(\e + 2)\tb}{\varepsilon^2+3\varepsilon+3}}
+\newcommand{\EndPF}{\hfill $\blacksquare$}
+\newcommand{\defset}[2]{\left\{#1\ : \ #2\ \right\}}
+\newcommand{\xplus}{x^+}
+\newcommand{\HS}{{\cal H}}
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\ball}{\mathbb{B}}
+\newcommand{\tto}{\rightrightarrows}
+%\newcommand{\tto}{\;{\lower 1pt \hbox{$\rightarrow$}}\kern -10pt      
+%        \hbox{\raise 2pt \hbox{$\rightarrow$}}\;}  
+\newcommand{\realsgeq}{{\reals_{\geq 0}}}
+\newcommand{\dom}{\mathop{\rm dom}\nolimits}      
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\non}{\nonumber}
+
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}{Proposition}[section]
+
+% brendans commands
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}} 
+\newcommand{\Hcal}{{\cal{H}}}
+\newcommand{\calX}{{\cal{X}}}  
+\newcommand{\calO}{{\cal{O}}} 
+\newcommand{\rref}[1]{(\ref{#1})}
+
+
+
+
+
+%\newtheorem{theorem}{Lemma}
+% function definitions
+\newcommand{\cartS}{\Upsilon}
+\newcommand{\cartO}{\zeta}
+\newcommand{\sms}{\hspace{.1 in}}
+\newcommand{\mms}{\hspace{.2 in}}
+\newcommand{\lenL}{\ell_\ell} % leg length
+\newcommand{\lenT}{\ell_t} % torso length
+\newcommand{\mT}{m_T}
+\newcommand{\mH}{m_H}
+\newcommand{\mL}{m_L}
+\newcommand{\pT}{\rho} % properties of virtual trajectory
+\newcommand{\aV}{\alpha_v} % acceleration of virtual trajectory based on state
+\newcommand{\orbI}{x_i} % initial orbit state
+\newcommand{\orbF}{x_f} % final orbit state
+\newcommand{\params}{\gamma} % parameters of the biped
+\newcommand{\torqueCalc}{\mu} % parameters of the biped
+\newcommand{\cycleSol}{\phi^*(t,j)} % parameters of the biped
+\newcommand{\sol}{\phi(t)} % parameters of the biped
+\newcommand{\solComplete}{\phi(t,j)} % parameters of the biped
+\newcommand{\tc}{s} % tracking controller state
+\newcommand{\vg}{z} % virtual guiding biped state
+\def\HSZero{\mathcal{H}_0}
+\newcommand{\sss}{{\hspace{.2in}}}
+\newcommand{\uvec}[1]{\boldsymbol{\hat{\textbf{#1}}}}
+\renewcommand{\baselinestretch}{1}
+\usepackage{fullpage}
+\newcommand{\stepAngle}{\phi_{s}}
+\newcommand{\torsoAngle}{\phi_{t}}
+\newcommand{\rs}{r}
+\newcommand{\vs}{r}
+\newcommand{\gs}{z}
+\newcommand{\eq}{\circ}
+
+% new environments
+\newtheorem{helptheorem}{Theorem}[section]     
+
+\newtheorem{helplemma}[helptheorem]{Lemma}     
+%
+\newtheorem{helpcorollary}[helptheorem]{Corollary}     
+
+\newtheorem{helpexample}[helptheorem]{Example}     
+
+\newtheorem{helpproposition}[helptheorem]{Proposition}     
+
+\newtheorem{helpremark}[helptheorem]{Remark}     
+
+\newtheorem{helpdefinition}[helptheorem]{Definition}
+
+\newtheorem{helpassumption}[helptheorem]{Assumption}
+
+\newtheorem{helpstassumption}[helptheorem]{Standing Assumption}
+
+
+\newenvironment{theorem}     
+{\vskip.1cm\begin{helptheorem}\it}
+	{\end{helptheorem} \vskip.1cm}   
+
+\newenvironment{lemma}     
+{\vskip.1cm\begin{helplemma}\it}     
+	{\end{helplemma}\vskip.1cm}     
+
+\newenvironment{corollary}     
+{\vskip.1cm\begin{helpcorollary}\it}     
+	{\end{helpcorollary}\vskip.1cm}     
+
+\newenvironment{proposition}     
+{\vskip.1cm\begin{helpproposition}\it}     
+	{\end{helpproposition}\vskip.1cm}     
+
+\newenvironment{example}     
+{\vskip.1cm\begin{helpexample}}     
+	{\end{helpexample}\vskip.1cm}     
+
+\newenvironment{remark}     
+{\vskip.1cm\begin{helpremark}}     
+	{ \hfill \end{helpremark}\vskip.1cm}     
+% $\blacksquare$
+
+\newenvironment{definition}
+{\vskip.1cm\begin{helpdefinition}}     
+	{\end{helpdefinition}\vskip.1cm}   
+
+%\iffalse
+\newenvironment{assumption}
+{\vskip.1cm\begin{helpassumption}}     
+	{\end{helpassumption}\vskip.1cm}
+%\fi
+
+\newenvironment{standingassumption}
+{\vskip.1cm\begin{helpstassumption}}     
+	{\end{helpstassumption}\vskip.1cm}
+
+
+\newcommand{\matt}[1]{\begin{bmatrix}
+		#1
+\end{bmatrix}} \begin{document}
+\[\left[A\right]\]
+\end{document}
