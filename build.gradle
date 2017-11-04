@@ -1,49 +1,19 @@
-// Apply the java plugin to add support for Java
-// Apply the java-library plugin to add support for Java Library
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-        maven { url "https://jitpack.io" }    
-    }
-    
-    dependencies {
-        classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
-    }
-}
-apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
-weaveClasses.dependsOn compileJava
-classes.dependsOn weaveClasses
-
 apply plugin: 'java'
+
 repositories {
         mavenLocal()
         mavenCentral()
         jcenter()
         maven { url "https://jitpack.io" }
-        maven { url "http://maven.jzy3d.org/releases"}
 }
-configurations.all {
-    // Check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-compileJava {
 
-        // this subproject requires -parameters option
-        options.compilerArgs << '-parameters'
-     
- }
+configurations.all {
+   // Uncomment to check for updates every build
+   // resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
 
 dependencies {
-
-    // Logging
-    // compile 'com.github.be3short:DynamicLogger:-SNAPSHOT'
-    //compile 'com.jcabi:jcabi-aspects:0.22.6'
-    // https://mvnrepository.com/artifact/log4j/log4j
-    compile 'log4j:log4j:1.2.17'
-
-
+   
     // Plotting
     compile group: 'org.jfree', name: 'jfreechart', version: '1.0.19'
     compile group: 'org.jfree', name: 'fxgraphics2d', version: '1.5'
@@ -54,30 +24,12 @@ dependencies {
     compile 'org.apache.commons:commons-math3:3.6.1'
 
     // Utilities
-    implementation 'com.google.guava:guava:21.0'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile 'com.github.be3short:ObjectTools:-SNAPSHOT'
     compile 'com.github.be3short:IOTools:-SNAPSHOT'
-    // Test
-    testImplementation 'junit:junit:4.12'
-
-    // UI
-    //compile 'com.github.be3short:UITools:-SNAPSHOT' // ui tols for helping with ui implementations
-    // https://mvnrepository.com/artifact/org.controlsfx/controlsfx
-compile group: 'org.controlsfx', name: 'controlsfx', version: '8.0.5'
     
-    compile 'com.github.be3short:JavaFXComponents:-SNAPSHOT'
-    compile group: 'at.bestsolution.eclipse', name: 'org.eclipse.fx.ui.controls', version: '2.2.0'
-    
-    // Temp
-    compile 'com.github.ronmamo:reflections:-SNAPSHOT'
-
     // Test
     testCompile group: 'junit', name: 'junit', version: '4.4'
-   compile 'org.jgrapht:jgrapht-core:1.0.1'
-   	compile 'com.github.jgrapht:jgrapht:-SNAPSHOT'
-    compile group: 'gov.nist.math', name: 'jama', version: '1.0.2'
-    
 }
 
 
