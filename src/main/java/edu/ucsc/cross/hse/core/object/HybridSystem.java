@@ -91,4 +91,9 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 
 	}
 
+	public static class EnvironmentAccessor
+	{
+
+	}
+
 }

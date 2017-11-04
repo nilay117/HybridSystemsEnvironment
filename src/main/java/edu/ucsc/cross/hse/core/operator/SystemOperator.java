@@ -5,11 +5,19 @@ import com.be3short.obj.manipulation.DynamicObjectManipulator;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SystemOperator
 {
 
+	int activeThreads = 0;
+	private HashMap<Integer, ArrayList<HybridSystem<?>>> systemz;
+	private HashMap<HybridSystem<?>, Runnable> systemzt;
 	private ExecutionOperator content;
+	private boolean jo;
 
 	public SystemOperator(ExecutionOperator content)
 	{
@@ -35,7 +43,18 @@ public class SystemOperator
 	public void applyDynamics(boolean jump_occurring)
 	{
 		prepareDynamicComponents(jump_occurring);
+		if (content.getSettings().getFunctionalitySettings().runThreadedOperations)
+		{
+			applyDynamicsMultiThread(jump_occurring);
+		} else
+		{
+			applyDynamicsSingleThread(jump_occurring);
+		}
+		processDynamicComponents(jump_occurring);
+	}
 
+	public void applyDynamicsSingleThread(boolean jump_occurring)
+	{
 		for (HybridSystem<?> hs : content.getContents().getSystems())
 		{
 			try
@@ -53,7 +72,82 @@ public class SystemOperator
 				+ XMLParser.serializeObject(hs.getState()), dynamicsError);
 			}
 		}
-		processDynamicComponents(jump_occurring);
+	}
+
+	public void applyDynamicsMultiThread(boolean jump_occurring)
+	{
+
+		// checkSystems();
+		jo = jump_occurring;
+
+		// Collection<Runnable> threads;// = new Runnable[content.getContents().getSystems().size()];
+		final int NUM_THREADS = Runtime.getRuntime().availableProcessors() - 1;
+		// System.out.println(NUM_THREADS);
+		final ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+		for (int i = 0; i < content.getContents().getSystems().size(); i++)
+		{
+			executor.execute(prepareThread(content.getContents().getSystems().get(i)));
+		}
+		// executor.
+		// while (!executor.isTerminated())
+		// {
+		//
+		// }
+		executor.shutdown();
+		while (!executor.isTerminated())
+		{
+
+		}
+		// {
+		// for (HybridSystem<?> hs : content.getContents().getSystems())
+		// {
+		// // System.out.println("new" + i++);
+		// new Thread(prepareThread(hs)).start();
+		// ;
+		// }
+		// }
+		// boolean done = false;
+		// while (!done)
+		// {
+		// done = true;
+		// for (Boolean val : systemz.values())
+		// {
+		// done = done && val;
+		// }
+		// }
+
+	}
+
+	private Runnable prepareThread(HybridSystem<?> hs)
+	{
+		return new Runnable()
+		{
+
+			public void run()
+			{
+
+				// systemz.put(hs, false);
+				try
+				{
+
+					if (jo)
+					{
+						HybridSystemOperator.g(hs);
+					} else
+					{
+						HybridSystemOperator.f(hs);
+					}
+				} catch (Exception dynamicsError)
+				{
+					Console.error("Apply Dynamics Error on " + hs.getClass() + " with state: \n"
+					+ XMLParser.serializeObject(hs.getState()), dynamicsError);
+				}
+				// System.out.println(activeThreads);
+
+				// systemz.put(hs, true);
+			}
+		};
+
 	}
 
 	public void prepareDynamicComponents(boolean jump)

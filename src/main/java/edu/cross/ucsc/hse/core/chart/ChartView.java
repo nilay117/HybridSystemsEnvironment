@@ -382,7 +382,7 @@ public class ChartView
 		}
 		for (JPanel panel : panels)
 		{
-			panel.printAll(graphics);
+			panel.print(graphics);
 		}
 		return graphics;
 	}
