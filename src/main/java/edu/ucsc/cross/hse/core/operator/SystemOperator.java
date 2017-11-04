@@ -7,15 +7,21 @@ import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class SystemOperator
 {
 
+	final int NUM_THREADS = Runtime.getRuntime().availableProcessors() - 1;
+	// System.out.println(NUM_THREADS);
+	final ExecutorService executor = Executors.newWorkStealingPool(NUM_THREADS);
 	int activeThreads = 0;
 	private HashMap<Integer, ArrayList<HybridSystem<?>>> systemz;
-	private HashMap<HybridSystem<?>, Runnable> systemzt;
+	private Thread[] tt;
 	private ExecutionOperator content;
 	private boolean jo;
 
@@ -77,27 +83,43 @@ public class SystemOperator
 	public void applyDynamicsMultiThread(boolean jump_occurring)
 	{
 
-		// checkSystems();
 		jo = jump_occurring;
-
-		// Collection<Runnable> threads;// = new Runnable[content.getContents().getSystems().size()];
-		final int NUM_THREADS = Runtime.getRuntime().availableProcessors() - 1;
-		// System.out.println(NUM_THREADS);
-		final ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
-		for (int i = 0; i < content.getContents().getSystems().size(); i++)
+		prepareThreads();
+		for (int i = 0; i < tt.length; i++)
 		{
-			executor.execute(prepareThread(content.getContents().getSystems().get(i)));
+			executor.execute(tt[i]);
+		}
+		Future<Boolean> done = null;
+		for (int i = 0; i < NUM_THREADS; i++)
+		{
+			done = executor.submit(finished());
+		}
+		try
+		{
+			done.get();
+		} catch (InterruptedException | ExecutionException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		// executor.
 		// while (!executor.isTerminated())
 		// {
 		//
 		// }
-		executor.shutdown();
-		while (!executor.isTerminated())
-		{
-
-		}
+		// executor.shutdown();
+		// try
+		// {
+		// executor.awaitTermination(10000, TimeUnit.MILLISECONDS);
+		// } catch (InterruptedException e)
+		// {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// while (!executor.isTerminated())
+		// {
+		//
+		// }
 		// {
 		// for (HybridSystem<?> hs : content.getContents().getSystems())
 		// {
@@ -115,6 +137,53 @@ public class SystemOperator
 		// done = done && val;
 		// }
 		// }
+
+	}
+
+	private void prepareThreads()
+	{
+		if (tt == null)
+		{
+			tt = new Thread[content.getContents().getSystems().size()];
+			for (int i = 0; i < content.getContents().getSystems().size(); i++)
+			{
+				tt[i] = new Thread(prepareThread(content.getContents().getSystems().get(i)));
+			}
+		}
+	}
+
+	private void prepareThreadz()
+	{
+		if (tt == null)
+		{
+			tt = new Thread[Runtime.getRuntime().availableProcessors() - 1];
+			int start = 0;
+			int end = 1 + content.getContents().getSystems().size() / (Runtime.getRuntime().availableProcessors() - 1);
+
+			for (int i = 0; i < Runtime.getRuntime().availableProcessors() - 1; i++)
+			{
+
+				int endVal = (i + 1) * end;
+				if (endVal >= content.getContents().getSystems().size())
+				{
+					endVal = content.getContents().getSystems().size() - 1;
+				}
+				tt[i] = new Thread(prepareThreadz(i * end, endVal));
+			}
+		}
+	}
+
+	private Callable<Boolean> finished()
+	{
+		return new Callable<Boolean>()
+		{
+
+			public Boolean call()
+			{
+
+				return true;
+			}
+		};
 
 	}
 
@@ -141,6 +210,40 @@ public class SystemOperator
 				{
 					Console.error("Apply Dynamics Error on " + hs.getClass() + " with state: \n"
 					+ XMLParser.serializeObject(hs.getState()), dynamicsError);
+				}
+				// System.out.println(activeThreads);
+
+				// systemz.put(hs, true);
+			}
+		};
+
+	}
+
+	private Runnable prepareThreadz(Integer start_index, Integer end)
+	{
+		return new Runnable()
+		{
+
+			public void run()
+			{
+				for (int i = start_index; i <= end; i++)
+				{
+					HybridSystem<?> hs = content.getContents().getSystems().get(i);
+					try
+					{
+
+						if (jo)
+						{
+							HybridSystemOperator.g(hs);
+						} else
+						{
+							HybridSystemOperator.f(hs);
+						}
+					} catch (Exception dynamicsError)
+					{
+						Console.error("Apply Dynamics Error on " + hs.getClass() + " with state: \n"
+						+ XMLParser.serializeObject(hs.getState()), dynamicsError);
+					}
 				}
 				// System.out.println(activeThreads);
 

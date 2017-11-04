@@ -14,8 +14,14 @@ public class FunctionalitySettings
 	 */
 	public Integer outputImageFileAttemptInterval; // in milliseconds
 
+	/*
+	 * Flag to run operations in parallel by multithreading
+	 */
+	public boolean runThreadedOperations;
+
 	public FunctionalitySettings()
 	{
-		outputImageFileAttemptInterval = 100;
+		outputImageFileAttemptInterval = 1000;
+		runThreadedOperations = true;
 	}
 }
