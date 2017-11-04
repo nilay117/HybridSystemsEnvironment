@@ -9,7 +9,7 @@ repositories {
 
 configurations.all {
    // Uncomment to check for updates every build
-   // resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 dependencies {
@@ -25,7 +25,7 @@ dependencies {
 
     // Utilities
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-    compile 'com.github.be3short:ObjectTools:-SNAPSHOT'
+    compile 'com.github.be3short:ObjectTools:v0.3.1'
     compile 'com.github.be3short:IOTools:-SNAPSHOT'
     
     // Test

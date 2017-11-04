@@ -92,6 +92,11 @@ public class ExecutionOperator
 		return systemControl;
 	}
 
+	public Environment getEnvironment()
+	{
+		return env;
+	}
+
 	public void initializeComponents()
 	{
 		simEngine = new SimulationOperator(this);
@@ -115,7 +120,8 @@ public class ExecutionOperator
 		{
 
 		}
-
+		prepareDir();
+		prepareConsole();
 		exeContent.prepareComponents(this);
 		dataManager.loadMap();
 		dataManager.gatherData(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
@@ -133,6 +139,7 @@ public class ExecutionOperator
 		prepare();
 		start();
 		stop();
+		dataManager.createCSVOutput();
 		env.getOutputs().generateOutputs(env, true);
 
 		// writeFiles(false);
@@ -151,14 +158,19 @@ public class ExecutionOperator
 
 	private void prepareDir()
 	{
-		if (env.getSettings().getOutputSettings().saveLogToFile)
-		{
-			File dir = new File(
-			env.getSettings().getOutputSettings().outputDirectory + "/" + getStartTime(env, false) + "/");
-			dir.mkdirs();
-		}
+
+		File dir = new File(
+		env.getSettings().getOutputSettings().outputDirectory + "/" + getStartTime(env, false) + "/");
+		dir.mkdirs();
+
+	}
+
+	private void prepareConsole()
+	{
+
 		Console.startOutputFile(new File(env.getSettings().getOutputSettings().outputDirectory + "/"
 		+ getStartTime(env, false) + "/log" + getStartTime(env, true) + ".txt"));
+
 	}
 
 	public void stop()

@@ -126,13 +126,19 @@ public class EnvironmentFile implements FileFormat
 	 */
 	public void writeToFile(File output)
 	{
-		String xmlOutput = XMLParser.serializeObject(this);
-		File adjustedInput = output;
-		if (!output.getAbsolutePath().contains(fileExtension))
+		try
 		{
-			adjustedInput = new File(output.getAbsolutePath() + fileExtension);
+			String xmlOutput = XMLParser.serializeObject(this);
+			File adjustedInput = output;
+			if (!output.getAbsolutePath().contains(fileExtension))
+			{
+				adjustedInput = new File(output.getAbsolutePath() + fileExtension);
+			}
+			FileSystemInteractor.createOutputFile(adjustedInput.getAbsolutePath(), xmlOutput);
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-		FileSystemInteractor.createOutputFile(adjustedInput.getAbsolutePath(), xmlOutput);
 	}
 
 	/*

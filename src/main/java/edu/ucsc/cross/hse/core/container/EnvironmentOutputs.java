@@ -102,12 +102,13 @@ public class EnvironmentOutputs
 	public void generateOutputs(Environment envi, boolean create_files)
 	{
 		initializeDataNames(envi);
+
+		generatePlots(envi, create_files);
+
 		if (create_files)
 		{
 			generateFiles(envi);
 		}
-		generatePlots(envi, create_files);
-
 	}
 
 	public void generatePlots(boolean create_files)

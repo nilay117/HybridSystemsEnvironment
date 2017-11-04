@@ -10,7 +10,7 @@ public class EnvironmentData
 {
 
 	private ArrayList<HybridTime> storeTimes;
-	private ArrayList<DataSeries<Double>> globalStateData;
+	private ArrayList<DataSeries<?>> globalStateData;
 	private HashMap<String, String> stateNames;
 	private ArrayList<String> nameOrder;
 
@@ -20,12 +20,12 @@ public class EnvironmentData
 	public EnvironmentData()
 	{
 		storeTimes = new ArrayList<HybridTime>();
-		globalStateData = new ArrayList<DataSeries<Double>>();
+		globalStateData = new ArrayList<DataSeries<?>>();
 		stateNames = new HashMap<String, String>();
 		nameOrder = new ArrayList<String>();
 	}
 
-	public void load(ArrayList<HybridTime> store_times, ArrayList<DataSeries<Double>> global_state_data)
+	public void load(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
 	{
 		storeTimes = store_times;
 		globalStateData = global_state_data;
@@ -42,7 +42,7 @@ public class EnvironmentData
 		return lastTime;
 	}
 
-	public ArrayList<DataSeries<Double>> getGlobalStateData()
+	public ArrayList<DataSeries<?>> getGlobalStateData()
 	{
 		return globalStateData;
 	}
@@ -61,7 +61,7 @@ public class EnvironmentData
 	{
 		if (nameOrder.size() == 0)
 		{
-			for (DataSeries<Double> dataSeries : getGlobalStateData())
+			for (DataSeries<?> dataSeries : getGlobalStateData())
 			{
 				nameOrder.add(getLegendLabel(dataSeries));
 			}

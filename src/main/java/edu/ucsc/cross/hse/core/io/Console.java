@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.io;
 
+import com.be3short.io.info.SystemInfo;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import java.io.File;
@@ -21,6 +22,7 @@ public class Console
 	private static Double infoStatusPrintInterval;
 	private static Double nextInfoPrint;
 	private static PrintWriter fileOut;
+	private static SystemInfo sysInfo = new SystemInfo();
 
 	public Console(ExecutionOperator manage)
 	{
@@ -242,8 +244,10 @@ public class Console
 
 	private static String compileMessagePrefix(String label)
 	{
-
-		String prefix = sdf.format(new Date()) + " [" + label + "]";
+		Runtime.getRuntime().totalMemory();
+		String memoryUsage = String.valueOf((int) Math.round(sysInfo.usedMem() / (Math.pow(1024.0, 2))) + "/"
+		+ String.valueOf((int) Math.round(sysInfo.totalMem() / (Math.pow(1024.0, 2)))));
+		String prefix = "[" + sdf.format(new Date()) + "][" + memoryUsage + "][" + label + "]";
 		return prefix;
 	}
 

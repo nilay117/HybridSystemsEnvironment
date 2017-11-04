@@ -114,10 +114,10 @@ public class SubChartView
 		rend.setPlotDiscontinuous(false);
 		HashMap<String, XYSeries> ser = new HashMap<String, XYSeries>();
 
-		for (DataSeries<Double> data : data.getGlobalStateData())
+		for (DataSeries<?> data : data.getGlobalStateData())
 		{
 			boolean matchesSelection = true;
-			DataSeries<Double> xS = null;
+			DataSeries<?> xS = null;
 			// System.out.println(props.fufilsFilters(data));
 			if (!sub().getyDataSelection().equals(data.getElementName()))
 			// .!fufilsFilters(data))
@@ -132,6 +132,8 @@ public class SubChartView
 					matchesSelection = false;
 				}
 			}
+			matchesSelection = matchesSelection && (data.getAllStoredData().get(0).getClass().equals(Double.class)
+			|| data.getAllStoredData().get(0).getClass().equals(double.class));
 			if (matchesSelection)
 			{
 				String label = this.data.getLegendLabel(data);// getLegendLabel(data, names);
@@ -140,11 +142,11 @@ public class SubChartView
 				s1.setDescription(label);
 				for (HybridTime ind : this.data.getStoreTimes())
 				{
-					Double y = data.getStoredData(ind);
+					Double y = (Double) data.getStoredData(ind);
 					Double x = ind.getTime();
 					if (xS != null)
 					{
-						x = xS.getStoredData(ind);
+						x = (Double) xS.getStoredData(ind);
 					}
 					if (x != null && y != null)
 					{
@@ -170,7 +172,7 @@ public class SubChartView
 	public ArrayList<String> getFieldNames()
 	{
 		ArrayList<String> fieldNames = new ArrayList<String>();
-		for (DataSeries<Double> e : data.getGlobalStateData())
+		for (DataSeries<?> e : data.getGlobalStateData())
 		{
 
 			if (!fieldNames.contains(e.getElementName()))

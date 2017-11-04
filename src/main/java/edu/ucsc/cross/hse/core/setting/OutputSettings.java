@@ -34,9 +34,6 @@ public class OutputSettings
 	 * Flag indicating if settings should be saved in an output file when not specified by the user
 	 */
 	public Boolean saveConfigurationToFile;
-
-	public boolean saveLogToFile;
-
 	public boolean appendFilesWithTime;
 	/*
 	 * Flag indicating if settings should be saved in an output file when not specified by the user
@@ -60,8 +57,7 @@ public class OutputSettings
 		saveConfigurationToFile = true;
 		environmentFileName = "environment";
 		configurationFileName = "environmentConfiguration";
-		chartFileFormat = ImageFormat.EPS;
-		saveLogToFile = true;
+		chartFileFormat = ImageFormat.PNG;
 		appendFilesWithTime = true;
 	}
 
