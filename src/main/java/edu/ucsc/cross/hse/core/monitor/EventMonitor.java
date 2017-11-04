@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import org.apache.commons.math3.ode.events.EventHandler;
@@ -9,7 +8,6 @@ import org.apache.commons.math3.ode.events.EventHandler;
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
  * smoothly as the discontinuities are addressed discretely while the solver is paused
  */
-@Loggable(Loggable.TRACE)
 public class EventMonitor implements EventHandler
 {
 
@@ -71,7 +69,6 @@ public class EventMonitor implements EventHandler
 	 * Response that occurs when event is detecteds
 	 */
 	@Override
-	@Loggable(Loggable.DEBUG)
 	public EventHandler.Action eventOccurred(double t, double[] y, boolean increasing)
 	{
 		approachingJump = false;

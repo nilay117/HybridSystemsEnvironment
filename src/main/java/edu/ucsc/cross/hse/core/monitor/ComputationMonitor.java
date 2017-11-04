@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.operator.SimulationOperator;
@@ -20,7 +19,6 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
  * and can automatically restart environment when errors that may effect results occur. Allowing adjustments to be made
  * eventually leads to a configuration that does not result in any errors, which can be saved for future use
  */
-@Loggable(Loggable.DEBUG)
 public class ComputationMonitor
 {
 

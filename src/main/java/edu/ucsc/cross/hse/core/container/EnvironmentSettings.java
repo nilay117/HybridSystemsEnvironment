@@ -1,11 +1,9 @@
 package edu.ucsc.cross.hse.core.container;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import edu.ucsc.cross.hse.core.setting.OutputSettings;
 
-@Loggable(Loggable.TRACE)
 public class EnvironmentSettings
 {
 

@@ -1123,7 +1123,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		if (this.elementOrder != null)
 		{
 			String st = dataset.getSeriesKey(series).toString();
-			System.out.println(st + " " + elementOrder.indexOf(st));
+			// System.out.println(st + " " + elementOrder.indexOf(st));
 			g2.setPaint(chart.getSeriesColor(elementOrder.indexOf(st)));// , item));
 		} else
 		{
@@ -1376,7 +1376,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 			urlText = getLegendItemURLGenerator().generateLabel(dataset, series);
 		}
 		String st = dataset.getSeriesKey(series).toString();
-		System.out.println(st + " " + elementOrder.indexOf(st));
+		// System.out.println(st + " " + elementOrder.indexOf(st));
 		Paint paint = (chart.getSeriesColor(elementOrder.indexOf(st)));
 		boolean shapeIsVisible = getItemShapeVisible(series, 0);
 		Shape shape = lookupLegendShape(series);

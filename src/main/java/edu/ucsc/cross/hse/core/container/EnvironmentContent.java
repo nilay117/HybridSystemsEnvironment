@@ -1,11 +1,9 @@
 package edu.ucsc.cross.hse.core.container;
 
 import com.be3short.obj.modification.ObjectCloner;
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import java.util.ArrayList;
 
-@Loggable(Loggable.DEBUG)
 public class EnvironmentContent
 {
 

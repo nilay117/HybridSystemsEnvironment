@@ -3,7 +3,6 @@ package edu.ucsc.cross.hse.core.environment;
 import com.be3short.data.cloning.ObjectCloner;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
-import com.jcabi.aspects.Loggable;
 import edu.cross.ucsc.hse.core.chart.Chart;
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
@@ -21,7 +20,6 @@ import java.util.HashMap;
 /*
  * The main class of the hybrid systeme environment, conting the manager, contents, and the setting configurer.
  */
-@Loggable(Loggable.TRACE)
 public class Environment
 {
 

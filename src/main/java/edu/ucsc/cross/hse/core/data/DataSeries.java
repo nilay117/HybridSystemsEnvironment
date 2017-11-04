@@ -1,10 +1,8 @@
 package edu.ucsc.cross.hse.core.data;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
 
-@Loggable(Loggable.DEBUG)
 public class DataSeries<X>
 {
 

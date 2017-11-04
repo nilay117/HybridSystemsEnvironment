@@ -39,7 +39,7 @@ dependencies {
 
     // Logging
     // compile 'com.github.be3short:DynamicLogger:-SNAPSHOT'
-    compile 'com.jcabi:jcabi-aspects:0.22.6'
+    //compile 'com.jcabi:jcabi-aspects:0.22.6'
     // https://mvnrepository.com/artifact/log4j/log4j
     compile 'log4j:log4j:1.2.17'
 
@@ -74,7 +74,9 @@ compile group: 'org.controlsfx', name: 'controlsfx', version: '8.0.5'
 
     // Test
     testCompile group: 'junit', name: 'junit', version: '4.4'
-
+   compile 'org.jgrapht:jgrapht-core:1.0.1'
+   	compile 'com.github.jgrapht:jgrapht:-SNAPSHOT'
+    compile group: 'gov.nist.math', name: 'jama', version: '1.0.2'
     
 }
 

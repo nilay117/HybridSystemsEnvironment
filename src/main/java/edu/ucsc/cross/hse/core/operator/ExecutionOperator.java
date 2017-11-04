@@ -1,7 +1,6 @@
 
 package edu.ucsc.cross.hse.core.operator;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
@@ -18,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-@Loggable(Loggable.TRACE)
 public class ExecutionOperator
 {
 
@@ -111,7 +109,7 @@ public class ExecutionOperator
 		try
 		{
 
-			resetData();
+			// resetData();
 
 		} catch (Exception e)
 		{

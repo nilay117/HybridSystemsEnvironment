@@ -1,12 +1,10 @@
 package edu.ucsc.cross.hse.core.container;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@Loggable(Loggable.DEBUG)
 public class EnvironmentData
 {
 

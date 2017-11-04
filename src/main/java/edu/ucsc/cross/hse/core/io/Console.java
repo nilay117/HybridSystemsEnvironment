@@ -1,6 +1,5 @@
 package edu.ucsc.cross.hse.core.io;
 
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import java.io.File;
@@ -12,7 +11,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Loggable(Loggable.TRACE)
 public class Console
 {
 

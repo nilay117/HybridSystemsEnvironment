@@ -1,13 +1,11 @@
 package edu.ucsc.cross.hse.core.monitor;
 
 import com.be3short.obj.manipulation.ObjectManipulator;
-import com.jcabi.aspects.Loggable;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.object.Objects;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 
-@Loggable(Loggable.TRACE)
 public class DataMonitor
 {
 

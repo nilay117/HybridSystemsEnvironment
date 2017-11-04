@@ -17,7 +17,7 @@ public class ObjectOperator
 {
 
 	public static final FieldMapper fieldMapper = new FieldMapper(Objects.class);
-	public static HashMap<String, ArrayList<Field>> fields;
+	public static HashMap<String, ArrayList<Field>> fields = new HashMap<String, ArrayList<Field>>();
 	private HybridTime simTime; // Simulation time
 	private HashMap<Object, DynamicObjectManipulator> objectMap;
 	private DynamicObjectManipulator[] objectAccessVector;
@@ -165,6 +165,7 @@ public class ObjectOperator
 	public void prepareComponents(ExecutionOperator manager)
 	{
 		simTime = new HybridTime(0.0, 0);
+		initializeFieldMapper();
 		objectMap = initializeObjectAccessMap(manager);
 		objectAccessVector = initializeObjectAccessVector(objectMap, manager);
 		valueVector = initializeValueVector(objectAccessVector, false);
@@ -251,15 +252,21 @@ public class ObjectOperator
 
 	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionOperator manager)
 	{
-		initializeFieldMapper();
+		// initializeFieldMapper();
 		HashMap<Object, DynamicObjectManipulator> newObjectAccessMap = new HashMap<Object, DynamicObjectManipulator>();
 		for (HybridSystem<?> system : manager.getContents().getSystems())
 		{
 
-			HybridSystemOperator.initializeDynamicState(system);
+			try
+			{
+				HybridSystemOperator.initializeDynamicState(system);
 
-			initializeMap(newObjectAccessMap, system.getState(), HybridSystemOperator.getDynamicState(system));
+				initializeMap(newObjectAccessMap, system.getState(), HybridSystemOperator.getDynamicState(system));
 
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 
 		return newObjectAccessMap;
@@ -268,58 +275,56 @@ public class ObjectOperator
 	@SuppressWarnings("unchecked")
 	private void initializeMap(HashMap<Object, DynamicObjectManipulator> object_map, Object state, Object dynamic)
 	{
-		try
+
+		for (Field field : fieldMapper.getClassFields(state.getClass()))// fields.get(state.getClass().getName()))
 		{
-			for (Field field : fields.get(state.getClass().getName()))
+			try
 			{
-
 				field.setAccessible(true);
-				{
-					if (fieldMapper.isState(field.getType()))
-					{
-						initializeMap(object_map, field.get(state), field.get(dynamic));
-					} else
-					{
-						if (field.getType().equals(ArrayList.class))
 
+				// if (fields.containsKey(field.getType()))
+				if (fieldMapper.isState(field.getType()))
+				{
+					initializeMap(object_map, field.get(state), field.get(dynamic));
+				} else
+				{
+					if (field.getType().equals(ArrayList.class))
+
+					{
+						ArrayList<Object> states = (ArrayList<Object>) field.get(state);
+						ArrayList<Object> dynamics = (ArrayList<Object>) field.get(dynamic);
+						if (!states.isEmpty())
 						{
-							ArrayList<Object> states = (ArrayList<Object>) field.get(state);
-							ArrayList<Object> dynamics = (ArrayList<Object>) field.get(dynamic);
-							if (!states.isEmpty())
+							if (FieldFinder.containsSuper(states.get(0), Objects.class))
 							{
-								if (FieldFinder.containsSuper(states.get(0), Objects.class))
+								for (int i = 0; i < states.size(); i++)
 								{
-									for (int i = 0; i < states.size(); i++)
-									{
-										initializeMap(object_map, states.get(i), dynamics.get(i));
-									}
+									initializeMap(object_map, states.get(i), dynamics.get(i));
 								}
 							}
 						}
+					}
 
-						else if (!object_map.containsKey(state.toString() + field.getName()))
+					else if (!object_map.containsKey(state.toString() + field.getName()))
+					{
+
+						try
 						{
-
-							try
-							{
-								DynamicObjectManipulator objAccess = new DynamicObjectManipulator(field, state,
-								dynamic);
-								object_map.put(state.toString() + field.getName(), objAccess);
-							} catch (Exception badField)
-							{
-								badField.printStackTrace();
-							}
+							DynamicObjectManipulator objAccess = new DynamicObjectManipulator(field, state, dynamic);
+							object_map.put(state.toString() + field.getName(), objAccess);
+						} catch (Exception badField)
+						{
+							badField.printStackTrace();
 						}
 					}
 				}
+			} catch (Exception e)
+			{
 
 			}
-		} catch (Exception e)// | IllegalAccessException e)
-		{
-			e.printStackTrace();
-
-			initializeMap(object_map, state, dynamic);
 		}
+
+		// initializeMap(object_map, state, dynamic);
 	}
 
 	private static DynamicObjectManipulator[] initializeObjectAccessVector(
