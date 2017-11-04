@@ -80,28 +80,4 @@ compile group: 'org.controlsfx', name: 'controlsfx', version: '8.0.5'
     
 }
 
-weaveClasses.dependsOn compileJava
-classes.dependsOn weaveClasses
-jar {
-
-    archiveName = "HSECoreDev.jar"
-
-    from {
-
-        configurations.runtime.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-
-    manifest {
-        attributes 'Main-Class': 'edu.ucsc.cross.hse.models.roomtemp.ControlledTempSimulator'
-
-    }
-
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA, log4j.properties'
-}
 
