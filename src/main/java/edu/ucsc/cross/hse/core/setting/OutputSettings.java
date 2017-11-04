@@ -53,7 +53,7 @@ public class OutputSettings
 	 */
 	public OutputSettings()
 	{
-		dataPointInterval = .05;
+		dataPointInterval = .1;
 		saveChartsToFile = true;
 		outputDirectory = "output";
 		saveEnvironmentToFile = false;

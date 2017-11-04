@@ -183,7 +183,7 @@ public class ComputationMonitor
 			return stopTime;
 		} catch (Exception e)
 		{
-			manager.getDataManager().removePreviousVals(manager.getExecutionContent().getSimulationTime(), true);
+			manager.getDataManager().revertToLastStoredValue(manager.getExecutionContent().getSimulationTime());
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
@@ -198,7 +198,6 @@ public class ComputationMonitor
 				return recursiveIntegrator(recursion_level + 1, end_time);
 			} else
 			{
-				// System.out.println("wtf");
 				return manager.getExecutionContent().getHybridSimTime().getTime();
 			}
 

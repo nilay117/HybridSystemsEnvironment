@@ -165,7 +165,7 @@ public class ExecutionOperator
 	{
 
 		jumpEvaluator.setRunning(false);
-		Console.printInfoStatus(this, true);
+		// Console.printInfoStatus(this, true);
 		Console.info("Environment Stopped");
 	}
 

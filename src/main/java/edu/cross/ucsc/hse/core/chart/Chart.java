@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import org.jfree.chart.ChartColor;
 
 public class Chart
 {
@@ -317,8 +318,8 @@ public class Chart
 
 	private ArrayList<Paint> defaultSeriesColors()
 	{
-		return new ArrayList<Paint>(Arrays.asList(new Color[]
-		{ Color.RED, Color.BLUE, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.YELLOW }));
+
+		return new ArrayList<Paint>(Arrays.asList(ChartColor.createDefaultPaintArray()));
 	}
 
 	public Paint getSeriesColor(Integer index)

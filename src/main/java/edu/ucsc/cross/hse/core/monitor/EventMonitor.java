@@ -61,7 +61,7 @@ public class EventMonitor implements EventHandler
 	public double g(double t, double[] y)
 	{
 		Console.printInfoStatus(manager);
-		// manager.getDataManager().gatherData(t, y, getCheckJumpStatus());
+		manager.getDataManager().gatherData(t, y, getCheckJumpStatus());
 		return getFlag();
 	}
 
@@ -100,11 +100,10 @@ public class EventMonitor implements EventHandler
 
 	private void executeJumps(double t, double[] y)
 	{
-		manager.getSystemControl().applyDynamics(true); // execute all jumps
-		manager.getDataManager().gatherData(t, y, JumpStatus.JUMP_OCCURRED);
-		if (manager.getSystemControl().checkDomain(true))
+		while (manager.getSystemControl().checkDomain(true))
 		{
-			executeJumps(t, y);
+			manager.getSystemControl().applyDynamics(true); // execute all jumps
+			manager.getDataManager().gatherData(t, y, JumpStatus.JUMP_OCCURRED);
 		}
 	}
 

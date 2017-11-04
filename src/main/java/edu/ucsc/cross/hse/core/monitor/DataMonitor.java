@@ -51,30 +51,35 @@ public class DataMonitor
 
 	private void updateData(Double time, JumpStatus jump_status)
 	{
-		removePreviousVals(time, false);
-		if (jump_status.equals(JumpStatus.JUMP_DETECTED) || jump_status.equals(JumpStatus.JUMP_OCCURRED))
+
+		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
 		{
 			storeNewData(time);
-		} else
+		} else if (jump_status.equals(JumpStatus.JUMP_DETECTED))
+		{
+			removePreviousVals(time);
+			storeNewData(time);
+		} else // if (jump_status.equals(JumpStatus.APPROACHING_JUMP) || )
 		{
 			if (time > (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
 			{
+				removePreviousVals(time);
 				storeNewData(time);
 			}
 
 		}
+
 	}
 
 	private void updateTime(Double time, JumpStatus jump_status)
 	{
 		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
 		{
-			manager.getExecutionContent().updateSimulationTime(
-			new HybridTime(time, manager.getExecutionContent().getHybridSimTime().getJumps() + 1));
+			manager.getExecutionContent().updateSimulationTime(time, 1);
+
 		} else
 		{
-			manager.getExecutionContent()
-			.updateSimulationTime(new HybridTime(time, manager.getExecutionContent().getHybridSimTime().getJumps()));
+			manager.getExecutionContent().updateSimulationTime(time);
 		}
 	}
 
@@ -104,31 +109,33 @@ public class DataMonitor
 		return values;
 	}
 
-	public void removePreviousVals(Double time, boolean err)
+	public void removePreviousVals(Double time)
 	{
 		try
 		{
-			while (((lastTime() >= time) && err) || ((lastTime() > time) && !err))
+			if (lastTime() > 0.0)
 			{
-				try
+				while (lastTime() >= time)
 				{
-					removeLastValue();
-				} catch (Exception removeLastValueFail)
-				{
+					try
+					{
+						removeLastValue();
+					} catch (Exception removeLastValueFail)
+					{
+						removeLastValueFail.printStackTrace();
+					}
 				}
-			}
-			if (err)
-			{
-				revertToLastStoredValue();
 			}
 
 		} catch (Exception removeValsFail)
 		{
+			removeValsFail.printStackTrace();
 		}
 	}
 
-	private void revertToLastStoredValue()
+	public void revertToLastStoredValue(Double time)
 	{
+		removePreviousVals(time);
 		manager.getExecutionContent().readStateValues(getLastValueArray());
 		manager.getExecutionContent().updateValueVector(null);
 		manager.getExecutionContent().updateSimulationTime(lastTime());
