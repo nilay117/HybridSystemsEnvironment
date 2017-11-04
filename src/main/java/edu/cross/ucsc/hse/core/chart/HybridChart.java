@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Set;
 import org.jfree.chart.ChartColor;
 
-public class Chart
+public class HybridChart
 {
 
 	// Constants
@@ -50,10 +50,6 @@ public class Chart
 	private ArrayList<Paint> seriesColors = this.defaultSeriesColors();
 	private ArrayList<Stroke> seriesStrokes = new ArrayList<Stroke>();
 
-	// User defined labels (in development)
-	// private Integer[][] labels;
-	// private HashMap<Integer, FreeLabel> extraLabels;
-
 	public String getMainTitle()
 	{
 		return mainTitle;
@@ -71,7 +67,7 @@ public class Chart
 		}
 	}
 
-	public Chart(Double width, Double height)
+	public HybridChart(Double width, Double height)
 	{
 		subPlots = new HashMap<Integer, SubChart>();
 		fonts = LabelType.getDefaultMap();
@@ -237,10 +233,6 @@ public class Chart
 
 	}
 
-	// public void plot(Environment envi)
-	// {
-	// ChartView pv = new ChartView(envi, this, TaskManager.createStage());
-	// }
 	public void plot(Environment envi)
 	{
 		new ChartView(envi, this, TaskManager.createStage());
@@ -332,35 +324,6 @@ public class Chart
 	{
 		seriesColors = colors;
 	}
-	// public Double getHeightChange(Integer chart_index)
-	// {
-	// adjustLabelGrid();
-	// Double off = 0.0;
-	// Double[] offset = computeHeightOffsets();
-	// for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-	// {
-	//
-	// boolean includeRow = false;
-	// for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-	// {
-	//
-	// if ((grid[rowIndex][colIndex].equals(chart_index)))
-	// {
-	// includeRow = true;
-	// }
-	// }
-	// if (includeRow)
-	// {
-	// if (offset[colIndex] > off)
-	// {
-	// off = offset[colIndex];
-	// }
-	// }
-	//
-	// }
-	// return off;
-	//
-	// }
 
 	public ArrayList<Stroke> getSeriesStrokes()
 	{
@@ -372,6 +335,9 @@ public class Chart
 		this.seriesStrokes = seriesStrokes;
 	}
 
+	// User defined labels (in development)
+	// private Integer[][] labels;
+	// private HashMap<Integer, FreeLabel> extraLabels;
 	// public Double getHeightOffset(Integer chart_index)
 	// {
 	// adjustLabelGrid();
@@ -512,5 +478,33 @@ public class Chart
 	// }
 	// return charts;
 	// }
-
+	// public Double getHeightChange(Integer chart_index)
+	// {
+	// adjustLabelGrid();
+	// Double off = 0.0;
+	// Double[] offset = computeHeightOffsets();
+	// for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
+	// {
+	//
+	// boolean includeRow = false;
+	// for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
+	// {
+	//
+	// if ((grid[rowIndex][colIndex].equals(chart_index)))
+	// {
+	// includeRow = true;
+	// }
+	// }
+	// if (includeRow)
+	// {
+	// if (offset[colIndex] > off)
+	// {
+	// off = offset[colIndex];
+	// }
+	// }
+	//
+	// }
+	// return off;
+	//
+	// }
 }

@@ -3,8 +3,9 @@ package edu.ucsc.cross.hse.core.container;
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
-import edu.cross.ucsc.hse.core.chart.Chart;
 import edu.cross.ucsc.hse.core.chart.ChartView;
+import edu.cross.ucsc.hse.core.chart.HybridChart;
+import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
@@ -29,38 +30,38 @@ public class EnvironmentOutputs
 	}
 
 	// Mapping of all plots to be generated and output file specifications for plots that will be saved to a file
-	private HashMap<FileSpecifications<ImageFormat>, Chart> plots;
+	private HashMap<FileSpecifications<ImageFormat>, HybridChart> plots;
 
 	public EnvironmentOutputs(Environment environment)
 	{
 		environments.put(this, environment);
-		plots = new HashMap<FileSpecifications<ImageFormat>, Chart>();
+		plots = new HashMap<FileSpecifications<ImageFormat>, HybridChart>();
 	}
 
-	public void addPlot(Chart... plot)
+	public void addPlot(HybridChart... plot)
 	{
-		for (Chart plo : plot)
+		for (HybridChart plo : plot)
 		{
 			plots.put(new FileSpecifications<ImageFormat>(), plo);
 		}
 	}
 
-	public void addPlot(Chart plot, FileSpecifications<ImageFormat> specs)
+	public void addPlot(HybridChart plot, FileSpecifications<ImageFormat> specs)
 	{
 		plots.put(specs, plot);
 	}
 
-	public void addPlot(Chart plot, String path, ImageFormat format)
+	public void addPlot(HybridChart plot, String path, ImageFormat format)
 	{
 		plots.put(format.createFileSpecs(path), plot);
 	}
 
-	public ArrayList<Chart> getPlots()
+	public ArrayList<HybridChart> getPlots()
 	{
-		return new ArrayList<Chart>(plots.values());
+		return new ArrayList<HybridChart>(plots.values());
 	}
 
-	HashMap<FileSpecifications<ImageFormat>, Chart> getPlotsWithFileSpecs(boolean appended)
+	HashMap<FileSpecifications<ImageFormat>, HybridChart> getPlotsWithFileSpecs(boolean appended)
 	{
 		if (appended)
 		{
@@ -93,12 +94,14 @@ public class EnvironmentOutputs
 
 	public void generateOutputs(Environment envi)
 	{
+		initializeDataNames(envi);
 		generatePlots(envi);
 		generateFiles(envi);
 	}
 
 	public void generateOutputs(Environment envi, boolean create_files)
 	{
+		initializeDataNames(envi);
 		if (create_files)
 		{
 			generateFiles(envi);
@@ -127,12 +130,12 @@ public class EnvironmentOutputs
 	public void generatePlots(Environment envi, boolean create_files)
 	{
 
-		HashMap<FileSpecifications<ImageFormat>, Chart> plotz = envi.getManager().getOutputs()
+		HashMap<FileSpecifications<ImageFormat>, HybridChart> plotz = envi.getManager().getOutputs()
 		.getPlotsWithFileSpecs(true);
 		int append = 1;
 		for (FileSpecifications<ImageFormat> specs : plotz.keySet())
 		{
-			Chart plot = plotz.get(specs);
+			HybridChart plot = plotz.get(specs);
 			if (create_files)
 			{
 				if (specs.isNullFile())
@@ -175,6 +178,14 @@ public class EnvironmentOutputs
 			File spe = specs.getLocation(true);
 			env.save(spe, true);
 			Console.info("Environment saved: " + spe.getAbsolutePath());
+		}
+	}
+
+	private void initializeDataNames(Environment env)
+	{
+		for (DataSeries<?> series : env.getData().getGlobalStateData())
+		{
+			env.getData().getLegendLabel(series);
 		}
 	}
 

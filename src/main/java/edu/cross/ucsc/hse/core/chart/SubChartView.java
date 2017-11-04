@@ -30,29 +30,30 @@ public class SubChartView
 	private BorderPane pane;
 	private EnvironmentData data;
 	public ChartPanel panel;
-	private Chart chartProps;
+	private HybridChart chartProps;
 	private Integer chartIndex;
 	ChartView ch;
 	// Content
 
-	SubChartView(BorderPane pane, Chart chart_props, Integer chart_index, ChartView ch)
+	SubChartView(BorderPane pane, HybridChart chart_props, Integer chart_index, ChartView ch)
 	{
 		initialize(null, pane, chart_props, null, chart_index, ch);
 	}
 
-	SubChartView(EnvironmentData data, BorderPane pane, Chart chart_props, Integer chart_index, ChartView ch)
+	SubChartView(EnvironmentData data, BorderPane pane, HybridChart chart_props, Integer chart_index, ChartView ch)
 	{
 		initialize(data, pane, chart_props, null, chart_index, ch);
 	}
 
-	SubChartView(EnvironmentData data, BorderPane pane, String y, Chart chart_props, Integer chart_index, ChartView ch)
+	SubChartView(EnvironmentData data, BorderPane pane, String y, HybridChart chart_props, Integer chart_index,
+	ChartView ch)
 	{
 		initialize(data, pane, chart_props, y, chart_index, ch);
 
 	}
 
-	private void initialize(EnvironmentData data, BorderPane pane, Chart chart_props, String y, Integer chart_index,
-	ChartView ch)
+	private void initialize(EnvironmentData data, BorderPane pane, HybridChart chart_props, String y,
+	Integer chart_index, ChartView ch)
 	{
 		this.ch = ch;
 		// props = new ChartProperties();
@@ -91,7 +92,7 @@ public class SubChartView
 		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
 		chart.setAntiAlias(false);
 		HybridDataRenderer renderer = new HybridDataRenderer(true, false, sub().getxDataSelection() != null, data,
-		chartProps, ch.getElementOrder());// true,
+		chartProps);// true,
 		// false);
 		chart.getXYPlot().setRenderer(renderer);
 		if (sub().getxDataSelection() == null)
@@ -133,7 +134,7 @@ public class SubChartView
 			}
 			if (matchesSelection)
 			{
-				String label = this.data.getStates().get(data.getParentID());// getLegendLabel(data, names);
+				String label = this.data.getLegendLabel(data);// getLegendLabel(data, names);
 				names.add(label);
 				XYSeries s1 = new XYSeries(label, false);
 				s1.setDescription(label);

@@ -60,7 +60,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.EntityCollection;
@@ -163,8 +162,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	private boolean drawSeriesLineAsPath;
 
 	private EnvironmentData data;
-	private Chart chart;
-	private ArrayList<String> elementOrder;
+	private HybridChart chart;
 
 	/**
 	 * 
@@ -176,11 +174,9 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 * @param shapes
 	 *            shapes visible?
 	 */
-	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data, Chart chart,
-	ArrayList<String> order)
+	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data, HybridChart chart)
 	{
 
-		this.elementOrder = order;
 		this.data = data;
 		this.chart = chart;
 		setupStrokes();
@@ -208,7 +204,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	private void setupStrokes()
 	{
 		this.setBaseStroke(chart.getFlowStroke());
-		for (int i = 0; i < this.elementOrder.size(); i++)
+		for (int i = 0; i < this.data.getNameOrder().size(); i++)
 		{
 			if (chart.getSeriesStrokes().size() > i)
 			{
@@ -1053,10 +1049,9 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		{
 			return;
 		}
-		// System.out
-		// .println(data.getStoreTimes().get(item).getJumps() + " x0 " + x0 + " x1" + x1 + " y0 " + y0 + " y1" + y1);
-		// if (x1 != x0)
-		if (data.getStoreTimes().get(item).getJumps() == data.getStoreTimes().get(item - 1).getJumps())
+
+		if (data.getGlobalStateData().get(series).getStoreTimes().get(item).getJumps()
+		.equals(data.getGlobalStateData().get(series).getStoreTimes().get(item - 1).getJumps()))
 		{
 
 			Stroke stroke1 = chart.getFlowStroke();// new BasicStroke(1.5f);// , 2, 2, 10);
@@ -1120,11 +1115,11 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	protected void drawFirstPassShape(Graphics2D g2, int pass, int series, int item, Shape shape, XYDataset dataset)
 	{
 		// g2.setStroke(getItemStroke(series, item));
-		if (this.elementOrder != null)
+		if (this.data.getNameOrder() != null)
 		{
 			String st = dataset.getSeriesKey(series).toString();
 			// System.out.println(st + " " + elementOrder.indexOf(st));
-			g2.setPaint(chart.getSeriesColor(elementOrder.indexOf(st)));// , item));
+			g2.setPaint(chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));// , item));
 		} else
 		{
 			g2.setPaint(getItemPaint(series, item));
@@ -1377,7 +1372,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		}
 		String st = dataset.getSeriesKey(series).toString();
 		// System.out.println(st + " " + elementOrder.indexOf(st));
-		Paint paint = (chart.getSeriesColor(elementOrder.indexOf(st)));
+		Paint paint = (chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));
 		boolean shapeIsVisible = getItemShapeVisible(series, 0);
 		Shape shape = lookupLegendShape(series);
 		boolean shapeIsFilled = getItemShapeFilled(series, 0);

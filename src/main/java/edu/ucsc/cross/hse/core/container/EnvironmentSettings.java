@@ -1,6 +1,7 @@
 package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.setting.ComputationSettings;
+import edu.ucsc.cross.hse.core.setting.FunctionalitySettings;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import edu.ucsc.cross.hse.core.setting.OutputSettings;
 
@@ -10,6 +11,7 @@ public class EnvironmentSettings
 	private ComputationSettings environmentSettings;
 	private OutputSettings dataSettings;
 	private LogSettings logging;
+	private FunctionalitySettings functionalitySettings;
 
 	public void setDataSettings(OutputSettings dataSettings)
 	{
@@ -21,6 +23,7 @@ public class EnvironmentSettings
 		loadExecutionSettings(new ComputationSettings());
 		dataSettings = new OutputSettings();
 		logging = new LogSettings();
+		functionalitySettings = new FunctionalitySettings();
 	}
 
 	public ComputationSettings getExecutionSettings()
@@ -64,5 +67,15 @@ public class EnvironmentSettings
 		// }
 		// }
 		this.environmentSettings = environment_settings;
+	}
+
+	public FunctionalitySettings getFunctionalitySettings()
+	{
+		return functionalitySettings;
+	}
+
+	public void loadFunctionalitySettings(FunctionalitySettings functionalitySettings)
+	{
+		this.functionalitySettings = functionalitySettings;
 	}
 }

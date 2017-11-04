@@ -8,7 +8,6 @@ import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
 import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
 import de.erichseifert.vectorgraphics2d.svg.SVGProcessor;
 import de.erichseifert.vectorgraphics2d.util.PageSize;
-import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
 import java.awt.BorderLayout;
@@ -21,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -56,9 +54,8 @@ public class ChartView
 	private BorderPane mainPane;
 	private FileSpecifications<ImageFormat> output;
 	private ArrayList<JPanel> panels;
-	private Chart plot;
+	private HybridChart plot;
 	private Pane plotPane;
-	private ArrayList<String> elementOrder;
 	private ArrayList<SubChartView> plots;
 
 	public void captureGraphic(File f, ImageFormat format)
@@ -88,45 +85,11 @@ public class ChartView
 
 	public ArrayList<String> getElementOrder()
 	{
-		return elementOrder;
-	}
-
-	private ArrayList<String> initializeElementOrder()
-	{
-		ArrayList<String> dataNames = new ArrayList<String>();
-		for (DataSeries<Double> dataSeries : env.getData().getGlobalStateData())
-		{
-			dataNames.add(getLegendLabel(dataSeries, dataNames));
-		}
-		Collections.sort(dataNames);
-		return dataNames;
-
-	}
-
-	public String getLegendLabel(DataSeries<Double> data, ArrayList<String> names)
-	{
-
-		String label = data.getParentName();
-		if (this.env.getData().getStates().containsKey(data.getParentID()))
-		{
-			return this.env.getData().getStates().get(data.getParentID());
-		}
-		String labelBase = label;
-		int append = 1;
-		label = labelBase + "(" + append + ")";
-		while (names.contains(label))
-		{
-			append++;
-			label = labelBase + "(" + append + ")";
-		}
-		this.env.getData().getStates().put(data.getParentID(), label);
-		return label;
-
+		return env.getData().getNameOrder();
 	}
 
 	public void generatePlots()
 	{
-		elementOrder = initializeElementOrder();
 		SubChartView pf = null;
 		HashMap<Integer, Integer[][]> dimensions = plot.getChartLocations();
 		for (Integer paneIndex : dimensions.keySet())
@@ -262,7 +225,8 @@ public class ChartView
 			protected Integer call() throws Exception
 			{
 				final BooleanProperty success = new SimpleBooleanProperty(false);
-				Long attemptTime = System.currentTimeMillis() + 10000;
+				Long attemptTime = System.currentTimeMillis()
+				+ env.getSettings().getFunctionalitySettings().outputImageFileAttemptInterval;
 				while (!success.getValue())
 				{
 					if (attemptTime <= System.currentTimeMillis())
@@ -276,14 +240,15 @@ public class ChartView
 
 						} catch (Exception e)
 						{
-							e.printStackTrace();
+							// e.printStackTrace();
 							// Console.error("Unable to create output plot: " + output.toString());
 						}
 						// your code here
 
 						// }
 						// }, (int) 500, (int) 500);
-						attemptTime = System.currentTimeMillis() + 10000;
+						attemptTime = System.currentTimeMillis()
+						+ env.getSettings().getFunctionalitySettings().outputImageFileAttemptInterval;
 					}
 				}
 				return 0;
@@ -338,7 +303,7 @@ public class ChartView
 		(double) maxY, label);
 	}
 
-	private void initialize(Environment env, Chart plot, Stage stage)
+	private void initialize(Environment env, HybridChart plot, Stage stage)
 	{
 		try
 		{
@@ -439,7 +404,7 @@ public class ChartView
 			} catch (Exception e)
 			{
 
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 		for (Integer p = 0; p < panels.size(); p++)
@@ -500,14 +465,14 @@ public class ChartView
 		});
 	}
 
-	public ChartView(Environment env, Chart plot, Stage stage)
+	public ChartView(Environment env, HybridChart plot, Stage stage)
 	{
 
 		initialize(env, plot, stage);
 		setupStage(stage, true);
 	}
 
-	public ChartView(Environment env, Chart plot, Stage stage, FileSpecifications<ImageFormat> output)
+	public ChartView(Environment env, HybridChart plot, Stage stage, FileSpecifications<ImageFormat> output)
 	{
 		closeablePlots++;
 		Console.info("Chart saved: " + output.getLocation(false) + output.getFormat().extension);

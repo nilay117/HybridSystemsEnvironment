@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.environment;
 import com.be3short.data.cloning.ObjectCloner;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
-import edu.cross.ucsc.hse.core.chart.Chart;
+import edu.cross.ucsc.hse.core.chart.HybridChart;
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
@@ -33,19 +33,19 @@ public class Environment
 
 	final EnvironmentSettings settings;
 
-	public void add(Chart... plot)
+	public void add(HybridChart... plot)
 	{
 
 		outputs.addPlot(plot);
 
 	}
 
-	public void add(Chart plot, FileSpecifications<ImageFormat> specs)
+	public void add(HybridChart plot, FileSpecifications<ImageFormat> specs)
 	{
 		outputs.addPlot(plot, specs);
 	}
 
-	public void add(Chart plot, String path, ImageFormat format)
+	public void add(HybridChart plot, String path, ImageFormat format)
 	{
 		outputs.addPlot(plot, path, format);
 	}
@@ -200,6 +200,7 @@ public class Environment
 	public static Environment loadFile(File file)
 	{
 		Environment env = EnvironmentFile.readContentFromFile(file, EnvironmentFile.ENVIRONMENT);
+		env.getManager();
 		return env;
 	}
 
