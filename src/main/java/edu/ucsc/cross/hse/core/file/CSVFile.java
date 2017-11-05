@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class CSVFile
 {
@@ -29,9 +30,14 @@ public class CSVFile
 
 	public void createCSVOutput(File file, boolean skip_prepare)
 	{
+		StringWriter writer = null;
 		if (!skip_prepare)
 		{
 			prepareDynamicOutput();
+		} else
+		{
+			writer = new StringWriter();
+			writers.put(this, new PrintWriter(writer));
 		}
 		fileOut().println(getDynamicHeader());
 		fileOut().flush();
@@ -41,17 +47,22 @@ public class CSVFile
 			HybridTime time = manager().getDataCollector().getStoreTimes().get(index);
 			for (DataSeries<?> data : manager().getDataCollector().getGlobalStateData())
 			{
+
 				line += "," + data.getStoredData(time).toString();
 			}
 			fileOut().println(line);
 			fileOut().flush();
+		}
+		if (writer != null)
+		{
+			contents = writer.toString();
 		}
 		fileOut().close();
 	}
 
 	public EnvironmentData extractDataFromContents()
 	{
-		String lines[] = contents.split("\n");
+		String lines[] = contents.split(Pattern.quote("\n"));
 		String line = lines[0];
 		EnvironmentData envData = getEnvDataWithSeries(line);
 		int i = 1;
@@ -64,11 +75,12 @@ public class CSVFile
 
 	public void storeDataToContents()
 	{
-		StringWriter out = new StringWriter();
-		writers.put(this, new PrintWriter(out));
+		contents = "";
+		// StringWriter out = new StringWriter();
+		// writers.put(this, new PrintWriter(out));
 		managers.put(this, manager());
 		createCSVOutput(null, true);
-		contents = out.toString();
+		// contents += out.toString();
 		writers.get(this).close();
 	}
 
@@ -91,7 +103,7 @@ public class CSVFile
 	private String getDynamicHeader()
 	{
 		String header = "dataIndex,simulationTime,jumpIndex";
-		for (Integer objIndex = 0; objIndex < manager().getContents().getSystems().size(); objIndex++)
+		for (Integer objIndex = 0; objIndex < manager().getDataCollector().getGlobalStateData().size(); objIndex++)
 		{
 			DataSeries<?> data = manager().getDataCollector().getGlobalStateData().get(objIndex);
 			header += "," + data.getHeader();
@@ -147,7 +159,8 @@ public class CSVFile
 	public CSVFile(ExecutionOperator manager, Boolean store_file_internally)
 	{
 		managers.put(this, manager);
-		// writers.get(this).close();
+		createCSVOutput(null, true);
+		// prepareDynamicOutput(); // writers.get(this).close();
 	}
 
 	private static HashMap<CSVFile, ExecutionOperator> managers = new HashMap<CSVFile, ExecutionOperator>();
@@ -190,7 +203,7 @@ public class CSVFile
 		} catch (FileNotFoundException e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return input;
 	}
@@ -200,10 +213,17 @@ public class CSVFile
 		String[] split = header.split(",");
 		HybridTime time = new HybridTime(Double.parseDouble(split[1]), Integer.parseInt(split[2]));
 		data.getStoreTimes().add(time);
+
 		for (Integer i = 3; i < split.length; i++)
 		{
-			DataMonitor.storeDataGeneral(data.getGlobalStateData().get(i - 3).getAllStoredData(),
-			StringParser.parseString(split[i], data.getGlobalStateData().get(i - 3).getDataClass()));
+			try
+			{
+				DataMonitor.storeDataGeneral(data.getGlobalStateData().get(i - 3).getAllStoredData(),
+				StringParser.parseString(split[i], data.getGlobalStateData().get(i - 3).getDataClass()));
+			} catch (Exception badIndex)
+			{
+				badIndex.printStackTrace();
+			}
 		}
 	}
 

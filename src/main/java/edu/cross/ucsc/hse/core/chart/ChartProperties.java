@@ -1,6 +1,7 @@
 package edu.cross.ucsc.hse.core.chart;
 
 import com.be3short.io.format.ImageFormat;
+import com.be3short.io.xml.XMLParser;
 import com.be3short.obj.modification.ObjectCloner;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
@@ -19,29 +20,29 @@ import org.jfree.chart.ChartColor;
 public class ChartProperties
 {
 
-	// Default Line Rendering Configuration
-	private Stroke flowStroke;
-	// Font Configuration
+	// Labeling
+	private String mainTitle;
 	private HashMap<LabelType, LabelProperties> fonts;
 
-	// Layout Configuration
-	private Integer[][] grid;
+	// Layout
 	private Double height;
-	private Stroke jumpStroke;
-	private String mainTitle;
+	private Double width;
 
-	// General Series Rendering Configuration
-	private ArrayList<Paint> seriesColors = this.defaultSeriesColors();
+	// Sub Plot Configuration
+	private Integer[][] grid;
+	private HashMap<Integer, SubChartProperties> subPlots;
 
-	private ArrayList<Stroke> seriesStrokes = new ArrayList<Stroke>();
+	// Data Rendering Configuration
+	private Stroke flowStroke; // base flow stroke to be used whenever stroke is not specified
+	private Stroke jumpStroke;// base flow stroke to be used when stroke is not specified
+	private ArrayList<Paint> seriesColors; // collection of series colors used to render lines
+	private ArrayList<Stroke> seriesStrokes; // collection of series strokes used to render lines
+	private HashMap<String, ArrayList<Paint>> assignedColors;
+	private HashMap<String, ArrayList<Stroke>> assignedStrokes;
 
-	// Grid Configuration
+	// Chart Element Configuration
 	private boolean showXGridLines;
 	private boolean showYGridLines;
-
-	// Individual Chart Configuration
-	private HashMap<Integer, SubChart> subPlots;
-	private Double width;
 
 	public void addMainTitle(String main_title, Font title_font)
 	{
@@ -52,8 +53,33 @@ public class ChartProperties
 		}
 	}
 
+	public void assignColors(String label, Paint... colors)
+	{
+		if (!assignedColors.containsKey(label))
+		{
+			assignedColors.put(label, new ArrayList<Paint>());
+		}
+		for (Paint color : colors)
+		{
+			assignedColors.get(label).add(color);
+		}
+	}
+
+	public void assignStrokes(String label, Stroke... colors)
+	{
+		if (!assignedStrokes.containsKey(label))
+		{
+			assignedStrokes.put(label, new ArrayList<Stroke>());
+		}
+		for (Stroke color : colors)
+		{
+			assignedStrokes.get(label).add(color);
+		}
+	}
+
 	public void createChart(Environment envi)
 	{
+		System.out.println(XMLParser.serializeObject(envi.getData()));
 		new ChartView(envi.getData(), this, TaskManager.createStage());
 	}
 
@@ -77,24 +103,6 @@ public class ChartProperties
 	public Stroke getBaseJumpStroke()
 	{
 		return jumpStroke;
-	}
-
-	public HashMap<Integer, Integer[][]> getChartLocations()
-	{
-		HashMap<Integer, Integer[][]> charts = new HashMap<Integer, Integer[][]>();
-
-		for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-		{
-			for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-			{
-				if (!charts.containsKey(grid[rowIndex][colIndex]))
-				{
-					charts.put(grid[rowIndex][colIndex], clearNonGrid(grid, grid[rowIndex][colIndex]));
-				}
-			}
-
-		}
-		return charts;
 	}
 
 	public HashMap<LabelType, LabelProperties> getFonts()
@@ -222,7 +230,7 @@ public class ChartProperties
 		this.width = width;
 	}
 
-	public SubChart sub(Integer index)
+	public SubChartProperties sub(Integer index)
 	{
 		if (subPlots.containsKey(index))
 		{
@@ -230,7 +238,7 @@ public class ChartProperties
 		} else
 		{
 			Console.warn("sub plot " + index + " does not exist");
-			return new SubChart();
+			return new SubChartProperties();
 		}
 	}
 
@@ -257,214 +265,77 @@ public class ChartProperties
 		return new ArrayList<Paint>(Arrays.asList(ChartColor.createDefaultPaintArray()));
 	}
 
+	private void initialize(Double width, Double height)
+	{
+		seriesColors = this.defaultSeriesColors();
+		seriesStrokes = new ArrayList<Stroke>();
+
+		fonts = LabelType.getDefaultMap();
+
+		this.width = width;
+		this.height = height;
+
+		showXGridLines = true;
+		showYGridLines = true;
+
+		grid = new Integer[][]
+		{
+				{ 0 } };
+
+		float dash1[] =
+		{ 2.0f };
+
+		assignedColors = new HashMap<String, ArrayList<Paint>>();
+		assignedStrokes = new HashMap<String, ArrayList<Stroke>>();
+
+		jumpStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
+		flowStroke = new BasicStroke(1.5f);
+
+		subPlots = new HashMap<Integer, SubChartProperties>();
+		initializeSubPlots();
+	}
+
 	private void initializeSubPlots()
 	{
-		Set<Integer> subPlotIndexes = getChartLocations().keySet();
+		Set<Integer> subPlotIndexes = ChartOperations.getChartLocations(this).keySet();
 		for (Integer sub : subPlotIndexes)
 		{
 			if (!subPlots.containsKey(sub))
 			{
-				subPlots.put(sub, new SubChart());
+				subPlots.put(sub, new SubChartProperties());
 			}
 		}
 	}
 
 	public ChartProperties(Double width, Double height)
 	{
-		subPlots = new HashMap<Integer, SubChart>();
-		fonts = LabelType.getDefaultMap();
-		grid = new Integer[][]
-		{
-				{ 0 } };
-		// labels = new Integer[][]
-		// {
-		// { 0 } };
-		// extraLabels = new HashMap<Integer, FreeLabel>();
-		this.width = width;
-		this.height = height;
-		showXGridLines = true;
-		showYGridLines = true;
-		float dash1[] =
-		{ 2.0f };
+		initialize(width, height);
+	}
 
-		jumpStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
-		flowStroke = new BasicStroke(1.5f);
-		initializeSubPlots();
+	public static class ChartOperations
+	{
+
+		public static HashMap<Integer, Integer[][]> getChartLocations(ChartProperties properties)
+		{
+			HashMap<Integer, Integer[][]> charts = new HashMap<Integer, Integer[][]>();
+
+			for (int rowIndex = 0; rowIndex < properties.grid.length; rowIndex++)
+			{
+				for (int colIndex = 0; colIndex < properties.grid[0].length; colIndex++)
+				{
+					if (!charts.containsKey(properties.grid[rowIndex][colIndex]))
+					{
+						charts.put(properties.grid[rowIndex][colIndex],
+						properties.clearNonGrid(properties.grid, properties.grid[rowIndex][colIndex]));
+					}
+				}
+
+			}
+			return charts;
+		}
+
 	}
 
 	// Constants
 	public static final String EMPTY = " ";
-
-	// User defined labels (in development)
-	// private Integer[][] labels;
-	// private HashMap<Integer, FreeLabel> extraLabels;
-	// public Double getHeightOffset(Integer chart_index)
-	// {
-	// adjustLabelGrid();
-	// Double off = 0.0;
-	// Double[] offset = computeHeightOffsets();
-	// for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-	// {
-	//
-	// boolean includeRow = false;
-	// for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-	// {
-	//
-	// if ((grid[rowIndex][colIndex].equals(chart_index)))
-	// {
-	// if ()
-	// includeRow = true;
-	// }
-	// }
-	// if (includeRow)
-	// {
-	// if (offset[colIndex] > off)
-	// {
-	// off = offset[colIndex];
-	// }
-	// }
-	//
-	// }
-	// return off;
-	//
-	// }
-	//
-	// private Double[] computeHeightOffsets()
-	// {
-	// Double[] heightOffsets = new Double[grid[0].length];
-	//
-	// for (int i = 0; i < heightOffsets.length; i++)
-	// {
-	// heightOffsets[i] = 0.0;
-	// }
-	//
-	// for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-	// {
-	// for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-	// {
-	// if ((labels[rowIndex][colIndex] > 0))
-	// {
-	// try
-	// {
-	// System.out.println(labels[rowIndex][colIndex]);
-	// measureFont(extraLabels.get(labels[rowIndex][colIndex]).getFont());
-	// heightOffsets[colIndex] += measureFont(extraLabels.get(labels[rowIndex][colIndex]).getFont());
-	// } catch (Exception noLabel)
-	// {
-	// noLabel.printStackTrace();
-	// }
-	// }
-	// }
-	// }
-	// System.out.println(XMLParser.serializeObject(heightOffsets));
-	// return heightOffsets;
-	//
-	// }
-	// private void adjustLabelGrid()
-	// {
-	// Integer[][] newLabelGrid = (Integer[][]) ObjectCloner.xmlClone(grid);
-	// for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-	// {
-	// for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-	// {
-	// try
-	// {
-	// Integer label = labels[rowIndex][colIndex];
-	// newLabelGrid[rowIndex][colIndex] = label;
-	// } catch (Exception e)
-	// {
-	// newLabelGrid[rowIndex][colIndex] = 0;
-	// }
-	//
-	// }
-	//
-	// }
-	// labels = newLabelGrid;
-	// }
-	//
-	// public HashMap<Integer, FreeLabel> getExtraLabels()
-	// {
-	// return extraLabels;
-	// }
-	//
-	// public void addLabels(Integer[][] layout, FreeLabel[] labels)
-	// {
-	//
-	// this.labels = layout;
-	// for (Integer i = 0; i < labels.length; i++)
-	// {
-	// extraLabels.put(i + 1, labels[i]);
-	// }
-	// }
-	//
-	// public HashMap<Integer, Integer[][]> getLabelLocations()
-	// {
-	// HashMap<Integer, Integer[][]> charts = new HashMap<Integer, Integer[][]>();
-	//
-	// for (int rowIndex = 0; rowIndex < labels.length; rowIndex++)
-	// {
-	// for (int colIndex = 0; colIndex < labels[0].length; colIndex++)
-	// {
-	// if (labels[rowIndex][colIndex] > 0)
-	// {
-	// if (!charts.containsKey(labels[rowIndex][colIndex]))
-	// {
-	// charts.put(labels[rowIndex][colIndex], clearNonGrid(grid, grid[rowIndex][colIndex]));
-	// }
-	// }
-	// }
-	//
-	// }
-	// return charts;
-	// }
-	//
-	// public HashMap<Integer, Integer> getLabelCharts()
-	// {
-	// HashMap<Integer, Integer> charts = new HashMap<Integer, Integer>();
-	//
-	// for (int rowIndex = 0; rowIndex < labels.length; rowIndex++)
-	// {
-	// for (int colIndex = 0; colIndex < labels[0].length; colIndex++)
-	// {
-	// if (labels[rowIndex][colIndex] > 0)
-	// {
-	// if (!charts.containsKey(labels[rowIndex][colIndex]))
-	// {
-	// charts.put(labels[rowIndex][colIndex], grid[rowIndex][colIndex]);
-	// }
-	// }
-	// }
-	//
-	// }
-	// return charts;
-	// }
-	// public Double getHeightChange(Integer chart_index)
-	// {
-	// adjustLabelGrid();
-	// Double off = 0.0;
-	// Double[] offset = computeHeightOffsets();
-	// for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-	// {
-	//
-	// boolean includeRow = false;
-	// for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-	// {
-	//
-	// if ((grid[rowIndex][colIndex].equals(chart_index)))
-	// {
-	// includeRow = true;
-	// }
-	// }
-	// if (includeRow)
-	// {
-	// if (offset[colIndex] > off)
-	// {
-	// off = offset[colIndex];
-	// }
-	// }
-	//
-	// }
-	// return off;
-	//
-	// }
 }

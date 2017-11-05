@@ -21,7 +21,7 @@ public class EnvironmentData
 	public ArrayList<String> getLabelOrder()
 	{
 		ArrayList<String> nameOrder = new ArrayList<String>();
-		if (nameOrder.size() == 0)
+		// if (nameOrder.size() == 0)
 		{
 			for (DataSeries<?> dataSeries : getGlobalStateData())
 			{
@@ -68,9 +68,9 @@ public class EnvironmentData
 	{
 
 		String label = data.getParentName();
-		if (getObjectLabels().containsKey(data.getParentID()))
+		if (getObjectLabels().containsKey(data.getParentID() + data.getElementName()))
 		{
-			return getObjectLabels().get(data.getParentID());
+			return getObjectLabels().get(data.getParentID() + data.getElementName());
 		}
 		String labelBase = label;
 		int append = 1;
@@ -80,7 +80,7 @@ public class EnvironmentData
 			append++;
 			label = labelBase + "(" + append + ")";
 		}
-		getObjectLabels().put(data.getParentID(), label);
+		getObjectLabels().put(data.getParentID() + data.getElementName(), label);
 		return label;
 	}
 

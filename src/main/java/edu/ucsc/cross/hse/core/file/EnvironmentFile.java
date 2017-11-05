@@ -173,7 +173,7 @@ public class EnvironmentFile implements FileFormat
 						CSVFile f = new CSVFile(env.getManager(), true);
 						addContent(f);//// add(new CSVFile(env.getManager(), true));
 						dat = new EnvironmentData(env.getData().getStateNames());
-						env.loadData(null);
+						// env.loadData(null);
 						// dat.load(env.getData().getStoreTimes(), env.getData().getGlobalStateData());
 						// env.loadData(null);
 						// env.getData().load(null, null);
@@ -184,13 +184,14 @@ public class EnvironmentFile implements FileFormat
 					// env.getData().load(null, null);
 					// storeContent(env.getData());
 				}
+				env.loadData(null);
 				// env.loadData(null);
 			}
 			storeContent(dat);
 
 			storeContent(env.getContents());
 			storeContent(env.getSettings());
-			// if (env.getContents().getSystems().size() > 0)
+			if (env.getContents().getSystems().size() > 0)
 			{
 				storeContent(
 				env.getContents().getSystems().toArray(new HybridSystem[env.getContents().getSystems().size()]));
@@ -278,20 +279,18 @@ public class EnvironmentFile implements FileFormat
 						dat = inputFile.getContent(CSVFile.class).extractDataFromContents();
 					} catch (Exception e)
 					{
+						e.printStackTrace();
 						dat = new EnvironmentData();
 					}
 					if (content_type.equals(Environment.class))
 					{
-						System.out.println(XMLParser.serializeObject(dat));
+						// System.out.println(XMLParser.serializeObject(dat));
 						Environment env = inputFile.getContent(Environment.class);
-						if (inputFile.getContent(EnvironmentData.class) != null)
+						// if (inputFile.getContent(EnvironmentData.class) != null)
 						{
 							env.loadData(inputFile.getContent(EnvironmentData.class));
 
 							env.getData().load(dat);
-						} else
-						{
-							env.loadData(dat);
 						}
 						inputContent = (T) env;
 

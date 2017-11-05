@@ -87,13 +87,14 @@ public class ChartView
 	{
 		try
 		{
+			env.getLabelOrder();
 			plots.clear();
 		} catch (Exception e)
 		{
 
 		}
 		SubChartView pf = null;
-		HashMap<Integer, Integer[][]> dimensions = plot.getChartLocations();
+		HashMap<Integer, Integer[][]> dimensions = ChartProperties.ChartOperations.getChartLocations(plot);
 		for (Integer paneIndex : dimensions.keySet())
 		{
 			pf = null;
@@ -288,7 +289,7 @@ public class ChartView
 
 						} catch (Exception e)
 						{
-							e.printStackTrace();
+							// e.printStackTrace();
 							// Console.error("Unable to create output plot: " + output.toString());
 						}
 						// your code here
@@ -328,13 +329,13 @@ public class ChartView
 			addOnPane = new BorderPane();
 			addOnPane.setCenter(plotPane);
 			// addOnPane.setBackground(null);
+			setupSave();
 			if (plot.getMainTitle() != null)
 			{
 				createSwingContent();
 			}
 			renderContents();
 
-			setupSave();
 			// setupMenus();
 			ScrollPane scroller = new ScrollPane();
 			scroller.setVbarPolicy(ScrollBarPolicy.NEVER);

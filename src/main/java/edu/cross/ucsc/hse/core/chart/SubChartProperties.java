@@ -1,6 +1,6 @@
 package edu.cross.ucsc.hse.core.chart;
 
-public class SubChart
+public class SubChartProperties
 {
 
 	// Visibility
@@ -61,6 +61,7 @@ public class SubChart
 
 	public void setAxisSelections(String x_selection, String y_selection)
 	{
+
 		xDataSelection = x_selection;
 		yDataSelection = y_selection;
 	}
@@ -95,7 +96,7 @@ public class SubChart
 		this.yDataSelection = yDataSelection;
 	}
 
-	SubChart()
+	SubChartProperties()
 	{
 
 	}

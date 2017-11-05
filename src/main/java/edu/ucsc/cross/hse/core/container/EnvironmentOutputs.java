@@ -169,6 +169,7 @@ public class EnvironmentOutputs
 			CSVFile csv = new CSVFile(env.getManager());
 			csv.createCSVOutput(spe);
 		}
+		env.loadData(data);
 	}
 
 	private <F extends FileFormat, T> HashMap<FileSpecifications<F>, T> getAppendedFiles(

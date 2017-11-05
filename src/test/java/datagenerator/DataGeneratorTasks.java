@@ -23,8 +23,9 @@ public class DataGeneratorTasks extends TaskManager
 	public void taskQueue()
 	{
 		// openEnvironmentAndPlot();//
-		// dataGeneratorSimulation();
+		dataGeneratorSimulation();
 		openEnvironmentAndPlot();//
+		// dataGeneratorSimulation();//
 	}
 
 	/*
@@ -46,22 +47,29 @@ public class DataGeneratorTasks extends TaskManager
 		// env.add(xyCombination());
 		System.out.println(XMLParser.serializeObject(env));
 		// statesAndTimerChart().plot(env);
+		// env.generateOutputs();
+		ChartProperties HybridChart2 = xOnly();
+		ChartProperties HybridChart1 = xyCombination();
+		env.add(HybridChart2);// .createChart(env);
 		env.generateOutputs();
-		// xyCombination().createChart(env);
 	}
 
 	public static void dataGeneratorSimulation()
 	{
 		Environment env = getConfiguredEnvironment();
-		CircleSystem signalGenerator = new CircleSystem(1.0, .3);
+
 		ChartProperties HybridChart1 = xyCombination();
 		ChartProperties HybridChart2 = xOnly();
 		ChartProperties HybridChart3 = xyVsTimeVertical();
 		env.add(HybridChart1, HybridChart2, HybridChart3);
-
-		env.add(signalGenerator);
+		for (int i = 0; i < 6; i++)
+		{
+			CircleSystem signalGenerator = new CircleSystem(1.0, .3);
+			env.add(signalGenerator);
+		}
 		env.start();
 		// xyCombination().createChart(env);
+		HybridChart2.createChart(env);
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
@@ -96,9 +104,9 @@ public class DataGeneratorTasks extends TaskManager
 		plot.sub(2).setAxisLabels(ChartProperties.EMPTY, null);
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
-		plot.sub(1).setDisplayLegend(false);
-		plot.sub(2).setDisplayLegend(false);
+		plot.sub(0).setDisplayLegend(true);
+		plot.sub(1).setDisplayLegend(true);
+		plot.sub(2).setDisplayLegend(true);
 
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
@@ -254,13 +262,13 @@ public class DataGeneratorTasks extends TaskManager
 		// Flag indicating if environment configuration should be saved in an output file when not specified by the user
 		env.getSettings().getOutputSettings().saveChartsToFile = true;
 		// Flag indicating if environment configuration should be saved in an output file when not specified by the user
-		env.getSettings().getOutputSettings().saveConfigurationToFile = true;
+		env.getSettings().getOutputSettings().saveConfigurationToFile = false;
 		// Flag indicating if data should be saved in separate CSV file
 		env.getSettings().getOutputSettings().saveDataToCSVFile = false;
 		// Flag indicating if environment should be saved in an output file when not specified by the user
 		env.getSettings().getOutputSettings().saveEnvironmentToFile = true;
 		// Flag indicating if log should be saved to file
-		env.getSettings().getOutputSettings().saveLogToFile = true;
+		env.getSettings().getOutputSettings().saveLogToFile = false;
 
 		///// Computation Settings
 

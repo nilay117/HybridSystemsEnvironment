@@ -36,8 +36,8 @@ public class DataSeries<X>
 	public String getHeader()
 	{
 
-		return correctName(elementName) + ";parent=" + correctName(parentName) + ";parentID=" + correctName(parentID)
-		+ ";" + XMLParser.serializeObject(storedData.get(0).getClass());
+		return correctName(elementName) + "``" + correctName(parentName) + "``" + correctName(parentID) + "``"
+		+ XMLParser.serializeObject(storedData.get(0).getClass());
 	}
 
 	public String getParentID()
@@ -93,13 +93,14 @@ public class DataSeries<X>
 	private static String correctName(String name)
 	{
 		String correctedName = name.replace(",", "[comma]");
-		correctedName = correctedName.replace(";", "[semiColon]");
+		correctedName = correctedName.replace("``", "[semiColon]");
 		return correctedName;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <D> DataSeries<D> getDataSeries(EnvironmentData data, String entry)
 	{
-		String component[] = entry.split(";");
+		String component[] = entry.split("``");
 		String elementName = component[0];
 		String parentName = component[1];
 		String parentID = component[2];
