@@ -21,6 +21,11 @@ public class OutputSettings
 	public String configurationFileName;
 
 	/*
+	 * Name of the CSV data file if it were to be saved
+	 */
+	public String csvDataFileName;
+
+	/*
 	 * Time between data point storage
 	 */
 	public double dataPointInterval;
@@ -46,9 +51,19 @@ public class OutputSettings
 	public Boolean saveConfigurationToFile;
 
 	/*
+	 * Flag indicating if data should be saved in separate CSV file
+	 */
+	public Boolean saveDataToCSVFile;
+
+	/*
 	 * Flag indicating if environment should be saved in an output file when not specified by the user
 	 */
 	public Boolean saveEnvironmentToFile;
+
+	/*
+	 * Flag indicating if log should be saved to file
+	 */
+	public Boolean saveLogToFile;
 
 	/*
 	 * Default value constructor
@@ -62,8 +77,11 @@ public class OutputSettings
 		saveConfigurationToFile = true;
 		environmentFileName = "environment";
 		configurationFileName = "environmentConfiguration";
+		csvDataFileName = "environmentData";
 		chartFileFormat = ImageFormat.PNG;
 		appendFilesWithNumericDate = true;
+		saveDataToCSVFile = false;
+		saveLogToFile = true;
 	}
 
 }

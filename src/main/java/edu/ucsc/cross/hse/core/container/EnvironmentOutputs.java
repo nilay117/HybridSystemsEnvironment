@@ -5,6 +5,7 @@ import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartProperties;
 import edu.cross.ucsc.hse.core.chart.ChartView;
+import edu.ucsc.cross.hse.core.data.CSVFile;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
@@ -162,6 +163,7 @@ public class EnvironmentOutputs
 
 	private void generateFiles(Environment env)
 	{
+		EnvironmentData data = env.getData();
 		if (env.getSettings().getOutputSettings().saveConfigurationToFile)
 		{
 			FileSpecifications<EnvironmentFile> specs = getSpecs(env, new EnvironmentFile(),
@@ -171,14 +173,35 @@ public class EnvironmentOutputs
 			env.save(spe, false);
 			Console.info("Configuration saved: " + spe.getAbsolutePath());
 		}
+		env.loadData(data);
 		if (env.getSettings().getOutputSettings().saveEnvironmentToFile)
 		{
 			FileSpecifications<EnvironmentFile> specs = getSpecs(env, new EnvironmentFile(),
 			env.getSettings().getOutputSettings().environmentFileName
 			+ ExecutionOperator.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
-			env.save(spe, true);
+
+			if (env.getSettings().getOutputSettings().saveDataToCSVFile)
+			{
+				env.save(spe, true);
+			} else
+			{
+				env.save(spe, true);
+			}
+
 			Console.info("Environment saved: " + spe.getAbsolutePath());
+		}
+		env.loadData(data);
+		if (env.getSettings().getOutputSettings().saveDataToCSVFile)
+		{
+			FileSpecifications<EnvironmentFile> specs = getSpecs(env, new EnvironmentFile(),
+			env.getSettings().getOutputSettings().environmentFileName
+			+ ExecutionOperator.getStartTime(env, true).toString());
+			File spe = specs.getLocation(true);
+			String corrected = spe.getAbsolutePath().replaceAll(".hse", ".csv");
+			spe = new File(corrected);
+			CSVFile csv = new CSVFile(env.getManager());
+			csv.createCSVOutput(spe);
 		}
 	}
 

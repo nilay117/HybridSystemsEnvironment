@@ -8,6 +8,7 @@ import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
+import edu.ucsc.cross.hse.core.data.CSVFile;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
@@ -184,6 +185,22 @@ public class EnvironmentFile implements FileFormat
 		{
 			if (inputFile != null)
 			{
+				if (content_type.equals(EnvironmentData.class) || content_type.equals(Environment.class))
+				{
+					EnvironmentData dat = inputFile.get(CSVFile.class).getLocalCSVData();
+					if (content_type.equals(Environment.class))
+					{
+						System.out.println(XMLParser.serializeObject(dat));
+						Environment env = inputFile.get(Environment.class);
+						env.loadData(dat);
+						inputContent = (T) env;
+
+					} else
+					{
+						inputContent = (T) dat;
+					}
+				}
+
 				inputContent = inputFile.get(content_type);
 
 			}
@@ -227,17 +244,32 @@ public class EnvironmentFile implements FileFormat
 		if (contentType.equals(Environment.class))
 		{
 			Environment env = (Environment) content;
+			// EnvironmentData dat = new EnvironmentData();
+			if (env.getData() != null)
+			{
+				add(new CSVFile(env.getManager(), true));
+
+				// dat = env.getData();
+
+				env.loadData(null);
+			}
+
 			add(env.getContents());
-			add(env.getData());
 			add(env.getSettings());
-			// if (env.getContents().getSystems().size() > 0)
+			if (env.getContents().getSystems().size() > 0)
 			{
 				storeContent(
 				env.getContents().getSystems().toArray(new HybridSystem[env.getContents().getSystems().size()]));
 			}
+
+			// env.loadData(dat);
+
 		} else if (FieldFinder.containsSuper(content, HybridSystem.class))
 		{
 			fileContents.get(HybridSystem.class).add(content);
+		} else if (contentType.equals(EnvironmentData.class))
+		{
+
 		}
 
 	}

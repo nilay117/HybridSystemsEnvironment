@@ -118,7 +118,7 @@ public class ExecutionOperator
 		{
 
 		}
-		prepareDir();
+		// prepareDir();
 		prepareConsole();
 		exeContent.prepareComponents(this);
 		dataManager.loadMap();
@@ -137,7 +137,6 @@ public class ExecutionOperator
 		prepare();
 		start();
 		stop();
-		dataManager.createCSVOutput();
 		env.getOutputs().generateOutputs(env, true);
 
 		// writeFiles(false);
@@ -165,10 +164,12 @@ public class ExecutionOperator
 
 	private void prepareConsole()
 	{
-
-		Console.startOutputFile(new File(env.getSettings().getOutputSettings().outputDirectory + "/"
-		+ getStartTime(env, false) + "/log" + getStartTime(env, true) + ".txt"));
-
+		if (env.getSettings().getOutputSettings().saveLogToFile)
+		{
+			prepareDir();
+			Console.startOutputFile(new File(env.getSettings().getOutputSettings().outputDirectory + "/"
+			+ getStartTime(env, false) + "/log" + getStartTime(env, true) + ".txt"));
+		}
 	}
 
 	public void stop()

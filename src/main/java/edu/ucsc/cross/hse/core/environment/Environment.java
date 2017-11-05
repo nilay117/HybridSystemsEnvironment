@@ -103,7 +103,7 @@ public class Environment
 		return settings;
 	}
 
-	public void load(Environment new_env)
+	public void loadEnvironment(Environment new_env)
 	{
 		for (Field field : Environment.class.getDeclaredFields())
 		{
@@ -118,14 +118,14 @@ public class Environment
 
 	}
 
-	public void load(File new_env)
+	public void loadEnvironmentFromFile(File new_env)
 	{
 		Environment env = Environment.loadFile(new_env);
 		try
 		{
 			if (env != null)
 			{
-				load(env);
+				loadEnvironment(env);
 			}
 		} catch (Exception badManager)
 		{
@@ -133,14 +133,31 @@ public class Environment
 		}
 	}
 
-	public void load(EnvironmentContent contents)
+	public void loadContent(EnvironmentContent contents)
 	{
 		getContents().load(contents);
 	}
 
-	public void load(EnvironmentSettings settings)
+	public void loadSettings(EnvironmentSettings settings)
 	{
 		getSettings().loadAllSettings(settings);
+	}
+
+	public void loadData(EnvironmentData data)
+	{
+		if (data == null)
+		{
+			dataCollector = null;
+		} else
+		{
+			// if (dataCollector == null)
+			{
+				dataCollector = data;
+			} // else
+			{
+				// getData().load(data.getStoreTimes(), data.getGlobalStateData());
+			}
+		}
 	}
 
 	public void start()

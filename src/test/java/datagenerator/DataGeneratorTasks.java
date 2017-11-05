@@ -2,13 +2,15 @@ package datagenerator;
 
 import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
-import edu.cross.ucsc.hse.core.chart.ChartView;
+import com.be3short.io.xml.XMLParser;
 import edu.cross.ucsc.hse.core.chart.ChartProperties;
 import edu.cross.ucsc.hse.core.chart.LabelType;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
 import edu.ucsc.cross.hse.core.task.TaskManager;
 import java.awt.Font;
+import java.io.File;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class DataGeneratorTasks extends TaskManager
@@ -20,6 +22,7 @@ public class DataGeneratorTasks extends TaskManager
 	@Override
 	public void taskQueue()
 	{
+		// openEnvironmentAndPlot();//
 		dataGeneratorSimulation();
 	}
 
@@ -29,6 +32,20 @@ public class DataGeneratorTasks extends TaskManager
 	public static void main(String args[])
 	{
 		launch();
+	}
+
+	public void openEnvironmentAndPlot()
+	{
+		File envFile = new FileChooser().showOpenDialog(new Stage());
+		Environment env = Environment.loadFile(envFile);
+		// File datFile = new FileChooser().showOpenDialog(new Stage());
+		// EnvironmentData dat = DataMonitor.getCSVData(datFile);
+		// env.getData().load(dat.getStoreTimes(), dat.getGlobalStateData());
+		// env.getOutputs().generateOutputs(env, true);
+		// env.add(xyCombination());
+		System.out.println(XMLParser.serializeObject(env));
+		// statesAndTimerChart().plot(env);
+		xyCombination().createChart(env);
 	}
 
 	public static void dataGeneratorSimulation()
@@ -43,9 +60,10 @@ public class DataGeneratorTasks extends TaskManager
 		env.add(signalGenerator);
 		env.start();
 		// xyCombination().plot(env);
-
-		ChartView cv = new ChartView(env, HybridChart1, new Stage());
-		cv.setChartProperties(HybridChart2);
+		env.save(new File("output/test"), false);
+		env.save(new File("output/testDat"), true);
+		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
+		// cv.setChartProperties(HybridChart2);
 
 	}
 
@@ -223,6 +241,8 @@ public class DataGeneratorTasks extends TaskManager
 		env.getSettings().getOutputSettings().chartFileFormat = ImageFormat.EPS;
 		// Name of the environment configuration file if it were to be saved
 		env.getSettings().getOutputSettings().configurationFileName = "environmentConfig";
+		// Name of the CSV data file if it were to be saved
+		env.getSettings().getOutputSettings().csvDataFileName = "environmentData";
 		// Time between data point storage
 		env.getSettings().getOutputSettings().dataPointInterval = .25;
 		// Name of the environment file if it were to be saved
@@ -233,8 +253,12 @@ public class DataGeneratorTasks extends TaskManager
 		env.getSettings().getOutputSettings().saveChartsToFile = true;
 		// Flag indicating if environment configuration should be saved in an output file when not specified by the user
 		env.getSettings().getOutputSettings().saveConfigurationToFile = true;
+		// Flag indicating if data should be saved in separate CSV file
+		env.getSettings().getOutputSettings().saveDataToCSVFile = false;
 		// Flag indicating if environment should be saved in an output file when not specified by the user
 		env.getSettings().getOutputSettings().saveEnvironmentToFile = true;
+		// Flag indicating if log should be saved to file
+		env.getSettings().getOutputSettings().saveLogToFile = true;
 
 		///// Computation Settings
 
@@ -267,5 +291,4 @@ public class DataGeneratorTasks extends TaskManager
 
 		return env;
 	}
-
 }

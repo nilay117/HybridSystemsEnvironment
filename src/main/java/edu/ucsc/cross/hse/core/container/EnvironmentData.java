@@ -25,6 +25,14 @@ public class EnvironmentData
 		nameOrder = new ArrayList<String>();
 	}
 
+	public EnvironmentData(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
+	{
+		storeTimes = store_times;
+		globalStateData = global_state_data;
+		stateNames = new HashMap<String, String>();
+		nameOrder = new ArrayList<String>();
+	}
+
 	public void load(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
 	{
 		storeTimes = store_times;
