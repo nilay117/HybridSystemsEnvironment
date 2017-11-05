@@ -6,17 +6,24 @@ import javafx.stage.Stage;
 public abstract class TaskManager extends Application implements TaskQueue
 {
 
-	private static TaskManager manager;
+	public Stage getNewStage()
+	{
+		return new Stage();
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception
+	{
+		manager = this;
+		taskQueue();
+	}
 
 	public TaskManager()
 	{
 
 	}
 
-	public Stage getNewStage()
-	{
-		return new Stage();
-	}
+	private static TaskManager manager;
 
 	public static Stage createStage()
 	{
@@ -27,13 +34,6 @@ public abstract class TaskManager extends Application implements TaskQueue
 		{
 			return null;
 		}
-	}
-
-	@Override
-	public void start(Stage primaryStage) throws Exception
-	{
-		manager = this;
-		taskQueue();
 	}
 
 	public static void runOp(TaskQueue item)

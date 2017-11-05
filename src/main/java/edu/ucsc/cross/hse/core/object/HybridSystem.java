@@ -11,17 +11,22 @@ import java.util.ArrayList;
 public abstract class HybridSystem<X> implements HybridDynamics<X>
 {
 
-	X state;
 	X dynamicState;
+	X state;
+
+	public X getState()
+	{
+		return state;
+	}
 
 	public HybridSystem(X state)
 	{
 		this.state = state;
 	}
 
-	public X getState()
+	public static class EnvironmentAccessor
 	{
-		return state;
+
 	}
 
 	public static class HybridSystemOperator
@@ -29,16 +34,6 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 
 		@SuppressWarnings("unused")
 		private HybridSystem<?> sys;
-
-		public HybridSystemOperator(HybridSystem<?> sys)
-		{
-			this.sys = sys;
-		}
-
-		public static HybridSystemOperator getOperator(HybridSystem<?> sys)
-		{
-			return new HybridSystemOperator(sys);
-		}
 
 		public ArrayList<HybridSystem<?>> getSubSystems()
 		{
@@ -51,19 +46,9 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			}
 		}
 
-		public static <T> T getDynamicState(HybridSystem<T> sys)
+		public HybridSystemOperator(HybridSystem<?> sys)
 		{
-			return sys.dynamicState;
-		}
-
-		public static <T> void initializeDynamicState(HybridSystem<T> sys)
-		{
-			sys.dynamicState = ObjectCloner.deepInstanceClone(sys.getState());
-		}
-
-		public static <T> boolean d(HybridSystem<T> sys)
-		{
-			return sys.D(sys.state);
+			this.sys = sys;
 		}
 
 		public static <T> boolean c(HybridSystem<T> sys)
@@ -71,13 +56,9 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			return sys.C(sys.state);
 		}
 
-		public static <T> T g(HybridSystem<T> sys)
+		public static <T> boolean d(HybridSystem<T> sys)
 		{
-			if (HybridSystemOperator.d(sys))
-			{
-				sys.G(sys.state, sys.dynamicState);
-			}
-			return sys.dynamicState;
+			return sys.D(sys.state);
 		}
 
 		public static <T> T f(HybridSystem<T> sys)
@@ -89,10 +70,29 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			return sys.dynamicState;
 		}
 
-	}
+		public static <T> T g(HybridSystem<T> sys)
+		{
+			if (HybridSystemOperator.d(sys))
+			{
+				sys.G(sys.state, sys.dynamicState);
+			}
+			return sys.dynamicState;
+		}
 
-	public static class EnvironmentAccessor
-	{
+		public static <T> T getDynamicState(HybridSystem<T> sys)
+		{
+			return sys.dynamicState;
+		}
+
+		public static HybridSystemOperator getOperator(HybridSystem<?> sys)
+		{
+			return new HybridSystemOperator(sys);
+		}
+
+		public static <T> void initializeDynamicState(HybridSystem<T> sys)
+		{
+			sys.dynamicState = ObjectCloner.deepInstanceClone(sys.getState());
+		}
 
 	}
 

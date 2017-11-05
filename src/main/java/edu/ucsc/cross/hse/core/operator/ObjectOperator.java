@@ -16,183 +16,16 @@ import java.util.Set;
 public class ObjectOperator
 {
 
-	public static final FieldMapper fieldMapper = new FieldMapper(Objects.class);
-	public static HashMap<String, ArrayList<Field>> fields = new HashMap<String, ArrayList<Field>>();
-	private HybridTime simTime; // Simulation time
-	private HashMap<Object, DynamicObjectManipulator> objectMap;
-	private DynamicObjectManipulator[] objectAccessVector;
-	private double[] valueVector;
 	private double[] changeVector;
+	private DynamicObjectManipulator[] objectAccessVector;
+	private HashMap<Object, DynamicObjectManipulator> objectMap;
+	private HybridTime simTime; // Simulation time
+	private double[] valueVector;
 	ExecutionOperator manager;
-
-	public ObjectOperator(ExecutionOperator manager)
-	{
-		this.manager = manager;
-		simTime = new HybridTime(0.0, 0);
-	}
-
-	///////// Access Functions
-
-	public HybridTime getHybridSimTime()
-	{
-		return simTime;
-	}
-
-	public Double getSimulationTime()
-	{
-		return simTime.getTime();
-	}
-
-	public void setSimTime(HybridTime simTime)
-	{
-		this.simTime = simTime;
-	}
-
-	public HashMap<Object, DynamicObjectManipulator> getFieldParentMap()
-	{
-		return objectMap;
-	}
-
-	public void setFieldParentMap(HashMap<Object, DynamicObjectManipulator> fieldParentMap)
-	{
-		this.objectMap = fieldParentMap;
-	}
-
-	public DynamicObjectManipulator[] getSimulatedObjectAccessVector()
-	{
-		return objectAccessVector;
-	}
-
-	public void setSimulatedObjectAccessVector(DynamicObjectManipulator[] simulatedObjectAccessVector)
-	{
-		this.objectAccessVector = simulatedObjectAccessVector;
-	}
-
-	public double[] getSimulatedObjectValueVector()
-	{
-		return valueVector;
-	}
-
-	public void setSimulatedObjectValueVector(double[] simulatedObjectValueVector)
-	{
-		this.valueVector = simulatedObjectValueVector;
-	}
-
-	public double[] getValueVector()
-	{
-
-		return valueVector;
-	}
 
 	public double[] getChangeVector()
 	{
 		return changeVector;
-	}
-
-	public void setChangeVector(double[] changeVector)
-	{
-		this.changeVector = changeVector;
-	}
-
-	///////// Time Operator Functions
-
-	public void updateSimulationTime(HybridTime simTime)
-	{
-		setSimTime(simTime);
-	}
-
-	public void updateSimulationTime(Double simTime)
-	{
-		setSimTime(new HybridTime(simTime, getHybridSimTime().getJumps()));
-	}
-
-	public void updateSimulationTime(Double simTime, Integer jump_increment)
-
-	{
-		setSimTime(new HybridTime(simTime, getHybridSimTime().getJumps() + jump_increment));
-	}
-
-	public void incrementJumpIndex(Integer jump_increment)
-	{
-		setSimTime(new HybridTime(getHybridSimTime().getTime(), getHybridSimTime().getJumps() + jump_increment));
-	}
-
-	///////// Vector Operator Functions
-
-	public void readStateValues(double y[])
-	{
-		for (int i = 0; i < y.length; i++)
-		{
-			getSimulatedObjectAccessVector()[i].updateObject(y[i]);
-		}
-	}
-
-	public double[] updateValueVector(double y[])
-	{
-
-		for (int i = 0; i < valueVector.length; i++)
-		{
-			valueVector[i] = (double) getSimulatedObjectAccessVector()[i].getObject();
-			if (y != null)
-			{
-
-				y[i] = (double) getSimulatedObjectAccessVector()[i].getObject();
-
-			}
-			DynamicObjectManipulator.isNumericalValue(getSimulatedObjectAccessVector()[i], valueVector[i]);
-		}
-
-		return valueVector;
-	}
-
-	public double[] updateChangeVector(double yDot[])
-	{
-
-		for (int i = 0; i < changeVector.length; i++)
-		{
-			changeVector[i] = (double) getSimulatedObjectAccessVector()[i].getChange();
-			if (yDot != null)
-			{
-				yDot[i] = (double) getSimulatedObjectAccessVector()[i].getChange();
-			}
-		}
-
-		return changeVector;
-	}
-
-	///////// Setup Functions
-
-	public void prepareComponents(ExecutionOperator manager)
-	{
-		simTime = new HybridTime(0.0, 0);
-		initializeFieldMapper();
-		objectMap = initializeObjectAccessMap(manager);
-		objectAccessVector = initializeObjectAccessVector(objectMap, manager);
-		valueVector = initializeValueVector(objectAccessVector, false);
-		changeVector = initializeValueVector(objectAccessVector, true);
-	}
-
-	private void initializeFieldMapper()
-	{
-		HashMap<Class<?>, String> classes = new HashMap<Class<?>, String>();
-		HashMap<String, ArrayList<Field>> elems = new HashMap<String, ArrayList<Field>>();
-		HashMap<String, ArrayList<Field>> ele = new HashMap<String, ArrayList<Field>>();
-		for (HybridSystem<?> sys : manager.getContents().getSystems())
-		{
-			if (!classes.containsValue(sys.getState().getClass()))
-			{
-				classes.put(sys.getState().getClass(), sys.getState().getClass().getName());
-				elems.put(sys.getState().getClass().getName(), new ArrayList<Field>());
-			}
-		}
-
-		getClassFieldMapping(elems, classes.keySet(), Objects.class);
-		while (fields(ele) < fields(elems))
-		{
-			getClassFieldMapping(elems, classes.keySet(), Objects.class);
-			ele = elems;
-		}
-		fields = elems;
 	}
 
 	public void getClassFieldMapping(HashMap<String, ArrayList<Field>> elements, Set<Class<?>> search_classes,
@@ -240,37 +73,164 @@ public class ObjectOperator
 
 	}
 
-	private static Integer fields(HashMap<String, ArrayList<Field>> test)
+	public HashMap<Object, DynamicObjectManipulator> getFieldParentMap()
 	{
-		Integer count = 0;
-		for (ArrayList<Field> clas : test.values())
-		{
-			count += clas.size();
-		}
-		return count;
+		return objectMap;
 	}
 
-	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionOperator manager)
+	///////// Access Functions
+
+	public HybridTime getHybridSimTime()
 	{
-		// initializeFieldMapper();
-		HashMap<Object, DynamicObjectManipulator> newObjectAccessMap = new HashMap<Object, DynamicObjectManipulator>();
-		for (HybridSystem<?> system : manager.getContents().getSystems())
+		return simTime;
+	}
+
+	public DynamicObjectManipulator[] getSimulatedObjectAccessVector()
+	{
+		return objectAccessVector;
+	}
+
+	public double[] getSimulatedObjectValueVector()
+	{
+		return valueVector;
+	}
+
+	public Double getSimulationTime()
+	{
+		return simTime.getTime();
+	}
+
+	public double[] getValueVector()
+	{
+
+		return valueVector;
+	}
+
+	public void incrementJumpIndex(Integer jump_increment)
+	{
+		setSimTime(new HybridTime(getHybridSimTime().getTime(), getHybridSimTime().getJumps() + jump_increment));
+	}
+
+	public void prepareComponents(ExecutionOperator manager)
+	{
+		simTime = new HybridTime(0.0, 0);
+		initializeFieldMapper();
+		objectMap = initializeObjectAccessMap(manager);
+		objectAccessVector = initializeObjectAccessVector(objectMap, manager);
+		valueVector = initializeValueVector(objectAccessVector, false);
+		changeVector = initializeValueVector(objectAccessVector, true);
+	}
+
+	public void readStateValues(double y[])
+	{
+		for (int i = 0; i < y.length; i++)
 		{
+			getSimulatedObjectAccessVector()[i].updateObject(y[i]);
+		}
+	}
 
-			try
+	public void setChangeVector(double[] changeVector)
+	{
+		this.changeVector = changeVector;
+	}
+
+	public void setFieldParentMap(HashMap<Object, DynamicObjectManipulator> fieldParentMap)
+	{
+		this.objectMap = fieldParentMap;
+	}
+
+	public void setSimTime(HybridTime simTime)
+	{
+		this.simTime = simTime;
+	}
+
+	public void setSimulatedObjectAccessVector(DynamicObjectManipulator[] simulatedObjectAccessVector)
+	{
+		this.objectAccessVector = simulatedObjectAccessVector;
+	}
+
+	///////// Time Operator Functions
+
+	public void setSimulatedObjectValueVector(double[] simulatedObjectValueVector)
+	{
+		this.valueVector = simulatedObjectValueVector;
+	}
+
+	public double[] updateChangeVector(double yDot[])
+	{
+
+		for (int i = 0; i < changeVector.length; i++)
+		{
+			changeVector[i] = (double) getSimulatedObjectAccessVector()[i].getChange();
+			if (yDot != null)
 			{
-				HybridSystemOperator.initializeDynamicState(system);
-
-				initializeMap(newObjectAccessMap, system.getState(), HybridSystemOperator.getDynamicState(system));
-
-			} catch (Exception e)
-			{
-				e.printStackTrace();
+				yDot[i] = (double) getSimulatedObjectAccessVector()[i].getChange();
 			}
 		}
 
-		return newObjectAccessMap;
+		return changeVector;
 	}
+
+	public void updateSimulationTime(Double simTime)
+	{
+		setSimTime(new HybridTime(simTime, getHybridSimTime().getJumps()));
+	}
+
+	public void updateSimulationTime(Double simTime, Integer jump_increment)
+
+	{
+		setSimTime(new HybridTime(simTime, getHybridSimTime().getJumps() + jump_increment));
+	}
+
+	///////// Vector Operator Functions
+
+	public void updateSimulationTime(HybridTime simTime)
+	{
+		setSimTime(simTime);
+	}
+
+	public double[] updateValueVector(double y[])
+	{
+
+		for (int i = 0; i < valueVector.length; i++)
+		{
+			valueVector[i] = (double) getSimulatedObjectAccessVector()[i].getObject();
+			if (y != null)
+			{
+
+				y[i] = (double) getSimulatedObjectAccessVector()[i].getObject();
+
+			}
+			DynamicObjectManipulator.isNumericalValue(getSimulatedObjectAccessVector()[i], valueVector[i]);
+		}
+
+		return valueVector;
+	}
+
+	private void initializeFieldMapper()
+	{
+		HashMap<Class<?>, String> classes = new HashMap<Class<?>, String>();
+		HashMap<String, ArrayList<Field>> elems = new HashMap<String, ArrayList<Field>>();
+		HashMap<String, ArrayList<Field>> ele = new HashMap<String, ArrayList<Field>>();
+		for (HybridSystem<?> sys : manager.getContents().getSystems())
+		{
+			if (!classes.containsValue(sys.getState().getClass()))
+			{
+				classes.put(sys.getState().getClass(), sys.getState().getClass().getName());
+				elems.put(sys.getState().getClass().getName(), new ArrayList<Field>());
+			}
+		}
+
+		getClassFieldMapping(elems, classes.keySet(), Objects.class);
+		while (fields(ele) < fields(elems))
+		{
+			getClassFieldMapping(elems, classes.keySet(), Objects.class);
+			ele = elems;
+		}
+		fields = elems;
+	}
+
+	///////// Setup Functions
 
 	@SuppressWarnings("unchecked")
 	private void initializeMap(HashMap<Object, DynamicObjectManipulator> object_map, Object state, Object dynamic)
@@ -325,6 +285,48 @@ public class ObjectOperator
 		}
 
 		// initializeMap(object_map, state, dynamic);
+	}
+
+	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionOperator manager)
+	{
+		// initializeFieldMapper();
+		HashMap<Object, DynamicObjectManipulator> newObjectAccessMap = new HashMap<Object, DynamicObjectManipulator>();
+		for (HybridSystem<?> system : manager.getContents().getSystems())
+		{
+
+			try
+			{
+				HybridSystemOperator.initializeDynamicState(system);
+
+				initializeMap(newObjectAccessMap, system.getState(), HybridSystemOperator.getDynamicState(system));
+
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return newObjectAccessMap;
+	}
+
+	public ObjectOperator(ExecutionOperator manager)
+	{
+		this.manager = manager;
+		simTime = new HybridTime(0.0, 0);
+	}
+
+	public static final FieldMapper fieldMapper = new FieldMapper(Objects.class);
+
+	public static HashMap<String, ArrayList<Field>> fields = new HashMap<String, ArrayList<Field>>();
+
+	private static Integer fields(HashMap<String, ArrayList<Field>> test)
+	{
+		Integer count = 0;
+		for (ArrayList<Field> clas : test.values())
+		{
+			count += clas.size();
+		}
+		return count;
 	}
 
 	private static DynamicObjectManipulator[] initializeObjectAccessVector(

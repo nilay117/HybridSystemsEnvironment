@@ -15,54 +15,68 @@ import java.util.Date;
 public class Console
 {
 
-	private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
-	private static ExecutionOperator manager;
-	private static OutputStream out;
-	private static Double nextDebugStatusPrint;
-	private static Double infoStatusPrintInterval;
-	private static Double nextInfoPrint;
+	public static enum OutputType
+	{
+		DEBUG,
+		ERROR,
+		INFO,
+		WARN;
+	}
+
 	private static PrintWriter fileOut;
+	private static Double infoStatusPrintInterval;
+
+	private static ExecutionOperator manager;
+
+	private static Double nextDebugStatusPrint;
+
+	private static Double nextInfoPrint;
+
+	private static OutputStream out;
+
+	private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
+
 	private static SystemInfo sysInfo = new SystemInfo();
 
-	public Console(ExecutionOperator manage)
+	public static void debug(String message)
 	{
-		manager = manage;
-
+		print(LogSettings.debugLabel, message, OutputType.DEBUG);
 	}
 
-	public void startStatusPrintThread()
+	public static void debug(String message, Throwable throwable)
 	{
-		nextDebugStatusPrint = System.currentTimeMillis()
-		+ manager.getSettings().getLogSettings().statusPrintInterval * 1000.0;
-		infoStatusPrintInterval = manager.getExecutionParameters().maximumTime
-		/ manager.getSettings().getLogSettings().numProgressUpdateOutputs;
-		nextInfoPrint = 0.0;
-		startThread();
+		print(LogSettings.debugLabel, message, throwable, OutputType.DEBUG);
 	}
 
-	private void startThread()
+	public static void endOutputFile()
 	{
-		Thread debugStatusThread = new Thread(new Runnable()
+		try
+		{
+			fileOut.close();
+		} catch (Exception e)
 		{
 
-			public void run()
-			{
-				printDebugStatusLoop();
-			}
-		});
-		debugStatusThread.start();
-	}
-
-	private void printDebugStatusLoop()
-	{
-		while (manager.getJumpEvaluator().isRunning())
-		{
-
-			if (manager.getSettings().getLogSettings().statusPrintInterval != null)
-			{
-				printDebugStatus();
-			}
 		}
+	}
+
+	public static void error(String message)
+	{
+		print(LogSettings.errorLabel, message, OutputType.ERROR);
+	}
+
+	public static void error(String message, Throwable throwable)
+	{
+		print(LogSettings.errorLabel, message, throwable, OutputType.DEBUG);
+	}
+
+	public static void info(String message)
+	{
+		print(LogSettings.infoLabel, message, OutputType.INFO);
+	}
+
+	public static void info(String message, Throwable throwable)
+	{
+		print(LogSettings.infoLabel, message, throwable, OutputType.INFO);
 	}
 
 	public static void printCompleteStatus(ExecutionOperator manager)
@@ -98,31 +112,20 @@ public class Console
 		}
 	}
 
-	private void printDebugStatus()
+	public static void setNewOutputStream(OutputStream output)
 	{
-		if (nextDebugStatusPrint < System.currentTimeMillis())
+		out = output;
+	}
+
+	public static void startOutputFile(File file)
+	{
+		try
 		{
-			if (manager.getJumpEvaluator().isRunning())
-			{
-				Double percentComplete = 100 * manager.getExecutionContent().getSimulationTime()
-				/ manager.getExecutionParameters().maximumTime;
-				info("monitor : " + String.format("%.2f", percentComplete) + "% complete : sim time = "
-				+ String.format("%.2f", manager.getExecutionContent().getSimulationTime()) + " : jumps = "
-				+ manager.getExecutionContent().getHybridSimTime().getJumps());
-				nextDebugStatusPrint = System.currentTimeMillis()
-				+ manager.getSettings().getLogSettings().statusPrintInterval * 1000.0;
-			}
+			fileOut = new PrintWriter(new FileOutputStream(file));
+		} catch (FileNotFoundException e)
+		{
+
 		}
-	}
-
-	public static void info(String message)
-	{
-		print(LogSettings.infoLabel, message, OutputType.INFO);
-	}
-
-	public static void debug(String message)
-	{
-		print(LogSettings.debugLabel, message, OutputType.DEBUG);
 	}
 
 	public static void warn(String message)
@@ -130,29 +133,18 @@ public class Console
 		print(LogSettings.warnLabel, message, OutputType.WARN);
 	}
 
-	public static void error(String message)
-	{
-		print(LogSettings.errorLabel, message, OutputType.ERROR);
-	}
-
-	public static void info(String message, Throwable throwable)
-	{
-		print(LogSettings.infoLabel, message, throwable, OutputType.INFO);
-	}
-
-	public static void debug(String message, Throwable throwable)
-	{
-		print(LogSettings.debugLabel, message, throwable, OutputType.DEBUG);
-	}
-
 	public static void warn(String message, Throwable throwable)
 	{
 		print(LogSettings.warnLabel, message, throwable, OutputType.WARN);
 	}
 
-	public static void error(String message, Throwable throwable)
+	private static String compileMessagePrefix(String label)
 	{
-		print(LogSettings.errorLabel, message, throwable, OutputType.DEBUG);
+		Runtime.getRuntime().totalMemory();
+		String memoryUsage = String.valueOf((int) Math.round(sysInfo.usedMem() / (Math.pow(1024.0, 2))) + "/"
+		+ String.valueOf((int) Math.round(sysInfo.totalMem() / (Math.pow(1024.0, 2)))));
+		String prefix = "[" + sdf.format(new Date()) + "][" + memoryUsage + "][" + label + "]";
+		return prefix;
 	}
 
 	private static boolean isOutputEnabled(OutputType type)
@@ -242,47 +234,61 @@ public class Console
 		}
 	}
 
-	private static String compileMessagePrefix(String label)
+	public void startStatusPrintThread()
 	{
-		Runtime.getRuntime().totalMemory();
-		String memoryUsage = String.valueOf((int) Math.round(sysInfo.usedMem() / (Math.pow(1024.0, 2))) + "/"
-		+ String.valueOf((int) Math.round(sysInfo.totalMem() / (Math.pow(1024.0, 2)))));
-		String prefix = "[" + sdf.format(new Date()) + "][" + memoryUsage + "][" + label + "]";
-		return prefix;
+		nextDebugStatusPrint = System.currentTimeMillis()
+		+ manager.getSettings().getLogSettings().statusPrintInterval * 1000.0;
+		infoStatusPrintInterval = manager.getExecutionParameters().maximumTime
+		/ manager.getSettings().getLogSettings().numProgressUpdateOutputs;
+		nextInfoPrint = 0.0;
+		startThread();
 	}
 
-	public static void setNewOutputStream(OutputStream output)
+	private void printDebugStatus()
 	{
-		out = output;
-	}
-
-	public static void startOutputFile(File file)
-	{
-		try
+		if (nextDebugStatusPrint < System.currentTimeMillis())
 		{
-			fileOut = new PrintWriter(new FileOutputStream(file));
-		} catch (FileNotFoundException e)
-		{
-
+			if (manager.getJumpEvaluator().isRunning())
+			{
+				Double percentComplete = 100 * manager.getExecutionContent().getSimulationTime()
+				/ manager.getExecutionParameters().maximumTime;
+				info("monitor : " + String.format("%.2f", percentComplete) + "% complete : sim time = "
+				+ String.format("%.2f", manager.getExecutionContent().getSimulationTime()) + " : jumps = "
+				+ manager.getExecutionContent().getHybridSimTime().getJumps());
+				nextDebugStatusPrint = System.currentTimeMillis()
+				+ manager.getSettings().getLogSettings().statusPrintInterval * 1000.0;
+			}
 		}
 	}
 
-	public static void endOutputFile()
+	private void printDebugStatusLoop()
 	{
-		try
-		{
-			fileOut.close();
-		} catch (Exception e)
+		while (manager.getJumpEvaluator().isRunning())
 		{
 
+			if (manager.getSettings().getLogSettings().statusPrintInterval != null)
+			{
+				printDebugStatus();
+			}
 		}
 	}
 
-	public static enum OutputType
+	private void startThread()
 	{
-		INFO,
-		DEBUG,
-		WARN,
-		ERROR;
+		Thread debugStatusThread = new Thread(new Runnable()
+		{
+
+			public void run()
+			{
+				printDebugStatusLoop();
+			}
+		});
+		debugStatusThread.start();
+	}
+
+	public Console(ExecutionOperator manage)
+	{
+		manager = manage;
+
 	}
 }

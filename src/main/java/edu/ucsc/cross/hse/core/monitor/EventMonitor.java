@@ -11,59 +11,14 @@ import org.apache.commons.math3.ode.events.EventHandler;
 public class EventMonitor implements EventHandler
 {
 
-	private ExecutionOperator manager; // manager of the environment
+	public Double toggleFlag; // toggle value that switches sign if an event has occurred since the last check
 
 	private boolean approachingJump; // flag indicating that the environment is approaching a jump, meaning that a jump
 										// has been detected by the ode but the pre-jump value has not been finalized
 
+	private ExecutionOperator manager; // manager of the environment
+
 	private boolean running; // flag indicating that the environment is terminating
-
-	public Double toggleFlag; // toggle value that switches sign if an event has occurred since the last check
-
-	/*
-	 * Constructor to link the environment
-	 */
-	public EventMonitor(ExecutionOperator manager)
-	{
-		this.manager = manager;
-		toggleFlag = 1.0;
-	}
-
-	public double getFlag()
-	{
-		boolean jumpOccurring = manager.getSystemControl().checkDomain(true);
-		approachingJump = (approachingJump || jumpOccurring);
-
-		if (jumpOccurring || !running)
-		{
-			// toggleCount = toggleCount + 1;
-			toggleFlag = -1 * toggleFlag;
-		}
-
-		return toggleFlag;
-	}
-
-	public JumpStatus getCheckJumpStatus()
-	{
-		if (approachingJump || running)
-		{
-			return JumpStatus.APPROACHING_JUMP;
-		} else
-		{
-			return JumpStatus.NO_JUMP;
-		}
-	}
-
-	/*
-	 * The Threshold checking method that will trigger an interrupt
-	 */
-	@Override
-	public double g(double t, double[] y)
-	{
-		Console.printInfoStatus(manager);
-		manager.getDataManager().gatherData(t, y, getCheckJumpStatus());
-		return getFlag();
-	}
 
 	/*
 	 * Response that occurs when event is detecteds
@@ -81,30 +36,46 @@ public class EventMonitor implements EventHandler
 												// hasn't been reached
 		} else
 		{
-			manager.getDataManager().gatherData(t, y, JumpStatus.JUMP_DETECTED);
+			manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
 			return EventHandler.Action.RESET_STATE; // otherwise terminate the
 			// environment
 		}
 	}
 
 	/*
-	 * Performs actions necessary to reset the state after a jump has occurred
+	 * The Threshold checking method that will trigger an interrupt
 	 */
-
 	@Override
-	public void resetState(double t, double[] y)
+	public double g(double t, double[] y)
 	{
-		manager.getDataManager().gatherData(t, y, JumpStatus.JUMP_DETECTED);
-		executeJumps(t, y);
+		Console.printInfoStatus(manager);
+		manager.getDataManager().performDataActions(t, y, getCheckJumpStatus());
+		return getFlag();
 	}
 
-	private void executeJumps(double t, double[] y)
+	public JumpStatus getCheckJumpStatus()
 	{
-		while (manager.getSystemControl().checkDomain(true))
+		if (approachingJump || running)
 		{
-			manager.getSystemControl().applyDynamics(true); // execute all jumps
-			manager.getDataManager().gatherData(t, y, JumpStatus.JUMP_OCCURRED);
+			return JumpStatus.APPROACHING_JUMP;
+		} else
+		{
+			return JumpStatus.NO_JUMP;
 		}
+	}
+
+	public double getFlag()
+	{
+		boolean jumpOccurring = manager.getSystemControl().checkDomain(true);
+		approachingJump = (approachingJump || jumpOccurring);
+
+		if (jumpOccurring || !running)
+		{
+			// toggleCount = toggleCount + 1;
+			toggleFlag = -1 * toggleFlag;
+		}
+
+		return toggleFlag;
 	}
 
 	/*
@@ -116,6 +87,10 @@ public class EventMonitor implements EventHandler
 		approachingJump = false;
 	}
 
+	/*
+	 * Performs actions necessary to reset the state after a jump has occurred
+	 */
+
 	public boolean isApproachingJump()
 	{
 		return approachingJump;
@@ -126,8 +101,33 @@ public class EventMonitor implements EventHandler
 		return running;
 	}
 
+	@Override
+	public void resetState(double t, double[] y)
+	{
+		manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
+		executeJumps(t, y);
+	}
+
 	public void setRunning(boolean running)
 	{
 		this.running = running;
+	}
+
+	private void executeJumps(double t, double[] y)
+	{
+		while (manager.getSystemControl().checkDomain(true))
+		{
+			manager.getSystemControl().applyDynamics(true); // execute all jumps
+			manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_OCCURRED);
+		}
+	}
+
+	/*
+	 * Constructor to link the environment
+	 */
+	public EventMonitor(ExecutionOperator manager)
+	{
+		this.manager = manager;
+		toggleFlag = 1.0;
 	}
 }

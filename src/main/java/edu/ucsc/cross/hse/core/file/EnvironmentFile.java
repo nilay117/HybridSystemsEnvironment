@@ -8,7 +8,6 @@ import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
-import edu.ucsc.cross.hse.core.data.CSVFile;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
@@ -32,35 +31,15 @@ public class EnvironmentFile implements FileFormat
 
 	// System File Content Definitions : Used to extract system contents from a file
 
-	public static final Class<HybridSystem> SYSTEMS = HybridSystem.class;
-	public static final Class<Environment> ENVIRONMENT = Environment.class;
-	public static final Class<EnvironmentSettings> SETTINGS = EnvironmentSettings.class;
-	public static final Class<EnvironmentContent> CONTENT = EnvironmentContent.class;
-	public static final Class<EnvironmentData> DATA = EnvironmentData.class;
-	public static final Class<EnvironmentOutputs> OUTPUT = EnvironmentOutputs.class;
-
-	// File Variables
-	private static final ArrayList<Class<?>> systemContents = new ArrayList<Class<?>>(
-	Arrays.asList(SYSTEMS, ENVIRONMENT, SETTINGS, CONTENT, DATA, OUTPUT));
-	private static final String fileExtension = ".hse";
-
 	// File Content Mapping : Stores all file contents
 	private HashMap<Class<?>, ArrayList<Object>> fileContents;
-
-	/*
-	 * Constructor
-	 */
-	public EnvironmentFile()
-	{
-		initializeContentMap();
-	}
 
 	/*
 	 * Add content to the file
 	 * 
 	 * @param content : content to be added
 	 */
-	public <T> void add(T... content)
+	public <T> void addContent(T... content)
 	{
 		for (T content_item : content)
 		{
@@ -72,6 +51,13 @@ public class EnvironmentFile implements FileFormat
 		}
 	}
 
+	@Override
+	public String extension()
+	{
+		// TODO Auto-generated method stub
+		return EnvironmentFile.fileExtension;
+	}
+
 	/*
 	 * Returns the first item stored in the list for the specified type. This call is used to fetch the components which
 	 * only have a single instance stored, such as an environment or settings.
@@ -80,7 +66,7 @@ public class EnvironmentFile implements FileFormat
 	 * 
 	 * @return content - first item stored in list for specified content type
 	 */
-	public <T> T get(Class<T> content_class)
+	public <T> T getContent(Class<T> content_class)
 	{
 		T content = null;
 		if (fileContents.containsKey(content_class))
@@ -100,7 +86,7 @@ public class EnvironmentFile implements FileFormat
 	 * 
 	 * @return content - first item stored in list for specified content type
 	 */
-	public <T> ArrayList<T> getAll(Class<T> content_class)
+	public <T> ArrayList<T> getContents(Class<T> content_class)
 	{
 		ArrayList<T> content = null;
 		if (fileContents.containsKey(content_class))
@@ -110,14 +96,11 @@ public class EnvironmentFile implements FileFormat
 		return content;
 	}
 
-	/*
-	 * Stores all contents to specified file path
-	 * 
-	 * @param output - path of location where file should be created
-	 */
-	public void writeToFile(String output)
+	@Override
+	public String label()
 	{
-		writeToFile(new File(output));
+		// TODO Auto-generated method stub
+		return "HSE File";
 	}
 
 	/*
@@ -144,107 +127,24 @@ public class EnvironmentFile implements FileFormat
 	}
 
 	/*
-	 * Loads a stored HSE file
+	 * Stores all contents to specified file path
 	 * 
-	 * @param input - location of stored file
-	 * 
-	 * @return HSEFile parsed from the input file
+	 * @param output - path of location where file should be created
 	 */
-	public static EnvironmentFile readFromFile(File input)
+	public void writeToFile(String output)
 	{
-		EnvironmentFile inputFile = null;
-		try
-		{
-			if (!input.getAbsolutePath().contains(fileExtension))
-			{
-				Console.error("Non HSE file specified: " + input, new Exception());
-
-			} else
-			{
-				EnvironmentFile parsedInput = (EnvironmentFile) XMLParser.getObject(input);
-				inputFile = parsedInput;
-			}
-		} catch (Exception badFile)
-		{
-			Console.error("Unable to fetch file: " + input, badFile);
-		}
-		return inputFile;
+		writeToFile(new File(output));
 	}
 
 	/*
-	 * Loads contents from a stored HSE file
-	 * 
-	 * @param input - location of stored file
-	 * 
-	 * @return T contents from the parsed input file
+	 * Initializes the content mapping with lists for all of the system objects
 	 */
-	public static <T> T readContentFromFile(File input, Class<T> content_type)
+	private void initializeContentMap()
 	{
-		EnvironmentFile inputFile = EnvironmentFile.readFromFile(input);
-		T inputContent = null;
-		try
+		fileContents = new HashMap<Class<?>, ArrayList<Object>>();
+		for (Class<?> componentClass : systemContents)
 		{
-			if (inputFile != null)
-			{
-				if (content_type.equals(EnvironmentData.class) || content_type.equals(Environment.class))
-				{
-					EnvironmentData dat = null;
-					try
-					{
-						dat = inputFile.get(CSVFile.class).getLocalCSVData();
-					} catch (Exception e)
-					{
-						dat = new EnvironmentData();
-					}
-					if (content_type.equals(Environment.class))
-					{
-						System.out.println(XMLParser.serializeObject(dat));
-						Environment env = inputFile.get(Environment.class);
-						if (inputFile.get(EnvironmentData.class) != null)
-						{
-							env.loadData(inputFile.get(EnvironmentData.class));
-
-							env.getData().load(dat.getStoreTimes(), dat.getGlobalStateData());
-						} else
-						{
-							env.loadData(dat);
-						}
-						inputContent = (T) env;
-
-					} else
-					{
-						inputContent = (T) dat;
-					}
-				}
-
-				inputContent = inputFile.get(content_type);
-
-			}
-		} catch (Exception badFile)
-		{
-			Console.error("Unable to fetch content " + content_type.toString() + " from file: " + input, badFile);
-		}
-		return inputContent;
-	}
-
-	/*
-	 * Creates an output file with the specified contents
-	 * 
-	 * @param output - location of output file
-	 *
-	 */
-	public static void createFile(File output, Object... contents)
-	{
-		try
-		{
-
-			EnvironmentFile newOutput = new EnvironmentFile();
-			newOutput.add(contents);
-			newOutput.writeToFile(output);
-
-		} catch (Exception badFile)
-		{
-			Console.error("Unable to write file: " + output, badFile);
+			fileContents.put(componentClass, new ArrayList<Object>());
 		}
 	}
 
@@ -271,9 +171,8 @@ public class EnvironmentFile implements FileFormat
 					{
 
 						CSVFile f = new CSVFile(env.getManager(), true);
-						add(f);//// add(new CSVFile(env.getManager(), true));
-						dat.setStateNames(env.getData().getStateNames());
-						dat.setNameOrder(env.getData().getNameOrder());
+						addContent(f);//// add(new CSVFile(env.getManager(), true));
+						dat = new EnvironmentData(env.getData().getStateNames());
 						env.loadData(null);
 						// dat.load(env.getData().getStoreTimes(), env.getData().getGlobalStateData());
 						// env.loadData(null);
@@ -309,30 +208,135 @@ public class EnvironmentFile implements FileFormat
 
 	}
 
-	@Override
-	public String extension()
+	/*
+	 * Constructor
+	 */
+	public EnvironmentFile()
 	{
-		// TODO Auto-generated method stub
-		return EnvironmentFile.fileExtension;
+		initializeContentMap();
 	}
 
-	@Override
-	public String label()
+	public static final Class<EnvironmentContent> CONTENT = EnvironmentContent.class;
+
+	public static final Class<EnvironmentData> DATA = EnvironmentData.class;
+
+	public static final Class<Environment> ENVIRONMENT = Environment.class;
+
+	public static final Class<EnvironmentOutputs> OUTPUT = EnvironmentOutputs.class;
+
+	public static final Class<EnvironmentSettings> SETTINGS = EnvironmentSettings.class;
+
+	public static final Class<HybridSystem> SYSTEMS = HybridSystem.class;
+
+	private static final String fileExtension = ".hse";
+
+	// File Variables
+	private static final ArrayList<Class<?>> systemContents = new ArrayList<Class<?>>(
+	Arrays.asList(SYSTEMS, ENVIRONMENT, SETTINGS, CONTENT, DATA, OUTPUT));
+
+	/*
+	 * Creates an output file with the specified contents
+	 * 
+	 * @param output - location of output file
+	 *
+	 */
+	public static void createFile(File output, Object... contents)
 	{
-		// TODO Auto-generated method stub
-		return "HSE File";
+		try
+		{
+
+			EnvironmentFile newOutput = new EnvironmentFile();
+			newOutput.addContent(contents);
+			newOutput.writeToFile(output);
+
+		} catch (Exception badFile)
+		{
+			Console.error("Unable to write file: " + output, badFile);
+		}
 	}
 
 	/*
-	 * Initializes the content mapping with lists for all of the system objects
+	 * Loads contents from a stored HSE file
+	 * 
+	 * @param input - location of stored file
+	 * 
+	 * @return T contents from the parsed input file
 	 */
-	private void initializeContentMap()
+	public static <T> T readContentFromFile(File input, Class<T> content_type)
 	{
-		fileContents = new HashMap<Class<?>, ArrayList<Object>>();
-		for (Class<?> componentClass : systemContents)
+		EnvironmentFile inputFile = EnvironmentFile.readFromFile(input);
+		T inputContent = null;
+		try
 		{
-			fileContents.put(componentClass, new ArrayList<Object>());
+			if (inputFile != null)
+			{
+				if (content_type.equals(EnvironmentData.class) || content_type.equals(Environment.class))
+				{
+					EnvironmentData dat = null;
+					try
+					{
+						dat = inputFile.getContent(CSVFile.class).extractDataFromContents();
+					} catch (Exception e)
+					{
+						dat = new EnvironmentData();
+					}
+					if (content_type.equals(Environment.class))
+					{
+						System.out.println(XMLParser.serializeObject(dat));
+						Environment env = inputFile.getContent(Environment.class);
+						if (inputFile.getContent(EnvironmentData.class) != null)
+						{
+							env.loadData(inputFile.getContent(EnvironmentData.class));
+
+							env.getData().load(dat);
+						} else
+						{
+							env.loadData(dat);
+						}
+						inputContent = (T) env;
+
+					} else
+					{
+						inputContent = (T) dat;
+					}
+				}
+
+				inputContent = inputFile.getContent(content_type);
+
+			}
+		} catch (Exception badFile)
+		{
+			Console.error("Unable to fetch content " + content_type.toString() + " from file: " + input, badFile);
 		}
+		return inputContent;
+	}
+
+	/*
+	 * Loads a stored HSE file
+	 * 
+	 * @param input - location of stored file
+	 * 
+	 * @return HSEFile parsed from the input file
+	 */
+	public static EnvironmentFile readFromFile(File input)
+	{
+		EnvironmentFile inputFile = null;
+		try
+		{
+			if (!input.getAbsolutePath().contains(fileExtension))
+			{
+				Console.error("Non HSE file specified: " + input, new Exception());
+
+			} else
+			{
+				EnvironmentFile parsedInput = (EnvironmentFile) XMLParser.getObject(input);
+				inputFile = parsedInput;
+			}
+		} catch (Exception badFile)
+		{
+			Console.error("Unable to fetch file: " + input, badFile);
+		}
+		return inputFile;
 	}
 
 }

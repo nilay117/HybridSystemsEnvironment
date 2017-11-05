@@ -23,8 +23,8 @@ public class DataGeneratorTasks extends TaskManager
 	public void taskQueue()
 	{
 		// openEnvironmentAndPlot();//
-		dataGeneratorSimulation();
-		// openEnvironmentAndPlot();//
+		// dataGeneratorSimulation();
+		openEnvironmentAndPlot();//
 	}
 
 	/*
@@ -46,7 +46,8 @@ public class DataGeneratorTasks extends TaskManager
 		// env.add(xyCombination());
 		System.out.println(XMLParser.serializeObject(env));
 		// statesAndTimerChart().plot(env);
-		xyCombination().createChart(env);
+		env.generateOutputs();
+		// xyCombination().createChart(env);
 	}
 
 	public static void dataGeneratorSimulation()

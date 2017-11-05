@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.EntityCollection;
@@ -161,6 +162,9 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 * A flag that controls whether the outline paint is used for drawing shape outlines.
 	 */
 	private boolean useOutlinePaint;
+
+	private ArrayList<String> nameOrder;
+
 	/**
 	 * Returns a clone of the renderer.
 	 *
@@ -526,7 +530,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		}
 		String st = dataset.getSeriesKey(series).toString();
 		// System.out.println(st + " " + elementOrder.indexOf(st));
-		Paint paint = (chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));
+		Paint paint = (chart.getSeriesColor(this.nameOrder.indexOf(st)));
 		boolean shapeIsVisible = getItemShapeVisible(series, 0);
 		Shape shape = lookupLegendShape(series);
 		boolean shapeIsFilled = getItemShapeFilled(series, 0);
@@ -1043,7 +1047,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	private void setupStrokes()
 	{
 		this.setBaseStroke(chart.getBaseFlowStroke());
-		for (int i = 0; i < this.data.getNameOrder().size(); i++)
+		for (int i = 0; i < this.nameOrder.size(); i++)
 		{
 			if (chart.getSeriesStrokes().size() > i)
 			{
@@ -1087,11 +1091,11 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	protected void drawFirstPassShape(Graphics2D g2, int pass, int series, int item, Shape shape, XYDataset dataset)
 	{
 		// g2.setStroke(getItemStroke(series, item));
-		if (this.data.getNameOrder() != null)
+		if (this.nameOrder != null)
 		{
 			String st = dataset.getSeriesKey(series).toString();
 			// System.out.println(st + " " + elementOrder.indexOf(st));
-			g2.setPaint(chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));// , item));
+			g2.setPaint(chart.getSeriesColor(this.nameOrder.indexOf(st)));// , item));
 		} else
 		{
 			g2.setPaint(getItemPaint(series, item));
@@ -1158,7 +1162,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		{
 
 			Stroke stroke1 = chart.getBaseJumpStroke();// dnew BasicStroke(.5f, BasicStroke.CAP_BUTT,
-													// BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
+														// BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
 
 			g2.setStroke(stroke1);
 		}
@@ -1432,10 +1436,12 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 * @param shapes
 	 *            shapes visible?
 	 */
-	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data, ChartProperties chart)
+	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data,
+	ChartProperties chart)
 	{
 
 		this.data = data;
+		this.nameOrder = data.getLabelOrder();
 		this.chart = chart;
 		setupStrokes();
 		this.linesVisible = null;
@@ -1455,7 +1461,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		this.drawOutlines = true;
 		this.useOutlinePaint = false; // use item paint for outlines by
 										// default, not outline paint
-
+		// this.nameOrder = data.getNameOrder();
 		this.drawSeriesLineAsPath = false;
 	}
 

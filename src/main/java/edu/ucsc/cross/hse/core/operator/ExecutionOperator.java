@@ -20,8 +20,6 @@ import java.util.HashMap;
 public class ExecutionOperator
 {
 
-	private static HashMap<Environment, String> startTimes = new HashMap<Environment, String>();
-
 	Console console;
 	DataMonitor dataManager;
 	Environment env;
@@ -49,6 +47,11 @@ public class ExecutionOperator
 	public DataMonitor getDataManager()
 	{
 		return dataManager;
+	}
+
+	public Environment getEnvironment()
+	{
+		return env;
 	}
 
 	public ObjectOperator getExecutionContent()
@@ -91,11 +94,6 @@ public class ExecutionOperator
 		return systemControl;
 	}
 
-	public Environment getEnvironment()
-	{
-		return env;
-	}
-
 	public void initializeComponents()
 	{
 		simEngine = new SimulationOperator(this);
@@ -122,7 +120,7 @@ public class ExecutionOperator
 		prepareConsole();
 		exeContent.prepareComponents(this);
 		dataManager.loadMap();
-		dataManager.gatherData(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
+		dataManager.performDataActions(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
 	}
 
 	public void resetData()
@@ -143,23 +141,12 @@ public class ExecutionOperator
 
 	}
 
-	private void start()
-	{
-		prepareDir();
-		Console.info("Environment Started");
-		jumpEvaluator.setRunning(true);
-		console.startStatusPrintThread();
-		executionMonitor.launchEnvironment();
-
-	}
-
-	private void prepareDir()
+	public void stop()
 	{
 
-		File dir = new File(
-		env.getSettings().getOutputSettings().outputDirectory + "/" + getStartTime(env, false) + "/");
-		dir.mkdirs();
-
+		jumpEvaluator.setRunning(false);
+		// Console.printInfoStatus(this, true);
+		Console.info("Environment Stopped");
 	}
 
 	private void prepareConsole()
@@ -172,12 +159,23 @@ public class ExecutionOperator
 		}
 	}
 
-	public void stop()
+	private void prepareDir()
 	{
 
-		jumpEvaluator.setRunning(false);
-		// Console.printInfoStatus(this, true);
-		Console.info("Environment Stopped");
+		File dir = new File(
+		env.getSettings().getOutputSettings().outputDirectory + "/" + getStartTime(env, false) + "/");
+		dir.mkdirs();
+
+	}
+
+	private void start()
+	{
+		prepareDir();
+		Console.info("Environment Started");
+		jumpEvaluator.setRunning(true);
+		console.startStatusPrintThread();
+		executionMonitor.launchEnvironment();
+
 	}
 
 	public ExecutionOperator(Environment envi)
@@ -187,6 +185,8 @@ public class ExecutionOperator
 	}
 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("M_d_yy_HH_mm_ss_SSS");
+
+	private static HashMap<Environment, String> startTimes = new HashMap<Environment, String>();
 
 	public static String getStartTime(Environment env, boolean file_name)
 	{

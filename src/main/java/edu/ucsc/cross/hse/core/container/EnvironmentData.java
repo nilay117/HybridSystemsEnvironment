@@ -9,40 +9,27 @@ import java.util.HashMap;
 public class EnvironmentData
 {
 
-	private ArrayList<HybridTime> storeTimes;
 	private ArrayList<DataSeries<?>> globalStateData;
 	private HashMap<String, String> stateNames;
-	private ArrayList<String> nameOrder;
+	private ArrayList<HybridTime> storeTimes;
 
-	public void setNameOrder(ArrayList<String> nameOrder)
+	public ArrayList<DataSeries<?>> getGlobalStateData()
 	{
-		this.nameOrder = nameOrder;
+		return globalStateData;
 	}
 
-	/*
-	 * Constructor
-	 */
-	public EnvironmentData()
+	public ArrayList<String> getLabelOrder()
 	{
-		storeTimes = new ArrayList<HybridTime>();
-		globalStateData = new ArrayList<DataSeries<?>>();
-		stateNames = new HashMap<String, String>();
-		nameOrder = new ArrayList<String>();
-	}
-
-	// public EnvironmentData(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
-	// {
-	// storeTimes = store_times;
-	// globalStateData = global_state_data;
-	// stateNames = new HashMap<String, String>();
-	// nameOrder = new ArrayList<String>();
-	// }
-
-	public void load(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
-	{
-		storeTimes = store_times;
-		globalStateData = global_state_data;
-
+		ArrayList<String> nameOrder = new ArrayList<String>();
+		if (nameOrder.size() == 0)
+		{
+			for (DataSeries<?> dataSeries : getGlobalStateData())
+			{
+				nameOrder.add(getLegendLabel(dataSeries));
+			}
+			Collections.sort(nameOrder);
+		}
+		return nameOrder;
 	}
 
 	public HybridTime getLastStoredTime()
@@ -55,55 +42,9 @@ public class EnvironmentData
 		return lastTime;
 	}
 
-	public ArrayList<DataSeries<?>> getGlobalStateData()
-	{
-		return globalStateData;
-	}
-
-	public ArrayList<HybridTime> getStoreTimes()
-	{
-		return storeTimes;
-	}
-
-	public HashMap<String, String> getStates()
+	public HashMap<String, String> getObjectLabels()
 	{
 		return stateNames;
-	}
-
-	public ArrayList<String> getNameOrder()
-	{
-		if (nameOrder.size() == 0)
-		{
-			for (DataSeries<?> dataSeries : getGlobalStateData())
-			{
-				nameOrder.add(getLegendLabel(dataSeries));
-			}
-			Collections.sort(nameOrder);
-		}
-		return nameOrder;
-	}
-
-	public String getLegendLabel(DataSeries<?> data)
-	{
-
-		String label = data.getParentName();
-		if (getStates().containsKey(data.getParentID()))
-		{
-			return getStates().get(data.getParentID());
-		}
-		String labelBase = label;
-		int append = 1;
-		label = labelBase + "(" + append + ")";
-		while (nameOrder.contains(label))
-		{
-			append++;
-			label = labelBase + "(" + append + ")";
-		}
-		nameOrder.add(label);
-		Collections.sort(nameOrder);
-		getStates().put(data.getParentID(), label);
-		return label;
-
 	}
 
 	public HashMap<String, String> getStateNames()
@@ -111,13 +52,55 @@ public class EnvironmentData
 		return stateNames;
 	}
 
-	public void setStateNames(HashMap<String, String> stateNames)
+	public ArrayList<HybridTime> getStoreTimes()
 	{
-		this.stateNames = stateNames;
+		return storeTimes;
 	}
 
-	public void setStoreTimes(ArrayList<HybridTime> storeTimes)
+	public void load(EnvironmentData new_data)
 	{
-		this.storeTimes = storeTimes;
+		storeTimes = new_data.getStoreTimes();
+		globalStateData = new_data.getGlobalStateData();
+
+	}
+
+	private String getLegendLabel(DataSeries<?> data)
+	{
+
+		String label = data.getParentName();
+		if (getObjectLabels().containsKey(data.getParentID()))
+		{
+			return getObjectLabels().get(data.getParentID());
+		}
+		String labelBase = label;
+		int append = 1;
+		label = labelBase + "(" + append + ")";
+		while (stateNames.containsValue(label))
+		{
+			append++;
+			label = labelBase + "(" + append + ")";
+		}
+		getObjectLabels().put(data.getParentID(), label);
+		return label;
+	}
+
+	/*
+	 * Constructor
+	 */
+	public EnvironmentData()
+	{
+		storeTimes = new ArrayList<HybridTime>();
+		globalStateData = new ArrayList<DataSeries<?>>();
+		stateNames = new HashMap<String, String>();
+	}
+
+	/*
+	 * Constructor
+	 */
+	public EnvironmentData(HashMap<String, String> state_labels)
+	{
+		storeTimes = new ArrayList<HybridTime>();
+		globalStateData = new ArrayList<DataSeries<?>>();
+		stateNames = state_labels;
 	}
 }

@@ -24,13 +24,6 @@ public class ComputationMonitor
 
 	private ExecutionOperator manager;
 
-	public ComputationMonitor(ExecutionOperator manager)
-	{
-
-		this.manager = manager;
-		runTime = 0.0;
-	}
-
 	/*
 	 * Total time that the environment has been running (excluding pauses and errors)
 	 */
@@ -61,88 +54,6 @@ public class ComputationMonitor
 		// manager.getExecutionParameters().getMaximumTime(), y);
 		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
 
-	}
-
-	/*
-	 * Instantiates the simulation integrator based on the current settings
-	 */
-	protected FirstOrderIntegrator getSimulationIntegrator()
-	{
-		FirstOrderIntegrator integrator = null;
-		switch (manager.getSettings().getComputationSettings().integratorType)
-		{
-			case EULER:
-				integrator = new EulerIntegrator(manager.getSettings().getComputationSettings().odeMinimumStepSize);
-				break;
-			case DORMAND_PRINCE_853:
-				integrator = new DormandPrince853Integrator(
-				manager.getSettings().getComputationSettings().odeMinimumStepSize,
-				manager.getSettings().getComputationSettings().odeMaximumStepSize,
-				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
-				manager.getSettings().getComputationSettings().odeRelativeTolerance);
-				break;
-			case DORMAND_PRINCE_54:
-				integrator = new DormandPrince54Integrator(
-				manager.getSettings().getComputationSettings().odeMinimumStepSize,
-				manager.getSettings().getComputationSettings().odeMaximumStepSize,
-				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
-				manager.getSettings().getComputationSettings().odeRelativeTolerance);
-				break;
-		}
-		loadEventHandlers(integrator);
-		return integrator;
-	}
-
-	/*
-	 * Loads the jump evaluator and interrupt responder to an integrator
-	 * 
-	 * @param integrator - integrator instance to contain the event handlers
-	 */
-	private void loadEventHandlers(FirstOrderIntegrator integrator)
-	{
-		integrator.addEventHandler(manager.getJumpEvaluator(),
-		manager.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval,
-		manager.getSettings().getComputationSettings().eventHandlerConvergenceThreshold,
-		manager.getSettings().getComputationSettings().maxEventHandlerIterations);
-		// integrator.addEventHandler(getInterruptHandler(),
-		// manager.getSettings().getEnvironmentSettings().ehMaxCheckInterval,
-		// manager.getSettings().getEnvironmentSettings().ehConvergence,
-		// manager.getSettings().getEnvironmentSettings().ehMaxIterationCount);
-	}
-
-	/*
-	 * Starts the specified integrator for the specified dynamics, start time, and duration
-	 * 
-	 * @param integrator - integrator to be used
-	 * 
-	 * @param ode - set of differential equations that define the dynamical system
-	 * 
-	 * @param start_time - initial time when integration will start
-	 * 
-	 * @param duration - final time when integration will be complete
-	 * 
-	 * @param ode_vector - initial values of all variables associated with the ode
-	 */
-	private Double runIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
-	Double start_time, Double duration, double[] ode_vector)
-	{
-		Double endTime = 0.0;
-		boolean timeExpired = false;
-		boolean jumpsExpired = false;
-		boolean terminated = false;
-		while (!timeExpired && !jumpsExpired && !terminated)
-		{
-
-			endTime = recursiveIntegrator(0);
-			timeExpired = endTime >= manager.getExecutionParameters().maximumTime;
-			jumpsExpired = manager.getExecutionContent().getHybridSimTime()
-			.getJumps() >= manager.getExecutionParameters().maximumJumps;
-			terminated = !manager.getJumpEvaluator().isRunning();
-
-		}
-		manager.getDataManager().gatherData(endTime, manager.getExecutionContent().getValueVector(), JumpStatus.NO_JUMP,
-		true);
-		return endTime;
 	}
 
 	/*
@@ -206,34 +117,6 @@ public class ComputationMonitor
 	}
 
 	/*
-	 * Catches halts in the integrator due to step size errors, and makes adjustments before restarting the integrator
-	 * to reduce the chance of similar errors in the future
-	 */
-	private boolean handleStepSizeIssues(Exception exc)
-	{
-		boolean handledIssue = false;
-		if (exc.getClass().equals(NumberIsTooSmallException.class))
-		{
-			if (manager.getSettings().getLogSettings().printIntegratorExceptions)
-			{
-				Console
-				.warn("Integrator failure - step size too large - adjusting step size and restarting integrator");
-			}
-			manager.getSettings()
-			.getComputationSettings().odeMaximumStepSize = this.manager.getSettings()
-			.getComputationSettings().odeMaximumStepSize
-			* this.manager.getSettings().getComputationSettings().stepSizeErrorMaxCorrectionFactor;
-			manager.getSettings()
-			.getComputationSettings().odeMinimumStepSize = this.manager.getSettings()
-			.getComputationSettings().odeMinimumStepSize
-			* (this.manager.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor);
-			handledIssue = true;
-		}
-		return handledIssue;
-
-	}
-
-	/*
 	 * Catches halts in the integrator due to bracketing issues (minimum check inverval too high), and makes adjustments
 	 * before restarting the integrator to reduce the chance of similar errors in the future
 	 */
@@ -286,6 +169,128 @@ public class ComputationMonitor
 	}
 
 	/*
+	 * Catches halts in the integrator due to step size errors, and makes adjustments before restarting the integrator
+	 * to reduce the chance of similar errors in the future
+	 */
+	private boolean handleStepSizeIssues(Exception exc)
+	{
+		boolean handledIssue = false;
+		if (exc.getClass().equals(NumberIsTooSmallException.class))
+		{
+			if (manager.getSettings().getLogSettings().printIntegratorExceptions)
+			{
+				Console
+				.warn("Integrator failure - step size too large - adjusting step size and restarting integrator");
+			}
+			manager.getSettings()
+			.getComputationSettings().odeMaximumStepSize = this.manager.getSettings()
+			.getComputationSettings().odeMaximumStepSize
+			* this.manager.getSettings().getComputationSettings().stepSizeErrorMaxCorrectionFactor;
+			manager.getSettings()
+			.getComputationSettings().odeMinimumStepSize = this.manager.getSettings()
+			.getComputationSettings().odeMinimumStepSize
+			* (this.manager.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor);
+			handledIssue = true;
+		}
+		return handledIssue;
+
+	}
+
+	/*
+	 * Loads the jump evaluator and interrupt responder to an integrator
+	 * 
+	 * @param integrator - integrator instance to contain the event handlers
+	 */
+	private void loadEventHandlers(FirstOrderIntegrator integrator)
+	{
+		integrator.addEventHandler(manager.getJumpEvaluator(),
+		manager.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval,
+		manager.getSettings().getComputationSettings().eventHandlerConvergenceThreshold,
+		manager.getSettings().getComputationSettings().maxEventHandlerIterations);
+		// integrator.addEventHandler(getInterruptHandler(),
+		// manager.getSettings().getEnvironmentSettings().ehMaxCheckInterval,
+		// manager.getSettings().getEnvironmentSettings().ehConvergence,
+		// manager.getSettings().getEnvironmentSettings().ehMaxIterationCount);
+	}
+
+	/*
+	 * Displays information about an error that occured that the monitor was not able to address.
+	 */
+	private void printOutUnresolvedIssues(Exception exc, boolean resolved)
+	{
+		if (!resolved)
+		{
+			// this.getConsole().print("Integrator failure due to another cause - please see stack trace for details");
+			exc.printStackTrace();
+		}
+	}
+
+	/*
+	 * Starts the specified integrator for the specified dynamics, start time, and duration
+	 * 
+	 * @param integrator - integrator to be used
+	 * 
+	 * @param ode - set of differential equations that define the dynamical system
+	 * 
+	 * @param start_time - initial time when integration will start
+	 * 
+	 * @param duration - final time when integration will be complete
+	 * 
+	 * @param ode_vector - initial values of all variables associated with the ode
+	 */
+	private Double runIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
+	Double start_time, Double duration, double[] ode_vector)
+	{
+		Double endTime = 0.0;
+		boolean timeExpired = false;
+		boolean jumpsExpired = false;
+		boolean terminated = false;
+		while (!timeExpired && !jumpsExpired && !terminated)
+		{
+
+			endTime = recursiveIntegrator(0);
+			timeExpired = endTime >= manager.getExecutionParameters().maximumTime;
+			jumpsExpired = manager.getExecutionContent().getHybridSimTime()
+			.getJumps() >= manager.getExecutionParameters().maximumJumps;
+			terminated = !manager.getJumpEvaluator().isRunning();
+
+		}
+		manager.getDataManager().performDataActions(endTime, manager.getExecutionContent().getValueVector(), JumpStatus.NO_JUMP,
+		true);
+		return endTime;
+	}
+
+	/*
+	 * Instantiates the simulation integrator based on the current settings
+	 */
+	protected FirstOrderIntegrator getSimulationIntegrator()
+	{
+		FirstOrderIntegrator integrator = null;
+		switch (manager.getSettings().getComputationSettings().integratorType)
+		{
+			case EULER:
+				integrator = new EulerIntegrator(manager.getSettings().getComputationSettings().odeMinimumStepSize);
+				break;
+			case DORMAND_PRINCE_853:
+				integrator = new DormandPrince853Integrator(
+				manager.getSettings().getComputationSettings().odeMinimumStepSize,
+				manager.getSettings().getComputationSettings().odeMaximumStepSize,
+				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
+				manager.getSettings().getComputationSettings().odeRelativeTolerance);
+				break;
+			case DORMAND_PRINCE_54:
+				integrator = new DormandPrince54Integrator(
+				manager.getSettings().getComputationSettings().odeMinimumStepSize,
+				manager.getSettings().getComputationSettings().odeMaximumStepSize,
+				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
+				manager.getSettings().getComputationSettings().odeRelativeTolerance);
+				break;
+		}
+		loadEventHandlers(integrator);
+		return integrator;
+	}
+
+	/*
 	 * Determines what to do when a fatal error occurs depending on the settings defined. These errors don't necessarly
 	 * mean the data is inacurate, and most likely won't effect the outcome much, however the system can be enabled to
 	 * restart a trial upon such errors if desired.
@@ -299,16 +304,11 @@ public class ComputationMonitor
 	 * // this.getInterruptHandler().interruptEnv(true); } }
 	 */
 
-	/*
-	 * Displays information about an error that occured that the monitor was not able to address.
-	 */
-	private void printOutUnresolvedIssues(Exception exc, boolean resolved)
+	public ComputationMonitor(ExecutionOperator manager)
 	{
-		if (!resolved)
-		{
-			// this.getConsole().print("Integrator failure due to another cause - please see stack trace for details");
-			exc.printStackTrace();
-		}
+
+		this.manager = manager;
+		runTime = 0.0;
 	}
 
 	/*

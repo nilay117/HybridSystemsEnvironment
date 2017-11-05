@@ -23,9 +23,6 @@ import java.util.HashMap;
 public class Environment
 {
 
-	private static HashMap<Environment, ExecutionOperator> operators = new HashMap<Environment, ExecutionOperator>();
-	// Operator
-
 	// Components
 	EnvironmentContent content;
 	EnvironmentData dataCollector;
@@ -35,18 +32,18 @@ public class Environment
 	public void add(ChartProperties... plot)
 	{
 
-		outputs.addPlot(plot);
+		outputs.addChart(plot);
 
 	}
 
 	public void add(ChartProperties plot, FileSpecifications<ImageFormat> specs)
 	{
-		outputs.addPlot(plot, specs);
+		outputs.addChart(plot, specs);
 	}
 
 	public void add(ChartProperties plot, String path, ImageFormat format)
 	{
-		outputs.addPlot(plot, path, format);
+		outputs.addChart(plot, path, format);
 	}
 
 	public void add(HybridSystem<?>... new_systems)
@@ -103,6 +100,28 @@ public class Environment
 		return settings;
 	}
 
+	public void loadContent(EnvironmentContent contents)
+	{
+		getContents().load(contents);
+	}
+
+	public void loadData(EnvironmentData data)
+	{
+		if (data == null)
+		{
+			dataCollector = null;
+		} else
+		{
+			// if (dataCollector == null)
+			{
+				dataCollector = data;
+			} // else
+			{
+				// getData().load(data.getStoreTimes(), data.getGlobalStateData());
+			}
+		}
+	}
+
 	public void loadEnvironment(Environment new_env)
 	{
 		for (Field field : Environment.class.getDeclaredFields())
@@ -133,31 +152,42 @@ public class Environment
 		}
 	}
 
-	public void loadContent(EnvironmentContent contents)
-	{
-		getContents().load(contents);
-	}
-
 	public void loadSettings(EnvironmentSettings settings)
 	{
 		getSettings().loadAllSettings(settings);
 	}
 
-	public void loadData(EnvironmentData data)
+	public void remove(ChartProperties... plot)
 	{
-		if (data == null)
+
+		outputs.removeChart(plot);
+
+	}
+
+	public void remove(HybridSystem<?>... new_systems)
+	{
+		content.remove(new_systems);
+	}
+
+	public void save(File file)
+	{
+		save(file, true);
+	}
+
+	public void save(File file, boolean save_data)
+	{
+		EnvironmentData savedData = dataCollector;
+		EnvironmentFile output = new EnvironmentFile();
+		if (!save_data)
 		{
-			dataCollector = null;
+			// dataCollector = null;
+			output.addContent(this);
 		} else
 		{
-			// if (dataCollector == null)
-			{
-				dataCollector = data;
-			} // else
-			{
-				// getData().load(data.getStoreTimes(), data.getGlobalStateData());
-			}
+			output.addContent(this);
 		}
+		output.writeToFile(file);
+		dataCollector = savedData; // loadData(savedData);
 	}
 
 	public void start()
@@ -185,27 +215,6 @@ public class Environment
 		start();
 	}
 
-	public void save(File file)
-	{
-		save(file, true);
-	}
-
-	public void save(File file, boolean save_data)
-	{
-		EnvironmentData savedData = dataCollector;
-		EnvironmentFile output = new EnvironmentFile();
-		if (!save_data)
-		{
-			dataCollector = null;
-			output.add(this);
-		} else
-		{
-			output.add(this);
-		}
-		output.writeToFile(file);
-		dataCollector = savedData; // loadData(savedData);
-	}
-
 	public Environment()
 	{
 
@@ -215,6 +224,9 @@ public class Environment
 		outputs = new EnvironmentOutputs(this);
 		dataCollector = new EnvironmentData();
 	}
+
+	private static HashMap<Environment, ExecutionOperator> operators = new HashMap<Environment, ExecutionOperator>();
+	// Operator
 
 	public static Environment loadFile(File file)
 	{

@@ -8,46 +8,12 @@ import java.util.ArrayList;
 public class DataSeries<X>
 {
 
-	private ArrayList<HybridTime> storeTimes; // data store times
-	private ArrayList<X> storedData; // stored values
 	private Class<X> dataClass;
 	private String elementName;
-	private String parentName;
 	private String parentID;
-
-	public DataSeries(ArrayList<HybridTime> store_times, Class<X> data_class, String element_name, String parent_name,
-	String parent_id)
-	{
-		storedData = new ArrayList<X>();
-		dataClass = data_class;
-		this.storeTimes = store_times;
-		this.elementName = element_name;
-		this.parentName = parent_name;
-		this.parentID = parent_id;
-	}
-
-	public String getParentID()
-	{
-		return parentID;
-	}
-
-	/*
-	 * Store the current value of the data element
-	 */
-	public void storeData(X value)
-	{
-
-		storedData.add((X) value);
-	}
-
-	/*
-	 * Store the current value of the data element
-	 */
-	@SuppressWarnings("unchecked")
-	public void storeDataGeneral(Object value)
-	{
-		storedData.add((X) value);
-	}
+	private String parentName;
+	private ArrayList<X> storedData; // stored values
+	private ArrayList<HybridTime> storeTimes; // data store times
 
 	/*
 	 * Get all of the data stored
@@ -57,22 +23,26 @@ public class DataSeries<X>
 		return storedData;
 	}
 
-	public ArrayList<HybridTime> getStoreTimes()
+	public Class<X> getDataClass()
 	{
-		return storeTimes;
-	}
-
-	public X getStoredData(HybridTime store_time)
-	{
-		Integer ind = storeTimes.indexOf(store_time);
-
-		return storedData.get(ind);
-
+		return dataClass;
 	}
 
 	public String getElementName()
 	{
 		return elementName;
+	}
+
+	public String getHeader()
+	{
+
+		return correctName(elementName) + ";parent=" + correctName(parentName) + ";parentID=" + correctName(parentID)
+		+ ";" + XMLParser.serializeObject(storedData.get(0).getClass());
+	}
+
+	public String getParentID()
+	{
+		return parentID;
 	}
 
 	public String getParentName()
@@ -96,14 +66,31 @@ public class DataSeries<X>
 		return null;
 	}
 
-	public String getHeader()
+	public X getStoredData(HybridTime store_time)
 	{
+		Integer ind = storeTimes.indexOf(store_time);
 
-		return correctName(elementName) + ";parent=" + correctName(parentName) + ";parentID=" + correctName(parentID)
-		+ ";" + XMLParser.serializeObject(storedData.get(0).getClass());
+		return storedData.get(ind);
+
 	}
 
-	public static String correctName(String name)
+	public ArrayList<HybridTime> getStoreTimes()
+	{
+		return storeTimes;
+	}
+
+	public DataSeries(ArrayList<HybridTime> store_times, Class<X> data_class, String element_name, String parent_name,
+	String parent_id)
+	{
+		storedData = new ArrayList<X>();
+		dataClass = data_class;
+		this.storeTimes = store_times;
+		this.elementName = element_name;
+		this.parentName = parent_name;
+		this.parentID = parent_id;
+	}
+
+	private static String correctName(String name)
 	{
 		String correctedName = name.replace(",", "[comma]");
 		correctedName = correctedName.replace(";", "[semiColon]");
@@ -125,10 +112,5 @@ public class DataSeries<X>
 	String element_name, String parent_name, String parent_id)
 	{
 		return new DataSeries<C>(store_times, data_class, element_name, parent_name, parent_id);
-	}
-
-	public Class<X> getDataClass()
-	{
-		return dataClass;
 	}
 }

@@ -3,18 +3,18 @@ package edu.ucsc.cross.hse.core.time;
 public class HybridTime
 {
 
-	public double getTime()
-	{
-		return time;
-	}
+	private Integer jumps;
+
+	private double time;
 
 	public Integer getJumps()
 	{
 		return jumps;
 	}
-
-	private double time;
-	private Integer jumps;
+	public double getTime()
+	{
+		return time;
+	}
 
 	public HybridTime(double time, Integer jumps)
 	{

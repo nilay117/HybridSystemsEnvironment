@@ -11,27 +11,6 @@ public class SystemOperator
 
 	private ExecutionOperator content;
 
-	public SystemOperator(ExecutionOperator content)
-	{
-		this.content = content;
-	}
-
-	public boolean checkDomain(boolean jump)
-	{
-		boolean domain = false;
-		for (HybridSystem<?> hs : content.getContents().getSystems())
-		{
-			if (jump)
-			{
-				domain = domain || HybridSystemOperator.d(hs);
-			} else
-			{
-				domain = domain || HybridSystemOperator.c(hs);
-			}
-		}
-		return domain;
-	}
-
 	public void applyDynamics(boolean jump_occurring)
 	{
 		prepareDynamicComponents(jump_occurring);
@@ -62,6 +41,39 @@ public class SystemOperator
 		}
 	}
 
+	public boolean checkDomain(boolean jump)
+	{
+		boolean domain = false;
+		for (HybridSystem<?> hs : content.getContents().getSystems())
+		{
+			if (jump)
+			{
+				domain = domain || HybridSystemOperator.d(hs);
+			} else
+			{
+				domain = domain || HybridSystemOperator.c(hs);
+			}
+		}
+		return domain;
+	}
+
+	public void clearChangeValues()
+	{
+		for (DynamicObjectManipulator field : content.getExecutionContent().getSimulatedObjectAccessVector())
+		{
+			try
+			{
+				if (field.getField().getType().equals(Double.class) || field.getField().getType().equals(double.class))
+				{
+					field.updateObject(0.0, field.getChangeParent());
+				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void prepareDynamicComponents(boolean jump)
 	{
 		if (jump)
@@ -85,23 +97,6 @@ public class SystemOperator
 
 	}
 
-	public void clearChangeValues()
-	{
-		for (DynamicObjectManipulator field : content.getExecutionContent().getSimulatedObjectAccessVector())
-		{
-			try
-			{
-				if (field.getField().getType().equals(Double.class) || field.getField().getType().equals(double.class))
-				{
-					field.updateObject(0.0, field.getChangeParent());
-				}
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public void storeChangeValues(boolean pre_jump)
 	{
 		for (DynamicObjectManipulator field : content.getExecutionContent().getFieldParentMap().values())
@@ -122,6 +117,11 @@ public class SystemOperator
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public SystemOperator(ExecutionOperator content)
+	{
+		this.content = content;
 	}
 
 }

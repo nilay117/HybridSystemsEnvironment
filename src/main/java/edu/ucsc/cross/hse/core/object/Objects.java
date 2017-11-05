@@ -5,25 +5,20 @@ public class Objects
 
 	private String name;
 
-	public Objects()
-	{
-		this.name = this.getClass().getSimpleName();
-	}
-
 	public ObjectsInfo info()
 	{
 		return new ObjectsInfo(this);
+	}
+
+	public Objects()
+	{
+		this.name = this.getClass().getSimpleName();
 	}
 
 	public static class ObjectsInfo
 	{
 
 		Objects obj;
-
-		public ObjectsInfo(Objects object)
-		{
-			obj = object;
-		}
 
 		public String getName()
 		{
@@ -33,6 +28,11 @@ public class Objects
 		public void setName(String name)
 		{
 			obj.name = name;
+		}
+
+		public ObjectsInfo(Objects object)
+		{
+			obj = object;
 		}
 	}
 }
