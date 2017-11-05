@@ -274,7 +274,7 @@ public class ChartView
 			protected Integer call() throws Exception
 			{
 				final BooleanProperty success = new SimpleBooleanProperty(false);
-				Long attemptTime = (long) 1000;
+				Long attemptTime = System.currentTimeMillis() + (long) 5000;
 				while (!success.getValue())
 				{
 					if (attemptTime <= System.currentTimeMillis())
@@ -288,14 +288,14 @@ public class ChartView
 
 						} catch (Exception e)
 						{
-							// e.printStackTrace();
+							e.printStackTrace();
 							// Console.error("Unable to create output plot: " + output.toString());
 						}
 						// your code here
 
 						// }
 						// }, (int) 500, (int) 500);
-						attemptTime = System.currentTimeMillis() + 1000;
+						attemptTime = System.currentTimeMillis() + 5000;
 					}
 				}
 				return 0;

@@ -14,6 +14,11 @@ public class EnvironmentData
 	private HashMap<String, String> stateNames;
 	private ArrayList<String> nameOrder;
 
+	public void setNameOrder(ArrayList<String> nameOrder)
+	{
+		this.nameOrder = nameOrder;
+	}
+
 	/*
 	 * Constructor
 	 */
@@ -25,13 +30,13 @@ public class EnvironmentData
 		nameOrder = new ArrayList<String>();
 	}
 
-	public EnvironmentData(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
-	{
-		storeTimes = store_times;
-		globalStateData = global_state_data;
-		stateNames = new HashMap<String, String>();
-		nameOrder = new ArrayList<String>();
-	}
+	// public EnvironmentData(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
+	// {
+	// storeTimes = store_times;
+	// globalStateData = global_state_data;
+	// stateNames = new HashMap<String, String>();
+	// nameOrder = new ArrayList<String>();
+	// }
 
 	public void load(ArrayList<HybridTime> store_times, ArrayList<DataSeries<?>> global_state_data)
 	{
@@ -99,5 +104,20 @@ public class EnvironmentData
 		getStates().put(data.getParentID(), label);
 		return label;
 
+	}
+
+	public HashMap<String, String> getStateNames()
+	{
+		return stateNames;
+	}
+
+	public void setStateNames(HashMap<String, String> stateNames)
+	{
+		this.stateNames = stateNames;
+	}
+
+	public void setStoreTimes(ArrayList<HybridTime> storeTimes)
+	{
+		this.storeTimes = storeTimes;
 	}
 }

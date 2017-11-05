@@ -24,6 +24,7 @@ public class DataGeneratorTasks extends TaskManager
 	{
 		// openEnvironmentAndPlot();//
 		dataGeneratorSimulation();
+		// openEnvironmentAndPlot();//
 	}
 
 	/*
@@ -55,13 +56,13 @@ public class DataGeneratorTasks extends TaskManager
 		ChartProperties HybridChart1 = xyCombination();
 		ChartProperties HybridChart2 = xOnly();
 		ChartProperties HybridChart3 = xyVsTimeVertical();
-		// env.add(HybridChart1, HybridChart2, HybridChart3);
+		env.add(HybridChart1, HybridChart2, HybridChart3);
 
 		env.add(signalGenerator);
 		env.start();
-		// xyCombination().plot(env);
-		env.save(new File("output/test"), false);
-		env.save(new File("output/testDat"), true);
+		// xyCombination().createChart(env);
+		// env.save(new File("output/test"), false);
+		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
 		// cv.setChartProperties(HybridChart2);
 

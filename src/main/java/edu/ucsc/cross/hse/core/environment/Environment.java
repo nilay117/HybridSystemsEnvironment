@@ -27,10 +27,10 @@ public class Environment
 	// Operator
 
 	// Components
-	final EnvironmentContent content;
+	EnvironmentContent content;
 	EnvironmentData dataCollector;
-	final EnvironmentOutputs outputs;
-	final EnvironmentSettings settings;
+	EnvironmentOutputs outputs;
+	EnvironmentSettings settings;
 
 	public void add(ChartProperties... plot)
 	{
@@ -193,14 +193,17 @@ public class Environment
 	public void save(File file, boolean save_data)
 	{
 		EnvironmentData savedData = dataCollector;
+		EnvironmentFile output = new EnvironmentFile();
 		if (!save_data)
 		{
 			dataCollector = null;
+			output.add(this);
+		} else
+		{
+			output.add(this);
 		}
-		EnvironmentFile output = new EnvironmentFile();
-		output.add(this);
 		output.writeToFile(file);
-		dataCollector = savedData;
+		dataCollector = savedData; // loadData(savedData);
 	}
 
 	public Environment()
@@ -216,7 +219,7 @@ public class Environment
 	public static Environment loadFile(File file)
 	{
 		Environment env = EnvironmentFile.readContentFromFile(file, EnvironmentFile.ENVIRONMENT);
-		env.getManager();
+		// env.getManager();// operators.put(env, new ExecutionOperator(env));
 		return env;
 	}
 

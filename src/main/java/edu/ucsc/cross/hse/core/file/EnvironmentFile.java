@@ -136,6 +136,7 @@ public class EnvironmentFile implements FileFormat
 				adjustedInput = new File(output.getAbsolutePath() + fileExtension);
 			}
 			FileSystemInteractor.createOutputFile(adjustedInput.getAbsolutePath(), xmlOutput);
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -187,12 +188,27 @@ public class EnvironmentFile implements FileFormat
 			{
 				if (content_type.equals(EnvironmentData.class) || content_type.equals(Environment.class))
 				{
-					EnvironmentData dat = inputFile.get(CSVFile.class).getLocalCSVData();
+					EnvironmentData dat = null;
+					try
+					{
+						dat = inputFile.get(CSVFile.class).getLocalCSVData();
+					} catch (Exception e)
+					{
+						dat = new EnvironmentData();
+					}
 					if (content_type.equals(Environment.class))
 					{
 						System.out.println(XMLParser.serializeObject(dat));
 						Environment env = inputFile.get(Environment.class);
-						env.loadData(dat);
+						if (inputFile.get(EnvironmentData.class) != null)
+						{
+							env.loadData(inputFile.get(EnvironmentData.class));
+
+							env.getData().load(dat.getStoreTimes(), dat.getGlobalStateData());
+						} else
+						{
+							env.loadData(dat);
+						}
 						inputContent = (T) env;
 
 					} else
@@ -244,19 +260,38 @@ public class EnvironmentFile implements FileFormat
 		if (contentType.equals(Environment.class))
 		{
 			Environment env = (Environment) content;
-			// EnvironmentData dat = new EnvironmentData();
-			if (env.getData() != null)
+			EnvironmentData dat = new EnvironmentData();
+			// if (env.getData() != null)
 			{
-				add(new CSVFile(env.getManager(), true));
+				// add(new CSVFile(env.getManager(), true));
+				if (env.getData() != null)
+				{
+					// dat = env.getData();
+					try
+					{
 
-				// dat = env.getData();
-
-				env.loadData(null);
+						CSVFile f = new CSVFile(env.getManager(), true);
+						add(f);//// add(new CSVFile(env.getManager(), true));
+						dat.setStateNames(env.getData().getStateNames());
+						dat.setNameOrder(env.getData().getNameOrder());
+						env.loadData(null);
+						// dat.load(env.getData().getStoreTimes(), env.getData().getGlobalStateData());
+						// env.loadData(null);
+						// env.getData().load(null, null);
+					} catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+					// env.getData().load(null, null);
+					// storeContent(env.getData());
+				}
+				// env.loadData(null);
 			}
+			storeContent(dat);
 
-			add(env.getContents());
-			add(env.getSettings());
-			if (env.getContents().getSystems().size() > 0)
+			storeContent(env.getContents());
+			storeContent(env.getSettings());
+			// if (env.getContents().getSystems().size() > 0)
 			{
 				storeContent(
 				env.getContents().getSystems().toArray(new HybridSystem[env.getContents().getSystems().size()]));

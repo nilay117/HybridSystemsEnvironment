@@ -173,7 +173,7 @@ public class EnvironmentOutputs
 			env.save(spe, false);
 			Console.info("Configuration saved: " + spe.getAbsolutePath());
 		}
-		env.loadData(data);
+		// env.loadData(data);
 		if (env.getSettings().getOutputSettings().saveEnvironmentToFile)
 		{
 			FileSpecifications<EnvironmentFile> specs = getSpecs(env, new EnvironmentFile(),
@@ -191,7 +191,7 @@ public class EnvironmentOutputs
 
 			Console.info("Environment saved: " + spe.getAbsolutePath());
 		}
-		env.loadData(data);
+		// env.loadData(data);
 		if (env.getSettings().getOutputSettings().saveDataToCSVFile)
 		{
 			FileSpecifications<EnvironmentFile> specs = getSpecs(env, new EnvironmentFile(),

@@ -33,11 +33,14 @@ public class CSVFile
 		managers.put(this, manager);
 		createCSVOutput(null, true);
 		contents = out.toString();
+		writers.get(this).close();
+		// writers.get(this).close();
 	}
 
 	public void createCSVOutput(File file)
 	{
 		createCSVOutput(file, false);
+		writers.get(this).close();
 	}
 
 	public void createCSVOutput(File file, boolean skip_prepare)
