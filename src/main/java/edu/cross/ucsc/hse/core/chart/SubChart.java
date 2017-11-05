@@ -3,21 +3,21 @@ package edu.cross.ucsc.hse.core.chart;
 public class SubChart
 {
 
-	// Labels
-	String xAxisLabel;
-	String yAxisLabel;
-	String title;
-
 	// Visibility
 	boolean displayLegend;
+	String title;
+	// Labels
+	String xAxisLabel;
 
 	// Data
 	String xDataSelection;
+
+	String yAxisLabel;
 	String yDataSelection;
 
-	SubChart()
+	public String getTitle()
 	{
-
+		return title;
 	}
 
 	public String getxAxisLabel()
@@ -25,9 +25,9 @@ public class SubChart
 		return xAxisLabel;
 	}
 
-	public void setxAxisLabel(String xAxisLabel)
+	public String getxDataSelection()
 	{
-		this.xAxisLabel = xAxisLabel;
+		return xDataSelection;
 	}
 
 	public String getyAxisLabel()
@@ -35,15 +35,14 @@ public class SubChart
 		return yAxisLabel;
 	}
 
-	public void setyAxisLabel(String yAxisLabel)
+	public String getyDataSelection()
 	{
-		this.yAxisLabel = yAxisLabel;
+		return yDataSelection;
 	}
 
-	public void setAxisSelections(String x_selection, String y_selection)
+	public boolean isDisplayLegend()
 	{
-		xDataSelection = x_selection;
-		yDataSelection = y_selection;
+		return displayLegend;
 	}
 
 	public void setAxisLabels(String x_label, String y_label)
@@ -60,19 +59,10 @@ public class SubChart
 		yDataSelection = y_selection;
 	}
 
-	public String getTitle()
+	public void setAxisSelections(String x_selection, String y_selection)
 	{
-		return title;
-	}
-
-	public void setTitle(String mainTitle)
-	{
-		this.title = mainTitle;
-	}
-
-	public boolean isDisplayLegend()
-	{
-		return displayLegend;
+		xDataSelection = x_selection;
+		yDataSelection = y_selection;
 	}
 
 	public void setDisplayLegend(boolean displayLegend)
@@ -80,9 +70,14 @@ public class SubChart
 		this.displayLegend = displayLegend;
 	}
 
-	public String getxDataSelection()
+	public void setTitle(String mainTitle)
 	{
-		return xDataSelection;
+		this.title = mainTitle;
+	}
+
+	public void setxAxisLabel(String xAxisLabel)
+	{
+		this.xAxisLabel = xAxisLabel;
 	}
 
 	public void setxDataSelection(String xDataSelection)
@@ -90,13 +85,18 @@ public class SubChart
 		this.xDataSelection = xDataSelection;
 	}
 
-	public String getyDataSelection()
+	public void setyAxisLabel(String yAxisLabel)
 	{
-		return yDataSelection;
+		this.yAxisLabel = yAxisLabel;
 	}
 
 	public void setyDataSelection(String yDataSelection)
 	{
 		this.yDataSelection = yDataSelection;
+	}
+
+	SubChart()
+	{
+
 	}
 }

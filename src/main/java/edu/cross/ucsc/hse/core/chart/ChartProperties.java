@@ -2,16 +2,12 @@ package edu.cross.ucsc.hse.core.chart;
 
 import com.be3short.io.format.ImageFormat;
 import com.be3short.obj.modification.ObjectCloner;
-import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.task.TaskManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.util.ArrayList;
@@ -20,39 +16,245 @@ import java.util.HashMap;
 import java.util.Set;
 import org.jfree.chart.ChartColor;
 
-public class HybridChart
+public class ChartProperties
 {
 
-	// Constants
-	public static final String EMPTY = " ";
+	// Default Line Rendering Configuration
+	private Stroke flowStroke;
+	// Font Configuration
+	private HashMap<LabelType, LabelProperties> fonts;
 
 	// Layout Configuration
 	private Integer[][] grid;
-	private Double width;
 	private Double height;
+	private Stroke jumpStroke;
 	private String mainTitle;
 
-	// Individual Chart Configuration
-	private HashMap<Integer, SubChart> subPlots;
+	// General Series Rendering Configuration
+	private ArrayList<Paint> seriesColors = this.defaultSeriesColors();
 
-	// Font config
-	private HashMap<LabelType, LabelProperties> fonts;
+	private ArrayList<Stroke> seriesStrokes = new ArrayList<Stroke>();
 
 	// Grid Configuration
 	private boolean showXGridLines;
 	private boolean showYGridLines;
 
-	// Default Line Rendering Configuration
-	private Stroke flowStroke;
-	private Stroke jumpStroke;
+	// Individual Chart Configuration
+	private HashMap<Integer, SubChart> subPlots;
+	private Double width;
 
-	// General Series Rendering Configuration
-	private ArrayList<Paint> seriesColors = this.defaultSeriesColors();
-	private ArrayList<Stroke> seriesStrokes = new ArrayList<Stroke>();
+	public void addMainTitle(String main_title, Font title_font)
+	{
+		mainTitle = main_title;
+		if (title_font != null)
+		{
+			fonts.get(LabelType.MAIN_TITLE).set(title_font);
+		}
+	}
+
+	public void createChart(Environment envi)
+	{
+		new ChartView(envi.getData(), this, TaskManager.createStage());
+	}
+
+	public void createChart(Environment envi, String path, ImageFormat file_format)
+	{
+		new ChartView(envi.getData(), this, TaskManager.createStage(), file_format.createFileSpecs(path));
+	}
+
+	public LabelProperties editFonts(LabelType type)
+	{
+
+		return fonts.get(type);
+
+	}
+
+	public Stroke getBaseFlowStroke()
+	{
+		return flowStroke;
+	}
+
+	public Stroke getBaseJumpStroke()
+	{
+		return jumpStroke;
+	}
+
+	public HashMap<Integer, Integer[][]> getChartLocations()
+	{
+		HashMap<Integer, Integer[][]> charts = new HashMap<Integer, Integer[][]>();
+
+		for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
+		{
+			for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
+			{
+				if (!charts.containsKey(grid[rowIndex][colIndex]))
+				{
+					charts.put(grid[rowIndex][colIndex], clearNonGrid(grid, grid[rowIndex][colIndex]));
+				}
+			}
+
+		}
+		return charts;
+	}
+
+	public HashMap<LabelType, LabelProperties> getFonts()
+	{
+		return fonts;
+	}
+
+	public Double getHeight()
+	{
+		return height;
+	}
+
+	public Font getLabelFont(LabelType type)
+	{
+		String family = LabelProperties.defaultFont.getFamily();
+		Integer style = LabelProperties.defaultFont.getStyle();
+		Integer size = LabelProperties.defaultFont.getStyle();
+		if (fonts.containsKey(type))
+		{
+			return fonts.get(type).getFont();
+
+		}
+		Font font = new Font(family, style, size);
+		return font;
+	}
+
+	public Paint getLabelPaint(LabelType type)
+	{
+		if (fonts.containsKey(type))
+		{
+			// return //fonts.get(type).fill;
+		}
+		return Color.BLACK;
+	}
+
+	public boolean getLabelVisibility(LabelType type)
+	{
+		if (fonts.containsKey(type))
+		{
+			return true;// fonts.get(type).show;
+		}
+		return false;
+	}
 
 	public String getMainTitle()
 	{
 		return mainTitle;
+	}
+
+	public Paint getSeriesColor(Integer index)
+	{
+		Integer adj = Math.floorMod(index, seriesColors.size() - 1);
+		return seriesColors.get(adj);
+	}
+
+	public ArrayList<Stroke> getSeriesStrokes()
+	{
+		return seriesStrokes;
+	}
+
+	public Boolean getShowXGridLines()
+	{
+		return showXGridLines;
+	}
+
+	public Boolean getShowYGridLines()
+	{
+		return showYGridLines;
+	}
+
+	public Double getWidth()
+	{
+		return width;
+	}
+
+	public void setFlowStroke(Stroke flowStroke)
+	{
+		this.flowStroke = flowStroke;
+	}
+
+	public void setFontMap(HashMap<LabelType, LabelProperties> fonts)
+	{
+		this.fonts = fonts;
+	}
+
+	public void setHeight(Double height)
+	{
+		this.height = height;
+	}
+
+	public void setJumpStroke(Stroke jumpStroke)
+	{
+		this.jumpStroke = jumpStroke;
+	}
+
+	public void setLayout(Integer[][] layout)
+	{
+
+		grid = layout;
+		initializeSubPlots();
+	}
+
+	public void setSeriesColors(ArrayList<Paint> colors)
+	{
+		seriesColors = colors;
+	}
+
+	public void setSeriesStrokes(ArrayList<Stroke> seriesStrokes)
+	{
+		this.seriesStrokes = seriesStrokes;
+	}
+
+	public void setShowXGridLines(boolean showXGridLines)
+	{
+		this.showXGridLines = showXGridLines;
+	}
+
+	public void setShowYGridLines(boolean showYGridLines)
+	{
+		this.showYGridLines = showYGridLines;
+	}
+
+	public void setWidth(Double width)
+	{
+		this.width = width;
+	}
+
+	public SubChart sub(Integer index)
+	{
+		if (subPlots.containsKey(index))
+		{
+			return subPlots.get(index);
+		} else
+		{
+			Console.warn("sub plot " + index + " does not exist");
+			return new SubChart();
+		}
+	}
+
+	private Integer[][] clearNonGrid(Integer[][] gridz, Integer index)
+	{
+		Integer[][] grid = (Integer[][]) ObjectCloner.xmlClone(gridz);
+		for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
+		{
+			for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
+			{
+				if (!(grid[rowIndex][colIndex].equals(index)))
+				{
+					grid[rowIndex][colIndex] = -1;
+				}
+			}
+
+		}
+		return grid;
+	}
+
+	private ArrayList<Paint> defaultSeriesColors()
+	{
+
+		return new ArrayList<Paint>(Arrays.asList(ChartColor.createDefaultPaintArray()));
 	}
 
 	private void initializeSubPlots()
@@ -67,7 +269,7 @@ public class HybridChart
 		}
 	}
 
-	public HybridChart(Double width, Double height)
+	public ChartProperties(Double width, Double height)
 	{
 		subPlots = new HashMap<Integer, SubChart>();
 		fonts = LabelType.getDefaultMap();
@@ -90,250 +292,8 @@ public class HybridChart
 		initializeSubPlots();
 	}
 
-	public void addMainTitle(String main_title, Font title_font)
-	{
-		mainTitle = main_title;
-		if (title_font != null)
-		{
-			fonts.get(LabelType.MAIN_TITLE).set(title_font);
-		}
-	}
-
-	public void setLayout(Integer[][] layout)
-	{
-
-		grid = layout;
-		initializeSubPlots();
-	}
-
-	public SubChart sub(Integer index)
-	{
-		if (subPlots.containsKey(index))
-		{
-			return subPlots.get(index);
-		} else
-		{
-			Console.warn("sub plot " + index + " does not exist");
-			return new SubChart();
-		}
-	}
-
-	public HashMap<Integer, Integer[][]> getChartLocations()
-	{
-		HashMap<Integer, Integer[][]> charts = new HashMap<Integer, Integer[][]>();
-
-		for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-		{
-			for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-			{
-				if (!charts.containsKey(grid[rowIndex][colIndex]))
-				{
-					charts.put(grid[rowIndex][colIndex], clearNonGrid(grid, grid[rowIndex][colIndex]));
-				}
-			}
-
-		}
-		return charts;
-	}
-
-	public Double measureFont()
-	{
-		Double height = 0.0;
-		if (mainTitle != null)
-		{
-
-			height = measureFont(fonts.get(LabelType.MAIN_TITLE).getFont());
-		}
-		return height;
-	}
-
-	public Double measureFont(Font font)
-	{
-		Double height = 0.0;
-
-		Graphics graphics = new VectorGraphics2D();// (int) 100, (int) 100, (int) 400, (int) 400);
-		// get metrics from the graphics
-		FontMetrics metrics = graphics.getFontMetrics(font);
-		// get the height of a line of text in this
-		// font and render context
-		int hgt = metrics.getHeight();
-		// get the advance of my text in this font
-		// and render context
-		// calculate the size of a box to hold the
-		// text with some padding.
-		Dimension size = new Dimension(0 + 2, hgt + 2);
-		height = size.getHeight() + 8;
-
-		return height;
-	}
-
-	private Integer[][] clearNonGrid(Integer[][] gridz, Integer index)
-	{
-		Integer[][] grid = (Integer[][]) ObjectCloner.xmlClone(gridz);
-		for (int rowIndex = 0; rowIndex < grid.length; rowIndex++)
-		{
-			for (int colIndex = 0; colIndex < grid[0].length; colIndex++)
-			{
-				if (!(grid[rowIndex][colIndex].equals(index)))
-				{
-					grid[rowIndex][colIndex] = -1;
-				}
-			}
-
-		}
-		return grid;
-	}
-
-	public Paint getLabelPaint(LabelType type)
-	{
-		if (fonts.containsKey(type))
-		{
-			// return //fonts.get(type).fill;
-		}
-		return Color.BLACK;
-	}
-
-	public boolean getLabelVisibility(LabelType type)
-	{
-		if (fonts.containsKey(type))
-		{
-			return true;// fonts.get(type).show;
-		}
-		return false;
-	}
-
-	public Font getLabelFont(LabelType type)
-	{
-		String family = LabelProperties.defaultFont.getFamily();
-		Integer style = LabelProperties.defaultFont.getStyle();
-		Integer size = LabelProperties.defaultFont.getStyle();
-		if (fonts.containsKey(type))
-		{
-			return fonts.get(type).getFont();
-
-		}
-		Font font = new Font(family, style, size);
-		return font;
-	}
-
-	public HashMap<LabelType, LabelProperties> getFonts()
-	{
-		return fonts;
-	}
-
-	public void setFontMap(HashMap<LabelType, LabelProperties> fonts)
-	{
-		this.fonts = fonts;
-	}
-
-	public LabelProperties editFonts(LabelType type)
-	{
-
-		return fonts.get(type);
-
-	}
-
-	public void plot(Environment envi)
-	{
-		new ChartView(envi, this, TaskManager.createStage());
-	}
-
-	public void plot(Environment envi, String path, ImageFormat file_format)
-	{
-		new ChartView(envi, this, TaskManager.createStage(), file_format.createFileSpecs(path));
-	}
-
-	public Double getWidth()
-	{
-		return width;
-	}
-
-	public void setWidth(Double width)
-	{
-		this.width = width;
-	}
-
-	public Double getHeight()
-	{
-		return getHeight(false);
-	}
-
-	public Double getHeight(boolean adjusted)
-	{
-		return height - measureFont();
-	}
-
-	public void setHeight(Double height)
-	{
-		this.height = height;
-	}
-
-	public Boolean getShowXGridLines()
-	{
-		return showXGridLines;
-	}
-
-	public void setShowXGridLines(boolean showXGridLines)
-	{
-		this.showXGridLines = showXGridLines;
-	}
-
-	public Boolean getShowYGridLines()
-	{
-		return showYGridLines;
-	}
-
-	public void setShowYGridLines(boolean showYGridLines)
-	{
-		this.showYGridLines = showYGridLines;
-	}
-
-	public Stroke getFlowStroke()
-	{
-		return flowStroke;
-	}
-
-	public void setFlowStroke(Stroke flowStroke)
-	{
-		this.flowStroke = flowStroke;
-	}
-
-	public Stroke getJumpStroke()
-	{
-		return jumpStroke;
-	}
-
-	public void setJumpStroke(Stroke jumpStroke)
-	{
-		this.jumpStroke = jumpStroke;
-	}
-
-	private ArrayList<Paint> defaultSeriesColors()
-	{
-
-		return new ArrayList<Paint>(Arrays.asList(ChartColor.createDefaultPaintArray()));
-	}
-
-	public Paint getSeriesColor(Integer index)
-	{
-		Integer adj = Math.floorMod(index, seriesColors.size() - 1);
-		return seriesColors.get(adj);
-	}
-
-	public void setSeriesColors(ArrayList<Paint> colors)
-	{
-		seriesColors = colors;
-	}
-
-	public ArrayList<Stroke> getSeriesStrokes()
-	{
-		return seriesStrokes;
-	}
-
-	public void setSeriesStrokes(ArrayList<Stroke> seriesStrokes)
-	{
-		this.seriesStrokes = seriesStrokes;
-	}
+	// Constants
+	public static final String EMPTY = " ";
 
 	// User defined labels (in development)
 	// private Integer[][] labels;

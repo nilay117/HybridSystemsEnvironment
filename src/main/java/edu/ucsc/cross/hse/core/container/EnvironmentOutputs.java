@@ -3,8 +3,8 @@ package edu.ucsc.cross.hse.core.container;
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
+import edu.cross.ucsc.hse.core.chart.ChartProperties;
 import edu.cross.ucsc.hse.core.chart.ChartView;
-import edu.cross.ucsc.hse.core.chart.HybridChart;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
@@ -30,38 +30,38 @@ public class EnvironmentOutputs
 	}
 
 	// Mapping of all plots to be generated and output file specifications for plots that will be saved to a file
-	private HashMap<FileSpecifications<ImageFormat>, HybridChart> plots;
+	private HashMap<FileSpecifications<ImageFormat>, ChartProperties> plots;
 
 	public EnvironmentOutputs(Environment environment)
 	{
 		environments.put(this, environment);
-		plots = new HashMap<FileSpecifications<ImageFormat>, HybridChart>();
+		plots = new HashMap<FileSpecifications<ImageFormat>, ChartProperties>();
 	}
 
-	public void addPlot(HybridChart... plot)
+	public void addPlot(ChartProperties... plot)
 	{
-		for (HybridChart plo : plot)
+		for (ChartProperties plo : plot)
 		{
 			plots.put(new FileSpecifications<ImageFormat>(), plo);
 		}
 	}
 
-	public void addPlot(HybridChart plot, FileSpecifications<ImageFormat> specs)
+	public void addPlot(ChartProperties plot, FileSpecifications<ImageFormat> specs)
 	{
 		plots.put(specs, plot);
 	}
 
-	public void addPlot(HybridChart plot, String path, ImageFormat format)
+	public void addPlot(ChartProperties plot, String path, ImageFormat format)
 	{
 		plots.put(format.createFileSpecs(path), plot);
 	}
 
-	public ArrayList<HybridChart> getPlots()
+	public ArrayList<ChartProperties> getPlots()
 	{
-		return new ArrayList<HybridChart>(plots.values());
+		return new ArrayList<ChartProperties>(plots.values());
 	}
 
-	HashMap<FileSpecifications<ImageFormat>, HybridChart> getPlotsWithFileSpecs(boolean appended)
+	HashMap<FileSpecifications<ImageFormat>, ChartProperties> getPlotsWithFileSpecs(boolean appended)
 	{
 		if (appended)
 		{
@@ -131,12 +131,12 @@ public class EnvironmentOutputs
 	public void generatePlots(Environment envi, boolean create_files)
 	{
 
-		HashMap<FileSpecifications<ImageFormat>, HybridChart> plotz = envi.getManager().getOutputs()
+		HashMap<FileSpecifications<ImageFormat>, ChartProperties> plotz = envi.getManager().getOutputs()
 		.getPlotsWithFileSpecs(true);
 		int append = 1;
 		for (FileSpecifications<ImageFormat> specs : plotz.keySet())
 		{
-			HybridChart plot = plotz.get(specs);
+			ChartProperties plot = plotz.get(specs);
 			if (create_files)
 			{
 				if (specs.isNullFile())
@@ -148,12 +148,12 @@ public class EnvironmentOutputs
 
 				specs.prependDirectory(ExecutionOperator.getStartTime(envi, false).toString());
 				specs.prependDirectory(envi.getSettings().getOutputSettings().outputDirectory);
-				new ChartView(envi, plot, TaskManager.createStage(), specs);
+				new ChartView(envi.getData(), plot, TaskManager.createStage(), specs);
 			} else
 
 			{
 
-				new ChartView(envi, plot, TaskManager.createStage());
+				new ChartView(envi.getData(), plot, TaskManager.createStage());
 
 			}
 		}

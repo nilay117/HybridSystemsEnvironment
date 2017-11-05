@@ -92,8 +92,29 @@ public class HybridDataRenderer extends AbstractXYItemRenderer
 implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 {
 
-	/** For serialization. */
-	private static final long serialVersionUID = -7435246895986425885L;
+	/** The default value returned by the getLinesVisible() method. */
+	private boolean baseLinesVisible;
+
+	/** The default value returned by the getShapeFilled() method. */
+	private boolean baseShapesFilled;
+
+	/** The default value returned by the getShapeVisible() method. */
+	private boolean baseShapesVisible;
+
+	private ChartProperties chart;
+
+	private EnvironmentData data;
+
+	/** A flag that controls whether outlines are drawn for shapes. */
+	private boolean drawOutlines;
+
+	/**
+	 * A flag that controls whether or not each series is drawn as a single path.
+	 */
+	private boolean drawSeriesLineAsPath;
+
+	/** The shape that is used to represent a line in the legend. */
+	private transient Shape legendLine;
 
 	/**
 	 * A flag that controls whether or not lines are visible for ALL series.
@@ -107,26 +128,15 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 */
 	private BooleanList seriesLinesVisible;
 
-	/** The default value returned by the getLinesVisible() method. */
-	private boolean baseLinesVisible;
-
-	/** The shape that is used to represent a line in the legend. */
-	private transient Shape legendLine;
-
 	/**
-	 * A flag that controls whether or not shapes are visible for ALL series.
-	 *
-	 * @deprecated As of 1.0.7.
+	 * A table of flags that control (per series) whether or not shapes are filled.
 	 */
-	private Boolean shapesVisible;
+	private BooleanList seriesShapesFilled;
 
 	/**
 	 * A table of flags that control (per series) whether or not shapes are visible.
 	 */
 	private BooleanList seriesShapesVisible;
-
-	/** The default value returned by the getShapeVisible() method. */
-	private boolean baseShapesVisible;
 
 	/**
 	 * A flag that controls whether or not shapes are filled for ALL series.
@@ -136,15 +146,11 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	private Boolean shapesFilled;
 
 	/**
-	 * A table of flags that control (per series) whether or not shapes are filled.
+	 * A flag that controls whether or not shapes are visible for ALL series.
+	 *
+	 * @deprecated As of 1.0.7.
 	 */
-	private BooleanList seriesShapesFilled;
-
-	/** The default value returned by the getShapeFilled() method. */
-	private boolean baseShapesFilled;
-
-	/** A flag that controls whether outlines are drawn for shapes. */
-	private boolean drawOutlines;
+	private Boolean shapesVisible;
 
 	/**
 	 * A flag that controls whether the fill paint is used for filling shapes.
@@ -155,755 +161,26 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 * A flag that controls whether the outline paint is used for drawing shape outlines.
 	 */
 	private boolean useOutlinePaint;
-
 	/**
-	 * A flag that controls whether or not each series is drawn as a single path.
-	 */
-	private boolean drawSeriesLineAsPath;
-
-	private EnvironmentData data;
-	private HybridChart chart;
-
-	/**
-	 * 
-	 * 
-	 * /** Creates a new renderer.
+	 * Returns a clone of the renderer.
 	 *
-	 * @param lines
-	 *            lines visible?
-	 * @param shapes
-	 *            shapes visible?
-	 */
-	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data, HybridChart chart)
-	{
-
-		this.data = data;
-		this.chart = chart;
-		setupStrokes();
-		this.linesVisible = null;
-		this.seriesLinesVisible = new BooleanList();
-		this.baseLinesVisible = lines;
-		this.legendLine = new Line2D.Double(-7.0, 0.0, 7.0, 0.0);
-
-		this.shapesVisible = null;
-		this.seriesShapesVisible = new BooleanList();
-		this.baseShapesVisible = shapes;
-
-		this.shapesFilled = null;
-		this.useFillPaint = false; // use item paint for fills by default
-		this.seriesShapesFilled = new BooleanList();
-		this.baseShapesFilled = true;
-
-		this.drawOutlines = true;
-		this.useOutlinePaint = false; // use item paint for outlines by
-										// default, not outline paint
-
-		this.drawSeriesLineAsPath = false;
-	}
-
-	private void setupStrokes()
-	{
-		this.setBaseStroke(chart.getFlowStroke());
-		for (int i = 0; i < this.data.getNameOrder().size(); i++)
-		{
-			if (chart.getSeriesStrokes().size() > i)
-			{
-				this.setSeriesOutlineStroke(i, chart.getSeriesStrokes().get(i));
-			} else
-			{
-				this.setSeriesStroke(i, chart.getFlowStroke());
-			}
-		}
-	}
-
-	/**
-	 * Returns a flag that controls whether or not each series is drawn as a single path.
+	 * @return A clone.
 	 *
-	 * @return A boolean.
-	 *
-	 * @see #setDrawSeriesLineAsPath(boolean)
-	 */
-	public boolean getDrawSeriesLineAsPath()
-	{
-		return this.drawSeriesLineAsPath;
-	}
-
-	/**
-	 * Sets the flag that controls whether or not each series is drawn as a single path and sends a
-	 * {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getDrawSeriesLineAsPath()
-	 */
-	public void setDrawSeriesLineAsPath(boolean flag)
-	{
-		if (this.drawSeriesLineAsPath != flag)
-		{
-			this.drawSeriesLineAsPath = flag;
-			fireChangeEvent();
-		}
-	}
-
-	/**
-	 * Returns the number of passes through the data that the renderer requires in order to draw the chart. Most charts
-	 * will require a single pass, but some require two passes.
-	 *
-	 * @return The pass count.
+	 * @throws CloneNotSupportedException
+	 *             if the clone cannot be created.
 	 */
 	@Override
-	public int getPassCount()
+	public Object clone() throws CloneNotSupportedException
 	{
-		return 1;
-	}
-
-	// LINES VISIBLE
-
-	/**
-	 * Returns the flag used to control whether or not the shape for an item is visible.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param item
-	 *            the item index (zero-based).
-	 *
-	 * @return A boolean.
-	 */
-	public boolean getItemLineVisible(int series, int item)
-	{
-		Boolean flag = this.linesVisible;
-		if (flag == null)
+		HybridDataRenderer clone = (HybridDataRenderer) super.clone();
+		clone.seriesLinesVisible = (BooleanList) this.seriesLinesVisible.clone();
+		if (this.legendLine != null)
 		{
-			flag = getSeriesLinesVisible(series);
+			clone.legendLine = ShapeUtilities.clone(this.legendLine);
 		}
-		if (flag != null)
-		{
-			return flag.booleanValue();
-		} else
-		{
-			return this.baseLinesVisible;
-		}
-	}
-
-	/**
-	 * Returns a flag that controls whether or not lines are drawn for ALL series. If this flag is <code>null</code>,
-	 * then the "per series" settings will apply.
-	 *
-	 * @return A flag (possibly <code>null</code>).
-	 *
-	 * @see #setLinesVisible(Boolean)
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public Boolean getLinesVisible()
-	{
-		return this.linesVisible;
-	}
-
-	/**
-	 * Sets a flag that controls whether or not lines are drawn between the items in ALL series, and sends a
-	 * {@link RendererChangeEvent} to all registered listeners. You need to set this to <code>null</code> if you want
-	 * the "per series" settings to apply.
-	 *
-	 * @param visible
-	 *            the flag (<code>null</code> permitted).
-	 *
-	 * @see #getLinesVisible()
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public void setLinesVisible(Boolean visible)
-	{
-		this.linesVisible = visible;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Sets a flag that controls whether or not lines are drawn between the items in ALL series, and sends a
-	 * {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param visible
-	 *            the flag.
-	 *
-	 * @see #getLinesVisible()
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public void setLinesVisible(boolean visible)
-	{
-		setLinesVisible(Boolean.valueOf(visible));
-	}
-
-	/**
-	 * Returns the flag used to control whether or not the lines for a series are visible.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 *
-	 * @return The flag (possibly <code>null</code>).
-	 *
-	 * @see #setSeriesLinesVisible(int, Boolean)
-	 */
-	public Boolean getSeriesLinesVisible(int series)
-	{
-		return this.seriesLinesVisible.getBoolean(series);
-	}
-
-	/**
-	 * Sets the 'lines visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param flag
-	 *            the flag (<code>null</code> permitted).
-	 *
-	 * @see #getSeriesLinesVisible(int)
-	 */
-	public void setSeriesLinesVisible(int series, Boolean flag)
-	{
-		this.seriesLinesVisible.setBoolean(series, flag);
-		fireChangeEvent();
-	}
-
-	/**
-	 * Sets the 'lines visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param visible
-	 *            the flag.
-	 *
-	 * @see #getSeriesLinesVisible(int)
-	 */
-	public void setSeriesLinesVisible(int series, boolean visible)
-	{
-		setSeriesLinesVisible(series, Boolean.valueOf(visible));
-	}
-
-	/**
-	 * Returns the base 'lines visible' attribute.
-	 *
-	 * @return The base flag.
-	 *
-	 * @see #setBaseLinesVisible(boolean)
-	 */
-	public boolean getBaseLinesVisible()
-	{
-		return this.baseLinesVisible;
-	}
-
-	/**
-	 * Sets the base 'lines visible' flag and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getBaseLinesVisible()
-	 */
-	public void setBaseLinesVisible(boolean flag)
-	{
-		this.baseLinesVisible = flag;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns the shape used to represent a line in the legend.
-	 *
-	 * @return The legend line (never <code>null</code>).
-	 *
-	 * @see #setLegendLine(Shape)
-	 */
-	public Shape getLegendLine()
-	{
-		return this.legendLine;
-	}
-
-	/**
-	 * Sets the shape used as a line in each legend item and sends a {@link RendererChangeEvent} to all registered
-	 * listeners.
-	 *
-	 * @param line
-	 *            the line (<code>null</code> not permitted).
-	 *
-	 * @see #getLegendLine()
-	 */
-	public void setLegendLine(Shape line)
-	{
-		// ParamChecks.nullNotPermitted(line, "line");
-		this.legendLine = line;
-		fireChangeEvent();
-	}
-
-	// SHAPES VISIBLE
-
-	/**
-	 * Returns the flag used to control whether or not the shape for an item is visible.
-	 * <p>
-	 * The default implementation passes control to the <code>getSeriesShapesVisible</code> method. You can override
-	 * this method if you require different behaviour.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param item
-	 *            the item index (zero-based).
-	 *
-	 * @return A boolean.
-	 */
-	public boolean getItemShapeVisible(int series, int item)
-	{
-		Boolean flag = this.shapesVisible;
-		if (flag == null)
-		{
-			flag = getSeriesShapesVisible(series);
-		}
-		if (flag != null)
-		{
-			return flag.booleanValue();
-		} else
-		{
-			return this.baseShapesVisible;
-		}
-	}
-
-	/**
-	 * Returns the flag that controls whether the shapes are visible for the items in ALL series.
-	 *
-	 * @return The flag (possibly <code>null</code>).
-	 *
-	 * @see #setShapesVisible(Boolean)
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public Boolean getShapesVisible()
-	{
-		return this.shapesVisible;
-	}
-
-	/**
-	 * Sets the 'shapes visible' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param visible
-	 *            the flag (<code>null</code> permitted).
-	 *
-	 * @see #getShapesVisible()
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public void setShapesVisible(Boolean visible)
-	{
-		this.shapesVisible = visible;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Sets the 'shapes visible' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param visible
-	 *            the flag.
-	 *
-	 * @see #getShapesVisible()
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public void setShapesVisible(boolean visible)
-	{
-		setShapesVisible(Boolean.valueOf(visible));
-	}
-
-	/**
-	 * Returns the flag used to control whether or not the shapes for a series are visible.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 *
-	 * @return A boolean.
-	 *
-	 * @see #setSeriesShapesVisible(int, Boolean)
-	 */
-	public Boolean getSeriesShapesVisible(int series)
-	{
-		return this.seriesShapesVisible.getBoolean(series);
-	}
-
-	/**
-	 * Sets the 'shapes visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param visible
-	 *            the flag.
-	 *
-	 * @see #getSeriesShapesVisible(int)
-	 */
-	public void setSeriesShapesVisible(int series, boolean visible)
-	{
-		setSeriesShapesVisible(series, Boolean.valueOf(visible));
-	}
-
-	/**
-	 * Sets the 'shapes visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getSeriesShapesVisible(int)
-	 */
-	public void setSeriesShapesVisible(int series, Boolean flag)
-	{
-		this.seriesShapesVisible.setBoolean(series, flag);
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns the base 'shape visible' attribute.
-	 *
-	 * @return The base flag.
-	 *
-	 * @see #setBaseShapesVisible(boolean)
-	 */
-	public boolean getBaseShapesVisible()
-	{
-		return this.baseShapesVisible;
-	}
-
-	/**
-	 * Sets the base 'shapes visible' flag and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getBaseShapesVisible()
-	 */
-	public void setBaseShapesVisible(boolean flag)
-	{
-		this.baseShapesVisible = flag;
-		fireChangeEvent();
-	}
-
-	// SHAPES FILLED
-
-	/**
-	 * Returns the flag used to control whether or not the shape for an item is filled.
-	 * <p>
-	 * The default implementation passes control to the <code>getSeriesShapesFilled</code> method. You can override this
-	 * method if you require different behaviour.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param item
-	 *            the item index (zero-based).
-	 *
-	 * @return A boolean.
-	 */
-	public boolean getItemShapeFilled(int series, int item)
-	{
-		Boolean flag = this.shapesFilled;
-		if (flag == null)
-		{
-			flag = getSeriesShapesFilled(series);
-		}
-		if (flag != null)
-		{
-			return flag.booleanValue();
-		} else
-		{
-			return this.baseShapesFilled;
-		}
-	}
-
-	/**
-	 * Sets the 'shapes filled' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param filled
-	 *            the flag.
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public void setShapesFilled(boolean filled)
-	{
-		setShapesFilled(Boolean.valueOf(filled));
-	}
-
-	/**
-	 * Sets the 'shapes filled' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param filled
-	 *            the flag (<code>null</code> permitted).
-	 *
-	 * @deprecated As of 1.0.7, use the per-series and base level settings.
-	 */
-	public void setShapesFilled(Boolean filled)
-	{
-		this.shapesFilled = filled;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns the flag used to control whether or not the shapes for a series are filled.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 *
-	 * @return A boolean.
-	 *
-	 * @see #setSeriesShapesFilled(int, Boolean)
-	 */
-	public Boolean getSeriesShapesFilled(int series)
-	{
-		return this.seriesShapesFilled.getBoolean(series);
-	}
-
-	/**
-	 * Sets the 'shapes filled' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getSeriesShapesFilled(int)
-	 */
-	public void setSeriesShapesFilled(int series, boolean flag)
-	{
-		setSeriesShapesFilled(series, Boolean.valueOf(flag));
-	}
-
-	/**
-	 * Sets the 'shapes filled' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param series
-	 *            the series index (zero-based).
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getSeriesShapesFilled(int)
-	 */
-	public void setSeriesShapesFilled(int series, Boolean flag)
-	{
-		this.seriesShapesFilled.setBoolean(series, flag);
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns the base 'shape filled' attribute.
-	 *
-	 * @return The base flag.
-	 *
-	 * @see #setBaseShapesFilled(boolean)
-	 */
-	public boolean getBaseShapesFilled()
-	{
-		return this.baseShapesFilled;
-	}
-
-	/**
-	 * Sets the base 'shapes filled' flag and sends a {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getBaseShapesFilled()
-	 */
-	public void setBaseShapesFilled(boolean flag)
-	{
-		this.baseShapesFilled = flag;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns <code>true</code> if outlines should be drawn for shapes, and <code>false</code> otherwise.
-	 *
-	 * @return A boolean.
-	 *
-	 * @see #setDrawOutlines(boolean)
-	 */
-	public boolean getDrawOutlines()
-	{
-		return this.drawOutlines;
-	}
-
-	/**
-	 * Sets the flag that controls whether outlines are drawn for shapes, and sends a {@link RendererChangeEvent} to all
-	 * registered listeners.
-	 * <P>
-	 * In some cases, shapes look better if they do NOT have an outline, but this flag allows you to set your own
-	 * preference.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getDrawOutlines()
-	 */
-	public void setDrawOutlines(boolean flag)
-	{
-		this.drawOutlines = flag;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns <code>true</code> if the renderer should use the fill paint setting to fill shapes, and
-	 * <code>false</code> if it should just use the regular paint.
-	 * <p>
-	 * Refer to <code>XYLineAndShapeRendererDemo2.java</code> to see the effect of this flag.
-	 *
-	 * @return A boolean.
-	 *
-	 * @see #setUseFillPaint(boolean)
-	 * @see #getUseOutlinePaint()
-	 */
-	public boolean getUseFillPaint()
-	{
-		return this.useFillPaint;
-	}
-
-	/**
-	 * Sets the flag that controls whether the fill paint is used to fill shapes, and sends a
-	 * {@link RendererChangeEvent} to all registered listeners.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getUseFillPaint()
-	 */
-	public void setUseFillPaint(boolean flag)
-	{
-		this.useFillPaint = flag;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Returns <code>true</code> if the renderer should use the outline paint setting to draw shape outlines, and
-	 * <code>false</code> if it should just use the regular paint.
-	 *
-	 * @return A boolean.
-	 *
-	 * @see #setUseOutlinePaint(boolean)
-	 * @see #getUseFillPaint()
-	 */
-	public boolean getUseOutlinePaint()
-	{
-		return this.useOutlinePaint;
-	}
-
-	/**
-	 * Sets the flag that controls whether the outline paint is used to draw shape outlines, and sends a
-	 * {@link RendererChangeEvent} to all registered listeners.
-	 * <p>
-	 * Refer to <code>XYLineAndShapeRendererDemo2.java</code> to see the effect of this flag.
-	 *
-	 * @param flag
-	 *            the flag.
-	 *
-	 * @see #getUseOutlinePaint()
-	 */
-	public void setUseOutlinePaint(boolean flag)
-	{
-		this.useOutlinePaint = flag;
-		fireChangeEvent();
-	}
-
-	/**
-	 * Records the state for the renderer. This is used to preserve state information between calls to the drawItem()
-	 * method for a single chart drawing.
-	 */
-	public static class State extends XYItemRendererState
-	{
-
-		/** The path for the current series. */
-		public GeneralPath seriesPath;
-
-		/**
-		 * A flag that indicates if the last (x, y) point was 'good' (non-null).
-		 */
-		private boolean lastPointGood;
-
-		/**
-		 * Creates a new state instance.
-		 *
-		 * @param info
-		 *            the plot rendering info.
-		 */
-		public State(PlotRenderingInfo info)
-		{
-			super(info);
-			this.seriesPath = new GeneralPath();
-		}
-
-		/**
-		 * Returns a flag that indicates if the last point drawn (in the current series) was 'good' (non-null).
-		 *
-		 * @return A boolean.
-		 */
-		public boolean isLastPointGood()
-		{
-			return this.lastPointGood;
-		}
-
-		/**
-		 * Sets a flag that indicates if the last point drawn (in the current series) was 'good' (non-null).
-		 *
-		 * @param good
-		 *            the flag.
-		 */
-		public void setLastPointGood(boolean good)
-		{
-			this.lastPointGood = good;
-		}
-
-		/**
-		 * This method is called by the {@link XYPlot} at the start of each series pass. We reset the state for the
-		 * current series.
-		 *
-		 * @param dataset
-		 *            the dataset.
-		 * @param series
-		 *            the series index.
-		 * @param firstItem
-		 *            the first item index for this pass.
-		 * @param lastItem
-		 *            the last item index for this pass.
-		 * @param pass
-		 *            the current pass index.
-		 * @param passCount
-		 *            the number of passes.
-		 */
-		@Override
-		public void startSeriesPass(XYDataset dataset, int series, int firstItem, int lastItem, int pass, int passCount)
-		{
-			this.seriesPath.reset();
-			this.lastPointGood = false;
-			super.startSeriesPass(dataset, series, firstItem, lastItem, pass, passCount);
-		}
-
-	}
-
-	/**
-	 * Initialises the renderer.
-	 * <P>
-	 * This method will be called before the first item is rendered, giving the renderer an opportunity to initialise
-	 * any state information it wants to maintain. The renderer can do nothing if it chooses.
-	 *
-	 * @param g2
-	 *            the graphics device.
-	 * @param dataArea
-	 *            the area inside the axes.
-	 * @param plot
-	 *            the plot.
-	 * @param data
-	 *            the data.
-	 * @param info
-	 *            an optional info collection object to return data back to the caller.
-	 *
-	 * @return The renderer state.
-	 */
-	@Override
-	public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea, XYPlot plot, XYDataset data,
-	PlotRenderingInfo info)
-	{
-		return new State(info);
+		clone.seriesShapesVisible = (BooleanList) this.seriesShapesVisible.clone();
+		clone.seriesShapesFilled = (BooleanList) this.seriesShapesFilled.clone();
+		return clone;
 	}
 
 	/**
@@ -978,29 +255,848 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	}
 
 	/**
-	 * Returns <code>true</code> if the specified pass is the one for drawing lines.
+	 * Tests this renderer for equality with an arbitrary object.
 	 *
-	 * @param pass
-	 *            the pass.
+	 * @param obj
+	 *            the object (<code>null</code> permitted).
 	 *
-	 * @return A boolean.
+	 * @return <code>true</code> or <code>false</code>.
 	 */
-	protected boolean isLinePass(int pass)
+	@Override
+	public boolean equals(Object obj)
 	{
-		return pass == 0;
+		if (obj == this)
+		{
+			return true;
+		}
+		if (!(obj instanceof HybridDataRenderer))
+		{
+			return false;
+		}
+		if (!super.equals(obj))
+		{
+			return false;
+		}
+		HybridDataRenderer that = (HybridDataRenderer) obj;
+		if (!ObjectUtilities.equal(this.linesVisible, that.linesVisible))
+		{
+			return false;
+		}
+		if (!ObjectUtilities.equal(this.seriesLinesVisible, that.seriesLinesVisible))
+		{
+			return false;
+		}
+		if (this.baseLinesVisible != that.baseLinesVisible)
+		{
+			return false;
+		}
+		if (!ShapeUtilities.equal(this.legendLine, that.legendLine))
+		{
+			return false;
+		}
+		if (!ObjectUtilities.equal(this.shapesVisible, that.shapesVisible))
+		{
+			return false;
+		}
+		if (!ObjectUtilities.equal(this.seriesShapesVisible, that.seriesShapesVisible))
+		{
+			return false;
+		}
+		if (this.baseShapesVisible != that.baseShapesVisible)
+		{
+			return false;
+		}
+		if (!ObjectUtilities.equal(this.shapesFilled, that.shapesFilled))
+		{
+			return false;
+		}
+		if (!ObjectUtilities.equal(this.seriesShapesFilled, that.seriesShapesFilled))
+		{
+			return false;
+		}
+		if (this.baseShapesFilled != that.baseShapesFilled)
+		{
+			return false;
+		}
+		if (this.drawOutlines != that.drawOutlines)
+		{
+			return false;
+		}
+		if (this.useOutlinePaint != that.useOutlinePaint)
+		{
+			return false;
+		}
+		if (this.useFillPaint != that.useFillPaint)
+		{
+			return false;
+		}
+		if (this.drawSeriesLineAsPath != that.drawSeriesLineAsPath)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	/**
-	 * Returns <code>true</code> if the specified pass is the one for drawing items.
+	 * Returns the base 'lines visible' attribute.
 	 *
-	 * @param pass
-	 *            the pass.
+	 * @return The base flag.
+	 *
+	 * @see #setBaseLinesVisible(boolean)
+	 */
+	public boolean getBaseLinesVisible()
+	{
+		return this.baseLinesVisible;
+	}
+
+	/**
+	 * Returns the base 'shape filled' attribute.
+	 *
+	 * @return The base flag.
+	 *
+	 * @see #setBaseShapesFilled(boolean)
+	 */
+	public boolean getBaseShapesFilled()
+	{
+		return this.baseShapesFilled;
+	}
+
+	/**
+	 * Returns the base 'shape visible' attribute.
+	 *
+	 * @return The base flag.
+	 *
+	 * @see #setBaseShapesVisible(boolean)
+	 */
+	public boolean getBaseShapesVisible()
+	{
+		return this.baseShapesVisible;
+	}
+
+	// LINES VISIBLE
+
+	/**
+	 * Returns <code>true</code> if outlines should be drawn for shapes, and <code>false</code> otherwise.
+	 *
+	 * @return A boolean.
+	 *
+	 * @see #setDrawOutlines(boolean)
+	 */
+	public boolean getDrawOutlines()
+	{
+		return this.drawOutlines;
+	}
+
+	/**
+	 * Returns a flag that controls whether or not each series is drawn as a single path.
+	 *
+	 * @return A boolean.
+	 *
+	 * @see #setDrawSeriesLineAsPath(boolean)
+	 */
+	public boolean getDrawSeriesLineAsPath()
+	{
+		return this.drawSeriesLineAsPath;
+	}
+
+	/**
+	 * Returns the flag used to control whether or not the shape for an item is visible.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param item
+	 *            the item index (zero-based).
 	 *
 	 * @return A boolean.
 	 */
-	protected boolean isItemPass(int pass)
+	public boolean getItemLineVisible(int series, int item)
 	{
-		return pass == 1;
+		Boolean flag = this.linesVisible;
+		if (flag == null)
+		{
+			flag = getSeriesLinesVisible(series);
+		}
+		if (flag != null)
+		{
+			return flag.booleanValue();
+		} else
+		{
+			return this.baseLinesVisible;
+		}
+	}
+
+	/**
+	 * Returns the flag used to control whether or not the shape for an item is filled.
+	 * <p>
+	 * The default implementation passes control to the <code>getSeriesShapesFilled</code> method. You can override this
+	 * method if you require different behaviour.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param item
+	 *            the item index (zero-based).
+	 *
+	 * @return A boolean.
+	 */
+	public boolean getItemShapeFilled(int series, int item)
+	{
+		Boolean flag = this.shapesFilled;
+		if (flag == null)
+		{
+			flag = getSeriesShapesFilled(series);
+		}
+		if (flag != null)
+		{
+			return flag.booleanValue();
+		} else
+		{
+			return this.baseShapesFilled;
+		}
+	}
+
+	/**
+	 * Returns the flag used to control whether or not the shape for an item is visible.
+	 * <p>
+	 * The default implementation passes control to the <code>getSeriesShapesVisible</code> method. You can override
+	 * this method if you require different behaviour.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param item
+	 *            the item index (zero-based).
+	 *
+	 * @return A boolean.
+	 */
+	public boolean getItemShapeVisible(int series, int item)
+	{
+		Boolean flag = this.shapesVisible;
+		if (flag == null)
+		{
+			flag = getSeriesShapesVisible(series);
+		}
+		if (flag != null)
+		{
+			return flag.booleanValue();
+		} else
+		{
+			return this.baseShapesVisible;
+		}
+	}
+
+	/**
+	 * Returns a legend item for the specified series.
+	 *
+	 * @param datasetIndex
+	 *            the dataset index (zero-based).
+	 * @param series
+	 *            the series index (zero-based).
+	 *
+	 * @return A legend item for the series (possibly {@code null}).
+	 */
+	@Override
+	public LegendItem getLegendItem(int datasetIndex, int series)
+	{
+		XYPlot plot = getPlot();
+		if (plot == null)
+		{
+			return null;
+		}
+
+		XYDataset dataset = plot.getDataset(datasetIndex);
+		if (dataset == null)
+		{
+			return null;
+		}
+
+		if (!getItemVisible(series, 0))
+		{
+			return null;
+		}
+		String label = getLegendItemLabelGenerator().generateLabel(dataset, series);
+		String description = label;
+		String toolTipText = null;
+		if (getLegendItemToolTipGenerator() != null)
+		{
+			toolTipText = getLegendItemToolTipGenerator().generateLabel(dataset, series);
+		}
+		String urlText = null;
+		if (getLegendItemURLGenerator() != null)
+		{
+			urlText = getLegendItemURLGenerator().generateLabel(dataset, series);
+		}
+		String st = dataset.getSeriesKey(series).toString();
+		// System.out.println(st + " " + elementOrder.indexOf(st));
+		Paint paint = (chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));
+		boolean shapeIsVisible = getItemShapeVisible(series, 0);
+		Shape shape = lookupLegendShape(series);
+		boolean shapeIsFilled = getItemShapeFilled(series, 0);
+		Paint fillPaint = paint;// (this.useFillPaint ? lookupSeriesFillPaint(series) : lookupSeriesPaint(series));
+		boolean shapeOutlineVisible = this.drawOutlines;
+		Paint outlinePaint = (this.useOutlinePaint ? lookupSeriesOutlinePaint(series) : lookupSeriesPaint(series));
+		Stroke outlineStroke = lookupSeriesOutlineStroke(series);
+		boolean lineVisible = getItemLineVisible(series, 0);
+		Stroke lineStroke = lookupSeriesStroke(series);
+		Paint linePaint = paint;// lookupSeriesPaint(series);
+		LegendItem result = new LegendItem(label, description, toolTipText, urlText, shapeIsVisible, shape,
+		shapeIsFilled, fillPaint, shapeOutlineVisible, outlinePaint, outlineStroke, lineVisible, this.legendLine,
+		lineStroke, linePaint);
+		result.setLabelFont(lookupLegendTextFont(series));
+		Paint labelPaint = lookupLegendTextPaint(series);
+		if (labelPaint != null)
+		{
+			result.setLabelPaint(labelPaint);
+		}
+		result.setSeriesKey(dataset.getSeriesKey(series));
+		result.setSeriesIndex(series);
+		result.setDataset(dataset);
+		result.setDatasetIndex(datasetIndex);
+
+		return result;
+	}
+
+	/**
+	 * Returns the shape used to represent a line in the legend.
+	 *
+	 * @return The legend line (never <code>null</code>).
+	 *
+	 * @see #setLegendLine(Shape)
+	 */
+	public Shape getLegendLine()
+	{
+		return this.legendLine;
+	}
+
+	/**
+	 * Returns a flag that controls whether or not lines are drawn for ALL series. If this flag is <code>null</code>,
+	 * then the "per series" settings will apply.
+	 *
+	 * @return A flag (possibly <code>null</code>).
+	 *
+	 * @see #setLinesVisible(Boolean)
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public Boolean getLinesVisible()
+	{
+		return this.linesVisible;
+	}
+
+	/**
+	 * Returns the number of passes through the data that the renderer requires in order to draw the chart. Most charts
+	 * will require a single pass, but some require two passes.
+	 *
+	 * @return The pass count.
+	 */
+	@Override
+	public int getPassCount()
+	{
+		return 1;
+	}
+
+	/**
+	 * Returns the flag used to control whether or not the lines for a series are visible.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 *
+	 * @return The flag (possibly <code>null</code>).
+	 *
+	 * @see #setSeriesLinesVisible(int, Boolean)
+	 */
+	public Boolean getSeriesLinesVisible(int series)
+	{
+		return this.seriesLinesVisible.getBoolean(series);
+	}
+
+	/**
+	 * Returns the flag used to control whether or not the shapes for a series are filled.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 *
+	 * @return A boolean.
+	 *
+	 * @see #setSeriesShapesFilled(int, Boolean)
+	 */
+	public Boolean getSeriesShapesFilled(int series)
+	{
+		return this.seriesShapesFilled.getBoolean(series);
+	}
+
+	// SHAPES VISIBLE
+
+	/**
+	 * Returns the flag used to control whether or not the shapes for a series are visible.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 *
+	 * @return A boolean.
+	 *
+	 * @see #setSeriesShapesVisible(int, Boolean)
+	 */
+	public Boolean getSeriesShapesVisible(int series)
+	{
+		return this.seriesShapesVisible.getBoolean(series);
+	}
+
+	/**
+	 * Returns the flag that controls whether the shapes are visible for the items in ALL series.
+	 *
+	 * @return The flag (possibly <code>null</code>).
+	 *
+	 * @see #setShapesVisible(Boolean)
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public Boolean getShapesVisible()
+	{
+		return this.shapesVisible;
+	}
+
+	/**
+	 * Returns <code>true</code> if the renderer should use the fill paint setting to fill shapes, and
+	 * <code>false</code> if it should just use the regular paint.
+	 * <p>
+	 * Refer to <code>XYLineAndShapeRendererDemo2.java</code> to see the effect of this flag.
+	 *
+	 * @return A boolean.
+	 *
+	 * @see #setUseFillPaint(boolean)
+	 * @see #getUseOutlinePaint()
+	 */
+	public boolean getUseFillPaint()
+	{
+		return this.useFillPaint;
+	}
+
+	/**
+	 * Returns <code>true</code> if the renderer should use the outline paint setting to draw shape outlines, and
+	 * <code>false</code> if it should just use the regular paint.
+	 *
+	 * @return A boolean.
+	 *
+	 * @see #setUseOutlinePaint(boolean)
+	 * @see #getUseFillPaint()
+	 */
+	public boolean getUseOutlinePaint()
+	{
+		return this.useOutlinePaint;
+	}
+
+	/**
+	 * Initialises the renderer.
+	 * <P>
+	 * This method will be called before the first item is rendered, giving the renderer an opportunity to initialise
+	 * any state information it wants to maintain. The renderer can do nothing if it chooses.
+	 *
+	 * @param g2
+	 *            the graphics device.
+	 * @param dataArea
+	 *            the area inside the axes.
+	 * @param plot
+	 *            the plot.
+	 * @param data
+	 *            the data.
+	 * @param info
+	 *            an optional info collection object to return data back to the caller.
+	 *
+	 * @return The renderer state.
+	 */
+	@Override
+	public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea, XYPlot plot, XYDataset data,
+	PlotRenderingInfo info)
+	{
+		return new State(info);
+	}
+
+	/**
+	 * Sets the base 'lines visible' flag and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getBaseLinesVisible()
+	 */
+	public void setBaseLinesVisible(boolean flag)
+	{
+		this.baseLinesVisible = flag;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the base 'shapes filled' flag and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getBaseShapesFilled()
+	 */
+	public void setBaseShapesFilled(boolean flag)
+	{
+		this.baseShapesFilled = flag;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the base 'shapes visible' flag and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getBaseShapesVisible()
+	 */
+	public void setBaseShapesVisible(boolean flag)
+	{
+		this.baseShapesVisible = flag;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the flag that controls whether outlines are drawn for shapes, and sends a {@link RendererChangeEvent} to all
+	 * registered listeners.
+	 * <P>
+	 * In some cases, shapes look better if they do NOT have an outline, but this flag allows you to set your own
+	 * preference.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getDrawOutlines()
+	 */
+	public void setDrawOutlines(boolean flag)
+	{
+		this.drawOutlines = flag;
+		fireChangeEvent();
+	}
+
+	// SHAPES FILLED
+
+	/**
+	 * Sets the flag that controls whether or not each series is drawn as a single path and sends a
+	 * {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getDrawSeriesLineAsPath()
+	 */
+	public void setDrawSeriesLineAsPath(boolean flag)
+	{
+		if (this.drawSeriesLineAsPath != flag)
+		{
+			this.drawSeriesLineAsPath = flag;
+			fireChangeEvent();
+		}
+	}
+
+	/**
+	 * Sets the shape used as a line in each legend item and sends a {@link RendererChangeEvent} to all registered
+	 * listeners.
+	 *
+	 * @param line
+	 *            the line (<code>null</code> not permitted).
+	 *
+	 * @see #getLegendLine()
+	 */
+	public void setLegendLine(Shape line)
+	{
+		// ParamChecks.nullNotPermitted(line, "line");
+		this.legendLine = line;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets a flag that controls whether or not lines are drawn between the items in ALL series, and sends a
+	 * {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param visible
+	 *            the flag.
+	 *
+	 * @see #getLinesVisible()
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public void setLinesVisible(boolean visible)
+	{
+		setLinesVisible(Boolean.valueOf(visible));
+	}
+
+	/**
+	 * Sets a flag that controls whether or not lines are drawn between the items in ALL series, and sends a
+	 * {@link RendererChangeEvent} to all registered listeners. You need to set this to <code>null</code> if you want
+	 * the "per series" settings to apply.
+	 *
+	 * @param visible
+	 *            the flag (<code>null</code> permitted).
+	 *
+	 * @see #getLinesVisible()
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public void setLinesVisible(Boolean visible)
+	{
+		this.linesVisible = visible;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the 'lines visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param visible
+	 *            the flag.
+	 *
+	 * @see #getSeriesLinesVisible(int)
+	 */
+	public void setSeriesLinesVisible(int series, boolean visible)
+	{
+		setSeriesLinesVisible(series, Boolean.valueOf(visible));
+	}
+
+	/**
+	 * Sets the 'lines visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param flag
+	 *            the flag (<code>null</code> permitted).
+	 *
+	 * @see #getSeriesLinesVisible(int)
+	 */
+	public void setSeriesLinesVisible(int series, Boolean flag)
+	{
+		this.seriesLinesVisible.setBoolean(series, flag);
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the 'shapes filled' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getSeriesShapesFilled(int)
+	 */
+	public void setSeriesShapesFilled(int series, boolean flag)
+	{
+		setSeriesShapesFilled(series, Boolean.valueOf(flag));
+	}
+
+	/**
+	 * Sets the 'shapes filled' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getSeriesShapesFilled(int)
+	 */
+	public void setSeriesShapesFilled(int series, Boolean flag)
+	{
+		this.seriesShapesFilled.setBoolean(series, flag);
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the 'shapes visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param visible
+	 *            the flag.
+	 *
+	 * @see #getSeriesShapesVisible(int)
+	 */
+	public void setSeriesShapesVisible(int series, boolean visible)
+	{
+		setSeriesShapesVisible(series, Boolean.valueOf(visible));
+	}
+
+	/**
+	 * Sets the 'shapes visible' flag for a series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param series
+	 *            the series index (zero-based).
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getSeriesShapesVisible(int)
+	 */
+	public void setSeriesShapesVisible(int series, Boolean flag)
+	{
+		this.seriesShapesVisible.setBoolean(series, flag);
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the 'shapes filled' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param filled
+	 *            the flag.
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public void setShapesFilled(boolean filled)
+	{
+		setShapesFilled(Boolean.valueOf(filled));
+	}
+
+	/**
+	 * Sets the 'shapes filled' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param filled
+	 *            the flag (<code>null</code> permitted).
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public void setShapesFilled(Boolean filled)
+	{
+		this.shapesFilled = filled;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the 'shapes visible' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param visible
+	 *            the flag.
+	 *
+	 * @see #getShapesVisible()
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public void setShapesVisible(boolean visible)
+	{
+		setShapesVisible(Boolean.valueOf(visible));
+	}
+
+	/**
+	 * Sets the 'shapes visible' for ALL series and sends a {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param visible
+	 *            the flag (<code>null</code> permitted).
+	 *
+	 * @see #getShapesVisible()
+	 *
+	 * @deprecated As of 1.0.7, use the per-series and base level settings.
+	 */
+	public void setShapesVisible(Boolean visible)
+	{
+		this.shapesVisible = visible;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the flag that controls whether the fill paint is used to fill shapes, and sends a
+	 * {@link RendererChangeEvent} to all registered listeners.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getUseFillPaint()
+	 */
+	public void setUseFillPaint(boolean flag)
+	{
+		this.useFillPaint = flag;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Sets the flag that controls whether the outline paint is used to draw shape outlines, and sends a
+	 * {@link RendererChangeEvent} to all registered listeners.
+	 * <p>
+	 * Refer to <code>XYLineAndShapeRendererDemo2.java</code> to see the effect of this flag.
+	 *
+	 * @param flag
+	 *            the flag.
+	 *
+	 * @see #getUseOutlinePaint()
+	 */
+	public void setUseOutlinePaint(boolean flag)
+	{
+		this.useOutlinePaint = flag;
+		fireChangeEvent();
+	}
+
+	/**
+	 * Provides serialization support.
+	 *
+	 * @param stream
+	 *            the input stream.
+	 *
+	 * @throws IOException
+	 *             if there is an I/O error.
+	 * @throws ClassNotFoundException
+	 *             if there is a classpath problem.
+	 */
+	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
+	{
+		stream.defaultReadObject();
+		this.legendLine = SerialUtilities.readShape(stream);
+	}
+
+	private void setupStrokes()
+	{
+		this.setBaseStroke(chart.getBaseFlowStroke());
+		for (int i = 0; i < this.data.getNameOrder().size(); i++)
+		{
+			if (chart.getSeriesStrokes().size() > i)
+			{
+				this.setSeriesOutlineStroke(i, chart.getSeriesStrokes().get(i));
+			} else
+			{
+				this.setSeriesStroke(i, chart.getBaseFlowStroke());
+			}
+		}
+	}
+
+	/**
+	 * Provides serialization support.
+	 *
+	 * @param stream
+	 *            the output stream.
+	 *
+	 * @throws IOException
+	 *             if there is an I/O error.
+	 */
+	private void writeObject(ObjectOutputStream stream) throws IOException
+	{
+		stream.defaultWriteObject();
+		SerialUtilities.writeShape(this.legendLine, stream);
+	}
+
+	/**
+	 * Draws the first pass shape.
+	 *
+	 * @param g2
+	 *            the graphics device.
+	 * @param pass
+	 *            the pass.
+	 * @param series
+	 *            the series index.
+	 * @param item
+	 *            the item index.
+	 * @param shape
+	 *            the shape.
+	 */
+	protected void drawFirstPassShape(Graphics2D g2, int pass, int series, int item, Shape shape, XYDataset dataset)
+	{
+		// g2.setStroke(getItemStroke(series, item));
+		if (this.data.getNameOrder() != null)
+		{
+			String st = dataset.getSeriesKey(series).toString();
+			// System.out.println(st + " " + elementOrder.indexOf(st));
+			g2.setPaint(chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));// , item));
+		} else
+		{
+			g2.setPaint(getItemPaint(series, item));
+		}
+		g2.draw(shape);
 	}
 
 	/**
@@ -1054,14 +1150,14 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		.equals(data.getGlobalStateData().get(series).getStoreTimes().get(item - 1).getJumps()))
 		{
 
-			Stroke stroke1 = chart.getFlowStroke();// new BasicStroke(1.5f);// , 2, 2, 10);
+			Stroke stroke1 = chart.getBaseFlowStroke();// new BasicStroke(1.5f);// , 2, 2, 10);
 			// System.out.println(XMLParser.serializeObject(this.getSeriesStroke(series)));
 			g2.setStroke(stroke1);// stroke1);
 			// g2.setStroke(s);
 		} else
 		{
 
-			Stroke stroke1 = chart.getJumpStroke();// dnew BasicStroke(.5f, BasicStroke.CAP_BUTT,
+			Stroke stroke1 = chart.getBaseJumpStroke();// dnew BasicStroke(.5f, BasicStroke.CAP_BUTT,
 													// BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
 
 			g2.setStroke(stroke1);
@@ -1096,35 +1192,6 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 			drawFirstPassShape(g2, pass, series, item, state.workingLine, dataset);
 		}
 
-	}
-
-	/**
-	 * Draws the first pass shape.
-	 *
-	 * @param g2
-	 *            the graphics device.
-	 * @param pass
-	 *            the pass.
-	 * @param series
-	 *            the series index.
-	 * @param item
-	 *            the item index.
-	 * @param shape
-	 *            the shape.
-	 */
-	protected void drawFirstPassShape(Graphics2D g2, int pass, int series, int item, Shape shape, XYDataset dataset)
-	{
-		// g2.setStroke(getItemStroke(series, item));
-		if (this.data.getNameOrder() != null)
-		{
-			String st = dataset.getSeriesKey(series).toString();
-			// System.out.println(st + " " + elementOrder.indexOf(st));
-			g2.setPaint(chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));// , item));
-		} else
-		{
-			g2.setPaint(getItemPaint(series, item));
-		}
-		g2.draw(shape);
 	}
 
 	/**
@@ -1330,211 +1397,144 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	}
 
 	/**
-	 * Returns a legend item for the specified series.
+	 * Returns <code>true</code> if the specified pass is the one for drawing items.
 	 *
-	 * @param datasetIndex
-	 *            the dataset index (zero-based).
-	 * @param series
-	 *            the series index (zero-based).
+	 * @param pass
+	 *            the pass.
 	 *
-	 * @return A legend item for the series (possibly {@code null}).
+	 * @return A boolean.
 	 */
-	@Override
-	public LegendItem getLegendItem(int datasetIndex, int series)
+	protected boolean isItemPass(int pass)
 	{
-		XYPlot plot = getPlot();
-		if (plot == null)
-		{
-			return null;
-		}
-
-		XYDataset dataset = plot.getDataset(datasetIndex);
-		if (dataset == null)
-		{
-			return null;
-		}
-
-		if (!getItemVisible(series, 0))
-		{
-			return null;
-		}
-		String label = getLegendItemLabelGenerator().generateLabel(dataset, series);
-		String description = label;
-		String toolTipText = null;
-		if (getLegendItemToolTipGenerator() != null)
-		{
-			toolTipText = getLegendItemToolTipGenerator().generateLabel(dataset, series);
-		}
-		String urlText = null;
-		if (getLegendItemURLGenerator() != null)
-		{
-			urlText = getLegendItemURLGenerator().generateLabel(dataset, series);
-		}
-		String st = dataset.getSeriesKey(series).toString();
-		// System.out.println(st + " " + elementOrder.indexOf(st));
-		Paint paint = (chart.getSeriesColor(this.data.getNameOrder().indexOf(st)));
-		boolean shapeIsVisible = getItemShapeVisible(series, 0);
-		Shape shape = lookupLegendShape(series);
-		boolean shapeIsFilled = getItemShapeFilled(series, 0);
-		Paint fillPaint = paint;// (this.useFillPaint ? lookupSeriesFillPaint(series) : lookupSeriesPaint(series));
-		boolean shapeOutlineVisible = this.drawOutlines;
-		Paint outlinePaint = (this.useOutlinePaint ? lookupSeriesOutlinePaint(series) : lookupSeriesPaint(series));
-		Stroke outlineStroke = lookupSeriesOutlineStroke(series);
-		boolean lineVisible = getItemLineVisible(series, 0);
-		Stroke lineStroke = lookupSeriesStroke(series);
-		Paint linePaint = paint;// lookupSeriesPaint(series);
-		LegendItem result = new LegendItem(label, description, toolTipText, urlText, shapeIsVisible, shape,
-		shapeIsFilled, fillPaint, shapeOutlineVisible, outlinePaint, outlineStroke, lineVisible, this.legendLine,
-		lineStroke, linePaint);
-		result.setLabelFont(lookupLegendTextFont(series));
-		Paint labelPaint = lookupLegendTextPaint(series);
-		if (labelPaint != null)
-		{
-			result.setLabelPaint(labelPaint);
-		}
-		result.setSeriesKey(dataset.getSeriesKey(series));
-		result.setSeriesIndex(series);
-		result.setDataset(dataset);
-		result.setDatasetIndex(datasetIndex);
-
-		return result;
+		return pass == 1;
 	}
 
 	/**
-	 * Returns a clone of the renderer.
+	 * Returns <code>true</code> if the specified pass is the one for drawing lines.
 	 *
-	 * @return A clone.
+	 * @param pass
+	 *            the pass.
 	 *
-	 * @throws CloneNotSupportedException
-	 *             if the clone cannot be created.
+	 * @return A boolean.
 	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException
+	protected boolean isLinePass(int pass)
 	{
-		HybridDataRenderer clone = (HybridDataRenderer) super.clone();
-		clone.seriesLinesVisible = (BooleanList) this.seriesLinesVisible.clone();
-		if (this.legendLine != null)
-		{
-			clone.legendLine = ShapeUtilities.clone(this.legendLine);
-		}
-		clone.seriesShapesVisible = (BooleanList) this.seriesShapesVisible.clone();
-		clone.seriesShapesFilled = (BooleanList) this.seriesShapesFilled.clone();
-		return clone;
+		return pass == 0;
 	}
 
 	/**
-	 * Tests this renderer for equality with an arbitrary object.
+	 * 
+	 * 
+	 * /** Creates a new renderer.
 	 *
-	 * @param obj
-	 *            the object (<code>null</code> permitted).
-	 *
-	 * @return <code>true</code> or <code>false</code>.
+	 * @param lines
+	 *            lines visible?
+	 * @param shapes
+	 *            shapes visible?
 	 */
-	@Override
-	public boolean equals(Object obj)
+	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data, ChartProperties chart)
 	{
-		if (obj == this)
-		{
-			return true;
-		}
-		if (!(obj instanceof HybridDataRenderer))
-		{
-			return false;
-		}
-		if (!super.equals(obj))
-		{
-			return false;
-		}
-		HybridDataRenderer that = (HybridDataRenderer) obj;
-		if (!ObjectUtilities.equal(this.linesVisible, that.linesVisible))
-		{
-			return false;
-		}
-		if (!ObjectUtilities.equal(this.seriesLinesVisible, that.seriesLinesVisible))
-		{
-			return false;
-		}
-		if (this.baseLinesVisible != that.baseLinesVisible)
-		{
-			return false;
-		}
-		if (!ShapeUtilities.equal(this.legendLine, that.legendLine))
-		{
-			return false;
-		}
-		if (!ObjectUtilities.equal(this.shapesVisible, that.shapesVisible))
-		{
-			return false;
-		}
-		if (!ObjectUtilities.equal(this.seriesShapesVisible, that.seriesShapesVisible))
-		{
-			return false;
-		}
-		if (this.baseShapesVisible != that.baseShapesVisible)
-		{
-			return false;
-		}
-		if (!ObjectUtilities.equal(this.shapesFilled, that.shapesFilled))
-		{
-			return false;
-		}
-		if (!ObjectUtilities.equal(this.seriesShapesFilled, that.seriesShapesFilled))
-		{
-			return false;
-		}
-		if (this.baseShapesFilled != that.baseShapesFilled)
-		{
-			return false;
-		}
-		if (this.drawOutlines != that.drawOutlines)
-		{
-			return false;
-		}
-		if (this.useOutlinePaint != that.useOutlinePaint)
-		{
-			return false;
-		}
-		if (this.useFillPaint != that.useFillPaint)
-		{
-			return false;
-		}
-		if (this.drawSeriesLineAsPath != that.drawSeriesLineAsPath)
-		{
-			return false;
-		}
-		return true;
+
+		this.data = data;
+		this.chart = chart;
+		setupStrokes();
+		this.linesVisible = null;
+		this.seriesLinesVisible = new BooleanList();
+		this.baseLinesVisible = lines;
+		this.legendLine = new Line2D.Double(-7.0, 0.0, 7.0, 0.0);
+
+		this.shapesVisible = null;
+		this.seriesShapesVisible = new BooleanList();
+		this.baseShapesVisible = shapes;
+
+		this.shapesFilled = null;
+		this.useFillPaint = false; // use item paint for fills by default
+		this.seriesShapesFilled = new BooleanList();
+		this.baseShapesFilled = true;
+
+		this.drawOutlines = true;
+		this.useOutlinePaint = false; // use item paint for outlines by
+										// default, not outline paint
+
+		this.drawSeriesLineAsPath = false;
 	}
 
 	/**
-	 * Provides serialization support.
-	 *
-	 * @param stream
-	 *            the input stream.
-	 *
-	 * @throws IOException
-	 *             if there is an I/O error.
-	 * @throws ClassNotFoundException
-	 *             if there is a classpath problem.
+	 * Records the state for the renderer. This is used to preserve state information between calls to the drawItem()
+	 * method for a single chart drawing.
 	 */
-	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
+	public static class State extends XYItemRendererState
 	{
-		stream.defaultReadObject();
-		this.legendLine = SerialUtilities.readShape(stream);
+
+		/** The path for the current series. */
+		public GeneralPath seriesPath;
+
+		/**
+		 * A flag that indicates if the last (x, y) point was 'good' (non-null).
+		 */
+		private boolean lastPointGood;
+
+		/**
+		 * Returns a flag that indicates if the last point drawn (in the current series) was 'good' (non-null).
+		 *
+		 * @return A boolean.
+		 */
+		public boolean isLastPointGood()
+		{
+			return this.lastPointGood;
+		}
+
+		/**
+		 * Sets a flag that indicates if the last point drawn (in the current series) was 'good' (non-null).
+		 *
+		 * @param good
+		 *            the flag.
+		 */
+		public void setLastPointGood(boolean good)
+		{
+			this.lastPointGood = good;
+		}
+
+		/**
+		 * This method is called by the {@link XYPlot} at the start of each series pass. We reset the state for the
+		 * current series.
+		 *
+		 * @param dataset
+		 *            the dataset.
+		 * @param series
+		 *            the series index.
+		 * @param firstItem
+		 *            the first item index for this pass.
+		 * @param lastItem
+		 *            the last item index for this pass.
+		 * @param pass
+		 *            the current pass index.
+		 * @param passCount
+		 *            the number of passes.
+		 */
+		@Override
+		public void startSeriesPass(XYDataset dataset, int series, int firstItem, int lastItem, int pass, int passCount)
+		{
+			this.seriesPath.reset();
+			this.lastPointGood = false;
+			super.startSeriesPass(dataset, series, firstItem, lastItem, pass, passCount);
+		}
+
+		/**
+		 * Creates a new state instance.
+		 *
+		 * @param info
+		 *            the plot rendering info.
+		 */
+		public State(PlotRenderingInfo info)
+		{
+			super(info);
+			this.seriesPath = new GeneralPath();
+		}
+
 	}
 
-	/**
-	 * Provides serialization support.
-	 *
-	 * @param stream
-	 *            the output stream.
-	 *
-	 * @throws IOException
-	 *             if there is an I/O error.
-	 */
-	private void writeObject(ObjectOutputStream stream) throws IOException
-	{
-		stream.defaultWriteObject();
-		SerialUtilities.writeShape(this.legendLine, stream);
-	}
+	/** For serialization. */
+	private static final long serialVersionUID = -7435246895986425885L;
 
 }

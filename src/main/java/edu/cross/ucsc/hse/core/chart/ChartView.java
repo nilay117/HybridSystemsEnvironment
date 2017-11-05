@@ -8,7 +8,7 @@ import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
 import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
 import de.erichseifert.vectorgraphics2d.svg.SVGProcessor;
 import de.erichseifert.vectorgraphics2d.util.PageSize;
-import edu.ucsc.cross.hse.core.environment.Environment;
+import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.io.Console;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,22 +46,20 @@ import javax.swing.SwingUtilities;
 public class ChartView
 {
 
-	private static Integer closeablePlots = 0;
 	private BorderPane addOnPane;
 	private BorderPane editorPane;
-	private Environment env;
-	// private JPanel legendPanel;
+	private EnvironmentData env;
 	private BorderPane mainPane;
 	private FileSpecifications<ImageFormat> output;
 	private ArrayList<JPanel> panels;
-	private HybridChart plot;
+	private ChartProperties plot;
 	private Pane plotPane;
 	private ArrayList<SubChartView> plots;
 
 	public void captureGraphic(File f, ImageFormat format)
 	{
 		double width = plotPane.widthProperty().get();
-		double height = plotPane.heightProperty().get() + plot.measureFont();
+		double height = plotPane.heightProperty().get() + measureFont();
 		BufferedImage bi = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
 		prepareBackgroundsForGraphicsCapture(format.needsBackground);// format.needsBackground);
 		Graphics2D graphics = prepareVectorGraphics(format.image, bi);
@@ -70,26 +68,30 @@ public class ChartView
 
 	}
 
-	public void displayMenu(boolean visible)
+	public ChartProperties getChartProperties()
 	{
-		if (visible)
+		return plot;
+	}
 
+	public EnvironmentData getEnvironment()
+	{
+		return env;
+	}
+
+	public BorderPane getMainPane()
+	{
+		return mainPane;
+	}
+
+	public void renderContents()
+	{
+		try
 		{
-			// mainPane.setBottom(settingsMenu);
-		} else
+			plots.clear();
+		} catch (Exception e)
 		{
-			mainPane.setBottom(null);
+
 		}
-
-	}
-
-	public ArrayList<String> getElementOrder()
-	{
-		return env.getData().getNameOrder();
-	}
-
-	public void generatePlots()
-	{
 		SubChartView pf = null;
 		HashMap<Integer, Integer[][]> dimensions = plot.getChartLocations();
 		for (Integer paneIndex : dimensions.keySet())
@@ -103,13 +105,12 @@ public class ChartView
 			{
 				if (plot.sub(paneIndex).getyDataSelection() != null)
 				{
-					pf = new SubChartView(env.getData(),
-					createSubChartPane(dimensions.get(paneIndex), paneIndex, false),
+					pf = new SubChartView(env, createSubChartPane(dimensions.get(paneIndex), paneIndex, false),
 					plot.sub(paneIndex).getyDataSelection(), plot, paneIndex, this);
 				} else
 				{
-					pf = new SubChartView(env.getData(),
-					createSubChartPane(dimensions.get(paneIndex), paneIndex, false), plot, paneIndex, this);
+					pf = new SubChartView(env, createSubChartPane(dimensions.get(paneIndex), paneIndex, false), plot,
+					paneIndex, this);
 				}
 			}
 			plots.add(pf);
@@ -119,37 +120,15 @@ public class ChartView
 
 	}
 
-	public BorderPane getMainPane()
+	public void setChartProperties(ChartProperties plot)
 	{
-		return mainPane;
+		this.plot = plot;
+		renderContents();
 	}
 
-	private BorderPane createSizedAndTranslatedPane(Integer[][] dimensions, Integer chart_index, Double x_min,
-	Double x_max, Double y_min, Double y_max, boolean label)
+	public void setEnvironment(EnvironmentData env)
 	{
-
-		Double widthGrid = plot.getWidth() / dimensions[0].length;
-		Double heightGrid = (plot.getHeight(true)) / dimensions.length;
-		Double x = x_min * widthGrid;
-		Double y = (y_min * heightGrid);
-
-		Double w = (1 + (x_max - x_min)) * widthGrid;
-		Double h = (1 + (y_max - y_min)) * heightGrid;// - plot.measureFont();
-
-		BorderPane pan = new BorderPane();
-
-		pan.setMaxSize(w, h);
-		pan.setMinSize(w, h);
-		pan.setPrefSize(w, h);
-		pan.setTranslateX(x);
-		pan.translateYProperty().set(y);
-
-		return pan;
-	}
-
-	public boolean menuVisible()
-	{
-		return (mainPane.getBottom() != null);
+		this.env = env;
 	}
 
 	private void createGraphicFile(File f, ImageFormat format, Graphics2D graphics, BufferedImage bi)
@@ -187,6 +166,65 @@ public class ChartView
 		}
 	}
 
+	private BorderPane createSizedAndTranslatedPane(Integer[][] dimensions, Integer chart_index, Double x_min,
+	Double x_max, Double y_min, Double y_max, boolean label)
+	{
+
+		Double widthGrid = plot.getWidth() / dimensions[0].length;
+		Double heightGrid = (getHeight(true)) / dimensions.length;
+		Double x = x_min * widthGrid;
+		Double y = (y_min * heightGrid);
+
+		Double w = (1 + (x_max - x_min)) * widthGrid;
+		Double h = (1 + (y_max - y_min)) * heightGrid;// - plot.measureFont();
+
+		BorderPane pan = new BorderPane();
+
+		pan.setMaxSize(w, h);
+		pan.setMinSize(w, h);
+		pan.setPrefSize(w, h);
+		pan.setTranslateX(x);
+		pan.translateYProperty().set(y);
+
+		return pan;
+	}
+
+	private BorderPane createSubChartPane(Integer[][] dimensions, Integer chart_index, boolean label)
+	{
+		Integer maxX = 0;
+		Integer maxY = 0;
+		Integer minX = dimensions[0].length;
+		Integer minY = dimensions.length;
+		for (int rowIndex = 0; rowIndex < dimensions.length; rowIndex++)
+		{
+			for (int colIndex = 0; colIndex < dimensions[0].length; colIndex++)
+			{
+				if (dimensions[rowIndex][colIndex] >= 0)
+				{
+					if (colIndex < minX)
+					{
+						minX = colIndex;
+					}
+					if (colIndex > maxX)
+					{
+						maxX = colIndex;
+					}
+
+					if (rowIndex < minY)
+					{
+						minY = rowIndex;
+					}
+					if (rowIndex > maxY)
+					{
+						maxY = rowIndex;
+					}
+				}
+			}
+		}
+		return createSizedAndTranslatedPane(dimensions, chart_index, (double) minX, (double) maxX, (double) minY,
+		(double) maxY, label);
+	}
+
 	private void createSwingContent()
 	{
 		final SwingNode swingNode = new SwingNode();
@@ -211,6 +249,17 @@ public class ChartView
 			}
 		});
 		addOnPane.setTop(swingNode);
+	}
+
+	private Double getHeight(boolean adjusted)
+	{
+		Double heightAdj = plot.getHeight();
+		if (plot.getMainTitle() != null)
+		{
+			heightAdj = plot.getHeight()
+			- LabelProperties.measureFont(plot.getFonts().get(LabelType.MAIN_TITLE).getFont());
+		}
+		return heightAdj;
 	}
 
 	private void getOutput(FileSpecifications<ImageFormat> file_specs, Stage stage)
@@ -257,7 +306,6 @@ public class ChartView
 			{
 				super.succeeded();
 				stage.close();
-				closeablePlots--;
 			}
 
 		};
@@ -265,43 +313,7 @@ public class ChartView
 
 	}
 
-	private BorderPane createSubChartPane(Integer[][] dimensions, Integer chart_index, boolean label)
-	{
-		Integer maxX = 0;
-		Integer maxY = 0;
-		Integer minX = dimensions[0].length;
-		Integer minY = dimensions.length;
-		for (int rowIndex = 0; rowIndex < dimensions.length; rowIndex++)
-		{
-			for (int colIndex = 0; colIndex < dimensions[0].length; colIndex++)
-			{
-				if (dimensions[rowIndex][colIndex] >= 0)
-				{
-					if (colIndex < minX)
-					{
-						minX = colIndex;
-					}
-					if (colIndex > maxX)
-					{
-						maxX = colIndex;
-					}
-
-					if (rowIndex < minY)
-					{
-						minY = rowIndex;
-					}
-					if (rowIndex > maxY)
-					{
-						maxY = rowIndex;
-					}
-				}
-			}
-		}
-		return createSizedAndTranslatedPane(dimensions, chart_index, (double) minX, (double) maxX, (double) minY,
-		(double) maxY, label);
-	}
-
-	private void initialize(Environment env, HybridChart plot, Stage stage)
+	private void initialize(EnvironmentData env, ChartProperties plot, Stage stage)
 	{
 		try
 		{
@@ -320,7 +332,7 @@ public class ChartView
 			{
 				createSwingContent();
 			}
-			generatePlots();
+			renderContents();
 
 			setupSave();
 			// setupMenus();
@@ -341,26 +353,14 @@ public class ChartView
 		}
 	}
 
-	private void setupStage(Stage stage, boolean stay_open)
+	private Double measureFont()
 	{
-		if (stage != null)
+		Double height = 0.0;
+		if (plot.getMainTitle() != null)
 		{
-			if (stay_open)
-			{
-				// stage
-				// .setScene(new Scene(mainPane, plot.getWidth() + 5.0, plot.getHeight() + plot.measureFont() + 50.0));
-				stage.setScene(new Scene(mainPane, plot.getWidth() + 2.0, plot.getHeight() + plot.measureFont() + 2.0));
-				stage.show();
-				stage.setResizable(false);
-			} else
-			{
-				stage.initStyle(StageStyle.TRANSPARENT);
-				stage.setAlwaysOnTop(false);
-				stage.setScene(new Scene(mainPane, 1, 1));
-				stage.show();
-			}
-			// stage.showAndWait();
+			height = LabelProperties.measureFont(plot.getFonts().get(LabelType.MAIN_TITLE).getFont());
 		}
+		return height;
 	}
 
 	private Graphics2D paintGraphics(Graphics2D graphics)
@@ -372,7 +372,7 @@ public class ChartView
 			double heightPercent = (pane.getPane().heightProperty().get());
 			double xPos = pane.getPane().getLocalToSceneTransform().getTx()
 			- this.plotPane.getLocalToSceneTransform().getTx();
-			double yPos = plot.measureFont() + pane.getPane().getLocalToSceneTransform().getTy()
+			double yPos = pane.measureFont() + pane.getPane().getLocalToSceneTransform().getTy()
 			- this.plotPane.getLocalToSceneTransform().getTy();
 			Rectangle r = new Rectangle((int) (xPos), (int) (yPos), (int) (widthPercent), (int) (heightPercent));
 			pane.getChart().draw(graphics, r);
@@ -401,19 +401,15 @@ public class ChartView
 				pane.getChart().setBackgroundPaint(background);
 			} catch (Exception e)
 			{
-
-				// e.printStackTrace();
 			}
 		}
 		for (Integer p = 0; p < panels.size(); p++)
 		{
 			JPanel panel = panels.get(p);
-			// BorderPane pane = panez.get(p - 1);
-			// pane.setBackground(null);
 			panel.setOpaque(load_background);
-			// if (load_background)
+			if (load_background)
 			{
-				// panel.setBackground(Color.white);
+				panel.setBackground(Color.WHITE);
 			}
 		}
 	}
@@ -431,7 +427,7 @@ public class ChartView
 		return graphics;
 	}
 
-	public void setupSave()
+	private void setupSave()
 	{
 		mainPane.setOnKeyTyped(new EventHandler<KeyEvent>()
 		{
@@ -463,149 +459,38 @@ public class ChartView
 		});
 	}
 
-	public ChartView(Environment env, HybridChart plot, Stage stage)
+	private void setupStage(Stage stage, boolean stay_open)
+	{
+		if (stage != null)
+		{
+			if (stay_open)
+			{
+				stage.setScene(new Scene(mainPane, plot.getWidth() + 2.0, plot.getHeight() + measureFont() + 2.0));
+				stage.show();
+				stage.setResizable(false);
+			} else
+			{
+				stage.initStyle(StageStyle.TRANSPARENT);
+				stage.setAlwaysOnTop(false);
+				stage.setScene(new Scene(mainPane, 1, 1));
+				stage.show();
+			}
+
+		}
+	}
+
+	public ChartView(EnvironmentData env, ChartProperties plot, Stage stage)
 	{
 
 		initialize(env, plot, stage);
 		setupStage(stage, true);
 	}
 
-	public ChartView(Environment env, HybridChart plot, Stage stage, FileSpecifications<ImageFormat> output)
+	public ChartView(EnvironmentData env, ChartProperties plot, Stage stage, FileSpecifications<ImageFormat> output)
 	{
-		closeablePlots++;
 		Console.info("Chart saved: " + output.getLocation(false) + output.getFormat().extension);
 		initialize(env, plot, stage);
 		setupStage(stage, false);
 		getOutput(output, stage);
 	}
-
-	public static boolean closeablePlotsOpen()
-	{
-		return closeablePlots > 0;
-	}
-
-	// private void createLabel(BorderPane label_pane, FreeLabel label, Integer ind)
-	// {
-	// final SwingNode swingNode = new SwingNode();
-	//
-	// SwingUtilities.invokeLater(new Runnable()
-	// {
-	//
-	// @Override
-	// public void run()
-	// {
-	// // SwingUtilities.invokeLater(new Runnable()
-	// // {
-	// //
-	// // @Override
-	// // public void run()
-	// // {
-	//
-	// JLabel jlabel = new JLabel(" " + label.getText() + " ");
-	// Font font = label.getFont();
-	// jlabel.setFont(font);
-	//
-	// JPanel panel = new JPanel();
-	// panel.add(jlabel, BorderLayout.CENTER);
-	// // panel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-	// panel.setAlignmentX((float) label_pane.translateXProperty().get());
-	// panel.setAlignmentY((float) label_pane.translateYProperty().get());
-	// // panel.repaint(
-	// // new Rectangle((int) label_pane.translateXProperty().get(), (int)
-	// // label_pane.translateYProperty().get(),
-	// // (int) label_pane.getPrefWidth(), (int) label_pane.getPrefHeight()));
-	// // System.out.println(panel);
-	// swingNode.setContent(panel);// panel);
-	// panels.add(panel);
-	// }
-	// });
-	// // }
-	// // });
-	// label_pane.setCenter(swingNode);
-	// }
-	//
-	// private BorderPane createSizedAndTranslatedPane(Integer[][] dimensions, Integer chart_index, Double x_min,
-	// Double x_max, Double y_min, Double y_max, boolean label)
-	// {
-	//
-	// Double widthGrid = plot.getWidth() / dimensions[0].length;
-	// Double heightGrid = (plot.getHeight(true) - plot.getHeightOffset(chart_index)) / dimensions.length;
-	// Double x = x_min * widthGrid;
-	// Double y = (y_min * heightGrid);
-	// if (label)
-	// {
-	// if (plot.getExtraLabels().get(chart_index).getPosition().equals(LabelPosition.BELOW))
-	// {
-	// y = ((y_min + 1) * heightGrid);
-	// }
-	// }
-	// Double w = (1 + (x_max - x_min)) * widthGrid;
-	// Double h = (1 + (y_max - y_min)) * heightGrid;// - plot.measureFont();
-	// if (label)
-	// {
-	// h = plot.measureFont(plot.getExtraLabels().get(chart_index).getFont());
-	// }
-	// BorderPane pan = new BorderPane();
-	// labelOffsets.put(chart_index, y);
-	// System.out.println(y);
-	// pan.setMaxSize(w, h);
-	// pan.setMinSize(w, h);
-	// pan.setPrefSize(w, h);
-	// pan.setTranslateX(x);
-	// pan.translateYProperty().set(y);
-	//
-	// return pan;
-	// }
-
-	// public void generateLabels()
-	// {
-	// SubChart pf = null;
-	// HashMap<Integer, Integer[][]> dimensions = plot.getLabelLocations();
-	// for (Integer paneIndex : dimensions.keySet())
-	// {
-	// BorderPane p = createSubChartPane(dimensions.get(paneIndex), paneIndex, true);
-	// createLabel(p, plot.getExtraLabels().get(paneIndex), paneIndex);
-	//
-	// panez.add(p);
-	// // plots.add(p);
-	// plotPane.getChildren().add(p);
-	// // plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
-	// }
-	//
-	// }
-
-	// private Graphics2D paintGraphics(Graphics2D graphics)
-	// {
-	// for (SubChart pane : plots)
-	// {
-	//
-	// double widthPercent = (pane.getPane().widthProperty().get());
-	// double heightPercent = (pane.getPane().heightProperty().get());
-	// double xPos = pane.getPane().getLocalToSceneTransform().getTx()
-	// - this.plotPane.getLocalToSceneTransform().getTx();
-	// double yPos = plot.measureFont() + pane.getPane().getLocalToSceneTransform().getTy()
-	// - this.plotPane.getLocalToSceneTransform().getTy();
-	// Rectangle r = new Rectangle((int) (xPos), (int) (yPos), (int) (widthPercent), (int) (heightPercent));
-	// pane.getChart().draw(graphics, r);
-	//
-	// }
-	// for (JPanel panel : panels)
-	// {
-	// System.out.println(panel);
-	// // graphics.create(0, 734, 500, 27);
-	// if (!panel.equals(panels.get(0)))
-	// {
-	// Integer paneIndex = panels.indexOf(panel) - 1;
-	// BorderPane p = panez.get(paneIndex);
-	// panel.printAll(graphics.create((int) p.getTranslateX(), (int) (p.getTranslateY() + plot.measureFont()),
-	// (int) p.getWidth(), (int) p.getHeight()));
-	// } else
-	// {
-	// panel.printAll(graphics);
-	// }
-	// // panel.printAll(graphics);// .getComponent(0).repaint(0, 0, 734, 500, 27);
-	// // panel.getComponent(0)..prin.paint(graphics);
-	// }
-	// return graphics;
-	// }
 }

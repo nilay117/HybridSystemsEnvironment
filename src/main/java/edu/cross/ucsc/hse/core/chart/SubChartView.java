@@ -26,85 +26,14 @@ import org.jfree.ui.VerticalAlignment;
 public class SubChartView
 {
 
-	private JFreeChart chart;
-	private BorderPane pane;
-	private EnvironmentData data;
 	public ChartPanel panel;
-	private HybridChart chartProps;
+	private JFreeChart chart;
 	private Integer chartIndex;
+	private ChartProperties chartProps;
+	private EnvironmentData data;
+	private BorderPane pane;
 	ChartView ch;
 	// Content
-
-	SubChartView(BorderPane pane, HybridChart chart_props, Integer chart_index, ChartView ch)
-	{
-		initialize(null, pane, chart_props, null, chart_index, ch);
-	}
-
-	SubChartView(EnvironmentData data, BorderPane pane, HybridChart chart_props, Integer chart_index, ChartView ch)
-	{
-		initialize(data, pane, chart_props, null, chart_index, ch);
-	}
-
-	SubChartView(EnvironmentData data, BorderPane pane, String y, HybridChart chart_props, Integer chart_index,
-	ChartView ch)
-	{
-		initialize(data, pane, chart_props, y, chart_index, ch);
-
-	}
-
-	private void initialize(EnvironmentData data, BorderPane pane, HybridChart chart_props, String y,
-	Integer chart_index, ChartView ch)
-	{
-		this.ch = ch;
-		// props = new ChartProperties();
-		this.pane = pane;
-		this.data = data;
-		this.chartProps = chart_props;
-		chartIndex = chart_index;
-		// props.setyFilters(y);
-		// props.setxFilter(HybridPlot.simTime);
-		createSwingContent();
-	}
-
-	private void createChart(XYDataset dataset)
-	{
-		String title = sub().getTitle();
-		String xLabel = sub().getxAxisLabel();
-		String yLabel = sub().getyAxisLabel();
-		PlotOrientation orientation = PlotOrientation.VERTICAL;
-		chart = ChartFactory.createXYLineChart(title, xLabel, yLabel, dataset, orientation, true, true, true);
-		chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
-		chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
-		chart.getXYPlot().setDomainGridlinesVisible(chartProps.getShowXGridLines());
-		chart.getXYPlot().setRangeGridlinesVisible(chartProps.getShowYGridLines());
-		chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
-		chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
-		// chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(false);
-		// chart.getXYPlot().getDomainAxis().setAutoTickUnitSelection(false);
-		chart.getXYPlot().getRangeAxis().setMinorTickCount(4);
-		chart.getLegend().setVisible(sub().isDisplayLegend());
-		chart.setBackgroundPaint(null);
-		chart.getLegend().setBackgroundPaint(null);
-		chart.getXYPlot().setBackgroundPaint(null);
-		chart.setAntiAlias(true);
-		chart.getLegend().setFrame(BlockBorder.NONE);
-		chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
-		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
-		chart.setAntiAlias(false);
-		HybridDataRenderer renderer = new HybridDataRenderer(true, false, sub().getxDataSelection() != null, data,
-		chartProps);// true,
-		// false);
-		chart.getXYPlot().setRenderer(renderer);
-		if (sub().getxDataSelection() == null)
-		{
-			chart.getXYPlot().getDomainAxis().setRange(0.0, data.getLastStoredTime().getTime());
-		}
-	}
-
-	private SubChart sub()
-	{
-		return chartProps.sub(chartIndex);
-	}
 
 	public XYDataset createDataset()
 	{
@@ -169,6 +98,11 @@ public class SubChartView
 		return dataset;
 	}
 
+	public JFreeChart getChart()
+	{
+		return chart;
+	}
+
 	public ArrayList<String> getFieldNames()
 	{
 		ArrayList<String> fieldNames = new ArrayList<String>();
@@ -183,6 +117,11 @@ public class SubChartView
 		return fieldNames;
 	}
 
+	public BorderPane getPane()
+	{
+		return pane;
+	}
+
 	public void toggleLegendVisibility(boolean visible)
 	{
 		SwingUtilities.invokeLater(new Runnable()
@@ -195,6 +134,41 @@ public class SubChartView
 
 			}
 		});
+	}
+
+	private void createChart(XYDataset dataset)
+	{
+		String title = sub().getTitle();
+		String xLabel = sub().getxAxisLabel();
+		String yLabel = sub().getyAxisLabel();
+		PlotOrientation orientation = PlotOrientation.VERTICAL;
+		chart = ChartFactory.createXYLineChart(title, xLabel, yLabel, dataset, orientation, true, true, true);
+		chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
+		chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
+		chart.getXYPlot().setDomainGridlinesVisible(chartProps.getShowXGridLines());
+		chart.getXYPlot().setRangeGridlinesVisible(chartProps.getShowYGridLines());
+		chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
+		chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
+		// chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(false);
+		// chart.getXYPlot().getDomainAxis().setAutoTickUnitSelection(false);
+		chart.getXYPlot().getRangeAxis().setMinorTickCount(4);
+		chart.getLegend().setVisible(sub().isDisplayLegend());
+		chart.setBackgroundPaint(null);
+		chart.getLegend().setBackgroundPaint(null);
+		chart.getXYPlot().setBackgroundPaint(null);
+		chart.setAntiAlias(true);
+		chart.getLegend().setFrame(BlockBorder.NONE);
+		chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
+		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
+		chart.setAntiAlias(false);
+		HybridDataRenderer renderer = new HybridDataRenderer(true, false, sub().getxDataSelection() != null, data,
+		chartProps);// true,
+		// false);
+		chart.getXYPlot().setRenderer(renderer);
+		if (sub().getxDataSelection() == null)
+		{
+			chart.getXYPlot().getDomainAxis().setRange(0.0, data.getLastStoredTime().getTime());
+		}
 	}
 
 	private void createSwingContent()
@@ -221,15 +195,52 @@ public class SubChartView
 		pane.setCenter(swingNode);
 	}
 
-	// Boiler Plate
-
-	public JFreeChart getChart()
+	private void initialize(EnvironmentData data, BorderPane pane, ChartProperties chart_props, String y,
+	Integer chart_index, ChartView ch)
 	{
-		return chart;
+		this.ch = ch;
+		// props = new ChartProperties();
+		this.pane = pane;
+		this.data = data;
+		this.chartProps = chart_props;
+		chartIndex = chart_index;
+		// props.setyFilters(y);
+		// props.setxFilter(HybridPlot.simTime);
+		createSwingContent();
 	}
 
-	public BorderPane getPane()
+	private SubChart sub()
 	{
-		return pane;
+		return chartProps.sub(chartIndex);
+	}
+
+	Double measureFont()
+	{
+		Double height = 0.0;
+		if (chartProps.getMainTitle() != null)
+		{
+
+			height = LabelProperties.measureFont(chartProps.getFonts().get(LabelType.MAIN_TITLE).getFont());
+		}
+		return height;
+	}
+
+	SubChartView(BorderPane pane, ChartProperties chart_props, Integer chart_index, ChartView ch)
+	{
+		initialize(null, pane, chart_props, null, chart_index, ch);
+	}
+
+	// Boiler Plate
+
+	SubChartView(EnvironmentData data, BorderPane pane, ChartProperties chart_props, Integer chart_index, ChartView ch)
+	{
+		initialize(data, pane, chart_props, null, chart_index, ch);
+	}
+
+	SubChartView(EnvironmentData data, BorderPane pane, String y, ChartProperties chart_props, Integer chart_index,
+	ChartView ch)
+	{
+		initialize(data, pane, chart_props, y, chart_index, ch);
+
 	}
 }
