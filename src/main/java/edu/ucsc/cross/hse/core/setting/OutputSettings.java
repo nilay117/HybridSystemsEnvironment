@@ -6,44 +6,49 @@ public class OutputSettings
 {
 
 	/*
-	 * Time interval between stored data points
+	 * Flag indicating if file names should include the date at the end (for uniqueness)
 	 */
-	public double dataPointInterval;
+	public boolean appendFilesWithNumericDate;
 
 	/*
-	 * Location where trial results will be automatically stored (if auto storage is enabled)
-	 */
-	public String outputDirectory;
-
-	/*
-	 * Flag indicating if settings should be saved in an output file when not specified by the user
-	 */
-	public Boolean saveChartsToFile;
-
-	/*
-	 * Flag indicating if settings should be saved in an output file when not specified by the user
+	 * Default image file format to be used when exporting charts with no format specified
 	 */
 	public ImageFormat chartFileFormat;
 
 	/*
-	 * Flag indicating if settings should be saved in an output file when not specified by the user
+	 * Name of the environment configuration file if it were to be saved
 	 */
-	public Boolean saveEnvironmentToFile;
+	public String configurationFileName;
 
 	/*
-	 * Flag indicating if settings should be saved in an output file when not specified by the user
+	 * Time between data point storage
 	 */
-	public Boolean saveConfigurationToFile;
-	public boolean appendFilesWithTime;
+	public double dataPointInterval;
+
 	/*
-	 * Flag indicating if settings should be saved in an output file when not specified by the user
+	 * Name of the environment file if it were to be saved
 	 */
 	public String environmentFileName;
 
 	/*
-	 * Flag indicating if settings should be saved in an output file when not specified by the user
+	 * Location where results will be automatically stored if auto storage is enabled
 	 */
-	public String configurationFileName;
+	public String outputDirectory;
+
+	/*
+	 * Flag indicating if charts should be saved in an output file when not specified by the user
+	 */
+	public Boolean saveChartsToFile;
+
+	/*
+	 * Flag indicating if environment configuration should be saved in an output file when not specified by the user
+	 */
+	public Boolean saveConfigurationToFile;
+
+	/*
+	 * Flag indicating if environment should be saved in an output file when not specified by the user
+	 */
+	public Boolean saveEnvironmentToFile;
 
 	/*
 	 * Default value constructor
@@ -58,7 +63,7 @@ public class OutputSettings
 		environmentFileName = "environment";
 		configurationFileName = "environmentConfiguration";
 		chartFileFormat = ImageFormat.PNG;
-		appendFilesWithTime = true;
+		appendFilesWithNumericDate = true;
 	}
 
 }

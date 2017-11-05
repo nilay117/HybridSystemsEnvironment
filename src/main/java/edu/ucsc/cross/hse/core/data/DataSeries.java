@@ -43,9 +43,9 @@ public class DataSeries<X>
 	/*
 	 * Store the current value of the data element
 	 */
+	@SuppressWarnings("unchecked")
 	public void storeDataGeneral(Object value)
 	{
-
 		storedData.add((X) value);
 	}
 

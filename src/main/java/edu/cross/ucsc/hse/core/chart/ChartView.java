@@ -225,8 +225,7 @@ public class ChartView
 			protected Integer call() throws Exception
 			{
 				final BooleanProperty success = new SimpleBooleanProperty(false);
-				Long attemptTime = System.currentTimeMillis()
-				+ env.getSettings().getFunctionalitySettings().outputImageFileAttemptInterval;
+				Long attemptTime = (long) 1000;
 				while (!success.getValue())
 				{
 					if (attemptTime <= System.currentTimeMillis())
@@ -247,8 +246,7 @@ public class ChartView
 
 						// }
 						// }, (int) 500, (int) 500);
-						attemptTime = System.currentTimeMillis()
-						+ env.getSettings().getFunctionalitySettings().outputImageFileAttemptInterval;
+						attemptTime = System.currentTimeMillis() + 1000;
 					}
 				}
 				return 0;

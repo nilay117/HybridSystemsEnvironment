@@ -1,32 +1,24 @@
 package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.setting.ComputationSettings;
-import edu.ucsc.cross.hse.core.setting.FunctionalitySettings;
+import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import edu.ucsc.cross.hse.core.setting.OutputSettings;
 
 public class EnvironmentSettings
 {
 
-	private ComputationSettings environmentSettings;
 	private OutputSettings dataSettings;
+	private ComputationSettings environmentSettings;
 	private LogSettings logging;
-	private FunctionalitySettings functionalitySettings;
+	private ExecutionParameters parameters;
 
-	public void setDataSettings(OutputSettings dataSettings)
+	public ExecutionParameters getExecutionParameters()
 	{
-		this.dataSettings = dataSettings;
+		return parameters;
 	}
 
-	public EnvironmentSettings()
-	{
-		loadExecutionSettings(new ComputationSettings());
-		dataSettings = new OutputSettings();
-		logging = new LogSettings();
-		functionalitySettings = new FunctionalitySettings();
-	}
-
-	public ComputationSettings getExecutionSettings()
+	public ComputationSettings getComputationSettings()
 	{
 		return environmentSettings;
 	}
@@ -41,19 +33,14 @@ public class EnvironmentSettings
 		return dataSettings;
 	}
 
-	public void loadSettings(EnvironmentSettings settings)
+	public void loadAllSettings(EnvironmentSettings settings)
 	{
 		this.environmentSettings = settings.environmentSettings;
 		this.dataSettings = settings.dataSettings;
 		this.logging = settings.logging;
 	}
 
-	public void loadLogSettings(LogSettings logging)
-	{
-		this.logging = logging;
-	}
-
-	public void loadExecutionSettings(ComputationSettings environment_settings)
+	public void loadComputationSettings(ComputationSettings environment_settings)
 	{
 		// for (Field field : environment_settings.getClass().getFields())
 		// {
@@ -69,13 +56,27 @@ public class EnvironmentSettings
 		this.environmentSettings = environment_settings;
 	}
 
-	public FunctionalitySettings getFunctionalitySettings()
+	public void loadExecutionParameters(ExecutionParameters parameters)
 	{
-		return functionalitySettings;
+		this.parameters = parameters;
 	}
 
-	public void loadFunctionalitySettings(FunctionalitySettings functionalitySettings)
+	public void loadLogSettings(LogSettings logging)
 	{
-		this.functionalitySettings = functionalitySettings;
+		this.logging = logging;
 	}
+
+	public void loadOutputSettings(OutputSettings dataSettings)
+	{
+		this.dataSettings = dataSettings;
+	}
+
+	public EnvironmentSettings()
+	{
+		loadComputationSettings(new ComputationSettings());
+		dataSettings = new OutputSettings();
+		logging = new LogSettings();
+		parameters = new ExecutionParameters();
+	}
+
 }

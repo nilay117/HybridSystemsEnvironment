@@ -30,7 +30,6 @@ public class Environment
 	final EnvironmentContent content;
 	EnvironmentData dataCollector;
 	final EnvironmentOutputs outputs;
-
 	final EnvironmentSettings settings;
 
 	public void add(HybridChart... plot)
@@ -141,7 +140,7 @@ public class Environment
 
 	public void load(EnvironmentSettings settings)
 	{
-		getSettings().loadSettings(settings);
+		getSettings().loadAllSettings(settings);
 	}
 
 	public void start()
@@ -153,7 +152,7 @@ public class Environment
 
 	public void start(Double run_time)
 	{
-		getManager().getExecutionParameters().setMaximumTime(run_time);
+		getManager().getExecutionParameters().maximumTime = (run_time);
 		start();
 	}
 
@@ -165,7 +164,7 @@ public class Environment
 
 	public void start(ExecutionParameters params)
 	{
-		getManager().setExecutionParameters(params);
+		settings.loadExecutionParameters(params);
 		start();
 	}
 

@@ -56,7 +56,7 @@ public class ComputationMonitor
 		SimulationOperator ode = manager.getSimEngine();
 		double[] y = manager.getExecutionContent().getValueVector();
 		runIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
-		manager.getExecutionParameters().getMaximumTime(), y);
+		manager.getExecutionParameters().maximumTime, y);
 		// runIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
 		// manager.getExecutionParameters().getMaximumTime(), y);
 		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
@@ -69,24 +69,24 @@ public class ComputationMonitor
 	protected FirstOrderIntegrator getSimulationIntegrator()
 	{
 		FirstOrderIntegrator integrator = null;
-		switch (manager.getSettings().getExecutionSettings().integratorType)
+		switch (manager.getSettings().getComputationSettings().integratorType)
 		{
 			case EULER:
-				integrator = new EulerIntegrator(manager.getSettings().getExecutionSettings().odeMinimumStepSize);
+				integrator = new EulerIntegrator(manager.getSettings().getComputationSettings().odeMinimumStepSize);
 				break;
 			case DORMAND_PRINCE_853:
 				integrator = new DormandPrince853Integrator(
-				manager.getSettings().getExecutionSettings().odeMinimumStepSize,
-				manager.getSettings().getExecutionSettings().odeMaximumStepSize,
-				manager.getSettings().getExecutionSettings().odeSolverAbsoluteTolerance,
-				manager.getSettings().getExecutionSettings().odeRelativeTolerance);
+				manager.getSettings().getComputationSettings().odeMinimumStepSize,
+				manager.getSettings().getComputationSettings().odeMaximumStepSize,
+				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
+				manager.getSettings().getComputationSettings().odeRelativeTolerance);
 				break;
 			case DORMAND_PRINCE_54:
 				integrator = new DormandPrince54Integrator(
-				manager.getSettings().getExecutionSettings().odeMinimumStepSize,
-				manager.getSettings().getExecutionSettings().odeMaximumStepSize,
-				manager.getSettings().getExecutionSettings().odeSolverAbsoluteTolerance,
-				manager.getSettings().getExecutionSettings().odeRelativeTolerance);
+				manager.getSettings().getComputationSettings().odeMinimumStepSize,
+				manager.getSettings().getComputationSettings().odeMaximumStepSize,
+				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
+				manager.getSettings().getComputationSettings().odeRelativeTolerance);
 				break;
 		}
 		loadEventHandlers(integrator);
@@ -101,9 +101,9 @@ public class ComputationMonitor
 	private void loadEventHandlers(FirstOrderIntegrator integrator)
 	{
 		integrator.addEventHandler(manager.getJumpEvaluator(),
-		manager.getSettings().getExecutionSettings().eventHandlerMaximumCheckInterval,
-		manager.getSettings().getExecutionSettings().eventHandlerConvergenceThreshold,
-		manager.getSettings().getExecutionSettings().maxEventHandlerIterations);
+		manager.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval,
+		manager.getSettings().getComputationSettings().eventHandlerConvergenceThreshold,
+		manager.getSettings().getComputationSettings().maxEventHandlerIterations);
 		// integrator.addEventHandler(getInterruptHandler(),
 		// manager.getSettings().getEnvironmentSettings().ehMaxCheckInterval,
 		// manager.getSettings().getEnvironmentSettings().ehConvergence,
@@ -134,9 +134,9 @@ public class ComputationMonitor
 		{
 
 			endTime = recursiveIntegrator(0);
-			timeExpired = endTime >= manager.getExecutionParameters().getMaximumTime();
-			jumpsExpired = manager.getExecutionContent().getHybridSimTime().getJumps() >= manager
-			.getExecutionParameters().getMaximumJumps();
+			timeExpired = endTime >= manager.getExecutionParameters().maximumTime;
+			jumpsExpired = manager.getExecutionContent().getHybridSimTime()
+			.getJumps() >= manager.getExecutionParameters().maximumJumps;
 			terminated = !manager.getJumpEvaluator().isRunning();
 
 		}
@@ -158,7 +158,7 @@ public class ComputationMonitor
 	 */
 	public Double recursiveIntegrator(Integer recursion_level)
 	{
-		return recursiveIntegrator(recursion_level, manager.getExecutionParameters().getMaximumTime());
+		return recursiveIntegrator(recursion_level, manager.getExecutionParameters().maximumTime);
 	}
 
 	/*
@@ -220,13 +220,13 @@ public class ComputationMonitor
 				.warn("Integrator failure - step size too large - adjusting step size and restarting integrator");
 			}
 			manager.getSettings()
-			.getExecutionSettings().odeMaximumStepSize = this.manager.getSettings()
-			.getExecutionSettings().odeMaximumStepSize
-			* this.manager.getSettings().getExecutionSettings().stepSizeErrorMaxCorrectionFactor;
+			.getComputationSettings().odeMaximumStepSize = this.manager.getSettings()
+			.getComputationSettings().odeMaximumStepSize
+			* this.manager.getSettings().getComputationSettings().stepSizeErrorMaxCorrectionFactor;
 			manager.getSettings()
-			.getExecutionSettings().odeMinimumStepSize = this.manager.getSettings()
-			.getExecutionSettings().odeMinimumStepSize
-			* (this.manager.getSettings().getExecutionSettings().stepSizeErrorMinCorrectionFactor);
+			.getComputationSettings().odeMinimumStepSize = this.manager.getSettings()
+			.getComputationSettings().odeMinimumStepSize
+			* (this.manager.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor);
 			handledIssue = true;
 		}
 		return handledIssue;
@@ -243,7 +243,7 @@ public class ComputationMonitor
 		if (exc.getClass().equals(NoBracketingException.class))
 		{
 			if (manager.getExecutionContent()
-			.getSimulationTime() > (manager.getSettings().getExecutionSettings().odeMaximumStepSize))
+			.getSimulationTime() > (manager.getSettings().getComputationSettings().odeMaximumStepSize))
 			{
 				if (manager.getSettings().getLogSettings().printIntegratorExceptions)
 				{
@@ -251,13 +251,13 @@ public class ComputationMonitor
 					+ "Integrator exception - exception handling thresholds too large - adjusting intervals and restarting integrator");// getEnvironmentOperator().getEnvironmentHybridTime().incrementJumpIndex(0);
 				}
 				manager.getSettings()
-				.getExecutionSettings().eventHandlerMaximumCheckInterval = manager.getSettings()
-				.getExecutionSettings().eventHandlerMaximumCheckInterval
-				* manager.getSettings().getExecutionSettings().intervalErrorCorrectionFactor;
+				.getComputationSettings().eventHandlerMaximumCheckInterval = manager.getSettings()
+				.getComputationSettings().eventHandlerMaximumCheckInterval
+				* manager.getSettings().getComputationSettings().intervalErrorCorrectionFactor;
 				manager.getSettings()
-				.getExecutionSettings().eventHandlerConvergenceThreshold = manager.getSettings()
-				.getExecutionSettings().eventHandlerConvergenceThreshold
-				* manager.getSettings().getExecutionSettings().convergenceErrorCorrectionFactor;
+				.getComputationSettings().eventHandlerConvergenceThreshold = manager.getSettings()
+				.getComputationSettings().eventHandlerConvergenceThreshold
+				* manager.getSettings().getComputationSettings().convergenceErrorCorrectionFactor;
 			}
 			handledIssue = true;
 		}
@@ -278,8 +278,8 @@ public class ComputationMonitor
 				Console.warn(
 				"Integrator exception - maximum event handler iterations reached - adjusting maximum iterations and restarting integrator");
 			}
-			manager.getSettings().getExecutionSettings().maxEventHandlerIterations = manager.getSettings()
-			.getExecutionSettings().maxEventHandlerIterations * 2;
+			manager.getSettings().getComputationSettings().maxEventHandlerIterations = manager.getSettings()
+			.getComputationSettings().maxEventHandlerIterations * 2;
 			handledIssue = true;
 		}
 		return handledIssue;

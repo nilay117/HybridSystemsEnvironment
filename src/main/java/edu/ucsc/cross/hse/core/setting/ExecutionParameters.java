@@ -6,8 +6,21 @@ package edu.ucsc.cross.hse.core.setting;
 public class ExecutionParameters
 {
 
-	private double maximumTime;
-	private int maximumJumps;
+	/*
+	 * Maximum time allowed before execution terminates
+	 */
+	public int maximumJumps;
+
+	/*
+	 * Maximum number of jumps allowed before execution terminates
+	 */
+	public double maximumTime;
+
+	public void setMaximumTimeAndJumps(Double maximum_time, Integer maximum_jumps)
+	{
+		maximumTime = maximum_time;
+		maximumJumps = maximum_jumps;
+	}
 
 	public ExecutionParameters()
 	{
@@ -15,43 +28,10 @@ public class ExecutionParameters
 		maximumJumps = 20;
 	}
 
-	public ExecutionParameters(Double duration, Integer jump_threshold)
+	public ExecutionParameters(Double maximum_time, Integer maximum_jumps)
 	{
-		maximumTime = duration;
-		maximumJumps = jump_threshold;
+		maximumTime = maximum_time;
+		maximumJumps = maximum_jumps;
 	}
 
-	public ExecutionParameters(Double duration, Integer jump_threshold, String save_directory)
-	{
-		maximumTime = duration;
-		maximumJumps = jump_threshold;
-	}
-
-	public double getMaximumTime()
-	{
-		return maximumTime;
-	}
-
-	public int getMaximumJumps()
-	{
-		return maximumJumps;
-	}
-
-	public void setMaximumTime(double max_time)
-	{
-		maximumTime = max_time;
-	}
-
-	public void setMaximumJumps(int jump_threshold)
-	{
-
-		maximumJumps = jump_threshold;
-
-	}
-
-	public void setMaximumTimeAndJumps(Double time_threshold, Integer jump_threshold)
-	{
-		maximumTime = time_threshold;
-		maximumJumps = jump_threshold;
-	}
 }

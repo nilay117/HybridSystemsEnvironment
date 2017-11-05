@@ -73,8 +73,8 @@ public class EventMonitor implements EventHandler
 	{
 		approachingJump = false;
 
-		if (!running || (manager.getExecutionContent().getHybridSimTime().getJumps() >= manager.getExecutionParameters()
-		.getMaximumJumps()))
+		if (!running || (manager.getExecutionContent().getHybridSimTime()
+		.getJumps() >= manager.getExecutionParameters().maximumJumps))
 		{
 
 			return EventHandler.Action.STOP; // continue if jump limit

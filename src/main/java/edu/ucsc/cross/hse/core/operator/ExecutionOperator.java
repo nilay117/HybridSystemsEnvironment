@@ -27,7 +27,6 @@ public class ExecutionOperator
 	Environment env;
 	ObjectOperator exeContent;
 	ComputationMonitor executionMonitor;
-	ExecutionParameters executionParameters;
 	EventMonitor jumpEvaluator;
 	SimulationOperator simEngine;
 	SystemOperator systemControl;
@@ -64,7 +63,7 @@ public class ExecutionOperator
 
 	public ExecutionParameters getExecutionParameters()
 	{
-		return executionParameters;
+		return env.getSettings().getExecutionParameters();
 	}
 
 	public EventMonitor getJumpEvaluator()
@@ -105,7 +104,6 @@ public class ExecutionOperator
 		dataManager = new DataMonitor(this);
 		systemControl = new SystemOperator(this);
 		console = new Console(this);
-		executionParameters = new ExecutionParameters();
 		exeContent = new ObjectOperator(this);
 	}
 
@@ -187,11 +185,6 @@ public class ExecutionOperator
 		initializeComponents();
 	}
 
-	public void setExecutionParameters(ExecutionParameters executionParameters)
-	{
-		this.executionParameters = executionParameters;
-	}
-
 	private static SimpleDateFormat sdf = new SimpleDateFormat("M_d_yy_HH_mm_ss_SSS");
 
 	public static String getStartTime(Environment env, boolean file_name)
@@ -201,7 +194,7 @@ public class ExecutionOperator
 		{
 			startTimes.put(env, "[" + sdf.format(new Date()) + "]");
 		}
-		if (file_name && env.getSettings().getOutputSettings().appendFilesWithTime)
+		if (file_name && env.getSettings().getOutputSettings().appendFilesWithNumericDate)
 		{
 			return "_" + startTimes.get(env);
 		} else if (!file_name)
