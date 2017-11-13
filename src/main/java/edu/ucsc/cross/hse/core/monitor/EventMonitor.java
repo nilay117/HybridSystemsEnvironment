@@ -1,8 +1,9 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import org.apache.commons.math3.ode.events.EventHandler;
+
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
-import org.apache.commons.math3.ode.events.EventHandler;
 
 /*
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
@@ -117,8 +118,16 @@ public class EventMonitor implements EventHandler
 	{
 		while (manager.getSystemControl().checkDomain(true))
 		{
-			manager.getSystemControl().applyDynamics(true); // execute all jumps
-			manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_OCCURRED);
+			if (manager.getExecutionContent().getHybridSimTime()
+			.getJumps() < manager.getSettings().getExecutionParameters().maximumJumps)
+			{
+				manager.getSystemControl().applyDynamics(true); // execute all jumps
+				manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_OCCURRED);
+			} else
+			{
+				return;
+			}
+
 		}
 	}
 

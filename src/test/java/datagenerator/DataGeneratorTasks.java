@@ -2,7 +2,6 @@ package datagenerator;
 
 import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
-import com.be3short.io.xml.XMLParser;
 import edu.cross.ucsc.hse.core.chart.ChartProperties;
 import edu.cross.ucsc.hse.core.chart.LabelType;
 import edu.ucsc.cross.hse.core.environment.Environment;
@@ -45,7 +44,7 @@ public class DataGeneratorTasks extends TaskManager
 		// env.getData().load(dat.getStoreTimes(), dat.getGlobalStateData());
 		// env.getOutputs().generateOutputs(env, true);
 		// env.add(xyCombination());
-		System.out.println(XMLParser.serializeObject(env));
+		// System.out.println(XMLParser.serializeObject(env));
 		// statesAndTimerChart().plot(env);
 		// env.generateOutputs();
 		ChartProperties HybridChart2 = xOnly();
@@ -64,7 +63,7 @@ public class DataGeneratorTasks extends TaskManager
 		env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 6; i++)
 		{
-			CircleSystem signalGenerator = new CircleSystem(1.0, .3);
+			CircleSystem signalGenerator = new CircleSystem(Math.random() * 1.0 + .2, Math.random() * 1.0 + .3);
 			env.add(signalGenerator);
 		}
 		env.start();
