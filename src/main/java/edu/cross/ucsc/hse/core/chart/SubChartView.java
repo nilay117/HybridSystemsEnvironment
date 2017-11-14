@@ -42,63 +42,64 @@ public class SubChartView
 		StandardXYItemRenderer rend = new StandardXYItemRenderer();
 		rend.setPlotDiscontinuous(false);
 		HashMap<String, XYSeries> ser = new HashMap<String, XYSeries>();
-
-		for (DataSeries<?> data : data.getGlobalStateData())
+		if (sub().getyDataSelection() != null)
 		{
-			boolean matchesSelection = true;
-			DataSeries<?> xS = null;
-			// System.out.println(props.fufilsFilters(data));
-			if (!sub().getyDataSelection().equals(data.getElementName()))
-			// .!fufilsFilters(data))
+			for (DataSeries<?> data : data.getGlobalStateData())
 			{
-				matchesSelection = false;
-			}
-			if (sub().getxDataSelection() != null)
-			{
-				xS = data.getSeriesWithSameParent(sub().getxDataSelection(), this.data.getGlobalStateData());
-				if (xS == null)
+				boolean matchesSelection = true;
+				DataSeries<?> xS = null;
+				// System.out.println(props.fufilsFilters(data));
+				if (!sub().getyDataSelection().equals(data.getElementName()))
+				// .!fufilsFilters(data))
 				{
 					matchesSelection = false;
 				}
-			}
-			matchesSelection = matchesSelection && (data.getAllStoredData().get(0).getClass().equals(Double.class)
-			|| data.getAllStoredData().get(0).getClass().equals(double.class));
-			if (matchesSelection)
-			{
-				// \String label = this.data.getStateNames().get(data.getParentID() + data.getElementName());//
-				String label = this.data.getStateNames().get(data.getParentID());
-				// defaultValue).getLegendLabel(data);//
-				// getLegendLabel(data,
-				// names);
-				names.add(label);
-				XYSeries s1 = new XYSeries(label, false);
-				s1.setDescription(label);
-				for (HybridTime ind : this.data.getStoreTimes())
+				if (sub().getxDataSelection() != null)
 				{
-					Double y = (Double) data.getStoredData(ind);
-					Double x = ind.getTime();
-					if (xS != null)
+					xS = data.getSeriesWithSameParent(sub().getxDataSelection(), this.data.getGlobalStateData());
+					if (xS == null)
 					{
-						x = (Double) xS.getStoredData(ind);
-					}
-					if (x != null && y != null)
-					{
-						XYDataItem dat = new XYDataItem(x, y);
-						s1.add(dat);
+						matchesSelection = false;
 					}
 				}
-				ser.put(s1.getKey().toString(), s1);
+				matchesSelection = matchesSelection && (data.getAllStoredData().get(0).getClass().equals(Double.class)
+				|| data.getAllStoredData().get(0).getClass().equals(double.class));
+				if (matchesSelection)
+				{
+					// \String label = this.data.getStateNames().get(data.getParentID() + data.getElementName());//
+					String label = this.data.getStateNames().get(data.getParentID());
+					// defaultValue).getLegendLabel(data);//
+					// getLegendLabel(data,
+					// names);
+					names.add(label);
+					XYSeries s1 = new XYSeries(label, false);
+					s1.setDescription(label);
+					for (HybridTime ind : this.data.getStoreTimes())
+					{
+						Double y = (Double) data.getStoredData(ind);
+						Double x = ind.getTime();
+						if (xS != null)
+						{
+							x = (Double) xS.getStoredData(ind);
+						}
+						if (x != null && y != null)
+						{
+							XYDataItem dat = new XYDataItem(x, y);
+							s1.add(dat);
+						}
+					}
+					ser.put(s1.getKey().toString(), s1);
 
+				}
+			}
+
+			ArrayList<String> serName = new ArrayList<String>(ser.keySet());
+			Collections.sort(serName);
+			for (String se : serName)
+			{
+				dataset.addSeries(ser.get(se));
 			}
 		}
-
-		ArrayList<String> serName = new ArrayList<String>(ser.keySet());
-		Collections.sort(serName);
-		for (String se : serName)
-		{
-			dataset.addSeries(ser.get(se));
-		}
-
 		return dataset;
 	}
 
@@ -165,8 +166,7 @@ public class SubChartView
 		chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
 		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
 		chart.setAntiAlias(false);
-		HybridDataRenderer renderer = new HybridDataRenderer(true, false, sub().getxDataSelection() != null, data,
-		chartProps, dataset);// true,
+		HybridDataRenderer renderer = new HybridDataRenderer(sub().getChartType(), data, chartProps, dataset);// true,
 
 		// XYShapeRenderer renderer = new XYShapeRenderer();
 
@@ -174,7 +174,8 @@ public class SubChartView
 		chart.getXYPlot().setRenderer(renderer);
 		if (sub().getxDataSelection() == null)
 		{
-			chart.getXYPlot().getDomainAxis().setRange(0.0, data.getLastStoredTime().getTime());
+			chart.getXYPlot().getDomainAxis().setRange(data.getEarliestStoredTime().getTime(),
+			data.getLastStoredTime().getTime());
 		}
 	}
 

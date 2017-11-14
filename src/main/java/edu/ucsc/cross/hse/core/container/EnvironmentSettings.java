@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.setting.ComputationSettings;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
+import edu.ucsc.cross.hse.core.setting.InterfaceSettings;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import edu.ucsc.cross.hse.core.setting.OutputSettings;
 
@@ -12,6 +13,7 @@ public class EnvironmentSettings
 	private ComputationSettings environmentSettings;
 	private LogSettings logging;
 	private ExecutionParameters parameters;
+	private InterfaceSettings interfaceSettings;
 
 	public ExecutionParameters getExecutionParameters()
 	{
@@ -77,6 +79,17 @@ public class EnvironmentSettings
 		dataSettings = new OutputSettings();
 		logging = new LogSettings();
 		parameters = new ExecutionParameters();
+		interfaceSettings = new InterfaceSettings();
+	}
+
+	public InterfaceSettings getInterfaceSettings()
+	{
+		return interfaceSettings;
+	}
+
+	public void loadInterfaceSettings(InterfaceSettings interfaceSettings)
+	{
+		this.interfaceSettings = interfaceSettings;
 	}
 
 }

@@ -16,6 +16,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class ExecutionOperator
 {
@@ -120,7 +121,10 @@ public class ExecutionOperator
 		prepareConsole();
 		exeContent.prepareComponents(this);
 		dataManager.loadMap();
-		dataManager.performDataActions(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
+		if (!getSettings().getInterfaceSettings().runInRealTime)
+		{
+			dataManager.performDataActions(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
+		}
 	}
 
 	public void resetData()
@@ -173,9 +177,39 @@ public class ExecutionOperator
 		prepareDir();
 		Console.info("Environment Started");
 		jumpEvaluator.setRunning(true);
-		console.startStatusPrintThread();
+		if (!getSettings().getInterfaceSettings().runInRealTime)
+		{
+			console.startStatusPrintThread();
+		}
+		Thread term = launchTerminationThread();
 		executionMonitor.launchEnvironment();
+		term.stop();
 
+	}
+
+	private Thread launchTerminationThread()
+	{
+		final Scanner in = new Scanner(System.in);
+		Thread debugStatusThread = new Thread(new Runnable()
+		{
+
+			public void run()
+			{
+				String input = "";
+				while (!input.equals("q"))
+				{
+					input = in.nextLine();
+					if (input.equals("q"))
+					{
+						System.out.println("killing");
+						jumpEvaluator.setRunning(false);
+					}
+				}
+
+			}
+		});
+		debugStatusThread.start();
+		return debugStatusThread;
 	}
 
 	public ExecutionOperator(Environment envi)

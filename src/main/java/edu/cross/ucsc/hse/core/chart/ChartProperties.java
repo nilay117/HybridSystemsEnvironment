@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.jfree.chart.ChartColor;
 
 public class ChartProperties
@@ -33,10 +34,10 @@ public class ChartProperties
 	private HashMap<Integer, SubChartProperties> subPlots;
 
 	// Data Rendering Configuration
-	private Stroke flowStroke; // base flow stroke to be used whenever stroke is not specified
-	private Stroke jumpStroke;// base flow stroke to be used when stroke is not specified
-	private ArrayList<Paint> seriesColors; // collection of series colors used to render lines
-	private ArrayList<Stroke> seriesStrokes; // collection of series strokes used to render lines
+	private Stroke flowStroke; // default flow stroke to be used whenever stroke is not specified
+	private Stroke jumpStroke;// default flow stroke to be used when stroke is not specified
+	private ArrayList<Paint> defaultSeriesColors; // collection of series colors used to render lines
+
 	private HashMap<String, ArrayList<Paint>> assignedColors;
 	private HashMap<String, ArrayList<Stroke>> assignedStrokes;
 
@@ -154,13 +155,82 @@ public class ChartProperties
 
 	public Paint getSeriesColor(Integer index)
 	{
-		Integer adj = Math.floorMod(index, seriesColors.size() - 1);
-		return seriesColors.get(adj);
+
+		return getSeriesColor(index, null);
 	}
 
-	public ArrayList<Stroke> getSeriesStrokes()
+	public Paint getSeriesColor(Integer index, String series_name)
 	{
-		return seriesStrokes;
+		Integer adj = Math.floorMod(index, defaultSeriesColors.size() - 1);
+		if (series_name != null)
+		{
+			for (String assignedColor : assignedColors.keySet())
+			{
+				if (series_name.contains(assignedColor))
+				{
+					String valueSplit[] = series_name.split(Pattern.quote("("));
+					String valString = valueSplit[valueSplit.length - 1].split(Pattern.quote(")"))[0];
+					ArrayList<Paint> colors = assignedColors.get(assignedColor);
+					Integer val = 0;
+					try
+					{
+						val = Integer.parseInt(valString) - 1;
+
+					} catch (Exception e)
+					{
+
+					}
+					Integer adj2 = Math.floorMod(val, colors.size());
+					try
+					{
+						Paint col = assignedColors.get(assignedColor).get(adj2);
+						return col;
+
+					} catch (Exception e)
+					{
+
+					}
+				}
+			}
+		}
+		return defaultSeriesColors.get(adj);
+	}
+
+	public Stroke getSeriesStrokes(String series_name)
+	{
+		if (series_name != null)
+		{
+			for (String assignedColor : assignedStrokes.keySet())
+			{
+				if (series_name.contains(assignedColor))
+				{
+					String valueSplit[] = series_name.split(Pattern.quote("("));
+					String valString = valueSplit[valueSplit.length - 1].split(Pattern.quote(")"))[0];
+					ArrayList<Stroke> colors = assignedStrokes.get(assignedColor);
+					Integer val = 0;
+					try
+					{
+						val = Integer.parseInt(valString) - 1;
+
+					} catch (Exception e)
+					{
+						val = 0;
+					}
+					Integer adj2 = Math.floorMod(val, colors.size());
+					try
+					{
+						Stroke col = assignedStrokes.get(assignedColor).get(adj2);
+						return col;
+
+					} catch (Exception e)
+					{
+
+					}
+				}
+			}
+		}
+		return getBaseFlowStroke();
+
 	}
 
 	public Boolean getShowXGridLines()
@@ -207,12 +277,7 @@ public class ChartProperties
 
 	public void setSeriesColors(ArrayList<Paint> colors)
 	{
-		seriesColors = colors;
-	}
-
-	public void setSeriesStrokes(ArrayList<Stroke> seriesStrokes)
-	{
-		this.seriesStrokes = seriesStrokes;
+		defaultSeriesColors = colors;
 	}
 
 	public void setShowXGridLines(boolean showXGridLines)
@@ -267,8 +332,7 @@ public class ChartProperties
 
 	private void initialize(Double width, Double height)
 	{
-		seriesColors = this.defaultSeriesColors();
-		seriesStrokes = new ArrayList<Stroke>();
+		defaultSeriesColors = this.defaultSeriesColors();
 
 		fonts = LabelType.getDefaultMap();
 

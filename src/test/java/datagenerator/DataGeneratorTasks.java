@@ -3,10 +3,13 @@ package datagenerator;
 import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartProperties;
+import edu.cross.ucsc.hse.core.chart.ChartType;
 import edu.cross.ucsc.hse.core.chart.LabelType;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
 import edu.ucsc.cross.hse.core.task.TaskManager;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import javafx.stage.FileChooser;
@@ -25,6 +28,9 @@ public class DataGeneratorTasks extends TaskManager
 		dataGeneratorSimulation();
 		// openEnvironmentAndPlot();//
 		// dataGeneratorSimulation();//
+		long l = (long) 1.9;
+
+		System.out.println(System.nanoTime() + " " + 10000000E-9);
 	}
 
 	/*
@@ -61,13 +67,13 @@ public class DataGeneratorTasks extends TaskManager
 		ChartProperties HybridChart2 = xOnly();
 		ChartProperties HybridChart3 = xyVsTimeVertical();
 		// env.add(HybridChart1, HybridChart2, HybridChart3);
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);
 			env.add(signalGenerator);
-			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
+			// env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
-		env.start();
+		env.start(10.0, 100000);
 		// xyCombination().createChart(env);
 		// HybridChart1.createChart(env);
 		HybridChart2.createChart(env);
@@ -175,11 +181,9 @@ public class DataGeneratorTasks extends TaskManager
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
 		{
-				{ 0 },
-				{ 1 },
-				{ 2 } });
-
-		// Select data to display
+				{ 0, 0, 0, 2, 2, 2, 3 } });
+		plot.assignColors("DataGeneratorState", Color.black, Color.gray, Color.DARK_GRAY);
+		plot.assignStrokes("DataGeneratorState", new BasicStroke(0.5f));// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
 		// * null is used to select time as the x axis values
 		plot.sub(0).setAxisSelections(null, "xValue");
@@ -189,7 +193,7 @@ public class DataGeneratorTasks extends TaskManager
 		// * null is used to hide an axis label
 		plot.sub(0).setAxisLabels(null, "X Value");
 		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
-
+		plot.sub(2).setChartType(ChartType.SCATTER);
 		// Specify legend visibility
 		plot.sub(0).setDisplayLegend(true);
 		plot.sub(1).setDisplayLegend(true);
@@ -257,7 +261,7 @@ public class DataGeneratorTasks extends TaskManager
 		// Name of the CSV data file if it were to be saved
 		env.getSettings().getOutputSettings().csvDataFileName = "environmentData";
 		// Time between data point storage
-		env.getSettings().getOutputSettings().dataPointInterval = .25;
+		env.getSettings().getOutputSettings().dataPointInterval = .025;
 		// Name of the environment file if it were to be saved
 		env.getSettings().getOutputSettings().environmentFileName = "environment";
 		// Location where results will be automatically stored if auto storage is enabled
@@ -302,6 +306,7 @@ public class DataGeneratorTasks extends TaskManager
 		// Factor to reduce minimum step size (if using variable step integrator) when a step size related error occurs
 		env.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor = 1.0;
 
+		env.getSettings().getInterfaceSettings().runInRealTime = true;
 		return env;
 	}
 }

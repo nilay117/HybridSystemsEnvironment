@@ -1068,16 +1068,20 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		{
 			String st = dataset.getSeriesKey(i).toString();
 			Integer adjusted = nameOrder.indexOf(st);
-			if (chart.getSeriesStrokes().size() > adjusted && adjusted > -1)
+			if (adjusted == -1)
 			{
-				this.setSeriesOutlineStroke(i, chart.getSeriesStrokes().get(adjusted));
-			} else
-			{
-				this.setSeriesStroke(i, chart.getBaseFlowStroke());
-
+				adjusted = i;
 			}
-			this.setSeriesPaint(i, chart.getSeriesColor(adjusted));
-			this.setSeriesFillPaint(i, chart.getSeriesColor(adjusted));
+			// if (chart.getSeriesStrokes().size() > adjusted && adjusted > -1)
+			// {
+			this.setSeriesStroke(i, chart.getSeriesStrokes(st));
+			// } else
+			// {
+			// this.setSeriesStroke(i, chart.getBaseFlowStroke());
+			//
+			// }
+			this.setSeriesPaint(i, chart.getSeriesColor(adjusted, st));
+			this.setSeriesFillPaint(i, chart.getSeriesColor(adjusted, st));
 
 		}
 	}
@@ -1118,7 +1122,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		{
 			String st = dataset.getSeriesKey(series).toString();
 			// System.out.println(st + " " + elementOrder.indexOf(st));
-			g2.setPaint(chart.getSeriesColor(this.nameOrder.indexOf(st)));// , item));
+			g2.setPaint(getSeriesPaint(series));// chart.getSeriesColor(this.nameOrder.indexOf(st)));// , item));
 		} else
 		{
 			g2.setPaint(getItemPaint(series, item));
@@ -1176,10 +1180,11 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		if (data.getGlobalStateData().get(series).getStoreTimes().get(item).getJumps()
 		.equals(data.getGlobalStateData().get(series).getStoreTimes().get(item - 1).getJumps()))
 		{
+			g2.setStroke(this.getSeriesStroke(series));
 
-			Stroke stroke1 = chart.getBaseFlowStroke();// new BasicStroke(1.5f);// , 2, 2, 10);
+			// Stroke stroke1 = chart.getBaseFlowStroke();// new BasicStroke(1.5f);// , 2, 2, 10);
 			// System.out.println(XMLParser.serializeObject(this.getSeriesStroke(series)));
-			g2.setStroke(stroke1);// stroke1);
+			// g2.setStroke(stroke1);// stroke1);
 			// g2.setStroke(s);
 		} else
 		{
@@ -1459,8 +1464,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 * @param shapes
 	 *            shapes visible?
 	 */
-	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data,
-	ChartProperties chart, XYDataset ds)
+	public HybridDataRenderer(ChartType type, EnvironmentData data, ChartProperties chart, XYDataset ds)
 	{
 
 		this.data = data;
@@ -1469,12 +1473,12 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		setupStrokes(ds);
 		this.linesVisible = null;
 		this.seriesLinesVisible = new BooleanList();
-		this.baseLinesVisible = true;
+		this.baseLinesVisible = type.renderLines;
 		this.legendLine = new Line2D.Double(-7.0, 0.0, 7.0, 0.0);
 
 		this.shapesVisible = null;
 		this.seriesShapesVisible = new BooleanList();
-		this.baseShapesVisible = true;
+		this.baseShapesVisible = type.renderShapes;
 
 		this.shapesFilled = null;
 		this.useFillPaint = false; // use item paint for fills by default

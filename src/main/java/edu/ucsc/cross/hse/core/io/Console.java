@@ -270,6 +270,7 @@ public class Console
 			{
 				printDebugStatus();
 			}
+			Console.printInfoStatus(manager);
 		}
 	}
 
@@ -281,6 +282,7 @@ public class Console
 			public void run()
 			{
 				printDebugStatusLoop();
+
 			}
 		});
 		debugStatusThread.start();

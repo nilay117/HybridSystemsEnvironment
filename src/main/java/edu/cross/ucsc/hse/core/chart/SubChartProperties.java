@@ -3,6 +3,7 @@ package edu.cross.ucsc.hse.core.chart;
 public class SubChartProperties
 {
 
+	ChartType type;
 	// Visibility
 	boolean displayLegend;
 	String title;
@@ -98,6 +99,16 @@ public class SubChartProperties
 
 	SubChartProperties()
 	{
+		type = ChartType.LINE;
+	}
 
+	public ChartType getChartType()
+	{
+		return type;
+	}
+
+	public void setChartType(ChartType type)
+	{
+		this.type = type;
 	}
 }

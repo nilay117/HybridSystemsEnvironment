@@ -46,6 +46,19 @@ public class EnvironmentData
 		return lastTime;
 	}
 
+	public HybridTime getEarliestStoredTime()
+	{
+		HybridTime earliestTime = getLastStoredTime();
+		for (HybridTime time : storeTimes)
+		{
+			if (time.getTime() < earliestTime.getTime())
+			{
+				earliestTime = time;
+			}
+		}
+		return earliestTime;
+	}
+
 	public HashMap<String, String> getObjectLabels()
 	{
 		return stateNames;
