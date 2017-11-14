@@ -5,7 +5,7 @@ import com.be3short.obj.manipulation.DynamicObjectManipulator;
 import com.be3short.obj.manipulation.FieldMapper;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
-import edu.ucsc.cross.hse.core.object.Objects;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -221,10 +221,10 @@ public class ObjectOperator
 			}
 		}
 
-		getClassFieldMapping(elems, classes.keySet(), Objects.class);
+		getClassFieldMapping(elems, classes.keySet(), ObjectSet.class);
 		while (fields(ele) < fields(elems))
 		{
-			getClassFieldMapping(elems, classes.keySet(), Objects.class);
+			getClassFieldMapping(elems, classes.keySet(), ObjectSet.class);
 			ele = elems;
 		}
 		fields = elems;
@@ -255,7 +255,7 @@ public class ObjectOperator
 						ArrayList<Object> dynamics = (ArrayList<Object>) field.get(dynamic);
 						if (!states.isEmpty())
 						{
-							if (FieldFinder.containsSuper(states.get(0), Objects.class))
+							if (FieldFinder.containsSuper(states.get(0), ObjectSet.class))
 							{
 								for (int i = 0; i < states.size(); i++)
 								{
@@ -315,7 +315,7 @@ public class ObjectOperator
 		simTime = new HybridTime(0.0, 0);
 	}
 
-	public static final FieldMapper fieldMapper = new FieldMapper(Objects.class);
+	public static final FieldMapper fieldMapper = new FieldMapper(ObjectSet.class);
 
 	public static HashMap<String, ArrayList<Field>> fields = new HashMap<String, ArrayList<Field>>();
 

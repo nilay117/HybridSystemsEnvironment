@@ -1,8 +1,8 @@
 package circlegenerator;
 
-import edu.ucsc.cross.hse.core.object.Objects;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 
-public class CircleState extends Objects
+public class CircleState extends ObjectSet
 {
 
 	public Double translate;

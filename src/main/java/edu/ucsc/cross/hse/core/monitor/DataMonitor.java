@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.core.monitor;
 
 import com.be3short.obj.manipulation.ObjectManipulator;
 import edu.ucsc.cross.hse.core.data.DataSeries;
-import edu.ucsc.cross.hse.core.object.Objects;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
@@ -22,8 +22,8 @@ public class DataMonitor
 			String parentName = state.getParent().getClass().getSimpleName();
 			try
 			{
-				Objects parent = (Objects) state.getParent();
-				parentName = parent.info().getName();
+				ObjectSet parent = (ObjectSet) state.getParent();
+				parentName = parent.extension().getName();
 			} catch (Exception e)
 			{
 

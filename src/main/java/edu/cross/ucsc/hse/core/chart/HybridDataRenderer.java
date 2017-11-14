@@ -530,7 +530,8 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		}
 		String st = dataset.getSeriesKey(series).toString();
 		// System.out.println(st + " " + elementOrder.indexOf(st));
-		Paint paint = (chart.getSeriesColor(this.nameOrder.indexOf(st)));
+		// Paint paint = (chart.getSeriesColor(this.nameOrder.indexOf(st)));
+		Paint paint = (this.useFillPaint ? lookupSeriesFillPaint(series) : lookupSeriesPaint(series));
 		boolean shapeIsVisible = getItemShapeVisible(series, 0);
 		Shape shape = lookupLegendShape(series);
 		boolean shapeIsFilled = getItemShapeFilled(series, 0);
@@ -594,7 +595,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	@Override
 	public int getPassCount()
 	{
-		return 1;
+		return 2;
 	}
 
 	/**
@@ -1044,18 +1045,40 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 		this.legendLine = SerialUtilities.readShape(stream);
 	}
 
-	private void setupStrokes()
+	private void setupStrokes(XYDataset dataset)
 	{
+
+		// this.setBaseStroke(chart.getBaseFlowStroke());
+		// for (int i = 0; i < this.nameOrder.size(); i++)
+		// {
+		// if (chart.getSeriesStrokes().size() > i)
+		// {
+		// this.setSeriesOutlineStroke(i, chart.getSeriesStrokes().get(i));
+		// } else
+		// {
+		// this.setSeriesStroke(i, chart.getBaseFlowStroke());
+		//
+		// }
+		// this.setSeriesPaint(i, chart.getSeriesColor(i));
+		// this.setSeriesFillPaint(i, chart.getSeriesColor(i));
+		// }
 		this.setBaseStroke(chart.getBaseFlowStroke());
-		for (int i = 0; i < this.nameOrder.size(); i++)
+
+		for (int i = 0; i < dataset.getSeriesCount(); i++)
 		{
-			if (chart.getSeriesStrokes().size() > i)
+			String st = dataset.getSeriesKey(i).toString();
+			Integer adjusted = nameOrder.indexOf(st);
+			if (chart.getSeriesStrokes().size() > adjusted && adjusted > -1)
 			{
-				this.setSeriesOutlineStroke(i, chart.getSeriesStrokes().get(i));
+				this.setSeriesOutlineStroke(i, chart.getSeriesStrokes().get(adjusted));
 			} else
 			{
 				this.setSeriesStroke(i, chart.getBaseFlowStroke());
+
 			}
+			this.setSeriesPaint(i, chart.getSeriesColor(adjusted));
+			this.setSeriesFillPaint(i, chart.getSeriesColor(adjusted));
+
 		}
 	}
 
@@ -1437,21 +1460,21 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 *            shapes visible?
 	 */
 	public HybridDataRenderer(boolean lines, boolean shapes, boolean time_axis, EnvironmentData data,
-	ChartProperties chart)
+	ChartProperties chart, XYDataset ds)
 	{
 
 		this.data = data;
 		this.nameOrder = data.getLabelOrder();
 		this.chart = chart;
-		setupStrokes();
+		setupStrokes(ds);
 		this.linesVisible = null;
 		this.seriesLinesVisible = new BooleanList();
-		this.baseLinesVisible = lines;
+		this.baseLinesVisible = true;
 		this.legendLine = new Line2D.Double(-7.0, 0.0, 7.0, 0.0);
 
 		this.shapesVisible = null;
 		this.seriesShapesVisible = new BooleanList();
-		this.baseShapesVisible = shapes;
+		this.baseShapesVisible = true;
 
 		this.shapesFilled = null;
 		this.useFillPaint = false; // use item paint for fills by default

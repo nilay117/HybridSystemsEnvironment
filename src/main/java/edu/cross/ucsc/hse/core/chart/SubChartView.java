@@ -65,7 +65,9 @@ public class SubChartView
 			|| data.getAllStoredData().get(0).getClass().equals(double.class));
 			if (matchesSelection)
 			{
-				String label = this.data.getStateNames().get(data.getParentID() + data.getElementName());// defaultValue).getLegendLabel(data);//
+				// \String label = this.data.getStateNames().get(data.getParentID() + data.getElementName());//
+				String label = this.data.getStateNames().get(data.getParentID());
+				// defaultValue).getLegendLabel(data);//
 				// getLegendLabel(data,
 				// names);
 				names.add(label);
@@ -164,7 +166,10 @@ public class SubChartView
 		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
 		chart.setAntiAlias(false);
 		HybridDataRenderer renderer = new HybridDataRenderer(true, false, sub().getxDataSelection() != null, data,
-		chartProps);// true,
+		chartProps, dataset);// true,
+
+		// XYShapeRenderer renderer = new XYShapeRenderer();
+
 		// false);
 		chart.getXYPlot().setRenderer(renderer);
 		if (sub().getxDataSelection() == null)

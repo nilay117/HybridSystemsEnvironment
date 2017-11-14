@@ -38,11 +38,12 @@ public class ComputationSettings
 	 */
 	public Integer iterationCountErrorCorrectionFactor;
 
-	// /*
-	// * Flag indicating if jumps have priority over flows, ie if a state is in both domains simultaneously,one response
-	// * has priority
-	// */
-	// public boolean jumpPriority;
+	/*
+	 * Flag indicating if jumps have priority over flows, ie if a state is in both domains simultaneously,one response
+	 * has priority. True indicates jump has priority, false indicates flow has priority, null indicates neither has
+	 * priority and jump or flow will be selected at random
+	 */
+	public Boolean jumpPriority;
 
 	/*
 	 * Maximum number of iterations for the event handler
@@ -86,6 +87,7 @@ public class ComputationSettings
 	 */
 	public ComputationSettings()
 	{
+		jumpPriority = true;
 		odeMinimumStepSize = .000005;
 		odeMaximumStepSize = .01;
 		odeSolverAbsoluteTolerance = 1.0e-4;

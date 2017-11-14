@@ -1,16 +1,16 @@
 package edu.ucsc.cross.hse.core.object;
 
-public class Objects
+public class ObjectSet
 {
 
 	private String name;
 
-	public ObjectsInfo info()
+	public ObjectsInfo extension()
 	{
 		return new ObjectsInfo(this);
 	}
 
-	public Objects()
+	public ObjectSet()
 	{
 		this.name = this.getClass().getSimpleName();
 	}
@@ -18,7 +18,7 @@ public class Objects
 	public static class ObjectsInfo
 	{
 
-		Objects obj;
+		ObjectSet obj;
 
 		public String getName()
 		{
@@ -30,7 +30,7 @@ public class Objects
 			obj.name = name;
 		}
 
-		public ObjectsInfo(Objects object)
+		public ObjectsInfo(ObjectSet object)
 		{
 			obj = object;
 		}

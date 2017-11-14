@@ -289,7 +289,7 @@ public class ChartProperties
 		assignedStrokes = new HashMap<String, ArrayList<Stroke>>();
 
 		jumpStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
-		flowStroke = new BasicStroke(1.5f);
+		flowStroke = new BasicStroke(3.5f);
 
 		subPlots = new HashMap<Integer, SubChartProperties>();
 		initializeSubPlots();

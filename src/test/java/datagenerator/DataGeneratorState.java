@@ -1,8 +1,8 @@
 package datagenerator;
 
-import edu.ucsc.cross.hse.core.object.Objects;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 
-public class DataGeneratorState extends Objects
+public class DataGeneratorState extends ObjectSet
 {
 
 	public double dataGenerated; // total amount of data generated

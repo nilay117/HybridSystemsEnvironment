@@ -6,24 +6,29 @@ import javafx.stage.Stage;
 public abstract class TaskManager extends Application implements TaskQueue
 {
 
+	private static TaskManager manager; // static access to task manager instance
+
+	/*
+	 * Creates a new stage
+	 */
 	public Stage getNewStage()
 	{
 		return new Stage();
 	}
 
+	/*
+	 * Starts the task manager application
+	 * 
+	 * (non-Javadoc)
+	 * 
+	 * @see javafx.application.Application#start(javafx.stage.Stage)
+	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	{
 		manager = this;
 		taskQueue();
 	}
-
-	public TaskManager()
-	{
-
-	}
-
-	private static TaskManager manager;
 
 	public static Stage createStage()
 	{

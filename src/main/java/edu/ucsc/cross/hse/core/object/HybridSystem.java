@@ -1,8 +1,11 @@
 package edu.ucsc.cross.hse.core.object;
 
-import com.be3short.data.cloning.ObjectCloner;
-import edu.ucsc.cross.hse.core.model.HybridDynamics;
 import java.util.ArrayList;
+
+import com.be3short.data.cloning.ObjectCloner;
+
+import edu.ucsc.cross.hse.core.environment.Environment;
+import edu.ucsc.cross.hse.core.model.HybridDynamics;
 
 // Hybrid system models are extensions of the
 // Hybrid System class, which contains
@@ -34,6 +37,7 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 
 		@SuppressWarnings("unused")
 		private HybridSystem<?> sys;
+		private Environment env;
 
 		public ArrayList<HybridSystem<?>> getSubSystems()
 		{

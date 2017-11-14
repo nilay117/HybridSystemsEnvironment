@@ -23,7 +23,7 @@ public class DataGeneratorTasks extends TaskManager
 	{
 		// openEnvironmentAndPlot();//
 		dataGeneratorSimulation();
-		openEnvironmentAndPlot();//
+		// openEnvironmentAndPlot();//
 		// dataGeneratorSimulation();//
 	}
 
@@ -60,15 +60,18 @@ public class DataGeneratorTasks extends TaskManager
 		ChartProperties HybridChart1 = xyCombination();
 		ChartProperties HybridChart2 = xOnly();
 		ChartProperties HybridChart3 = xyVsTimeVertical();
-		env.add(HybridChart1, HybridChart2, HybridChart3);
-		for (int i = 0; i < 6; i++)
+		// env.add(HybridChart1, HybridChart2, HybridChart3);
+		for (int i = 0; i < 2; i++)
 		{
-			CircleSystem signalGenerator = new CircleSystem(Math.random() * 1.0 + .2, Math.random() * 1.0 + .3);
+			CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);
 			env.add(signalGenerator);
+			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
 		env.start();
 		// xyCombination().createChart(env);
+		// HybridChart1.createChart(env);
 		HybridChart2.createChart(env);
+		HybridChart3.createChart(env);
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
@@ -131,7 +134,7 @@ public class DataGeneratorTasks extends TaskManager
 	public static ChartProperties xOnly()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(400.0, 400.0);
+		ChartProperties plot = new ChartProperties(900.0, 600.0);
 
 		// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
@@ -143,7 +146,7 @@ public class DataGeneratorTasks extends TaskManager
 		plot.sub(0).setAxisLabels("Time (sec)", "X Value");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
+		plot.sub(0).setDisplayLegend(true);
 
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
@@ -167,29 +170,30 @@ public class DataGeneratorTasks extends TaskManager
 	public static ChartProperties xyVsTimeVertical()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(800.0, 800.0);
+		ChartProperties plot = new ChartProperties(800.0, 600.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
 		{
 				{ 0 },
-				{ 1 } });
+				{ 1 },
+				{ 2 } });
 
 		// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
 		// * null is used to select time as the x axis values
 		plot.sub(0).setAxisSelections(null, "xValue");
 		plot.sub(1).setAxisSelections(null, "yValue");
-
+		plot.sub(2).setAxisSelections(null, "dataGenerated");
 		// Select axis labels
 		// * null is used to hide an axis label
 		plot.sub(0).setAxisLabels(null, "X Value");
 		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
-		plot.sub(1).setDisplayLegend(false);
-
+		plot.sub(0).setDisplayLegend(true);
+		plot.sub(1).setDisplayLegend(true);
+		plot.sub(2).setDisplayLegend(true);
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
 		// * there are no sub plot titles by default so following lines can be ommitted for no sub plot titles

@@ -25,7 +25,11 @@ public class EnvironmentData
 		{
 			for (DataSeries<?> dataSeries : getGlobalStateData())
 			{
-				nameOrder.add(getLegendLabel(dataSeries));
+				String leg = getLegendLabel(dataSeries);
+				if (!nameOrder.contains(leg))
+				{
+					nameOrder.add(leg);
+				}
 			}
 			Collections.sort(nameOrder);
 		}
@@ -64,13 +68,17 @@ public class EnvironmentData
 
 	}
 
-	private String getLegendLabel(DataSeries<?> data)
+	public String getLegendLabel(DataSeries<?> data)
 	{
 
 		String label = data.getParentName();
-		if (getObjectLabels().containsKey(data.getParentID() + data.getElementName()))
+		// if (getObjectLabels().containsKey(data.getParentID() + data.getElementName()))
+		// {
+		// return getObjectLabels().get(data.getParentID() + data.getElementName());
+		// }
+		if (getObjectLabels().containsKey(data.getParentID()))
 		{
-			return getObjectLabels().get(data.getParentID() + data.getElementName());
+			return getObjectLabels().get(data.getParentID());
 		}
 		String labelBase = label;
 		int append = 1;
@@ -80,8 +88,20 @@ public class EnvironmentData
 			append++;
 			label = labelBase + "(" + append + ")";
 		}
-		getObjectLabels().put(data.getParentID() + data.getElementName(), label);
+		getObjectLabels().put(data.getParentID(), label);
+		// putAllLabels(data.getParentID(), label);
 		return label;
+	}
+
+	private void putAllLabels(String parent_id, String label)
+	{
+		for (DataSeries<?> data : globalStateData)
+		{
+			if (data.getParentID().equals(parent_id))
+			{
+				getObjectLabels().put(data.getParentID() + data.getElementName(), label);
+			}
+		}
 	}
 
 	/*

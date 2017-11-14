@@ -26,12 +26,33 @@ public class SystemOperator
 		{
 			try
 			{
+				boolean hasPriority = true;
 				if (jump_occurring)
 				{
-					HybridSystemOperator.g(hs);
+					if (!getJumpPriority())
+					{
+						if (HybridSystemOperator.c(hs))
+						{
+							hasPriority = false;
+						}
+					}
+					if (hasPriority)
+					{
+						HybridSystemOperator.g(hs);
+					}
 				} else
 				{
-					HybridSystemOperator.f(hs);
+					if (getJumpPriority())
+					{
+						if (HybridSystemOperator.d(hs))
+						{
+							hasPriority = false;
+						}
+					}
+					if (hasPriority)
+					{
+						HybridSystemOperator.f(hs);
+					}
 				}
 			} catch (Exception dynamicsError)
 			{
@@ -124,4 +145,21 @@ public class SystemOperator
 		this.content = content;
 	}
 
+	public boolean getJumpPriority()
+	{
+		Boolean jumpPriority = content.getSettings().getComputationSettings().jumpPriority;
+		if (jumpPriority == null)
+		{
+			Double randomSelect = Math.random() - .5;
+			if (randomSelect >= 0.0)
+			{
+				jumpPriority = true;
+			} else
+			{
+				jumpPriority = false;
+			}
+		}
+		return jumpPriority;
+
+	}
 }
