@@ -53,6 +53,11 @@ public class EnvironmentData
 		return earliestTime;
 	}
 
+	public HashMap<ObjectSet, HybridArc<?>> getHybridArcMap()
+	{
+		return hybridArcMap;
+	}
+
 	public HybridTime getLastStoredTime()
 	{
 		HybridTime lastTime = null;
@@ -61,11 +66,6 @@ public class EnvironmentData
 			lastTime = hybridTimeDomain.get(hybridTimeDomain.size() - 1);
 		}
 		return lastTime;
-	}
-
-	public HashMap<ObjectSet, HybridArc<?>> getHybridArcMap()
-	{
-		return hybridArcMap;
 	}
 
 	public ArrayList<HybridTime> getStoreTimes()

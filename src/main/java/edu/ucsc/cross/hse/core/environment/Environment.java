@@ -15,7 +15,6 @@ import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 
 /*
  * The main class of the hybrid systeme environment, conting the manager, contents, and the setting configurer.
@@ -24,10 +23,10 @@ public class Environment
 {
 
 	// Components
-	EnvironmentContent content;
-	EnvironmentData dataCollector;
-	EnvironmentOutputs outputs;
-	EnvironmentSettings settings;
+	public EnvironmentContent content;
+	public EnvironmentData dataCollector;
+	public EnvironmentOutputs outputs;
+	public EnvironmentSettings settings;
 
 	public void add(ChartConfiguration... plot)
 	{
@@ -82,11 +81,11 @@ public class Environment
 
 	public ExecutionOperator getManager()
 	{
-		if (!operators.containsKey(this))
+		if (!ExecutionOperator.operatorMap.containsKey(this))
 		{
-			operators.put(this, new ExecutionOperator(this));
+			ExecutionOperator.operatorMap.put(this, new ExecutionOperator(this));
 		}
-		return operators.get(this);
+		return ExecutionOperator.operatorMap.get(this);
 	}
 
 	public EnvironmentOutputs getOutputs()
@@ -142,9 +141,9 @@ public class Environment
 
 	}
 
-	public void loadEnvironmentFromFile(File new_env)
+	public void loadEnvironment(File new_env)
 	{
-		Environment env = Environment.loadFile(new_env);
+		Environment env = Environment.createEnvironment(new_env);
 		try
 		{
 			if (env != null)
@@ -230,10 +229,7 @@ public class Environment
 		dataCollector = new EnvironmentData();
 	}
 
-	private static HashMap<Environment, ExecutionOperator> operators = new HashMap<Environment, ExecutionOperator>();
-	// Operator
-
-	public static Environment loadFile(File file)
+	public static Environment createEnvironment(File file)
 	{
 		Environment env = EnvironmentFile.readContentFromFile(file, EnvironmentFile.ENVIRONMENT);
 		env.getManager();// operators.put(env, new ExecutionOperator(env));

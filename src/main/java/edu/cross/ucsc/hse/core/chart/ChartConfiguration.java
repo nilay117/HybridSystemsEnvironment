@@ -7,7 +7,6 @@ import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.task.TaskManager;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
@@ -22,9 +21,10 @@ import org.jfree.chart.JFreeChart;
 public class ChartConfiguration
 {
 
-	// Labeling
+	// Title
 	private String mainTitle;
-	private HashMap<LabelType, LabelProperties> fonts;
+	private Font mainTitleFont;
+	private Paint mainTitleColor;
 
 	// Layout
 	private Double height;
@@ -42,10 +42,6 @@ public class ChartConfiguration
 	// Chart Properties
 	public JFreeChart chartTemplate;
 
-	// Chart Element Configuration
-	private boolean showXGridLines;
-	private boolean showYGridLines;
-
 	private JFreeChart obtainChart()
 	{
 		SubChartView sv = new SubChartView(null, this, 0, null);
@@ -55,10 +51,7 @@ public class ChartConfiguration
 	public void addMainTitle(String main_title, Font title_font)
 	{
 		mainTitle = main_title;
-		if (title_font != null)
-		{
-			fonts.get(LabelType.MAIN_TITLE).set(title_font);
-		}
+		setMainTitleFont(title_font);
 	}
 
 	public void assignColors(String label, Paint... colors)
@@ -96,13 +89,6 @@ public class ChartConfiguration
 		new ChartView(envi.getData(), this, TaskManager.createStage(), file_format.createFileSpecs(path));
 	}
 
-	public LabelProperties editFonts(LabelType type)
-	{
-
-		return fonts.get(type);
-
-	}
-
 	public Stroke getBaseFlowStroke()
 	{
 		return flowStroke;
@@ -113,46 +99,9 @@ public class ChartConfiguration
 		return jumpStroke;
 	}
 
-	public HashMap<LabelType, LabelProperties> getFonts()
-	{
-		return fonts;
-	}
-
 	public Double getHeight()
 	{
 		return height;
-	}
-
-	public Font getLabelFont(LabelType type)
-	{
-		String family = LabelProperties.defaultFont.getFamily();
-		Integer style = LabelProperties.defaultFont.getStyle();
-		Integer size = LabelProperties.defaultFont.getStyle();
-		if (fonts.containsKey(type))
-		{
-			return fonts.get(type).getFont();
-
-		}
-		Font font = new Font(family, style, size);
-		return font;
-	}
-
-	public Paint getLabelPaint(LabelType type)
-	{
-		if (fonts.containsKey(type))
-		{
-			// return //fonts.get(type).fill;
-		}
-		return Color.BLACK;
-	}
-
-	public boolean getLabelVisibility(LabelType type)
-	{
-		if (fonts.containsKey(type))
-		{
-			return true;// fonts.get(type).show;
-		}
-		return false;
 	}
 
 	public String getMainTitle()
@@ -240,16 +189,6 @@ public class ChartConfiguration
 
 	}
 
-	public Boolean getShowXGridLines()
-	{
-		return showXGridLines;
-	}
-
-	public Boolean getShowYGridLines()
-	{
-		return showYGridLines;
-	}
-
 	public Double getWidth()
 	{
 		return width;
@@ -258,11 +197,6 @@ public class ChartConfiguration
 	public void setFlowStroke(Stroke flowStroke)
 	{
 		this.flowStroke = flowStroke;
-	}
-
-	public void setFontMap(HashMap<LabelType, LabelProperties> fonts)
-	{
-		this.fonts = fonts;
 	}
 
 	public void setHeight(Double height)
@@ -287,22 +221,12 @@ public class ChartConfiguration
 		defaultSeriesColors = colors;
 	}
 
-	public void setShowXGridLines(boolean showXGridLines)
-	{
-		this.showXGridLines = showXGridLines;
-	}
-
-	public void setShowYGridLines(boolean showYGridLines)
-	{
-		this.showYGridLines = showYGridLines;
-	}
-
 	public void setWidth(Double width)
 	{
 		this.width = width;
 	}
 
-	public SubChartProperties sub(Integer index)
+	public SubChartProperties chartProperties(Integer index)
 	{
 		if (chartPropertyMap.containsKey(index))
 		{
@@ -341,13 +265,8 @@ public class ChartConfiguration
 	{
 		defaultSeriesColors = this.defaultSeriesColors();
 
-		fonts = LabelType.getDefaultMap();
-
 		this.width = width;
 		this.height = height;
-
-		showXGridLines = true;
-		showYGridLines = true;
 
 		chartArrangementMatrix = new Integer[][]
 		{
@@ -384,6 +303,26 @@ public class ChartConfiguration
 		initialize(width, height);
 	}
 
+	public Font getMainTitleFont()
+	{
+		return mainTitleFont;
+	}
+
+	public void setMainTitleFont(Font mainTitleFont)
+	{
+		this.mainTitleFont = mainTitleFont;
+	}
+
+	public Paint getMainTitleColor()
+	{
+		return mainTitleColor;
+	}
+
+	public void setMainTitleColor(Paint mainTitleColor)
+	{
+		this.mainTitleColor = mainTitleColor;
+	}
+
 	public static class ChartOperations
 	{
 
@@ -408,6 +347,4 @@ public class ChartConfiguration
 
 	}
 
-	// Constants
-	public static final String EMPTY = " ";
 }

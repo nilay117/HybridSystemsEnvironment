@@ -104,13 +104,13 @@ public class DataGeneratorOperations extends TaskManager
 		ChartConfiguration plot = new ChartConfiguration(600.0, 600.0);
 
 		// Select data to display
-		plot.sub(0).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(0).setAxisSelections(null, "dataGenerated");
 
 		// Select axis label
-		plot.sub(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
 
 		return plot;
 	}
@@ -121,13 +121,13 @@ public class DataGeneratorOperations extends TaskManager
 		ChartConfiguration plot = new ChartConfiguration(600.0, 600.0);
 
 		// Select data to display
-		plot.sub(0).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(0).setAxisSelections(null, "dataGenerated");
 
 		// Select axis label
-		plot.sub(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
 
 		return plot;
 	}
@@ -144,16 +144,16 @@ public class DataGeneratorOperations extends TaskManager
 				{ 1, 1 } });
 
 		// Select data to display
-		plot.sub(0).setAxisSelections(null, "dataGenerated");
-		plot.sub(0).setAxisSelections(null, "timeToNextData");
+		plot.chartProperties(0).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(0).setAxisSelections(null, "timeToNextData");
 
 		// Select axis labels
-		plot.sub(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
-		plot.sub(1).setAxisLabels("Time (sec)", "Time to Next Generation (sec)");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Time to Next Generation (sec)");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
-		plot.sub(1).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
+		plot.chartProperties(1).setDisplayLegend(false);
 
 		return plot;
 	}
@@ -170,16 +170,16 @@ public class DataGeneratorOperations extends TaskManager
 				{ 1, 0 } });
 
 		// Select data to display
-		plot.sub(0).setAxisSelections(null, "data");
-		plot.sub(1).setAxisSelections(null, "timer");
+		plot.chartProperties(0).setAxisSelections(null, "data");
+		plot.chartProperties(1).setAxisSelections(null, "timer");
 
 		// Select axis labels
-		plot.sub(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
-		plot.sub(1).setAxisLabels("Time (sec)", "Time to Next Generation (sec)");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Time to Next Generation (sec)");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
-		plot.sub(1).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
+		plot.chartProperties(1).setDisplayLegend(false);
 
 		// Specify overall title for the plot
 		plot.addMainTitle("Signal Generator", null);
@@ -199,17 +199,17 @@ public class DataGeneratorOperations extends TaskManager
 				{ 0, 1, 2 } });
 
 		// Select data to display
-		plot.sub(0).setAxisSelections(null, "xValue");
-		plot.sub(1).setAxisSelections(null, "yValue");
-		plot.sub(2).setAxisSelections("xValue", "yValue");
+		plot.chartProperties(0).setAxisSelections(null, "xValue");
+		plot.chartProperties(1).setAxisSelections(null, "yValue");
+		plot.chartProperties(2).setAxisSelections("xValue", "yValue");
 		// Select axis labels
-		plot.sub(0).setAxisLabels("Time (sec)", "X Value");
-		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
-		plot.sub(2).setAxisLabels("X Value", "Y Value");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "X Value");
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Y Value");
+		plot.chartProperties(2).setAxisLabels("X Value", "Y Value");
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
-		plot.sub(1).setDisplayLegend(false);
-		plot.sub(2).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
+		plot.chartProperties(1).setDisplayLegend(false);
+		plot.chartProperties(2).setDisplayLegend(false);
 		// Specify overall title for the plot
 		plot.addMainTitle("Signal Generator", null);
 
@@ -228,23 +228,23 @@ public class DataGeneratorOperations extends TaskManager
 				{ 1, 1, 1, 2, 2 } });
 
 		// Select data to display
-		plot.sub(0).setAxisSelections(null, "xValue");
-		plot.sub(1).setAxisSelections(null, "yValue");
-		plot.sub(2).setAxisSelections("xValue", "yValue");
-		plot.sub(3).setAxisSelections("yValue", "xValue");
-		plot.sub(4).setAxisSelections(null, "translate");
+		plot.chartProperties(0).setAxisSelections(null, "xValue");
+		plot.chartProperties(1).setAxisSelections(null, "yValue");
+		plot.chartProperties(2).setAxisSelections("xValue", "yValue");
+		plot.chartProperties(3).setAxisSelections("yValue", "xValue");
+		plot.chartProperties(4).setAxisSelections(null, "translate");
 		// Select axis labels
-		plot.sub(0).setAxisLabels("Time (sec)", "X Value");
-		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
-		plot.sub(2).setAxisLabels("X Value", "Y Value");
-		plot.sub(3).setAxisLabels("Y Value", "X Value");
-		plot.sub(4).setAxisLabels("Time (sec)", "Translation");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "X Value");
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Y Value");
+		plot.chartProperties(2).setAxisLabels("X Value", "Y Value");
+		plot.chartProperties(3).setAxisLabels("Y Value", "X Value");
+		plot.chartProperties(4).setAxisLabels("Time (sec)", "Translation");
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
-		plot.sub(1).setDisplayLegend(false);
-		plot.sub(2).setDisplayLegend(false);
-		plot.sub(3).setDisplayLegend(false);
-		plot.sub(4).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
+		plot.chartProperties(1).setDisplayLegend(false);
+		plot.chartProperties(2).setDisplayLegend(false);
+		plot.chartProperties(3).setDisplayLegend(false);
+		plot.chartProperties(4).setDisplayLegend(false);
 
 		// Specify overall title for the plot
 		plot.addMainTitle("Signal Generator", null);
@@ -264,13 +264,13 @@ public class DataGeneratorOperations extends TaskManager
 				{ 0, 0 } });
 
 		// Select data to display
-		plot.sub(0).setAxisSelections("timer", "data");
+		plot.chartProperties(0).setAxisSelections("timer", "data");
 
 		// Select axis labels
-		plot.sub(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Data Generated (Mb)");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(false);
+		plot.chartProperties(0).setDisplayLegend(false);
 
 		// Specify overall title for the plot
 		plot.addMainTitle("Signal Generator", null);

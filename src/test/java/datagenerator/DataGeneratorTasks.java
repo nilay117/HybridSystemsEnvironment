@@ -4,7 +4,6 @@ import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.cross.ucsc.hse.core.chart.ChartType;
-import edu.cross.ucsc.hse.core.chart.LabelType;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
 import edu.ucsc.cross.hse.core.task.TaskManager;
@@ -25,8 +24,8 @@ public class DataGeneratorTasks extends TaskManager
 	public void taskQueue()
 	{
 		// openEnvironmentAndPlot();//
-		// dataGeneratorSimulation();
-		openEnvironmentAndPlot();//
+		dataGeneratorSimulation();
+		// openEnvironmentAndPlot();//
 		// dataGeneratorSimulation();//
 		long l = (long) 1.9;
 
@@ -44,7 +43,7 @@ public class DataGeneratorTasks extends TaskManager
 	public void openEnvironmentAndPlot()
 	{
 		File envFile = new FileChooser().showOpenDialog(new Stage());
-		Environment env = Environment.loadFile(envFile);
+		Environment env = Environment.createEnvironment(envFile);
 		// File datFile = new FileChooser().showOpenDialog(new Stage());
 		// EnvironmentData dat = DataMonitor.getCSVData(datFile);
 		// env.getData().load(dat.getStoreTimes(), dat.getGlobalStateData());
@@ -101,41 +100,34 @@ public class DataGeneratorTasks extends TaskManager
 		// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
 		// * null is used to select time as the x axis values
-		plot.sub(0).setAxisSelections(null, "xValue");
-		plot.sub(1).setAxisSelections(null, "yValue");
-		plot.sub(2).setAxisSelections("xValue", "yValue");
+		plot.chartProperties(0).setAxisSelections(null, "xValue");
+		plot.chartProperties(1).setAxisSelections(null, "yValue");
+		plot.chartProperties(2).setAxisSelections("xValue", "yValue");
 
 		// Select axis labels
 		// * null is used to remove an axis label completely
 		// HybridChart.EMPTY is used to remove an axis label but keep the space so the sub HybridChart stays alligned
 		// with grid
-		plot.sub(0).setAxisLabels("Time (sec)", "X Value");
-		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
-		plot.sub(2).setAxisLabels(ChartConfiguration.EMPTY, null);
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "X Value");
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Y Value");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(true);
-		plot.sub(1).setDisplayLegend(true);
-		plot.sub(2).setDisplayLegend(true);
+		plot.chartProperties(0).setDisplayLegend(true);
+		plot.chartProperties(1).setDisplayLegend(true);
+		plot.chartProperties(2).setDisplayLegend(true);
 
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
 		// * there are no sub plot titles by default so following lines can be ommitted for no sub plot titles
-		plot.sub(0).setTitle(null);
-		plot.sub(1).setTitle(null);
-		plot.sub(2).setTitle("X Value vs Y Value");
+		plot.chartProperties(0).setTitle(null);
+		plot.chartProperties(1).setTitle(null);
+		plot.chartProperties(2).setTitle("X Value vs Y Value");
 
 		// Specify overall title for the plot
 		// * null is used to indicate no main title
 		// * there is no main title by default so following line can be ommitted if no main title is desired
 		plot.addMainTitle("Signal Generator", null);
 
-		plot.editFonts(LabelType.TITLE).set(new Font("Tahoma", Font.ITALIC, 18));
-		plot.editFonts(LabelType.RANGE_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
-		plot.editFonts(LabelType.DOMAIN_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
-		plot.editFonts(LabelType.RANGE_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
-		plot.editFonts(LabelType.DOMAIN_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
-		plot.editFonts(LabelType.LEGEND_ITEM).set(new Font("Tahoma", Font.PLAIN, 10));
 		return plot;
 	}
 
@@ -147,31 +139,25 @@ public class DataGeneratorTasks extends TaskManager
 		// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
 		// * null is used to select time as the x axis values
-		plot.sub(0).setAxisSelections(null, "xValue");
+		plot.chartProperties(0).setAxisSelections(null, "xValue");
 
 		// Select axis labels
 		// * null is used to hide an axis label
-		plot.sub(0).setAxisLabels("Time (sec)", "X Value");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "X Value");
 
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(true);
+		plot.chartProperties(0).setDisplayLegend(true);
 
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
 		// * there are no sub plot titles by default so following lines can be ommitted for no sub plot titles
-		plot.sub(0).setTitle(null);
+		plot.chartProperties(0).setTitle(null);
 
 		// Specify overall title for the plot
 		// * null is used to indicate no main title
 		// * there is no main title by default so following line can be ommitted if no main title is desired
 		plot.addMainTitle(null, null);
 
-		plot.editFonts(LabelType.TITLE).set(new Font("Tahoma", Font.ITALIC, 18));
-		plot.editFonts(LabelType.RANGE_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
-		plot.editFonts(LabelType.DOMAIN_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
-		plot.editFonts(LabelType.RANGE_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
-		plot.editFonts(LabelType.DOMAIN_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
-		plot.editFonts(LabelType.LEGEND_ITEM).set(new Font("Tahoma", Font.PLAIN, 10));
 		return plot;
 	}
 
@@ -188,40 +174,33 @@ public class DataGeneratorTasks extends TaskManager
 		plot.assignStrokes("DataGeneratorState", new BasicStroke(0.5f));// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
 		// * null is used to select time as the x axis values
-		plot.sub(0).setAxisSelections(null, "xValue");
-		plot.sub(1).setAxisSelections(null, "yValue");
-		plot.sub(2).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(0).setAxisSelections(null, "xValue");
+		plot.chartProperties(1).setAxisSelections(null, "yValue");
+		plot.chartProperties(2).setAxisSelections(null, "dataGenerated");
 		// Select axis labels
 		// * null is used to hide an axis label
-		plot.sub(0).setAxisLabels(null, "X Value");
-		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
-		plot.sub(2).setChartType(ChartType.SCATTER);
+		plot.chartProperties(0).setAxisLabels(null, "X Value");
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Y Value");
+		plot.chartProperties(2).setChartType(ChartType.SCATTER_WITH_LINE);
 		// Specify legend visibility
-		plot.sub(0).setDisplayLegend(true);
-		plot.sub(1).setDisplayLegend(true);
-		plot.sub(2).setDisplayLegend(true);
+		plot.chartProperties(0).setDisplayLegend(true);
+		plot.chartProperties(1).setDisplayLegend(true);
+		plot.chartProperties(2).setDisplayLegend(true);
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
 		// * there are no sub plot titles by default so following lines can be ommitted for no sub plot titles
-		plot.sub(0).setTitle(null);
-		plot.sub(1).setTitle(null);
+		plot.chartProperties(0).setTitle(null);
+		plot.chartProperties(1).setTitle(null);
 
 		// Specify overall title for the plot
 		// * null is used to indicate no main title
 		// * there is no main title by default so following line can be ommitted if no main title is desired
 		plot.addMainTitle(null, null);
 
-		plot.editFonts(LabelType.TITLE).set(new Font("Tahoma", Font.ITALIC, 18));
-		plot.editFonts(LabelType.RANGE_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
-		plot.editFonts(LabelType.DOMAIN_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
-		plot.editFonts(LabelType.RANGE_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
-		plot.editFonts(LabelType.DOMAIN_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
-		plot.editFonts(LabelType.DOMAIN_AXIS_TICK_LABEL).setVisibility(false);// .set(new Font("Tahoma", Font.PLAIN,
 		plot.chartTemplate.getXYPlot().getDomainAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
 		plot.chartTemplate.getTitle().setText("YYEEEE");// .setFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
 		plot.chartTemplate.getXYPlot().getDomainAxis().setTickLabelsVisible(true);
 		plot.chartTemplate.getLegend().setVisible(true);
-		plot.editFonts(LabelType.LEGEND_ITEM).set(new Font("Tahoma", Font.PLAIN, 10));
 		return plot;
 	}
 

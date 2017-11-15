@@ -56,7 +56,7 @@ public class ChartView
 	private Pane plotPane;
 	private ArrayList<SubChartView> plots;
 
-	public void captureGraphic(File f, ImageFormat format)
+	public void exportToFile(File f, ImageFormat format)
 	{
 		double width = plotPane.widthProperty().get();
 		double height = plotPane.heightProperty().get() + measureFont();
@@ -68,12 +68,12 @@ public class ChartView
 
 	}
 
-	public ChartConfiguration getChartProperties()
+	public ChartConfiguration getChartConfiguration()
 	{
 		return plot;
 	}
 
-	public EnvironmentData getEnvironment()
+	public EnvironmentData getEnvironmentData()
 	{
 		return env;
 	}
@@ -104,10 +104,10 @@ public class ChartView
 				this);
 			} else
 			{
-				if (plot.sub(paneIndex).getyDataSelection() != null)
+				if (plot.chartProperties(paneIndex).getyDataSelection() != null)
 				{
 					pf = new SubChartView(env, createSubChartPane(dimensions.get(paneIndex), paneIndex, false),
-					plot.sub(paneIndex).getyDataSelection(), plot, paneIndex, this);
+					plot.chartProperties(paneIndex).getyDataSelection(), plot, paneIndex, this);
 				} else
 				{
 					pf = new SubChartView(env, createSubChartPane(dimensions.get(paneIndex), paneIndex, false), plot,
@@ -121,7 +121,7 @@ public class ChartView
 
 	}
 
-	public void setChartProperties(ChartConfiguration plot)
+	public void setChartConfiguration(ChartConfiguration plot)
 	{
 		this.plot = plot;
 		renderContents();
@@ -130,6 +130,7 @@ public class ChartView
 	public void setEnvironment(EnvironmentData env)
 	{
 		this.env = env;
+		renderContents();
 	}
 
 	private void createGraphicFile(File f, ImageFormat format, Graphics2D graphics, BufferedImage bi)
@@ -238,7 +239,7 @@ public class ChartView
 			{
 
 				JLabel label = new JLabel(" " + plot.getMainTitle() + " ");
-				Font font = plot.getLabelFont(LabelType.MAIN_TITLE);
+				Font font = plot.getMainTitleFont();
 				label.setFont(font);
 
 				JPanel panel = new JPanel();
@@ -257,8 +258,7 @@ public class ChartView
 		Double heightAdj = plot.getHeight();
 		if (plot.getMainTitle() != null)
 		{
-			heightAdj = plot.getHeight()
-			- LabelProperties.measureFont(plot.getFonts().get(LabelType.MAIN_TITLE).getFont());
+			heightAdj = plot.getHeight() - LabelProperties.measureFont(plot.getMainTitleFont());
 		}
 		return heightAdj;
 	}
@@ -283,7 +283,7 @@ public class ChartView
 						try
 						{
 
-							captureGraphic(out, output.getFormat());// .getMatch(action.label));
+							exportToFile(out, output.getFormat());// .getMatch(action.label));
 
 							success.setValue(true);
 
@@ -359,7 +359,7 @@ public class ChartView
 		Double height = 0.0;
 		if (plot.getMainTitle() != null)
 		{
-			height = LabelProperties.measureFont(plot.getFonts().get(LabelType.MAIN_TITLE).getFont());
+			height = LabelProperties.measureFont(plot.getMainTitleFont());
 		}
 		return height;
 	}
@@ -454,7 +454,7 @@ public class ChartView
 					choose.setInitialFileName("chart");
 					File f = choose.showSaveDialog(new Stage());
 					// File fe = new File(f.getAbsolutePath().replaceAll(".", ""));
-					captureGraphic(f, formats.get(choose.getSelectedExtensionFilter()));
+					exportToFile(f, formats.get(choose.getSelectedExtensionFilter()));
 				}
 			}
 		});

@@ -22,7 +22,7 @@ public class HybridArc<X extends ObjectSet>
 	public HybridArc(X system, ArrayList<HybridTime> store_times)
 	{
 		this.system = system;
-		this.storeTimes = store_times;
+		this.setStoreTimes(store_times);
 		data = new HashMap<Field, DataSeries<?>>();
 	}
 
@@ -40,4 +40,15 @@ public class HybridArc<X extends ObjectSet>
 	{
 		return new HybridArc<Y>(system, store_times);
 	}
+
+	public ArrayList<HybridTime> getStoreTimes()
+	{
+		return storeTimes;
+	}
+
+	public void setStoreTimes(ArrayList<HybridTime> storeTimes)
+	{
+		this.storeTimes = storeTimes;
+	}
+
 }

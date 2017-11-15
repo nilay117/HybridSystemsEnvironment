@@ -1,11 +1,14 @@
 
 package edu.ucsc.cross.hse.core.operator;
 
+import com.be3short.io.format.FileFormat;
+import com.be3short.io.format.FileSpecifications;
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
 import edu.ucsc.cross.hse.core.environment.Environment;
+import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.monitor.ComputationMonitor;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
@@ -31,6 +34,7 @@ public class ExecutionOperator
 	EventMonitor jumpEvaluator;
 	SimulationOperator simEngine;
 	SystemOperator systemControl;
+	public static HashMap<Environment, ExecutionOperator> operatorMap = new HashMap<Environment, ExecutionOperator>();
 
 	public Console getConsole()
 	{
@@ -155,6 +159,41 @@ public class ExecutionOperator
 		Console.info("Environment Stopped");
 	}
 
+	private <T extends FileFormat> FileSpecifications<T> getFileSpecifications(Environment env, T spec_type,
+	String file_name)
+	{
+		FileSpecifications<T> specs = new FileSpecifications<T>(file_name, spec_type);
+		specs.prependDirectory(ExecutionOperator.getStartTime(env, false).toString());
+		specs.prependDirectory(env.getSettings().getOutputSettings().outputDirectory);
+		return specs;
+	}
+
+	public void generateFiles()
+	{
+		EnvironmentData data = env.getData();
+		if (env.getSettings().getOutputSettings().saveConfigurationToFile)
+		{
+			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
+			env.getSettings().getOutputSettings().configurationFileName
+			+ ExecutionOperator.getStartTime(env, true).toString());
+			File spe = specs.getLocation(true);
+			env.save(spe, false);
+			Console.info("Configuration saved: " + spe.getAbsolutePath());
+		}
+		env.loadData(data);
+		if (env.getSettings().getOutputSettings().saveEnvironmentToFile)
+		{
+			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
+			env.getSettings().getOutputSettings().environmentFileName
+			+ ExecutionOperator.getStartTime(env, true).toString());
+			File spe = specs.getLocation(true);
+			env.save(spe, true);
+			Console.info("Environment saved: " + spe.getAbsolutePath());
+		}
+		env.loadData(data);
+
+	}
+
 	private void prepareConsole()
 	{
 		if (env.getSettings().getOutputSettings().saveLogToFile)
@@ -230,6 +269,43 @@ public class ExecutionOperator
 	{
 		return new ArrayList<Object>(Arrays.asList(console, dataManager, env, exeContent, executionMonitor,
 		jumpEvaluator, simEngine, systemControl));
+	}
+
+	// Operator
+	public static Environment getContainingEnvironment(Object component)
+	{
+		for (Environment env : operatorMap.keySet())
+		{
+			ArrayList<Object> objs = new ArrayList<Object>(
+			Arrays.asList(env.content, env.dataCollector, env.outputs, env.settings));
+			if (objs.contains(component))
+			{
+				return env;
+			}
+		}
+		return null;
+	}
+
+	public static <F extends FileFormat, T> HashMap<FileSpecifications<F>, T> getAppendedFiles(
+	HashMap<FileSpecifications<F>, T> unappended, Object component)
+	{
+		HashMap<FileSpecifications<F>, T> appended = new HashMap<FileSpecifications<F>, T>();
+		String prefix = String
+		.valueOf(getStartTime(ExecutionOperator.getContainingEnvironment(component), false));
+		for (FileSpecifications<F> spec : unappended.keySet())
+		{
+			FileSpecifications<F> specs = spec.copy();
+			if (!specs.isNullFile())
+			{
+				specs.prependDirectory((FileSpecifications.checkSlashes(new File(
+				ExecutionOperator.getContainingEnvironment(component).getSettings().getOutputSettings().outputDirectory)
+				.getAbsolutePath(), prefix)));
+				// System.out.println("final path: " + specs.getLocation(false).getAbsolutePath());
+	
+			}
+			appended.put(specs, unappended.get(spec));
+		}
+		return appended;
 	}
 
 	public static ExecutionOperator getOperator(Object object)

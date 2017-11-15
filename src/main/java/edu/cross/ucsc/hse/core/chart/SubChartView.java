@@ -168,8 +168,8 @@ public class SubChartView
 			chart = ChartFactory.createXYLineChart("", "", "", dataset, orientation, true, true, true);
 			chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
 			chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
-			chart.getXYPlot().setDomainGridlinesVisible(chartProps.getShowXGridLines());
-			chart.getXYPlot().setRangeGridlinesVisible(chartProps.getShowYGridLines());
+			chart.getXYPlot().setDomainGridlinesVisible(true);
+			chart.getXYPlot().setRangeGridlinesVisible(true);
 			chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
 			chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
 			// chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(false);
@@ -236,7 +236,7 @@ public class SubChartView
 
 	private SubChartProperties properties()
 	{
-		return chartProps.sub(chartIndex);
+		return chartProps.chartProperties(chartIndex);
 	}
 
 	Double measureFont()
@@ -245,7 +245,7 @@ public class SubChartView
 		if (chartProps.getMainTitle() != null)
 		{
 
-			height = LabelProperties.measureFont(chartProps.getFonts().get(LabelType.MAIN_TITLE).getFont());
+			height = LabelProperties.measureFont(chartProps.getMainTitleFont());
 		}
 		return height;
 	}

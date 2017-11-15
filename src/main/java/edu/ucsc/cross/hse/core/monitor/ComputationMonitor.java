@@ -361,7 +361,6 @@ public class ComputationMonitor
 	 * 
 	 * // this.getInterruptHandler().interruptEnv(true); } }
 	 */
-
 	public ComputationMonitor(ExecutionOperator manager)
 	{
 
@@ -369,46 +368,4 @@ public class ComputationMonitor
 		runTime = 0.0;
 	}
 
-	/*
-	 * Starts the specified integrator for the specified dynamics, start time, and duration
-	 * 
-	 * @param integrator - integrator to be used
-	 * 
-	 * @param ode - set of differential equations that define the dynamical system
-	 * 
-	 * @param start_time - initial time when integration will start
-	 * 
-	 * @param duration - final time when integration will be complete
-	 * 
-	 * @param ode_vector - initial values of all variables associated with the ode
-	 */
-	// private Double runRealTimeIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
-	// Double start_time, Double duration, double[] ode_vector)
-	// {
-	// Double endTime = 0.0;
-	// boolean timeExpired = false;
-	// boolean jumpsExpired = false;
-	// boolean terminated = false;
-	// Double timeAhead = 100.0;
-	// Long startTime = System.currentTimeMillis();
-	// while (!timeExpired && !jumpsExpired && !terminated)
-	// {
-	// System.out.println(
-	// "Check " + manager.getExecutionContent().getSimulationTime() + (System.currentTimeMillis() - startTime));
-	// while ((manager.getExecutionContent().getSimulationTime() + .005)
-	// * 1000 > (System.currentTimeMillis() - startTime))
-	//
-	// {
-	// }
-	// endTime = recursiveIntegrator(0, manager.getExecutionContent().getSimulationTime() + .005);
-	// timeExpired = endTime >= manager.getExecutionParameters().getMaximumTime();
-	// jumpsExpired = manager.getExecutionContent().getHybridSimTime().getJumps() >= manager
-	// .getExecutionParameters().getMaximumJumps();
-	// terminated = !manager.getJumpEvaluator().isRunning();
-	//
-	// }
-	// manager.getDataManager().gatherData(endTime, manager.getExecutionContent().getValueVector(), JumpStatus.NO_JUMP,
-	// true);
-	// return endTime;
-	// }
 }
