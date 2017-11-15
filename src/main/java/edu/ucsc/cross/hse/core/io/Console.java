@@ -28,6 +28,15 @@ public class Console
 
 	private static ExecutionOperator manager;
 
+	private static ExecutionOperator getManager()
+	{
+		if (manager == null)
+		{
+			manager = ExecutionOperator.getOperator(null);
+		}
+		return manager;
+	}
+
 	private static Double nextDebugStatusPrint;
 
 	private static Double nextInfoPrint;
@@ -81,11 +90,11 @@ public class Console
 
 	public static void printCompleteStatus(ExecutionOperator manager)
 	{
-		if (manager.getSettings().getLogSettings().numProgressUpdateOutputs > 0)
+		if (getManager().getSettings().getLogSettings().numProgressUpdateOutputs > 0)
 		{
 			info("update : " + String.format("%2.2f", 100.0) + "%  complete : sim time = "
-			+ manager.getExecutionContent().getSimulationTime() + " : jumps = "
-			+ manager.getExecutionContent().getHybridSimTime().getJumps());
+			+ getManager().getExecutionContent().getSimulationTime() + " : jumps = "
+			+ getManager().getExecutionContent().getHybridSimTime().getJumps());
 		}
 
 	}
@@ -97,15 +106,15 @@ public class Console
 
 	public static void printInfoStatus(ExecutionOperator manager, boolean override_time)
 	{
-		if ((manager.getExecutionContent().getSimulationTime() >= nextInfoPrint) || override_time)
+		if ((getManager().getExecutionContent().getSimulationTime() >= nextInfoPrint) || override_time)
 		{
 
-			Double percentComplete = 100 * manager.getExecutionContent().getSimulationTime()
-			/ manager.getExecutionParameters().maximumTime;
+			Double percentComplete = 100 * getManager().getExecutionContent().getSimulationTime()
+			/ getManager().getExecutionParameters().maximumTime;
 			info("status: " + String.format("%.2f", percentComplete) + "%  complete : sim time = "
-			+ String.format("%.2f", manager.getExecutionContent().getSimulationTime()) + " : jumps = "
-			+ manager.getExecutionContent().getHybridSimTime().getJumps());
-			if (manager.getExecutionContent().getSimulationTime() >= nextInfoPrint)
+			+ String.format("%.2f", getManager().getExecutionContent().getSimulationTime()) + " : jumps = "
+			+ getManager().getExecutionContent().getHybridSimTime().getJumps());
+			if (getManager().getExecutionContent().getSimulationTime() >= nextInfoPrint)
 			{
 				nextInfoPrint = nextInfoPrint + infoStatusPrintInterval;
 			}
@@ -153,22 +162,22 @@ public class Console
 		{
 			case INFO:
 			{
-				return manager.getSettings().getLogSettings().printInfo;
+				return getManager().getSettings().getLogSettings().printInfo;
 
 			}
 			case DEBUG:
 			{
-				return manager.getSettings().getLogSettings().printDebug;
+				return getManager().getSettings().getLogSettings().printDebug;
 
 			}
 			case WARN:
 			{
-				return manager.getSettings().getLogSettings().printWarning;
+				return getManager().getSettings().getLogSettings().printWarning;
 
 			}
 			case ERROR:
 			{
-				return manager.getSettings().getLogSettings().printError;
+				return getManager().getSettings().getLogSettings().printError;
 
 			}
 			default:
@@ -237,9 +246,9 @@ public class Console
 	public void startStatusPrintThread()
 	{
 		nextDebugStatusPrint = System.currentTimeMillis()
-		+ manager.getSettings().getLogSettings().statusPrintInterval * 1000.0;
-		infoStatusPrintInterval = manager.getExecutionParameters().maximumTime
-		/ manager.getSettings().getLogSettings().numProgressUpdateOutputs;
+		+ getManager().getSettings().getLogSettings().statusPrintInterval * 1000.0;
+		infoStatusPrintInterval = getManager().getExecutionParameters().maximumTime
+		/ getManager().getSettings().getLogSettings().numProgressUpdateOutputs;
 		nextInfoPrint = 0.0;
 		startThread();
 	}
@@ -248,25 +257,25 @@ public class Console
 	{
 		if (nextDebugStatusPrint < System.currentTimeMillis())
 		{
-			if (manager.getJumpEvaluator().isRunning())
+			if (getManager().getJumpEvaluator().isRunning())
 			{
-				Double percentComplete = 100 * manager.getExecutionContent().getSimulationTime()
-				/ manager.getExecutionParameters().maximumTime;
+				Double percentComplete = 100 * getManager().getExecutionContent().getSimulationTime()
+				/ getManager().getExecutionParameters().maximumTime;
 				info("monitor : " + String.format("%.2f", percentComplete) + "% complete : sim time = "
-				+ String.format("%.2f", manager.getExecutionContent().getSimulationTime()) + " : jumps = "
-				+ manager.getExecutionContent().getHybridSimTime().getJumps());
+				+ String.format("%.2f", getManager().getExecutionContent().getSimulationTime()) + " : jumps = "
+				+ getManager().getExecutionContent().getHybridSimTime().getJumps());
 				nextDebugStatusPrint = System.currentTimeMillis()
-				+ manager.getSettings().getLogSettings().statusPrintInterval * 1000.0;
+				+ getManager().getSettings().getLogSettings().statusPrintInterval * 1000.0;
 			}
 		}
 	}
 
 	private void printDebugStatusLoop()
 	{
-		while (manager.getJumpEvaluator().isRunning())
+		while (getManager().getJumpEvaluator().isRunning())
 		{
 
-			if (manager.getSettings().getLogSettings().statusPrintInterval != null)
+			if (getManager().getSettings().getLogSettings().statusPrintInterval != null)
 			{
 				printDebugStatus();
 			}

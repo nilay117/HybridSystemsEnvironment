@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.file;
 import com.be3short.obj.stringparse.StringParser;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
+import edu.ucsc.cross.hse.core.data.HybridArc;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
@@ -45,7 +46,7 @@ public class CSVFile
 		{
 			String line = getLine(index);
 			HybridTime time = manager().getDataCollector().getStoreTimes().get(index);
-			for (DataSeries<?> data : manager().getDataCollector().getGlobalStateData())
+			for (DataSeries<?> data : manager().getDataCollector().getAllDataSeries())
 			{
 
 				line += "," + data.getStoredData(time).toString();
@@ -62,9 +63,11 @@ public class CSVFile
 
 	public EnvironmentData extractDataFromContents()
 	{
-		String lines[] = contents.split(Pattern.quote("\n"));
+		String lines[] = contents.split(Pattern.quote("**!!@#$"));
 		String line = lines[0];
 		EnvironmentData envData = getEnvDataWithSeries(line);
+		lines = lines[1].split(("\n"));
+		// EnvironmentData envData = getEnvDataWithSeries(line);
 		int i = 1;
 		while (i < lines.length)
 		{
@@ -103,11 +106,12 @@ public class CSVFile
 	private String getDynamicHeader()
 	{
 		String header = "dataIndex,simulationTime,jumpIndex";
-		for (Integer objIndex = 0; objIndex < manager().getDataCollector().getGlobalStateData().size(); objIndex++)
+		for (Integer objIndex = 0; objIndex < manager().getDataCollector().getAllDataSeries().size(); objIndex++)
 		{
-			DataSeries<?> data = manager().getDataCollector().getGlobalStateData().get(objIndex);
+			DataSeries<?> data = manager().getDataCollector().getAllDataSeries().get(objIndex);
 			header += "," + data.getHeader();
 		}
+		header += "**!!@#$";
 		return header;
 
 	}
@@ -188,8 +192,17 @@ public class CSVFile
 		for (Integer i = 3; i < split.length; i++)
 		{
 			DataSeries<?> series = DataSeries.getDataSeries(data, split[i]);
-			data.getGlobalStateData().add(series);
+			if (!data.getHybridArcMap().containsKey(series.getParent()))
+			{
+				data.getHybridArcMap().put(series.getParent(),
+				HybridArc.createArc(series.getParent(), data.getStoreTimes()));
+			}
+			HybridArc<?> solution = data.getHybridArcMap().get(series.getParent());
+			solution.addSeries(series.getChild(), DataSeries.getSeries(data.getStoreTimes(), series.getParent(),
+			series.getChild(), series.getChild().getType()));
+
 		}
+		// EnvironmentData.populateListMap(data);
 		return data;
 	}
 
@@ -218,8 +231,8 @@ public class CSVFile
 		{
 			try
 			{
-				DataMonitor.storeDataGeneral(data.getGlobalStateData().get(i - 3).getAllStoredData(),
-				StringParser.parseString(split[i], data.getGlobalStateData().get(i - 3).getDataClass()));
+				DataMonitor.storeDataGeneral(data.getAllDataSeries().get(i - 3).getAllStoredData(),
+				StringParser.parseString(split[i], data.getAllDataSeries().get(i - 3).getDataClass()));
 			} catch (Exception badIndex)
 			{
 				badIndex.printStackTrace();

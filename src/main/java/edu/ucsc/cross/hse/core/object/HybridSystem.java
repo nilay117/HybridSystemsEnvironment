@@ -1,17 +1,15 @@
 package edu.ucsc.cross.hse.core.object;
 
-import java.util.ArrayList;
-
 import com.be3short.data.cloning.ObjectCloner;
-
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.model.HybridDynamics;
+import java.util.ArrayList;
 
 // Hybrid system models are extensions of the
 // Hybrid System class, which contains
 // hidden components that allow the system
 // to operate properly
-public abstract class HybridSystem<X> implements HybridDynamics<X>
+public abstract class HybridSystem<X extends ObjectSet> implements HybridDynamics<X>
 {
 
 	X dynamicState;
@@ -25,6 +23,8 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 	public HybridSystem(X state)
 	{
 		this.state = state;
+		state.extension().setHistorySaved(true);
+		state.extension().setSimulated(true);
 	}
 
 	public static class EnvironmentAccessor
@@ -55,17 +55,17 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			this.sys = sys;
 		}
 
-		public static <T> boolean c(HybridSystem<T> sys)
+		public static <T extends ObjectSet> boolean c(HybridSystem<T> sys)
 		{
 			return sys.C(sys.state);
 		}
 
-		public static <T> boolean d(HybridSystem<T> sys)
+		public static <T extends ObjectSet> boolean d(HybridSystem<T> sys)
 		{
 			return sys.D(sys.state);
 		}
 
-		public static <T> T f(HybridSystem<T> sys)
+		public static <T extends ObjectSet> T f(HybridSystem<T> sys)
 		{
 			if (HybridSystemOperator.c(sys))
 			{
@@ -74,7 +74,7 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			return sys.dynamicState;
 		}
 
-		public static <T> T g(HybridSystem<T> sys)
+		public static <T extends ObjectSet> T g(HybridSystem<T> sys)
 		{
 			if (HybridSystemOperator.d(sys))
 			{
@@ -83,7 +83,7 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			return sys.dynamicState;
 		}
 
-		public static <T> T getDynamicState(HybridSystem<T> sys)
+		public static <T extends ObjectSet> T getDynamicState(HybridSystem<T> sys)
 		{
 			return sys.dynamicState;
 		}
@@ -93,7 +93,7 @@ public abstract class HybridSystem<X> implements HybridDynamics<X>
 			return new HybridSystemOperator(sys);
 		}
 
-		public static <T> void initializeDynamicState(HybridSystem<T> sys)
+		public static <T extends ObjectSet> void initializeDynamicState(HybridSystem<T> sys)
 		{
 			sys.dynamicState = ObjectCloner.deepInstanceClone(sys.getState());
 		}

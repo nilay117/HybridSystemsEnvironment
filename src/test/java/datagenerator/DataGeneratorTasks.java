@@ -25,8 +25,8 @@ public class DataGeneratorTasks extends TaskManager
 	public void taskQueue()
 	{
 		// openEnvironmentAndPlot();//
-		dataGeneratorSimulation();
-		// openEnvironmentAndPlot();//
+		// dataGeneratorSimulation();
+		openEnvironmentAndPlot();//
 		// dataGeneratorSimulation();//
 		long l = (long) 1.9;
 
@@ -55,8 +55,10 @@ public class DataGeneratorTasks extends TaskManager
 		// env.generateOutputs();
 		ChartConfiguration HybridChart2 = xOnly();
 		ChartConfiguration HybridChart1 = xyCombination();
-		env.add(HybridChart2);// .createChart(env);
-		env.generateOutputs();
+		HybridChart1.createChart(env);
+		HybridChart2.createChart(env);
+		// env.add(HybridChart2);// .createChart(env);
+		// env.generateOutputs();
 	}
 
 	public static void dataGeneratorSimulation()
@@ -71,7 +73,7 @@ public class DataGeneratorTasks extends TaskManager
 		{
 			CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);
 			env.add(signalGenerator);
-			// env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
+			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
 		env.start(10.0, 100000);
 		// xyCombination().createChart(env);
@@ -234,7 +236,7 @@ public class DataGeneratorTasks extends TaskManager
 		///// Execution Parameters
 
 		// Maximum time allowed before execution terminates
-		env.getSettings().getExecutionParameters().maximumTime = 20.0;
+		env.getSettings().getExecutionParameters().maximumTime = 5.0;
 		// Maximum number of jumps allowed before execution terminates
 		env.getSettings().getExecutionParameters().maximumJumps = 200;
 

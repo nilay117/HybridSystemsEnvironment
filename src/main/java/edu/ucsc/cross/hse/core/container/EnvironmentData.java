@@ -1,6 +1,8 @@
 package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.data.DataSeries;
+import edu.ucsc.cross.hse.core.data.HybridArc;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,23 +11,25 @@ import java.util.HashMap;
 public class EnvironmentData
 {
 
-	private ArrayList<DataSeries<?>> globalStateData;
-	private HashMap<String, String> stateNames;
-	private ArrayList<HybridTime> storeTimes;
+	private HashMap<ObjectSet, HybridArc<?>> hybridArcMap;
+	private ArrayList<HybridTime> hybridTimeDomain;
 
-	public ArrayList<DataSeries<?>> getGlobalStateData()
+	public ArrayList<DataSeries<?>> getAllDataSeries()
 	{
-		return globalStateData;
+		if (!seriesListMap.containsKey(this))
+		{
+			populateListMap(this);
+		}
+		return seriesListMap.get(this);
 	}
 
-	public ArrayList<String> getLabelOrder()
+	public ArrayList<String> getAllStoredObjectSetNames()
 	{
 		ArrayList<String> nameOrder = new ArrayList<String>();
-		// if (nameOrder.size() == 0)
 		{
-			for (DataSeries<?> dataSeries : getGlobalStateData())
+			for (DataSeries<?> dataSeries : getAllDataSeries())
 			{
-				String leg = getLegendLabel(dataSeries);
+				String leg = dataSeries.getParent().extension().getUniqueLabel();
 				if (!nameOrder.contains(leg))
 				{
 					nameOrder.add(leg);
@@ -36,20 +40,10 @@ public class EnvironmentData
 		return nameOrder;
 	}
 
-	public HybridTime getLastStoredTime()
-	{
-		HybridTime lastTime = null;
-		if (storeTimes.size() > 0)
-		{
-			lastTime = storeTimes.get(storeTimes.size() - 1);
-		}
-		return lastTime;
-	}
-
 	public HybridTime getEarliestStoredTime()
 	{
 		HybridTime earliestTime = getLastStoredTime();
-		for (HybridTime time : storeTimes)
+		for (HybridTime time : hybridTimeDomain)
 		{
 			if (time.getTime() < earliestTime.getTime())
 			{
@@ -59,81 +53,54 @@ public class EnvironmentData
 		return earliestTime;
 	}
 
-	public HashMap<String, String> getObjectLabels()
+	public HybridTime getLastStoredTime()
 	{
-		return stateNames;
+		HybridTime lastTime = null;
+		if (hybridTimeDomain.size() > 0)
+		{
+			lastTime = hybridTimeDomain.get(hybridTimeDomain.size() - 1);
+		}
+		return lastTime;
 	}
 
-	public HashMap<String, String> getStateNames()
+	public HashMap<ObjectSet, HybridArc<?>> getHybridArcMap()
 	{
-		return stateNames;
+		return hybridArcMap;
 	}
 
 	public ArrayList<HybridTime> getStoreTimes()
 	{
-		return storeTimes;
+		return hybridTimeDomain;
 	}
 
 	public void load(EnvironmentData new_data)
 	{
-		storeTimes = new_data.getStoreTimes();
-		globalStateData = new_data.getGlobalStateData();
-
+		// hybridTimeDomain.clear();
+		hybridTimeDomain = (new_data.getStoreTimes());
+		hybridArcMap = new_data.getHybridArcMap();
+		//EnvironmentData.populateListMap(this);
 	}
 
-	public String getLegendLabel(DataSeries<?> data)
-	{
-
-		String label = data.getParentName();
-		// if (getObjectLabels().containsKey(data.getParentID() + data.getElementName()))
-		// {
-		// return getObjectLabels().get(data.getParentID() + data.getElementName());
-		// }
-		if (getObjectLabels().containsKey(data.getParentID()))
-		{
-			return getObjectLabels().get(data.getParentID());
-		}
-		String labelBase = label;
-		int append = 1;
-		label = labelBase + "(" + append + ")";
-		while (stateNames.containsValue(label))
-		{
-			append++;
-			label = labelBase + "(" + append + ")";
-		}
-		getObjectLabels().put(data.getParentID(), label);
-		// putAllLabels(data.getParentID(), label);
-		return label;
-	}
-
-	private void putAllLabels(String parent_id, String label)
-	{
-		for (DataSeries<?> data : globalStateData)
-		{
-			if (data.getParentID().equals(parent_id))
-			{
-				getObjectLabels().put(data.getParentID() + data.getElementName(), label);
-			}
-		}
-	}
-
-	/*
-	 * Constructor
-	 */
 	public EnvironmentData()
 	{
-		storeTimes = new ArrayList<HybridTime>();
-		globalStateData = new ArrayList<DataSeries<?>>();
-		stateNames = new HashMap<String, String>();
+		hybridTimeDomain = new ArrayList<HybridTime>();
+		hybridArcMap = (new HashMap<ObjectSet, HybridArc<?>>());
 	}
 
-	/*
-	 * Constructor
-	 */
-	public EnvironmentData(HashMap<String, String> state_labels)
+	private static HashMap<EnvironmentData, ArrayList<DataSeries<?>>> seriesListMap = new HashMap<EnvironmentData, ArrayList<DataSeries<?>>>();
+
+	public static void populateListMap(EnvironmentData data)
 	{
-		storeTimes = new ArrayList<HybridTime>();
-		globalStateData = new ArrayList<DataSeries<?>>();
-		stateNames = state_labels;
+		seriesListMap.put(data, new ArrayList<DataSeries<?>>());
+		for (HybridArc<?> arc : data.hybridArcMap.values())
+		{
+			for (DataSeries<?> series : arc.getData().values())
+			{
+				if (!seriesListMap.get(data).contains(series))
+				{
+					seriesListMap.get(data).add(series);
+				}
+			}
+		}
 	}
 }

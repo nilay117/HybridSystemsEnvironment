@@ -98,7 +98,7 @@ public class EnvironmentOutputs
 
 	public void generateOutputs(Environment envi, boolean create_files)
 	{
-		initializeDataNames(envi);
+		// initializeDataNames(envi);
 
 		generateCharts(envi, create_files);
 
@@ -214,7 +214,7 @@ public class EnvironmentOutputs
 
 	private void initializeDataNames(Environment env)
 	{
-		env.getData().getLabelOrder();
+		env.getData().getAllStoredObjectSetNames();
 
 	}
 

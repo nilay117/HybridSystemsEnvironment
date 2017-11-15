@@ -14,6 +14,8 @@ import edu.ucsc.cross.hse.core.monitor.JumpStatus;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -221,6 +223,31 @@ public class ExecutionOperator
 	private static SimpleDateFormat sdf = new SimpleDateFormat("M_d_yy_HH_mm_ss_SSS");
 
 	private static HashMap<Environment, String> startTimes = new HashMap<Environment, String>();
+
+	private static ArrayList<ExecutionOperator> operators = new ArrayList<ExecutionOperator>();
+
+	private ArrayList<Object> components()
+	{
+		return new ArrayList<Object>(Arrays.asList(console, dataManager, env, exeContent, executionMonitor,
+		jumpEvaluator, simEngine, systemControl));
+	}
+
+	public static ExecutionOperator getOperator(Object object)
+	{
+		ExecutionOperator op = null;
+		if (operators.size() > 0)
+		{
+			op = operators.get(0);
+		}
+		for (ExecutionOperator operator : operators)
+		{
+			if (operator.components().contains(object))
+			{
+				op = operator;
+			}
+		}
+		return op;
+	}
 
 	public static String getStartTime(Environment env, boolean file_name)
 	{

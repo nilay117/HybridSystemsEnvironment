@@ -2,16 +2,22 @@ package edu.ucsc.cross.hse.core.data;
 
 import com.be3short.obj.modification.XMLParser;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class DataSeries<X>
 {
 
-	private Class<X> dataClass;
-	private String elementName;
-	private String parentID;
-	private String parentName;
+	// private Class<X> dataClass;
+	// private String elementName;
+	// private String parentID;
+	// private String parentName;
+
+	private ObjectSet parent;
+	private Field child;
 	private ArrayList<X> storedData; // stored values
 	private ArrayList<HybridTime> storeTimes; // data store times
 
@@ -25,36 +31,40 @@ public class DataSeries<X>
 
 	public Class<X> getDataClass()
 	{
-		return dataClass;
+		return (Class<X>) child.getType();
 	}
 
 	public String getElementName()
 	{
-		return elementName;
+		return child.getName();
 	}
 
 	public String getHeader()
 	{
 
-		return correctName(elementName) + "``" + correctName(parentName) + "``" + correctName(parentID) + "``"
-		+ XMLParser.serializeObject(storedData.get(0).getClass());
+		return correctName(child.getName()) + "``" + correctName(XMLParser.serializeObject(parent)) + "``"
+		+ correctName(XMLParser.serializeObject(child)) + "``"
+		+ correctName(XMLParser.serializeObject(parent.getClass()));// +
+		// "``"
+		// +
+		// XMLParser.serializeObject(storedData.get(0).getClass());
 	}
 
 	public String getParentID()
 	{
-		return parentID;
+		return parent.extension().getAddress();
 	}
 
 	public String getParentName()
 	{
-		return parentName;
+		return parent.extension().getUniqueLabel();
 	}
 
 	public DataSeries<?> getSeriesWithSameParent(String element_name, ArrayList<DataSeries<?>> series_list)
 	{
 		for (DataSeries<?> series : series_list)
 		{
-			if (series.getParentID().equals(parentID))
+			if (series.getParentID().equals(parent.extension().getAddress()))
 			{
 				if (series.getElementName().equals(element_name))
 				{
@@ -79,39 +89,56 @@ public class DataSeries<X>
 		return storeTimes;
 	}
 
-	public DataSeries(ArrayList<HybridTime> store_times, Class<X> data_class, String element_name, String parent_name,
-	String parent_id)
+	public DataSeries(ArrayList<HybridTime> store_times, ObjectSet parent, Field element)
 	{
 		storedData = new ArrayList<X>();
-		dataClass = data_class;
 		this.storeTimes = store_times;
-		this.elementName = element_name;
-		this.parentName = parent_name;
-		this.parentID = parent_id;
+		this.child = element;
+		this.parent = parent;
 	}
 
 	private static String correctName(String name)
 	{
-		String correctedName = name.replace(",", "[comma]");
-		correctedName = correctedName.replace("``", "[semiColon]");
+		String correctedName = name.replaceAll(",", Pattern.quote("[comma]"));
+		correctedName = correctedName.replaceAll("``", Pattern.quote("[semiColon]"));
+		return correctedName;
+	}
+
+	private static String restoreName(String name)
+	{
+		String correctedName = name.replaceAll(Pattern.quote("[comma]"), ",");
+		correctedName = correctedName.replaceAll(Pattern.quote("[semiColon]"), "``");
 		return correctedName;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <D> DataSeries<D> getDataSeries(EnvironmentData data, String entry)
 	{
-		String component[] = entry.split("``");
+		String component[] = entry.split(Pattern.quote("``"));
 		String elementName = component[0];
-		String parentName = component[1];
-		String parentID = component[2];
-		Class<D> elementClass = (Class<D>) XMLParser.getObjectFromString(component[3]);
-		DataSeries<D> series = new DataSeries<D>(data.getStoreTimes(), elementClass, elementName, parentName, parentID);
+		// Class cl = (Class) XMLParser.getObjectFromString(restoreName(component[3]));
+		System.out.println(entry + "\n\n" + restoreName(component[1]));
+		ObjectSet parentID = (ObjectSet) (XMLParser.getObjectFromString(restoreName(component[1])));
+		Field parentName = (Field) XMLParser.getObjectFromString(restoreName(component[2]));
+
+		// Class<D> elementClass = (Class<D>) XMLParser.getObjectFromString(component[3]);
+		DataSeries<D> series = new DataSeries<D>(data.getStoreTimes(), parentID, parentName);
 		return series;
 	}
 
-	public static <C> DataSeries<C> getSeries(ArrayList<HybridTime> store_times, Class<C> data_class,
-	String element_name, String parent_name, String parent_id)
+	public static <C> DataSeries<C> getSeries(ArrayList<HybridTime> store_times, ObjectSet parent, Field element,
+	Class<C> data_class)
 	{
-		return new DataSeries<C>(store_times, data_class, element_name, parent_name, parent_id);
+		return new DataSeries<C>(store_times, parent, element);
+	}
+
+	public ObjectSet getParent()
+	{
+		return parent;
+	}
+
+	public Field getChild()
+	{
+		return child;
 	}
 }

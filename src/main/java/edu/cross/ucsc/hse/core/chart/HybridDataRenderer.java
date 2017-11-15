@@ -1177,8 +1177,8 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 			return;
 		}
 
-		if (data.getGlobalStateData().get(series).getStoreTimes().get(item).getJumps()
-		.equals(data.getGlobalStateData().get(series).getStoreTimes().get(item - 1).getJumps()))
+		if (data.getAllDataSeries().get(series).getStoreTimes().get(item).getJumps()
+		.equals(data.getAllDataSeries().get(series).getStoreTimes().get(item - 1).getJumps()))
 		{
 			g2.setStroke(this.getSeriesStroke(series));
 
@@ -1468,7 +1468,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	{
 
 		this.data = data;
-		this.nameOrder = data.getLabelOrder();
+		this.nameOrder = data.getAllStoredObjectSetNames();
 		this.chart = chart;
 		setupStrokes(ds);
 		this.linesVisible = null;

@@ -87,7 +87,7 @@ public class ChartView
 	{
 		try
 		{
-			env.getLabelOrder();
+			env.getAllStoredObjectSetNames();
 			plots.clear();
 		} catch (Exception e)
 		{

@@ -1,8 +1,11 @@
 package edu.ucsc.cross.hse.core.monitor;
 
 import com.be3short.obj.manipulation.ObjectManipulator;
+import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
+import edu.ucsc.cross.hse.core.data.HybridArc;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
+import edu.ucsc.cross.hse.core.object.ObjectSet.ObjectSetAPI;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
@@ -16,21 +19,62 @@ public class DataMonitor
 	public void loadMap()
 	{
 
-		manager.getDataCollector().getGlobalStateData().clear();
-		for (ObjectManipulator state : manager.getExecutionContent().getSimulatedObjectAccessVector())
+		manager.getDataCollector().getHybridArcMap().clear();
+		for (ObjectManipulator state : manager.getExecutionContent().getFieldParentMap().values())// .getSimulatedObjectAccessVector())
 		{
-			String parentName = state.getParent().getClass().getSimpleName();
+			// state.getParent()
+			// String parentName = state.getParent().getClass().getSimpleName();
 			try
 			{
 				ObjectSet parent = (ObjectSet) state.getParent();
-				parentName = parent.extension().getName();
+				if (ObjectSetAPI.isHistorySaved(parent))
+				{
+					if (!manager.getDataCollector().getHybridArcMap().containsKey(parent))
+					{
+						manager.getDataCollector().getHybridArcMap().put(parent,
+						HybridArc.createArc(parent, manager.getDataCollector().getStoreTimes()));
+					}
+					HybridArc<?> solution = manager.getDataCollector().getHybridArcMap().get(parent);
+					solution.addSeries(state.getField(), DataSeries.getSeries(
+					manager.getDataCollector().getStoreTimes(), parent, state.getField(), state.getField().getType()));
+				}
 			} catch (Exception e)
 			{
 				e.printStackTrace();
 			}
-			manager.getDataCollector().getGlobalStateData()
-			.add(DataSeries.getSeries(manager.getDataCollector().getStoreTimes(), state.getObject().getClass(),
-			state.getField().getName(), parentName, state.getParent().toString()));
+
+		}
+		initializeUniqueNamesAndAddresses();
+		EnvironmentData.populateListMap(manager.getDataCollector());
+	}
+
+	public void initializeUniqueNamesAndAddresses()
+	{
+		ArrayList<ObjectSet> duplicateNames = new ArrayList<ObjectSet>();
+		for (ObjectManipulator state : manager.getExecutionContent().getFieldParentMap().values())// .getSimulatedObjectAccessVector())
+		{
+			try
+			{
+				ObjectSet parent = (ObjectSet) state.getParent();
+				if (!duplicateNames.contains(parent))
+				{
+					int dup = 1;
+					for (ObjectSet set : duplicateNames)
+					{
+						if (parent.extension().getName().equals(set.extension().getName()))
+						{
+							dup++;
+						}
+					}
+					parent.extension().setUniqueLabel(parent.extension().getName() + "(" + dup + ")");
+					parent.extension().setAddress(parent.toString());
+					duplicateNames.add(parent);
+				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
 		}
 	}
 
@@ -85,7 +129,7 @@ public class DataMonitor
 		.getSimulatedObjectAccessVector().length; objIndex++)
 		{
 			ObjectManipulator obj = manager.getExecutionContent().getSimulatedObjectAccessVector()[objIndex];
-			DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
+			DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
 			obj.updateObject(data.getAllStoredData().get(0));
 			data.getAllStoredData().clear();
 		}
@@ -103,11 +147,12 @@ public class DataMonitor
 	public void storeNewData(Double time)
 	{
 		// removePreviousVals(time);
-		for (Integer objIndex = 0; objIndex < manager.getExecutionContent()
-		.getSimulatedObjectAccessVector().length; objIndex++)
+		for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
+		// .getSimulatedObjectAccessVector().length; objIndex++)
 		{
-			ObjectManipulator obj = manager.getExecutionContent().getSimulatedObjectAccessVector()[objIndex];
-			DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
+			ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
+			.get(data.getParent().toString() + data.getChild().getName());// [objIndex];
+			// DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
 			storeDataGeneral(data, obj.getObject());
 		}
 		manager.getDataCollector().getStoreTimes()
@@ -139,7 +184,7 @@ public class DataMonitor
 			for (Integer objIndex = 0; objIndex < manager.getExecutionContent()
 			.getSimulatedObjectAccessVector().length; objIndex++)
 			{
-				DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
+				DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
 				if (data.getAllStoredData().size() > i)
 				{
 					data.getAllStoredData().remove(i);

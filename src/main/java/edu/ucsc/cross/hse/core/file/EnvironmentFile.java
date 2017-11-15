@@ -160,7 +160,7 @@ public class EnvironmentFile implements FileFormat
 		if (contentType.equals(Environment.class))
 		{
 			Environment env = (Environment) content;
-			EnvironmentData dat = new EnvironmentData();
+			// EnvironmentData dat = new EnvironmentData();
 			// if (env.getData() != null)
 			{
 				// add(new CSVFile(env.getManager(), true));
@@ -170,9 +170,9 @@ public class EnvironmentFile implements FileFormat
 					try
 					{
 
-						CSVFile f = new CSVFile(env.getManager(), true);
-						addContent(f);//// add(new CSVFile(env.getManager(), true));
-						dat = new EnvironmentData(env.getData().getStateNames());
+						// CSVFile f = new CSVFile(env.getManager(), true);
+						// addContent(f);//// add(new CSVFile(env.getManager(), true));
+
 						// env.loadData(null);
 						// dat.load(env.getData().getStoreTimes(), env.getData().getGlobalStateData());
 						// env.loadData(null);
@@ -184,10 +184,10 @@ public class EnvironmentFile implements FileFormat
 					// env.getData().load(null, null);
 					// storeContent(env.getData());
 				}
-				env.loadData(null);
+				storeContent(env.getData());
+				// env.loadData(null);
 				// env.loadData(null);
 			}
-			storeContent(dat);
 
 			storeContent(env.getContents());
 			storeContent(env.getSettings());
@@ -276,7 +276,7 @@ public class EnvironmentFile implements FileFormat
 					EnvironmentData dat = null;
 					try
 					{
-						dat = inputFile.getContent(CSVFile.class).extractDataFromContents();
+						dat = inputFile.getContent(EnvironmentData.class);// .extractDataFromContents();
 					} catch (Exception e)
 					{
 						e.printStackTrace();
@@ -287,11 +287,11 @@ public class EnvironmentFile implements FileFormat
 						// System.out.println(XMLParser.serializeObject(dat));
 						Environment env = inputFile.getContent(Environment.class);
 						// if (inputFile.getContent(EnvironmentData.class) != null)
-						{
-							env.loadData(inputFile.getContent(EnvironmentData.class));
-
-							env.getData().load(dat);
-						}
+						// {
+						// env.loadData(dat);// .getData().load(dat);
+						//
+						// }
+						env.loadData(dat);
 						inputContent = (T) env;
 
 					} else

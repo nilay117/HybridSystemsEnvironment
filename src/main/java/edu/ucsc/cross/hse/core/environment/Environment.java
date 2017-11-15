@@ -73,6 +73,10 @@ public class Environment
 
 	public EnvironmentData getData()
 	{
+		if (dataCollector == null)
+		{
+			dataCollector = new EnvironmentData();
+		}
 		return dataCollector;
 	}
 
@@ -115,6 +119,7 @@ public class Environment
 			// if (dataCollector == null)
 			{
 				dataCollector = data;
+				EnvironmentData.populateListMap(dataCollector);
 			} // else
 			{
 				// getData().load(data.getStoreTimes(), data.getGlobalStateData());
@@ -231,7 +236,7 @@ public class Environment
 	public static Environment loadFile(File file)
 	{
 		Environment env = EnvironmentFile.readContentFromFile(file, EnvironmentFile.ENVIRONMENT);
-		// env.getManager();// operators.put(env, new ExecutionOperator(env));
+		env.getManager();// operators.put(env, new ExecutionOperator(env));
 		return env;
 	}
 

@@ -45,7 +45,7 @@ public class SubChartView
 		HashMap<String, XYSeries> ser = new HashMap<String, XYSeries>();
 		if (properties().getyDataSelection() != null)
 		{
-			for (DataSeries<?> data : data.getGlobalStateData())
+			for (DataSeries<?> data : data.getAllDataSeries())
 			{
 				boolean matchesSelection = true;
 				DataSeries<?> xS = null;
@@ -57,7 +57,7 @@ public class SubChartView
 				}
 				if (properties().getxDataSelection() != null)
 				{
-					xS = data.getSeriesWithSameParent(properties().getxDataSelection(), this.data.getGlobalStateData());
+					xS = data.getSeriesWithSameParent(properties().getxDataSelection(), this.data.getAllDataSeries());
 					if (xS == null)
 					{
 						matchesSelection = false;
@@ -68,7 +68,7 @@ public class SubChartView
 				if (matchesSelection)
 				{
 					// \String label = this.data.getStateNames().get(data.getParentID() + data.getElementName());//
-					String label = this.data.getStateNames().get(data.getParentID());
+					String label = data.getParent().extension().getUniqueLabel();
 					// defaultValue).getLegendLabel(data);//
 					// getLegendLabel(data,
 					// names);
@@ -112,7 +112,7 @@ public class SubChartView
 	public ArrayList<String> getFieldNames()
 	{
 		ArrayList<String> fieldNames = new ArrayList<String>();
-		for (DataSeries<?> e : data.getGlobalStateData())
+		for (DataSeries<?> e : data.getAllDataSeries())
 		{
 
 			if (!fieldNames.contains(e.getElementName()))
