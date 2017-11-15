@@ -1,6 +1,6 @@
 package datagenerator;
 
-import edu.cross.ucsc.hse.core.chart.ChartProperties;
+import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.task.TaskManager;
 import java.util.ArrayList;
@@ -98,10 +98,10 @@ public class DataGeneratorOperations extends TaskManager
 
 	}
 
-	public static ChartProperties dataGeneratedHybridChart()
+	public static ChartConfiguration dataGeneratedHybridChart()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(600.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(600.0, 600.0);
 
 		// Select data to display
 		plot.sub(0).setAxisSelections(null, "dataGenerated");
@@ -115,10 +115,10 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties timeToNextGenerationHybridChart()
+	public static ChartConfiguration timeToNextGenerationHybridChart()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(600.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(600.0, 600.0);
 
 		// Select data to display
 		plot.sub(0).setAxisSelections(null, "dataGenerated");
@@ -132,10 +132,10 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties dataGeneratorStateHybridChart()
+	public static ChartConfiguration dataGeneratorStateHybridChart()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(600.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(600.0, 600.0);
 
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
@@ -158,10 +158,10 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties dataGeneratorStateHybridChart2()
+	public static ChartConfiguration dataGeneratorStateHybridChart2()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(1200.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(1200.0, 600.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
@@ -187,10 +187,10 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties signalGenerator()
+	public static ChartConfiguration signalGenerator()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(1200.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(1200.0, 600.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
@@ -216,10 +216,10 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties signalGenerator2()
+	public static ChartConfiguration signalGenerator2()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(1000.0, 800.0);
+		ChartConfiguration plot = new ChartConfiguration(1000.0, 800.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
@@ -252,10 +252,10 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties sampleAndHold()
+	public static ChartConfiguration sampleAndHold()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(1200.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(1200.0, 600.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]

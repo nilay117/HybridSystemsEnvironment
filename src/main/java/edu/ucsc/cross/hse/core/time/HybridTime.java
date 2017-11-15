@@ -11,6 +11,7 @@ public class HybridTime
 	{
 		return jumps;
 	}
+
 	public double getTime()
 	{
 		return time;

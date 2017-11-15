@@ -243,7 +243,7 @@ public class ObjectOperator
 				field.setAccessible(true);
 
 				// if (fields.containsKey(field.getType()))
-				if (fieldMapper.isState(field.getType()))
+				if (FieldFinder.containsSuper(field.get(state), ObjectSet.class))
 				{
 					initializeMap(object_map, field.get(state), field.get(dynamic));
 				} else

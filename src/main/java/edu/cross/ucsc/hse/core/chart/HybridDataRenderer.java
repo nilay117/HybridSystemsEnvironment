@@ -102,7 +102,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	/** The default value returned by the getShapeVisible() method. */
 	private boolean baseShapesVisible;
 
-	private ChartProperties chart;
+	private ChartConfiguration chart;
 
 	private EnvironmentData data;
 
@@ -1464,7 +1464,7 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 	 * @param shapes
 	 *            shapes visible?
 	 */
-	public HybridDataRenderer(ChartType type, EnvironmentData data, ChartProperties chart, XYDataset ds)
+	public HybridDataRenderer(ChartType type, EnvironmentData data, ChartConfiguration chart, XYDataset ds)
 	{
 
 		this.data = data;

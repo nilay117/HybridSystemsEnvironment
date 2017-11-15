@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.environment;
 import com.be3short.data.cloning.ObjectCloner;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
-import edu.cross.ucsc.hse.core.chart.ChartProperties;
+import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
@@ -29,19 +29,19 @@ public class Environment
 	EnvironmentOutputs outputs;
 	EnvironmentSettings settings;
 
-	public void add(ChartProperties... plot)
+	public void add(ChartConfiguration... plot)
 	{
 
 		outputs.addChart(plot);
 
 	}
 
-	public void add(ChartProperties plot, FileSpecifications<ImageFormat> specs)
+	public void add(ChartConfiguration plot, FileSpecifications<ImageFormat> specs)
 	{
 		outputs.addChart(plot, specs);
 	}
 
-	public void add(ChartProperties plot, String path, ImageFormat format)
+	public void add(ChartConfiguration plot, String path, ImageFormat format)
 	{
 		outputs.addChart(plot, path, format);
 	}
@@ -157,7 +157,7 @@ public class Environment
 		getSettings().loadAllSettings(settings);
 	}
 
-	public void remove(ChartProperties... plot)
+	public void remove(ChartConfiguration... plot)
 	{
 
 		outputs.removeChart(plot);

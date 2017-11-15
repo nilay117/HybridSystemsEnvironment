@@ -24,6 +24,7 @@ public class SystemOperator
 	{
 		for (HybridSystem<?> hs : content.getContents().getSystems())
 		{
+			// System.out.println(XMLParser.serializeObject(hs.getState()));
 			try
 			{
 				boolean hasPriority = true;

@@ -26,7 +26,7 @@ public class DataMonitor
 				parentName = parent.extension().getName();
 			} catch (Exception e)
 			{
-
+				e.printStackTrace();
 			}
 			manager.getDataCollector().getGlobalStateData()
 			.add(DataSeries.getSeries(manager.getDataCollector().getStoreTimes(), state.getObject().getClass(),

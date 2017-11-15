@@ -3,18 +3,23 @@ package edu.cross.ucsc.hse.core.chart;
 public class SubChartProperties
 {
 
+	// Display
 	ChartType type;
-	// Visibility
 	boolean displayLegend;
-	String title;
+
 	// Labels
 	String xAxisLabel;
-
-	// Data
-	String xDataSelection;
-
 	String yAxisLabel;
+	String title;
+
+	// Data Selection
+	String xDataSelection;
 	String yDataSelection;
+
+	public ChartType getChartType()
+	{
+		return type;
+	}
 
 	public String getTitle()
 	{
@@ -67,6 +72,11 @@ public class SubChartProperties
 		yDataSelection = y_selection;
 	}
 
+	public void setChartType(ChartType type)
+	{
+		this.type = type;
+	}
+
 	public void setDisplayLegend(boolean displayLegend)
 	{
 		this.displayLegend = displayLegend;
@@ -99,16 +109,9 @@ public class SubChartProperties
 
 	SubChartProperties()
 	{
+		title = "";
+		yAxisLabel = "";
+		xAxisLabel = "";
 		type = ChartType.LINE;
-	}
-
-	public ChartType getChartType()
-	{
-		return type;
-	}
-
-	public void setChartType(ChartType type)
-	{
-		this.type = type;
 	}
 }

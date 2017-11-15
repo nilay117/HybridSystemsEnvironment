@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.container;
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
-import edu.cross.ucsc.hse.core.chart.ChartProperties;
+import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.cross.ucsc.hse.core.chart.ChartView;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.file.CSVFile;
@@ -20,22 +20,22 @@ public class EnvironmentOutputs
 {
 
 	// Mapping of all plots to be generated and output file specifications for plots that will be saved to a file
-	private HashMap<FileSpecifications<ImageFormat>, ChartProperties> plots;
+	private HashMap<FileSpecifications<ImageFormat>, ChartConfiguration> plots;
 
-	public void addChart(ChartProperties... plot)
+	public void addChart(ChartConfiguration... plot)
 	{
-		for (ChartProperties plo : plot)
+		for (ChartConfiguration plo : plot)
 		{
 			plots.put(new FileSpecifications<ImageFormat>(), plo);
 		}
 	}
 
-	public void addChart(ChartProperties plot, FileSpecifications<ImageFormat> specs)
+	public void addChart(ChartConfiguration plot, FileSpecifications<ImageFormat> specs)
 	{
 		plots.put(specs, plot);
 	}
 
-	public void addChart(ChartProperties plot, String path, ImageFormat format)
+	public void addChart(ChartConfiguration plot, String path, ImageFormat format)
 	{
 		plots.put(format.createFileSpecs(path), plot);
 	}
@@ -60,12 +60,12 @@ public class EnvironmentOutputs
 	public void generateCharts(Environment envi, boolean create_files)
 	{
 
-		HashMap<FileSpecifications<ImageFormat>, ChartProperties> plotz = envi.getManager().getOutputs()
+		HashMap<FileSpecifications<ImageFormat>, ChartConfiguration> plotz = envi.getManager().getOutputs()
 		.getFileSpecChartMap(true);
 		int append = 1;
 		for (FileSpecifications<ImageFormat> specs : plotz.keySet())
 		{
-			ChartProperties plot = plotz.get(specs);
+			ChartConfiguration plot = plotz.get(specs);
 			if (create_files)
 			{
 				if (specs.isNullFile())
@@ -108,14 +108,14 @@ public class EnvironmentOutputs
 		}
 	}
 
-	public ArrayList<ChartProperties> getLoadedCharts()
+	public ArrayList<ChartConfiguration> getLoadedCharts()
 	{
-		return new ArrayList<ChartProperties>(plots.values());
+		return new ArrayList<ChartConfiguration>(plots.values());
 	}
 
-	public void removeChart(ChartProperties... charts)
+	public void removeChart(ChartConfiguration... charts)
 	{
-		ArrayList<ChartProperties> chartList = new ArrayList<ChartProperties>(Arrays.asList(charts));
+		ArrayList<ChartConfiguration> chartList = new ArrayList<ChartConfiguration>(Arrays.asList(charts));
 		ArrayList<FileSpecifications<ImageFormat>> filez = new ArrayList<FileSpecifications<ImageFormat>>(
 		plots.keySet());
 		for (FileSpecifications<ImageFormat> chartFile : filez)
@@ -193,7 +193,7 @@ public class EnvironmentOutputs
 		return appended;
 	}
 
-	private HashMap<FileSpecifications<ImageFormat>, ChartProperties> getFileSpecChartMap(boolean appended)
+	private HashMap<FileSpecifications<ImageFormat>, ChartConfiguration> getFileSpecChartMap(boolean appended)
 	{
 		if (appended)
 		{
@@ -221,7 +221,7 @@ public class EnvironmentOutputs
 	public EnvironmentOutputs(Environment environment)
 	{
 		environments.put(this, environment);
-		plots = new HashMap<FileSpecifications<ImageFormat>, ChartProperties>();
+		plots = new HashMap<FileSpecifications<ImageFormat>, ChartConfiguration>();
 	}
 
 	private static HashMap<EnvironmentOutputs, Environment> environments = new HashMap<EnvironmentOutputs, Environment>();

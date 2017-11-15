@@ -2,7 +2,7 @@ package datagenerator;
 
 import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
-import edu.cross.ucsc.hse.core.chart.ChartProperties;
+import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.cross.ucsc.hse.core.chart.ChartType;
 import edu.cross.ucsc.hse.core.chart.LabelType;
 import edu.ucsc.cross.hse.core.environment.Environment;
@@ -53,8 +53,8 @@ public class DataGeneratorTasks extends TaskManager
 		// System.out.println(XMLParser.serializeObject(env));
 		// statesAndTimerChart().plot(env);
 		// env.generateOutputs();
-		ChartProperties HybridChart2 = xOnly();
-		ChartProperties HybridChart1 = xyCombination();
+		ChartConfiguration HybridChart2 = xOnly();
+		ChartConfiguration HybridChart1 = xyCombination();
 		env.add(HybridChart2);// .createChart(env);
 		env.generateOutputs();
 	}
@@ -63,9 +63,9 @@ public class DataGeneratorTasks extends TaskManager
 	{
 		Environment env = getConfiguredEnvironment();
 
-		ChartProperties HybridChart1 = xyCombination();
-		ChartProperties HybridChart2 = xOnly();
-		ChartProperties HybridChart3 = xyVsTimeVertical();
+		ChartConfiguration HybridChart1 = xyCombination();
+		ChartConfiguration HybridChart2 = xOnly();
+		ChartConfiguration HybridChart3 = xyVsTimeVertical();
 		// env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 5; i++)
 		{
@@ -85,10 +85,10 @@ public class DataGeneratorTasks extends TaskManager
 
 	}
 
-	public static ChartProperties xyCombination()
+	public static ChartConfiguration xyCombination()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(1000.0, 800.0);
+		ChartConfiguration plot = new ChartConfiguration(1000.0, 800.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
@@ -109,7 +109,7 @@ public class DataGeneratorTasks extends TaskManager
 		// with grid
 		plot.sub(0).setAxisLabels("Time (sec)", "X Value");
 		plot.sub(1).setAxisLabels("Time (sec)", "Y Value");
-		plot.sub(2).setAxisLabels(ChartProperties.EMPTY, null);
+		plot.sub(2).setAxisLabels(ChartConfiguration.EMPTY, null);
 
 		// Specify legend visibility
 		plot.sub(0).setDisplayLegend(true);
@@ -137,10 +137,10 @@ public class DataGeneratorTasks extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties xOnly()
+	public static ChartConfiguration xOnly()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(900.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(900.0, 600.0);
 
 		// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
@@ -173,10 +173,10 @@ public class DataGeneratorTasks extends TaskManager
 		return plot;
 	}
 
-	public static ChartProperties xyVsTimeVertical()
+	public static ChartConfiguration xyVsTimeVertical()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartProperties plot = new ChartProperties(800.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(800.0, 600.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
@@ -214,6 +214,11 @@ public class DataGeneratorTasks extends TaskManager
 		plot.editFonts(LabelType.DOMAIN_AXIS_LABEL).set(new Font("Tahoma", Font.BOLD, 14));
 		plot.editFonts(LabelType.RANGE_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
 		plot.editFonts(LabelType.DOMAIN_AXIS_TICK_LABEL).set(new Font("Tahoma", Font.PLAIN, 12));
+		plot.editFonts(LabelType.DOMAIN_AXIS_TICK_LABEL).setVisibility(false);// .set(new Font("Tahoma", Font.PLAIN,
+		plot.chartTemplate.getXYPlot().getDomainAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
+		plot.chartTemplate.getTitle().setText("YYEEEE");// .setFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
+		plot.chartTemplate.getXYPlot().getDomainAxis().setTickLabelsVisible(true);
+		plot.chartTemplate.getLegend().setVisible(true);
 		plot.editFonts(LabelType.LEGEND_ITEM).set(new Font("Tahoma", Font.PLAIN, 10));
 		return plot;
 	}
@@ -306,7 +311,7 @@ public class DataGeneratorTasks extends TaskManager
 		// Factor to reduce minimum step size (if using variable step integrator) when a step size related error occurs
 		env.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor = 1.0;
 
-		env.getSettings().getInterfaceSettings().runInRealTime = true;
+		env.getSettings().getInterfaceSettings().runInRealTime = false;
 		return env;
 	}
 }

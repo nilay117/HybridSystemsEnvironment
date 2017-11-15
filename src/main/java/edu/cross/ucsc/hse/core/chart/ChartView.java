@@ -52,7 +52,7 @@ public class ChartView
 	private BorderPane mainPane;
 	private FileSpecifications<ImageFormat> output;
 	private ArrayList<JPanel> panels;
-	private ChartProperties plot;
+	private ChartConfiguration plot;
 	private Pane plotPane;
 	private ArrayList<SubChartView> plots;
 
@@ -68,7 +68,7 @@ public class ChartView
 
 	}
 
-	public ChartProperties getChartProperties()
+	public ChartConfiguration getChartProperties()
 	{
 		return plot;
 	}
@@ -94,7 +94,7 @@ public class ChartView
 
 		}
 		SubChartView pf = null;
-		HashMap<Integer, Integer[][]> dimensions = ChartProperties.ChartOperations.getChartLocations(plot);
+		HashMap<Integer, Integer[][]> dimensions = ChartConfiguration.ChartOperations.getChartLocations(plot);
 		for (Integer paneIndex : dimensions.keySet())
 		{
 			pf = null;
@@ -121,7 +121,7 @@ public class ChartView
 
 	}
 
-	public void setChartProperties(ChartProperties plot)
+	public void setChartProperties(ChartConfiguration plot)
 	{
 		this.plot = plot;
 		renderContents();
@@ -314,7 +314,7 @@ public class ChartView
 
 	}
 
-	private void initialize(EnvironmentData env, ChartProperties plot, Stage stage)
+	private void initialize(EnvironmentData env, ChartConfiguration plot, Stage stage)
 	{
 		try
 		{
@@ -480,14 +480,14 @@ public class ChartView
 		}
 	}
 
-	public ChartView(EnvironmentData env, ChartProperties plot, Stage stage)
+	public ChartView(EnvironmentData env, ChartConfiguration plot, Stage stage)
 	{
 
 		initialize(env, plot, stage);
 		setupStage(stage, true);
 	}
 
-	public ChartView(EnvironmentData env, ChartProperties plot, Stage stage, FileSpecifications<ImageFormat> output)
+	public ChartView(EnvironmentData env, ChartConfiguration plot, Stage stage, FileSpecifications<ImageFormat> output)
 	{
 		Console.info("Chart saved: " + output.getLocation(false) + output.getFormat().extension);
 		initialize(env, plot, stage);

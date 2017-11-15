@@ -17,8 +17,9 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.jfree.chart.ChartColor;
+import org.jfree.chart.JFreeChart;
 
-public class ChartProperties
+public class ChartConfiguration
 {
 
 	// Labeling
@@ -28,22 +29,28 @@ public class ChartProperties
 	// Layout
 	private Double height;
 	private Double width;
+	private Integer[][] chartArrangementMatrix;
+	private HashMap<Integer, SubChartProperties> chartPropertyMap;
 
-	// Sub Plot Configuration
-	private Integer[][] grid;
-	private HashMap<Integer, SubChartProperties> subPlots;
-
-	// Data Rendering Configuration
+	// Data Rendering
 	private Stroke flowStroke; // default flow stroke to be used whenever stroke is not specified
 	private Stroke jumpStroke;// default flow stroke to be used when stroke is not specified
 	private ArrayList<Paint> defaultSeriesColors; // collection of series colors used to render lines
-
 	private HashMap<String, ArrayList<Paint>> assignedColors;
 	private HashMap<String, ArrayList<Stroke>> assignedStrokes;
+
+	// Chart Properties
+	public JFreeChart chartTemplate;
 
 	// Chart Element Configuration
 	private boolean showXGridLines;
 	private boolean showYGridLines;
+
+	private JFreeChart obtainChart()
+	{
+		SubChartView sv = new SubChartView(null, this, 0, null);
+		return sv.createChart(null);
+	}
 
 	public void addMainTitle(String main_title, Font title_font)
 	{
@@ -271,7 +278,7 @@ public class ChartProperties
 	public void setLayout(Integer[][] layout)
 	{
 
-		grid = layout;
+		chartArrangementMatrix = layout;
 		initializeSubPlots();
 	}
 
@@ -297,9 +304,9 @@ public class ChartProperties
 
 	public SubChartProperties sub(Integer index)
 	{
-		if (subPlots.containsKey(index))
+		if (chartPropertyMap.containsKey(index))
 		{
-			return subPlots.get(index);
+			return chartPropertyMap.get(index);
 		} else
 		{
 			Console.warn("sub plot " + index + " does not exist");
@@ -342,7 +349,7 @@ public class ChartProperties
 		showXGridLines = true;
 		showYGridLines = true;
 
-		grid = new Integer[][]
+		chartArrangementMatrix = new Integer[][]
 		{
 				{ 0 } };
 
@@ -355,7 +362,8 @@ public class ChartProperties
 		jumpStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
 		flowStroke = new BasicStroke(3.5f);
 
-		subPlots = new HashMap<Integer, SubChartProperties>();
+		chartPropertyMap = new HashMap<Integer, SubChartProperties>();
+		chartTemplate = obtainChart();
 		initializeSubPlots();
 	}
 
@@ -364,14 +372,14 @@ public class ChartProperties
 		Set<Integer> subPlotIndexes = ChartOperations.getChartLocations(this).keySet();
 		for (Integer sub : subPlotIndexes)
 		{
-			if (!subPlots.containsKey(sub))
+			if (!chartPropertyMap.containsKey(sub))
 			{
-				subPlots.put(sub, new SubChartProperties());
+				chartPropertyMap.put(sub, new SubChartProperties());
 			}
 		}
 	}
 
-	public ChartProperties(Double width, Double height)
+	public ChartConfiguration(Double width, Double height)
 	{
 		initialize(width, height);
 	}
@@ -379,18 +387,18 @@ public class ChartProperties
 	public static class ChartOperations
 	{
 
-		public static HashMap<Integer, Integer[][]> getChartLocations(ChartProperties properties)
+		public static HashMap<Integer, Integer[][]> getChartLocations(ChartConfiguration properties)
 		{
 			HashMap<Integer, Integer[][]> charts = new HashMap<Integer, Integer[][]>();
 
-			for (int rowIndex = 0; rowIndex < properties.grid.length; rowIndex++)
+			for (int rowIndex = 0; rowIndex < properties.chartArrangementMatrix.length; rowIndex++)
 			{
-				for (int colIndex = 0; colIndex < properties.grid[0].length; colIndex++)
+				for (int colIndex = 0; colIndex < properties.chartArrangementMatrix[0].length; colIndex++)
 				{
-					if (!charts.containsKey(properties.grid[rowIndex][colIndex]))
+					if (!charts.containsKey(properties.chartArrangementMatrix[rowIndex][colIndex]))
 					{
-						charts.put(properties.grid[rowIndex][colIndex],
-						properties.clearNonGrid(properties.grid, properties.grid[rowIndex][colIndex]));
+						charts.put(properties.chartArrangementMatrix[rowIndex][colIndex], properties.clearNonGrid(
+						properties.chartArrangementMatrix, properties.chartArrangementMatrix[rowIndex][colIndex]));
 					}
 				}
 

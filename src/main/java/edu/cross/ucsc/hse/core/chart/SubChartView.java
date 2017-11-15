@@ -1,5 +1,6 @@
 package edu.cross.ucsc.hse.core.chart;
 
+import com.be3short.data.cloning.ObjectCloner;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.time.HybridTime;
@@ -29,7 +30,7 @@ public class SubChartView
 	public ChartPanel panel;
 	private JFreeChart chart;
 	private Integer chartIndex;
-	private ChartProperties chartProps;
+	private ChartConfiguration chartProps;
 	private EnvironmentData data;
 	private BorderPane pane;
 	ChartView ch;
@@ -42,21 +43,21 @@ public class SubChartView
 		StandardXYItemRenderer rend = new StandardXYItemRenderer();
 		rend.setPlotDiscontinuous(false);
 		HashMap<String, XYSeries> ser = new HashMap<String, XYSeries>();
-		if (sub().getyDataSelection() != null)
+		if (properties().getyDataSelection() != null)
 		{
 			for (DataSeries<?> data : data.getGlobalStateData())
 			{
 				boolean matchesSelection = true;
 				DataSeries<?> xS = null;
 				// System.out.println(props.fufilsFilters(data));
-				if (!sub().getyDataSelection().equals(data.getElementName()))
+				if (!properties().getyDataSelection().equals(data.getElementName()))
 				// .!fufilsFilters(data))
 				{
 					matchesSelection = false;
 				}
-				if (sub().getxDataSelection() != null)
+				if (properties().getxDataSelection() != null)
 				{
-					xS = data.getSeriesWithSameParent(sub().getxDataSelection(), this.data.getGlobalStateData());
+					xS = data.getSeriesWithSameParent(properties().getxDataSelection(), this.data.getGlobalStateData());
 					if (xS == null)
 					{
 						matchesSelection = false;
@@ -141,42 +142,55 @@ public class SubChartView
 		});
 	}
 
-	private void createChart(XYDataset dataset)
+	JFreeChart createChart(XYDataset dataset)
 	{
-		String title = sub().getTitle();
-		String xLabel = sub().getxAxisLabel();
-		String yLabel = sub().getyAxisLabel();
-		PlotOrientation orientation = PlotOrientation.VERTICAL;
-		chart = ChartFactory.createXYLineChart(title, xLabel, yLabel, dataset, orientation, true, true, true);
-		chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
-		chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
-		chart.getXYPlot().setDomainGridlinesVisible(chartProps.getShowXGridLines());
-		chart.getXYPlot().setRangeGridlinesVisible(chartProps.getShowYGridLines());
-		chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
-		chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
-		// chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(false);
-		// chart.getXYPlot().getDomainAxis().setAutoTickUnitSelection(false);
-		chart.getXYPlot().getRangeAxis().setMinorTickCount(4);
-		chart.getLegend().setVisible(sub().isDisplayLegend());
-		chart.setBackgroundPaint(null);
-		chart.getLegend().setBackgroundPaint(null);
-		chart.getXYPlot().setBackgroundPaint(null);
-		chart.setAntiAlias(true);
-		chart.getLegend().setFrame(BlockBorder.NONE);
-		chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
-		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
-		chart.setAntiAlias(false);
-		HybridDataRenderer renderer = new HybridDataRenderer(sub().getChartType(), data, chartProps, dataset);// true,
-
-		// XYShapeRenderer renderer = new XYShapeRenderer();
-
-		// false);
-		chart.getXYPlot().setRenderer(renderer);
-		if (sub().getxDataSelection() == null)
+		if (chartProps.chartTemplate != null)
 		{
-			chart.getXYPlot().getDomainAxis().setRange(data.getEarliestStoredTime().getTime(),
-			data.getLastStoredTime().getTime());
+
+			chart = (JFreeChart) ObjectCloner.xmlClone(chartProps.chartTemplate);
+			// ObjectCloner.deepInstanceClone(chartProps.chart);
+			chart.getXYPlot().setDataset(dataset);
+			HybridDataRenderer renderer = new HybridDataRenderer(properties().getChartType(), data, chartProps,
+			dataset);// true,
+
+			// XYShapeRenderer renderer = new XYShapeRenderer();
+
+			// false);
+			chart.getXYPlot().setRenderer(renderer);
+			if (properties().getxDataSelection() == null)
+			{
+				chart.getXYPlot().getDomainAxis().setRange(data.getEarliestStoredTime().getTime(),
+				data.getLastStoredTime().getTime());
+			}
+		} else
+		{
+			PlotOrientation orientation = PlotOrientation.VERTICAL;
+			chart = ChartFactory.createXYLineChart("", "", "", dataset, orientation, true, true, true);
+			chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
+			chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
+			chart.getXYPlot().setDomainGridlinesVisible(chartProps.getShowXGridLines());
+			chart.getXYPlot().setRangeGridlinesVisible(chartProps.getShowYGridLines());
+			chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
+			chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
+			// chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(false);
+			// chart.getXYPlot().getDomainAxis().setAutoTickUnitSelection(false);
+			chart.getXYPlot().getRangeAxis().setMinorTickCount(4);
+			chart.setBackgroundPaint(null);
+			chart.getLegend().setBackgroundPaint(null);
+			chart.getXYPlot().setBackgroundPaint(null);
+			chart.setAntiAlias(true);
+			chart.getLegend().setFrame(BlockBorder.NONE);
+			chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
+			chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
+			chart.setAntiAlias(false);
 		}
+
+		chart.setTitle(properties().getTitle());
+		chart.getXYPlot().getDomainAxis().setLabel(properties().getxAxisLabel());
+		chart.getXYPlot().getRangeAxis().setLabel(properties().getyAxisLabel());
+		chart.getLegend().setVisible(properties().isDisplayLegend());
+
+		return chart;
 	}
 
 	private void createSwingContent()
@@ -203,7 +217,7 @@ public class SubChartView
 		pane.setCenter(swingNode);
 	}
 
-	private void initialize(EnvironmentData data, BorderPane pane, ChartProperties chart_props, String y,
+	private void initialize(EnvironmentData data, BorderPane pane, ChartConfiguration chart_props, String y,
 	Integer chart_index, ChartView ch)
 	{
 		this.ch = ch;
@@ -214,10 +228,13 @@ public class SubChartView
 		chartIndex = chart_index;
 		// props.setyFilters(y);
 		// props.setxFilter(HybridPlot.simTime);
-		createSwingContent();
+		if (pane != null)
+		{
+			createSwingContent();
+		}
 	}
 
-	private SubChartProperties sub()
+	private SubChartProperties properties()
 	{
 		return chartProps.sub(chartIndex);
 	}
@@ -233,19 +250,20 @@ public class SubChartView
 		return height;
 	}
 
-	SubChartView(BorderPane pane, ChartProperties chart_props, Integer chart_index, ChartView ch)
+	SubChartView(BorderPane pane, ChartConfiguration chart_props, Integer chart_index, ChartView ch)
 	{
 		initialize(null, pane, chart_props, null, chart_index, ch);
 	}
 
 	// Boiler Plate
 
-	SubChartView(EnvironmentData data, BorderPane pane, ChartProperties chart_props, Integer chart_index, ChartView ch)
+	SubChartView(EnvironmentData data, BorderPane pane, ChartConfiguration chart_props, Integer chart_index,
+	ChartView ch)
 	{
 		initialize(data, pane, chart_props, null, chart_index, ch);
 	}
 
-	SubChartView(EnvironmentData data, BorderPane pane, String y, ChartProperties chart_props, Integer chart_index,
+	SubChartView(EnvironmentData data, BorderPane pane, String y, ChartConfiguration chart_props, Integer chart_index,
 	ChartView ch)
 	{
 		initialize(data, pane, chart_props, y, chart_index, ch);
