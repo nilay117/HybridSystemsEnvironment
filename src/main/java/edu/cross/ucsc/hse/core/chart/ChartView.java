@@ -404,8 +404,10 @@ public class ChartView
 			mainPane.setCenter(b);
 
 			final SwingNode swingNode = new SwingNode();
-			createSwingLabel(swingNode);
-
+			if (this.getChartConfiguration().isDisplayGlobalLegend())
+			{
+				createSwingLabel(swingNode);
+			}
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -493,13 +495,18 @@ public class ChartView
 		{
 			panel.print(graphics);
 		}
-		Size2D size = globalLegend.arrange(graphics);
-		globalLegend.draw(graphics,
-		new Rectangle((int) ((this.getChartConfiguration().getWidth() - size.width) / 2),
-		this.getChartConfiguration().getHeight().intValue(), this.getChartConfiguration().getWidth().intValue(),
-		this.getChartConfiguration().getHeight().intValue()));
-		System.out.println(XMLParser.serializeObject(globalLegend.arrange(graphics)));
+		try
+		{
+			Size2D size = globalLegend.arrange(graphics);
+			globalLegend.draw(graphics,
+			new Rectangle((int) ((this.getChartConfiguration().getWidth() - size.width) / 2),
+			this.getChartConfiguration().getHeight().intValue(), this.getChartConfiguration().getWidth().intValue(),
+			this.getChartConfiguration().getHeight().intValue()));
+			System.out.println(XMLParser.serializeObject(globalLegend.arrange(graphics)));
+		} catch (Exception e)
+		{
 
+		}
 		return graphics;
 	}
 
@@ -530,12 +537,17 @@ public class ChartView
 				panel.setBackground(Color.white);
 			}
 		}
-		if (load_background)
+		try
 		{
-			globalLegend.setBackgroundPaint(Color.white);
-		} else
+			if (load_background)
+			{
+				globalLegend.setBackgroundPaint(Color.white);
+			} else
+			{
+				globalLegend.setBackgroundPaint(null);
+			}
+		} catch (Exception e)
 		{
-			globalLegend.setBackgroundPaint(null);
 		}
 	}
 

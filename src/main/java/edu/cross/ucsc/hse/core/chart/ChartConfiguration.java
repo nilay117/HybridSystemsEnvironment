@@ -21,10 +21,14 @@ import org.jfree.chart.JFreeChart;
 public class ChartConfiguration
 {
 
-	// Title
+	// Global title
 	private String mainTitle;
 	private Font mainTitleFont;
 	private Paint mainTitleColor;
+
+	// Global legend
+	private Font globalLegendFont;
+	private boolean displayGlobalLegend;
 
 	// Layout
 	private Double height;
@@ -277,6 +281,9 @@ public class ChartConfiguration
 
 		chartPropertyMap = new HashMap<Integer, SubChartProperties>();
 		chartTemplate = SubChartView.getDefaultChart();
+
+		displayGlobalLegend = false;
+		globalLegendFont = new Font("Tahoma", Font.PLAIN, 10);
 		initializeSubPlots();
 	}
 
@@ -315,6 +322,26 @@ public class ChartConfiguration
 	public void setMainTitleColor(Paint mainTitleColor)
 	{
 		this.mainTitleColor = mainTitleColor;
+	}
+
+	public boolean isDisplayGlobalLegend()
+	{
+		return displayGlobalLegend;
+	}
+
+	public void setDisplayGlobalLegend(boolean displayGlobalLegend)
+	{
+		this.displayGlobalLegend = displayGlobalLegend;
+	}
+
+	public Font getGlobalLegendFont()
+	{
+		return globalLegendFont;
+	}
+
+	public void setGlobalLegendFont(Font globalLegendFont)
+	{
+		this.globalLegendFont = globalLegendFont;
 	}
 
 	public static class ChartOperations
