@@ -24,11 +24,11 @@ public class DataGeneratorTasks extends TaskManager
 	public void taskQueue()
 	{
 		// openEnvironmentAndPlot();//
-		dataGeneratorSimulation();
+		// dataGeneratorSimulation();
 		// openEnvironmentAndPlot();//
 		// dataGeneratorSimulation();//
 		long l = (long) 1.9;
-
+		dataGeneratorSimulation();
 		System.out.println(System.nanoTime() + " " + 10000000E-9);
 	}
 
@@ -67,7 +67,7 @@ public class DataGeneratorTasks extends TaskManager
 		ChartConfiguration HybridChart1 = xyCombination();
 		ChartConfiguration HybridChart2 = xOnly();
 		ChartConfiguration HybridChart3 = xyVsTimeVertical();
-		env.add(HybridChart1, HybridChart2, HybridChart3);
+		// env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 5; i++)
 		{
 			CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);
@@ -77,8 +77,9 @@ public class DataGeneratorTasks extends TaskManager
 		env.start(10.0, 100000);
 		// xyCombination().createChart(env);
 		// HybridChart1.createChart(env);
-		HybridChart2.createChart(env);
-		HybridChart3.createChart(env);
+		// HybridChart2.createChart(env);
+		// HybridChart3.createChart(env);
+		env.getData().exportToCSVFile(new File("output/testCSV.csv"));
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
@@ -244,8 +245,6 @@ public class DataGeneratorTasks extends TaskManager
 		env.getSettings().getOutputSettings().chartFileFormat = ImageFormat.EPS;
 		// Name of the environment configuration file if it were to be saved
 		env.getSettings().getOutputSettings().configurationFileName = "environmentConfig";
-		// Name of the CSV data file if it were to be saved
-		env.getSettings().getOutputSettings().csvDataFileName = "environmentData";
 		// Time between data point storage
 		env.getSettings().getOutputSettings().dataPointInterval = .025;
 		// Name of the environment file if it were to be saved
@@ -256,8 +255,6 @@ public class DataGeneratorTasks extends TaskManager
 		env.getSettings().getOutputSettings().saveChartsToFile = true;
 		// Flag indicating if environment configuration should be saved in an output file when not specified by the user
 		env.getSettings().getOutputSettings().saveConfigurationToFile = false;
-		// Flag indicating if data should be saved in separate CSV file
-		env.getSettings().getOutputSettings().saveDataToCSVFile = false;
 		// Flag indicating if environment should be saved in an output file when not specified by the user
 		env.getSettings().getOutputSettings().saveEnvironmentToFile = true;
 		// Flag indicating if log should be saved to file

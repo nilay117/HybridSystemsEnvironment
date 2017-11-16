@@ -309,7 +309,10 @@ public class ChartView
 		Double heightAdj = plot.getHeight();
 		if (plot.getMainTitle() != null)
 		{
-			heightAdj = plot.getHeight() - LabelProperties.measureFont(plot.getMainTitleFont());
+			if (plot.getMainTitle().length() > 0)
+			{
+				heightAdj = plot.getHeight() - LabelProperties.measureFont(plot.getMainTitleFont());
+			}
 		}
 		return heightAdj;
 	}

@@ -2,8 +2,10 @@ package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
+import edu.ucsc.cross.hse.core.file.CSVFileParser;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,7 +80,7 @@ public class EnvironmentData
 		// hybridTimeDomain.clear();
 		hybridTimeDomain = (new_data.getStoreTimes());
 		hybridArcMap = new_data.getHybridArcMap();
-		//EnvironmentData.populateListMap(this);
+		// EnvironmentData.populateListMap(this);
 	}
 
 	public EnvironmentData()
@@ -102,5 +104,11 @@ public class EnvironmentData
 				}
 			}
 		}
+	}
+
+	public void exportToCSVFile(File output)
+	{
+		CSVFileParser parser = new CSVFileParser(this);
+		parser.createCSVOutput(output);
 	}
 }

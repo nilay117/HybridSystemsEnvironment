@@ -264,7 +264,7 @@ public class ChartConfiguration
 
 		this.width = width;
 		this.height = height;
-
+		mainTitleFont = new Font("Tahoma", Font.BOLD, 18);
 		chartArrangementMatrix = new Integer[][]
 		{
 				{ 0 } };
@@ -276,7 +276,7 @@ public class ChartConfiguration
 		assignedStrokes = new HashMap<String, ArrayList<Stroke>>();
 
 		jumpStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1.0f, dash1, 2.0f);
-		flowStroke = new BasicStroke(3.5f);
+		flowStroke = new BasicStroke(1.5f);
 
 		chartPropertyMap = new HashMap<Integer, SubChartProperties>();
 		chartTemplate = SubChartView.getDefaultChart();
@@ -284,6 +284,7 @@ public class ChartConfiguration
 		displayGlobalLegend = false;
 		globalLegendFont = new Font("Tahoma", Font.PLAIN, 10);
 		initializeSubPlots();
+
 	}
 
 	private void initializeSubPlots()
