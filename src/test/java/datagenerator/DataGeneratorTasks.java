@@ -79,7 +79,7 @@ public class DataGeneratorTasks extends TaskManager
 		// HybridChart1.createChart(env);
 		// HybridChart2.createChart(env);
 		// HybridChart3.createChart(env);
-		env.getData().exportToCSVFile(new File("output/testCSV.csv"));
+		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());

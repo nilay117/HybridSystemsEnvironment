@@ -106,6 +106,12 @@ public class EnvironmentData
 		}
 	}
 
+	public void exportToCSVFile()
+	{
+		CSVFileParser parser = new CSVFileParser(this);
+		parser.createCSVOutput();
+	}
+
 	public void exportToCSVFile(File output)
 	{
 		CSVFileParser parser = new CSVFileParser(this);

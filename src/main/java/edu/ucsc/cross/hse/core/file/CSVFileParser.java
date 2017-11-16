@@ -2,6 +2,7 @@ package edu.ucsc.cross.hse.core.file;
 
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
+import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,6 +27,14 @@ public class CSVFileParser
 			header += "," + series.getElementName();
 		}
 		return header;
+	}
+
+	public void createCSVOutput()
+	{
+		String filepath = "output/"
+		+ ExecutionOperator.getStartTime(ExecutionOperator.getContainingEnvironment(data), false).toString()
+		+ "/environmentData.csv";
+		createCSVOutput(new File(filepath));
 	}
 
 	public void createCSVOutput(File file)
@@ -78,9 +87,10 @@ public class CSVFileParser
 	{
 		try
 		{
+			// file.mkdirs();
+
 			writers.put(this, new PrintWriter(new FileOutputStream(file)));
-			file.mkdirs();
-			file.createNewFile();
+			// file.createNewFile();
 		} catch (Exception e)
 		{
 			// TODO Auto-generated catch block
