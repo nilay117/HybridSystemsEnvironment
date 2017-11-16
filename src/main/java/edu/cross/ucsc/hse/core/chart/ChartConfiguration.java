@@ -1,7 +1,6 @@
 package edu.cross.ucsc.hse.core.chart;
 
 import com.be3short.io.format.ImageFormat;
-import com.be3short.io.xml.XMLParser;
 import com.be3short.obj.modification.ObjectCloner;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.io.Console;
@@ -78,7 +77,7 @@ public class ChartConfiguration
 
 	public void createChart(Environment envi)
 	{
-		System.out.println(XMLParser.serializeObject(envi.getData()));
+		// System.out.println(XMLParser.serializeObject(envi.getData()));
 		new ChartView(envi.getData(), this, TaskManager.createStage());
 	}
 

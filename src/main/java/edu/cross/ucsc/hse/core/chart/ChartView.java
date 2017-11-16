@@ -2,7 +2,6 @@ package edu.cross.ucsc.hse.core.chart;
 
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
-import com.be3short.obj.modification.XMLParser;
 import de.erichseifert.vectorgraphics2d.Document;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
 import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
@@ -502,7 +501,7 @@ public class ChartView
 			new Rectangle((int) ((this.getChartConfiguration().getWidth() - size.width) / 2),
 			this.getChartConfiguration().getHeight().intValue(), this.getChartConfiguration().getWidth().intValue(),
 			this.getChartConfiguration().getHeight().intValue()));
-			System.out.println(XMLParser.serializeObject(globalLegend.arrange(graphics)));
+			// System.out.println(XMLParser.serializeObject(globalLegend.arrange(graphics)));
 		} catch (Exception e)
 		{
 

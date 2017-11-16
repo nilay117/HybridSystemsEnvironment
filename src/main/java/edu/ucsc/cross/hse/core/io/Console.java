@@ -279,7 +279,7 @@ public class Console
 			{
 				printDebugStatus();
 			}
-			Console.printInfoStatus(manager);
+
 		}
 	}
 

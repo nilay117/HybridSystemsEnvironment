@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import org.apache.commons.math3.ode.events.EventHandler;
 
@@ -47,6 +48,7 @@ public class EventMonitor implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
+		Console.printInfoStatus(manager);
 		manager.getDataManager().performDataActions(t, y, getCheckJumpStatus());
 		return getFlag();
 	}
