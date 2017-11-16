@@ -179,7 +179,7 @@ public class SubChartView
 		try
 		{
 
-			chart = (JFreeChart) ObjectCloner.xmlClone(chartProps.chartTemplate);
+			chart = (JFreeChart) ObjectCloner.xmlClone(chartProps.getChartTemplate());
 			// ObjectCloner.deepInstanceClone(chartProps.chart);
 			chart.getXYPlot().setDataset(dataset);
 			HybridDataRenderer renderer = new HybridDataRenderer(properties().getChartType(), data, chartProps,
@@ -210,22 +210,25 @@ public class SubChartView
 	{
 		final SwingNode swingNode = new SwingNode();
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
+		// SwingUtilities.invokeLater(new Runnable()
+		// {
 
-			@Override
-			public void run()
+		// @Override
+		// public void run()
+		{
+			XYDataset dataset = null;//
+			if (chart == null)
 			{
-				XYDataset dataset = null;//
 				if (data != null)
 				{
 					dataset = createDataset();
 				}
 				initializeChart(dataset);
-				panel = new ChartPanel(chart);
-				swingNode.setContent(panel);// panel);
 			}
-		});
+			panel = new ChartPanel(chart);
+			swingNode.setContent(panel);// panel);
+		}
+		// });
 
 		pane.setCenter(swingNode);
 	}
@@ -280,6 +283,13 @@ public class SubChartView
 	ChartView ch)
 	{
 		initialize(data, pane, chart_props, y, chart_index, ch);
+
+	}
+
+	SubChartView(JFreeChart multi_chart, BorderPane pane, ChartConfiguration chart_props, ChartView ch)
+	{
+		chart = multi_chart;
+		initialize(data, pane, chart_props, null, 0, ch);
 
 	}
 }

@@ -2,6 +2,7 @@ package edu.cross.ucsc.hse.core.chart;
 
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
+import com.be3short.obj.modification.ObjectCloner;
 import de.erichseifert.vectorgraphics2d.Document;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
 import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
@@ -50,6 +51,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -108,6 +111,11 @@ public class ChartView
 
 	public boolean renderContents()
 	{
+		CombinedDomainXYPlot mplot = null;
+		if (plot.isCombinedDomainPlot())
+		{
+			mplot = (CombinedDomainXYPlot) ObjectCloner.xmlClone(plot.getCombinedPlot());
+		}
 		try
 		{
 			env.getAllStoredObjectSetNames();
@@ -137,12 +145,94 @@ public class ChartView
 					paneIndex, this);
 				}
 			}
+			if (plot.isCombinedDomainPlot())
+			{
+				Double weight = (pf.getPane().getPrefHeight() * 100) / plot.getHeight();
+				mplot.add(pf.getChart().getXYPlot(), weight.intValue());
+			} else
+			{
+				plots.add(pf);
+				plotPane.getChildren().add(pf.getPane());
+				plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
+			}
+
+		}
+		if (plot.isCombinedDomainPlot())
+		{
+
+			BorderPane pane = new BorderPane();
+			pane.setPrefSize(plot.getWidth(), plot.getHeight());
+			pf = new SubChartView(new JFreeChart("HSE Plot", JFreeChart.DEFAULT_TITLE_FONT, mplot, true), pane,
+			this.plot, this);
 			plots.add(pf);
 			plotPane.getChildren().add(pf.getPane());
-			plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
 		}
+
+		cleanMultiDomainLegend(mplot);
+		plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
 		return true;
 	}
+
+	private void cleanMultiDomainLegend(CombinedDomainXYPlot mplot)
+	{
+		if (plot.isCombinedDomainPlot())
+		{
+			ArrayList<String> existingLabels = new ArrayList<String>();
+			LegendItemCollection items = new LegendItemCollection();
+			System.out.println(mplot.getLegendItems().getItemCount());
+			for (int i = 0; i < mplot.getLegendItems().getItemCount(); i++)
+			{
+
+				LegendItem item = mplot.getLegendItems().get(i);
+				System.out.println(item.getLabel());
+				if (!existingLabels.contains(item.getLabel()))
+				{
+					items.add(item);
+					existingLabels.add(item.getLabel());
+				}
+			}
+			mplot.setFixedLegendItems(items);
+		}
+	}
+
+	// private boolean renderContents()// CustomLayout()
+	// {
+	// try
+	// {
+	// env.getAllStoredObjectSetNames();
+	// plots.clear();
+	// } catch (Exception e)
+	// {
+	// e.printStackTrace();
+	// }
+	// SubChartView pf = null;
+	// HashMap<Integer, Integer[][]> dimensions = ChartConfiguration.ChartOperations.getChartLocations(plot);
+	// for (Integer paneIndex : dimensions.keySet())
+	// {
+	// pf = null;
+	// if (env == null)
+	// {
+	// pf = new SubChartView(createSubChartPane(dimensions.get(paneIndex), paneIndex, false), plot, paneIndex,
+	// this);
+	// } else
+	// {
+	// if (plot.chartProperties(paneIndex).getyDataSelection() != null)
+	// {
+	// pf = new SubChartView(env, createSubChartPane(dimensions.get(paneIndex), paneIndex, false),
+	// plot.chartProperties(paneIndex).getyDataSelection(), plot, paneIndex, this);
+	// } else
+	// {
+	// pf = new SubChartView(env, createSubChartPane(dimensions.get(paneIndex), paneIndex, false), plot,
+	// paneIndex, this);
+	// }
+	// }
+	// plots.add(pf);
+	// plotPane.getChildren().add(pf.getPane());
+	//
+	// }
+	// plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
+	// return true;
+	// }
 
 	public void setChartConfiguration(ChartConfiguration plot)
 	{

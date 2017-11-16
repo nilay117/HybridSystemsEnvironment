@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 
 public class ChartConfiguration
 {
@@ -30,6 +31,7 @@ public class ChartConfiguration
 	private boolean displayGlobalLegend;
 
 	// Layout
+	private boolean combinedDomainPlot;
 	private Double height;
 	private Double width;
 	private Integer[][] chartArrangementMatrix;
@@ -43,7 +45,8 @@ public class ChartConfiguration
 	private HashMap<String, ArrayList<Stroke>> assignedStrokes;
 
 	// Chart Properties
-	public JFreeChart chartTemplate;
+	private JFreeChart chartTemplate;
+	private CombinedDomainXYPlot combinedPlot = null;
 
 	public void addMainTitle(String main_title, Font title_font)
 	{
@@ -279,7 +282,7 @@ public class ChartConfiguration
 		flowStroke = new BasicStroke(1.5f);
 
 		chartPropertyMap = new HashMap<Integer, SubChartProperties>();
-		chartTemplate = SubChartView.getDefaultChart();
+		setChartTemplate(SubChartView.getDefaultChart());
 
 		displayGlobalLegend = false;
 		globalLegendFont = new Font("Tahoma", Font.PLAIN, 10);
@@ -342,6 +345,46 @@ public class ChartConfiguration
 	public void setGlobalLegendFont(Font globalLegendFont)
 	{
 		this.globalLegendFont = globalLegendFont;
+	}
+
+	public boolean isCombinedDomainPlot()
+	{
+		return combinedDomainPlot;
+	}
+
+	public void setCombinedDomainPlot(boolean combinedDomainPlot)
+	{
+		if (combinedDomainPlot)
+		{
+			if (combinedPlot == null)
+			{
+				combinedPlot = new CombinedDomainXYPlot();
+			}
+		} else
+		{
+			combinedPlot = null;
+		}
+		this.combinedDomainPlot = combinedDomainPlot;
+	}
+
+	public JFreeChart getChartTemplate()
+	{
+		return chartTemplate;
+	}
+
+	public void setChartTemplate(JFreeChart chartTemplate)
+	{
+		this.chartTemplate = chartTemplate;
+	}
+
+	public CombinedDomainXYPlot getCombinedPlot()
+	{
+		return combinedPlot;
+	}
+
+	public void setCombinedPlot(CombinedDomainXYPlot combinedPlot)
+	{
+		this.combinedPlot = combinedPlot;
 	}
 
 	public static class ChartOperations

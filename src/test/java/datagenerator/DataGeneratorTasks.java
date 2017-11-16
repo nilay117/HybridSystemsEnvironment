@@ -198,10 +198,10 @@ public class DataGeneratorTasks extends TaskManager
 		// * there is no main title by default so following line can be ommitted if no main title is desired
 		plot.addMainTitle(null, null);
 
-		plot.chartTemplate.getXYPlot().getDomainAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
-		plot.chartTemplate.getTitle().setText("YYEEEE");// .setFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
-		plot.chartTemplate.getXYPlot().getDomainAxis().setTickLabelsVisible(true);
-		plot.chartTemplate.getLegend().setVisible(true);
+		plot.getChartTemplate().getXYPlot().getDomainAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
+		plot.getChartTemplate().getTitle().setText("YYEEEE");// .setFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
+		plot.getChartTemplate().getXYPlot().getDomainAxis().setTickLabelsVisible(true);
+		plot.getChartTemplate().getLegend().setVisible(true);
 		return plot;
 	}
 
