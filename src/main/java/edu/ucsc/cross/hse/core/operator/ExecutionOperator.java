@@ -146,7 +146,7 @@ public class ExecutionOperator
 		start();
 		stop();
 		env.getOutputs().generateOutputs(env, true);
-
+		generateFiles();
 		// writeFiles(false);
 
 	}
@@ -290,8 +290,7 @@ public class ExecutionOperator
 	HashMap<FileSpecifications<F>, T> unappended, Object component)
 	{
 		HashMap<FileSpecifications<F>, T> appended = new HashMap<FileSpecifications<F>, T>();
-		String prefix = String
-		.valueOf(getStartTime(ExecutionOperator.getContainingEnvironment(component), false));
+		String prefix = String.valueOf(getStartTime(ExecutionOperator.getContainingEnvironment(component), false));
 		for (FileSpecifications<F> spec : unappended.keySet())
 		{
 			FileSpecifications<F> specs = spec.copy();
@@ -301,7 +300,7 @@ public class ExecutionOperator
 				ExecutionOperator.getContainingEnvironment(component).getSettings().getOutputSettings().outputDirectory)
 				.getAbsolutePath(), prefix)));
 				// System.out.println("final path: " + specs.getLocation(false).getAbsolutePath());
-	
+
 			}
 			appended.put(specs, unappended.get(spec));
 		}

@@ -67,7 +67,7 @@ public class DataGeneratorTasks extends TaskManager
 		ChartConfiguration HybridChart1 = xyCombination();
 		ChartConfiguration HybridChart2 = xOnly();
 		ChartConfiguration HybridChart3 = xyVsTimeVertical();
-		// env.add(HybridChart1, HybridChart2, HybridChart3);
+		env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 5; i++)
 		{
 			CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);

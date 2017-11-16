@@ -2,6 +2,7 @@ package edu.cross.ucsc.hse.core.chart;
 
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
+import com.be3short.obj.modification.XMLParser;
 import de.erichseifert.vectorgraphics2d.Document;
 import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
 import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
@@ -12,10 +13,15 @@ import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.io.Console;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,9 +45,16 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Size2D;
 
 public class ChartView
 {
@@ -55,17 +68,28 @@ public class ChartView
 	private ChartConfiguration plot;
 	private Pane plotPane;
 	private ArrayList<SubChartView> plots;
+	private LegendTitle globalLegend;
 
 	public void exportToFile(File f, ImageFormat format)
 	{
-		double width = plotPane.widthProperty().get();
-		double height = plotPane.heightProperty().get() + measureFont();
-		BufferedImage bi = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
-		prepareBackgroundsForGraphicsCapture(format.needsBackground);// format.needsBackground);
-		Graphics2D graphics = prepareVectorGraphics(format.image, bi);
-		graphics = paintGraphics(graphics);
-		createGraphicFile(f, format, graphics, bi);
 
+		SwingUtilities.invokeLater(new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+
+				double width = plotPane.widthProperty().get();
+				double height = plotPane.heightProperty().get() + measureFont() + drawGlobalLegend().height;
+				BufferedImage bi = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
+				prepareBackgroundsForGraphicsCapture(format.needsBackground);// format.needsBackground);
+				Graphics2D graphics = prepareVectorGraphics(format.image, bi);
+				graphics = paintGraphics(graphics);
+				createGraphicFile(f, format, graphics, bi);
+
+			}
+		});
 	}
 
 	public ChartConfiguration getChartConfiguration()
@@ -83,7 +107,7 @@ public class ChartView
 		return mainPane;
 	}
 
-	public void renderContents()
+	public boolean renderContents()
 	{
 		try
 		{
@@ -91,7 +115,7 @@ public class ChartView
 			plots.clear();
 		} catch (Exception e)
 		{
-
+			e.printStackTrace();
 		}
 		SubChartView pf = null;
 		HashMap<Integer, Integer[][]> dimensions = ChartConfiguration.ChartOperations.getChartLocations(plot);
@@ -118,7 +142,7 @@ public class ChartView
 			plotPane.getChildren().add(pf.getPane());
 			plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
 		}
-
+		return true;
 	}
 
 	public void setChartConfiguration(ChartConfiguration plot)
@@ -173,7 +197,7 @@ public class ChartView
 	{
 
 		Double widthGrid = plot.getWidth() / dimensions[0].length;
-		Double heightGrid = (getHeight(true)) / dimensions.length;
+		Double heightGrid = ((getHeight(true)) - drawGlobalLegend().height) / dimensions.length;
 		Double x = x_min * widthGrid;
 		Double y = (y_min * heightGrid);
 
@@ -244,10 +268,38 @@ public class ChartView
 
 				JPanel panel = new JPanel();
 				panel.add(label, BorderLayout.CENTER);
+
+				// , new Rectangle(100,
+				// 100));
 				// panel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
 				swingNode.setContent(panel);// panel);
 				panels.add(panel);
+
+				// SwingUtilities.invokeLater(new Runnable()
+				// {
+				//
+				// @Override
+				// public void run()
+				// {
+				//
+				// LegendTitle title = (LegendTitle) ObjectCloner.xmlClone(plots.get(0).getChart().getLegend());
+				// title.setVisible(true);
+				// System.out.println(XMLParser.serializeObject(title));
+				//
+				// // title.arrange((Graphics2D) panel.getGraphics());
+				// title.draw((Graphics2D) panel.getGraphics(), panel.getBounds());//
+				// chart.getLegend().draw((Graphics2D)
+				// // g,
+				// // new
+				//
+				// }
+				// });
+				// Rectangle(0,
+				// 0,
+				// this.getWidth(),
+				// this.getHeight()));//plots.get(0).getChart().getLegend().arrange((Graphics2D)
+				// panel.getGraphics());
 			}
 		});
 		addOnPane.setTop(swingNode);
@@ -289,7 +341,7 @@ public class ChartView
 
 						} catch (Exception e)
 						{
-							// e.printStackTrace();
+							e.printStackTrace();
 							// Console.error("Unable to create output plot: " + output.toString());
 						}
 						// your code here
@@ -330,12 +382,15 @@ public class ChartView
 			addOnPane.setCenter(plotPane);
 			// addOnPane.setBackground(null);
 			setupSave();
+
+			renderContents();
 			if (plot.getMainTitle() != null)
 			{
 				createSwingContent();
 			}
-			renderContents();
 
+			final SwingNode n = new SwingNode();
+			// createSwingLabel(n);
 			// setupMenus();
 			ScrollPane scroller = new ScrollPane();
 			scroller.setVbarPolicy(ScrollBarPolicy.NEVER);
@@ -348,11 +403,66 @@ public class ChartView
 			b.setAlignment(Pos.CENTER);
 			mainPane.setCenter(b);
 
+			final SwingNode swingNode = new SwingNode();
+			createSwingLabel(swingNode);
+
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
+
+	private Size2D drawGlobalLegend()
+	{
+		Size2D size = new Size2D(0.0, 0.0);
+		try
+		{
+			BufferedImage bi = new BufferedImage(getChartConfiguration().getWidth().intValue(),
+			getChartConfiguration().getHeight().intValue(), BufferedImage.TYPE_INT_RGB);
+			Graphics2D graphics = prepareVectorGraphics(false, bi);
+			size = globalLegend.arrange(graphics);
+			globalLegend.draw(graphics,
+			new Rectangle((int) ((this.getChartConfiguration().getWidth() - size.width) / 2),
+			this.getChartConfiguration().getHeight().intValue(), this.getChartConfiguration().getWidth().intValue(),
+			this.getChartConfiguration().getHeight().intValue()));
+		} catch (Exception e)
+		{
+
+		}
+		return size;
+	}
+
+	// private void initializeGlobalLegend()
+	// {
+	// ArrayList<LegendItem> legendItems = new ArrayList<LegendItem>();
+	// for (SubChartView ch : plots)
+	// {
+	//
+	// try
+	// {
+	// for (int i = 0; i < ch.getChart().getXYPlot().getLegendItems().getItemCount(); i++)
+	// {
+	// LegendItem item = ch.getChart().getXYPlot().getLegendItems().get(i);
+	// if (!legendItems.contains(item))
+	// {
+	// legendItems.add(item);
+	// }
+	// }
+	// } catch (Exception e)
+	// {
+	//
+	// }
+	// }
+	//
+	// JFreeChart ch = (JFreeChart) ObjectCloner.xmlClone(getChartConfiguration().chartTemplate);
+	// ch.getLegend().setVisible(true);
+	// for (LegendItem item : legendItems)
+	// {
+	// ch.getPlot().getLegendItems().add(item);
+	// }
+	//
+	// globalLegend = ch.getLegend();// ObjectCloner.xmlClone(plots.get(0).getChart().getPlot()));
+	// }
 
 	private Double measureFont()
 	{
@@ -383,6 +493,13 @@ public class ChartView
 		{
 			panel.print(graphics);
 		}
+		Size2D size = globalLegend.arrange(graphics);
+		globalLegend.draw(graphics,
+		new Rectangle((int) ((this.getChartConfiguration().getWidth() - size.width) / 2),
+		this.getChartConfiguration().getHeight().intValue(), this.getChartConfiguration().getWidth().intValue(),
+		this.getChartConfiguration().getHeight().intValue()));
+		System.out.println(XMLParser.serializeObject(globalLegend.arrange(graphics)));
+
 		return graphics;
 	}
 
@@ -410,8 +527,15 @@ public class ChartView
 			panel.setOpaque(load_background);
 			if (load_background)
 			{
-				panel.setBackground(Color.WHITE);
+				panel.setBackground(Color.white);
 			}
+		}
+		if (load_background)
+		{
+			globalLegend.setBackgroundPaint(Color.white);
+		} else
+		{
+			globalLegend.setBackgroundPaint(null);
 		}
 	}
 
@@ -494,4 +618,231 @@ public class ChartView
 		setupStage(stage, false);
 		getOutput(output, stage);
 	}
+
+	// public static class MyPanel extends JPanel
+	public class MyPanel extends JPanel
+	{
+
+		SubChartView v;
+		private int squareX = 0;
+		private int squareY = 0;
+		private int squareW = 20;
+		private int squareH = 20;
+		JFreeChart chart;
+		ChartView panez;
+
+		public MyPanel(ChartView panez, EnvironmentData chartz, ChartView p)
+		{
+			v = new SubChartView(chartz, new BorderPane(), panez.plot, 0, panez);
+			p.getChartConfiguration().chartProperties(0).setDisplayLegend(true);
+			v.toggleLegendVisibility(true);// .getChart().getLegend().setVisible(true);
+			this.panez = panez;
+			// v.getProps().addToYFilter(v.getFieldNames().get(0));
+			SwingUtilities.invokeLater(new Runnable()
+
+			{
+
+				@Override
+				public void run()
+				{
+					chart = v.getChart();
+
+					ArrayList<LegendItem> legendItems = new ArrayList<LegendItem>();
+					XYSeriesCollection ser = (XYSeriesCollection) chart.getXYPlot().getDataset();
+					for (SubChartView ch : plots)
+					{
+						XYSeriesCollection series = (XYSeriesCollection) ch.getChart().getXYPlot().getDataset();
+						for (int in = 0; in < series.getSeriesCount(); in++)
+						{
+							XYSeries serie = series.getSeries(in);
+							try
+							{
+								ser.addSeries(serie);
+							} catch (Exception e)
+							{
+
+							}
+						}
+						try
+
+						{
+							for (int i = 0; i < ch.getChart().getXYPlot().getLegendItems().getItemCount(); i++)
+							{
+								LegendItem item = ch.getChart().getXYPlot().getLegendItems().get(i);
+								if (!legendItems.contains(item))
+								{
+									legendItems.add(item);
+								}
+							}
+						} catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+
+					// v.getProps().setLegendVisible(true);
+					// this.chart = v.createChart();// (new ViewPane(chart, p, null)).getChart().getChart();
+
+					for (LegendItem item : legendItems)
+					{
+						chart.getPlot().getLegendItems().add(item);
+					}
+
+					chart.getLegend().setVisible(true);
+					chart.getLegend().setBackgroundPaint(null);
+					globalLegend = chart.getLegend();
+					drawGlobalLegend();
+
+				}
+			});
+
+			// this.chart = v.getChart();
+			//
+			// ArrayList<LegendItem> legendItems = new ArrayList<LegendItem>();
+			// XYSeriesCollection ser = (XYSeriesCollection) this.chart.getXYPlot().getDataset();
+			// for (SubChartView ch : plots)
+			// {
+			// XYSeriesCollection series = (XYSeriesCollection) ch.getChart().getXYPlot().getDataset();
+			// for (int in = 0; in < series.getSeriesCount(); in++)
+			// {
+			// XYSeries serie = series.getSeries(in);
+			// ser.addSeries(serie);
+			// }
+			// try
+			//
+			// {
+			// for (int i = 0; i < ch.getChart().getXYPlot().getLegendItems().getItemCount(); i++)
+			// {
+			// LegendItem item = ch.getChart().getXYPlot().getLegendItems().get(i);
+			// if (!legendItems.contains(item))
+			// {
+			// legendItems.add(item);
+			// }
+			// }
+			// } catch (Exception e)
+			// {
+			// e.printStackTrace();
+			// }
+			// }
+			//
+			// // v.getProps().setLegendVisible(true);
+			// // this.chart = v.createChart();// (new ViewPane(chart, p, null)).getChart().getChart();
+			//
+			// for (LegendItem item : legendItems)
+			// {
+			// this.chart.getPlot().getLegendItems().add(item);
+			// }
+
+			// globalLegend = ch.getLegend();// ObjectCloner.xmlClone(plots.get(0).getChart().getPlot()));
+			this.setLayout(new FlowLayout());
+			this.setAlignmentX((float) 0.5);
+			// , BorderLayout.CENTER);
+			setBorder(BorderFactory.createLineBorder(Color.black));
+			// setBackground(null);
+			// setOpaque(false);
+
+			addMouseListener(new MouseAdapter()
+			{
+
+				public void mousePressed(MouseEvent e)
+				{
+					moveSquare(e.getX(), e.getY());
+				}
+			});
+
+			addMouseMotionListener(new MouseAdapter()
+			{
+
+				public void mouseDragged(MouseEvent e)
+				{
+					moveSquare(e.getX(), e.getY());
+				}
+			});
+
+		}
+
+		private void moveSquare(int x, int y)
+		{
+			update();
+
+			int OFFSET = 1;
+			// if ((squareX != x) || (squareY != y))
+			{
+				repaint(squareX, squareY, this.getWidth(), this.getHeight());
+				squareX = 0;
+				squareY = 0;
+				repaint(squareX, squareY, this.getWidth(), this.getHeight());
+			}
+		}
+
+		public void update()
+		{
+			// v.getProps().getyFilters().clear();
+			// v.getProps().setLegendVisible(true);
+			// for (ViewPane fn : panez.childPanes)
+			{
+
+				// v.getProps().addToYFilter(fn.getChart().getProps().getyFilters().get(0));
+			}
+
+			// v.getProps().addToYFilter(v.getFieldNames().get(0));
+			// l.draw((Graphics2D) this.getGraphics(), new Rectangle(this.getWidth() / 2, this.getHeight()));
+			// v.getProps().setLegendVisible(true);
+			// this.chart = v.createChart();
+		}
+
+		public Dimension getPreferredSize()
+		{
+			return new Dimension(25, 20);
+		}
+
+		protected void paintComponent(Graphics g)
+		{
+			this.chart.getLegend().setBackgroundPaint(null);
+			super.paintComponent(g);
+			drawGlobalLegend();
+			// this.chart.getLegend().arrange((Graphics2D) g, new RectangleConstraint(this.getWidth(),
+			// this.getHeight()));// ,
+			// new
+			// RectangleConstraint(this.getWidth(),
+			// this.getHeight()));
+			// this.chart.getLegend().draw((Graphics2D) g, new Rectangle(this.getWidth(), this.getHeight()));
+			// g.drawRect(squareX, squareY, squareW, squareH);
+		}
+
+	}
+
+	private void createSwingLabel(final SwingNode swingNode)
+	{
+		final EnvironmentData data = env;
+		final ChartView mp = this;
+		ChartView panez = this;
+
+		MyPanel p = new MyPanel(panez, data, mp);
+
+		// JFreeChart c = createCombinedChart();
+		// p.setChart(c);
+		// JFrame f = new JFrame();
+		// JPanel pan = createDemoPanel();
+		// table.add((Component) l.getItemContainer().getFrame().);
+		// f.add(p);
+		// p.add(table, BorderLayout.CENTER);
+		// panels.add(p);
+		// p.repaint();
+		// p.setOpaque(true);
+		// JPanel pan = new JPanel();
+		// pan.add(p);
+		// f.add(p);
+		// Graphics2D g =
+		// JFreeChart c = createCombinedChart();
+		// p.setChart(c);
+		// p.setPreferredSize(new Dimension(200, 200));
+		swingNode.setContent(p);
+
+		BorderPane lp = new BorderPane();
+		lp.setCenter(swingNode);
+		addOnPane.setBottom(lp);
+
+	}
+
 }

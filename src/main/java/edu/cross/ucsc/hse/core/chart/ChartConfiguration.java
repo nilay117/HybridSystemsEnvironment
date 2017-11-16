@@ -42,12 +42,6 @@ public class ChartConfiguration
 	// Chart Properties
 	public JFreeChart chartTemplate;
 
-	private JFreeChart obtainChart()
-	{
-		SubChartView sv = new SubChartView(null, this, 0, null);
-		return sv.createChart(null);
-	}
-
 	public void addMainTitle(String main_title, Font title_font)
 	{
 		mainTitle = main_title;
@@ -282,7 +276,7 @@ public class ChartConfiguration
 		flowStroke = new BasicStroke(3.5f);
 
 		chartPropertyMap = new HashMap<Integer, SubChartProperties>();
-		chartTemplate = obtainChart();
+		chartTemplate = SubChartView.getDefaultChart();
 		initializeSubPlots();
 	}
 

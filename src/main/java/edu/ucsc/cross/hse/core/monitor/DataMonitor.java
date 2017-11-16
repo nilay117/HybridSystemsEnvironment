@@ -76,6 +76,34 @@ public class DataMonitor
 			}
 
 		}
+		removeIndicesFromNonDuplicateNames(duplicateNames);
+	}
+
+	/*
+	 * Removes the index number appended to a unique name that was already unique.
+	 */
+	private void removeIndicesFromNonDuplicateNames(ArrayList<ObjectSet> objects)
+	{
+		for (ObjectSet obj : objects)
+		{
+			boolean nameAlreadyUnique = true;
+			for (ObjectSet otherObj : objects)
+			{
+				if (!otherObj.equals(obj))
+				{
+					if (otherObj.extension().getName().equals(obj.extension().getName()))
+					{
+						nameAlreadyUnique = false;
+
+					}
+				}
+			}
+			if (nameAlreadyUnique)
+			{
+				obj.extension().setUniqueLabel(obj.extension().getName());
+			}
+
+		}
 	}
 
 	public void performDataActions(double time, double state_vector[], JumpStatus jump_status)
@@ -181,8 +209,7 @@ public class DataMonitor
 
 		if (manager.getDataCollector().getStoreTimes().size() > i)
 		{
-			for (Integer objIndex = 0; objIndex < manager.getExecutionContent()
-			.getSimulatedObjectAccessVector().length; objIndex++)
+			for (Integer objIndex = 0; objIndex < manager.getDataCollector().getAllDataSeries().size(); objIndex++)
 			{
 				DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
 				if (data.getAllStoredData().size() > i)

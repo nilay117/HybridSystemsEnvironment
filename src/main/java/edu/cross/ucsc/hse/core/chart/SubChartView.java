@@ -5,6 +5,7 @@ import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -142,9 +143,40 @@ public class SubChartView
 		});
 	}
 
-	JFreeChart createChart(XYDataset dataset)
+	public static JFreeChart getDefaultChart()
 	{
-		if (chartProps.chartTemplate != null)
+		JFreeChart chart = ChartFactory.createXYLineChart("", "", "", null, PlotOrientation.VERTICAL, true, true, true);
+
+		chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
+		chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
+		chart.getXYPlot().setDomainGridlinesVisible(true);
+		chart.getXYPlot().setRangeGridlinesVisible(true);
+
+		chart.getXYPlot().getDomainAxis().setLabelFont(new Font("Tahoma", Font.PLAIN, 12));
+		chart.getXYPlot().getRangeAxis().setLabelFont(new Font("Tahoma", Font.PLAIN, 12));
+		chart.getXYPlot().getDomainAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 10));
+		chart.getXYPlot().getRangeAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 10));
+		chart.getTitle().setFont(new Font("Tahoma", Font.BOLD, 14));
+		chart.getLegend().setItemFont(new Font("Tahoma", Font.PLAIN, 10));
+
+		chart.setBackgroundPaint(null);
+		chart.getLegend().setBackgroundPaint(null);
+		chart.getXYPlot().setBackgroundPaint(null);
+		chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
+		chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
+
+		chart.setAntiAlias(true);
+
+		chart.getLegend().setFrame(BlockBorder.NONE);
+		chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
+		chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
+
+		return chart;
+	}
+
+	private void initializeChart(XYDataset dataset)
+	{
+		try
 		{
 
 			chart = (JFreeChart) ObjectCloner.xmlClone(chartProps.chartTemplate);
@@ -162,35 +194,16 @@ public class SubChartView
 				chart.getXYPlot().getDomainAxis().setRange(data.getEarliestStoredTime().getTime(),
 				data.getLastStoredTime().getTime());
 			}
-		} else
+			chart.setTitle(properties().getTitle());
+			chart.getXYPlot().getDomainAxis().setLabel(properties().getxAxisLabel());
+			chart.getXYPlot().getRangeAxis().setLabel(properties().getyAxisLabel());
+			chart.getLegend().setVisible(properties().isDisplayLegend());
+
+		} catch (Exception e)
 		{
-			PlotOrientation orientation = PlotOrientation.VERTICAL;
-			chart = ChartFactory.createXYLineChart("", "", "", dataset, orientation, true, true, true);
-			chart.getXYPlot().getDomainAxis().setAxisLineVisible(false);
-			chart.getXYPlot().getRangeAxis().setAxisLineVisible(false);
-			chart.getXYPlot().setDomainGridlinesVisible(true);
-			chart.getXYPlot().setRangeGridlinesVisible(true);
-			chart.getXYPlot().setDomainGridlinePaint(Color.GRAY);
-			chart.getXYPlot().setRangeGridlinePaint(Color.GRAY);
-			// chart.getXYPlot().getRangeAxis().setAutoTickUnitSelection(false);
-			// chart.getXYPlot().getDomainAxis().setAutoTickUnitSelection(false);
-			chart.getXYPlot().getRangeAxis().setMinorTickCount(4);
-			chart.setBackgroundPaint(null);
-			chart.getLegend().setBackgroundPaint(null);
-			chart.getXYPlot().setBackgroundPaint(null);
-			chart.setAntiAlias(true);
-			chart.getLegend().setFrame(BlockBorder.NONE);
-			chart.getLegend().setHorizontalAlignment(HorizontalAlignment.CENTER);
-			chart.getLegend().setVerticalAlignment(VerticalAlignment.CENTER);
-			chart.setAntiAlias(false);
+
 		}
 
-		chart.setTitle(properties().getTitle());
-		chart.getXYPlot().getDomainAxis().setLabel(properties().getxAxisLabel());
-		chart.getXYPlot().getRangeAxis().setLabel(properties().getyAxisLabel());
-		chart.getLegend().setVisible(properties().isDisplayLegend());
-
-		return chart;
 	}
 
 	private void createSwingContent()
@@ -208,7 +221,7 @@ public class SubChartView
 				{
 					dataset = createDataset();
 				}
-				createChart(dataset);
+				initializeChart(dataset);
 				panel = new ChartPanel(chart);
 				swingNode.setContent(panel);// panel);
 			}
