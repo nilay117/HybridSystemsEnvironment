@@ -159,11 +159,11 @@ public class ChartView
 		}
 		if (plot.isCombinedDomainPlot())
 		{
-
+			mplot.getDomainAxis().setRange(env.getEarliestStoredTime().getTime(), env.getLastStoredTime().getTime());
 			BorderPane pane = new BorderPane();
 			pane.setPrefSize(plot.getWidth(), plot.getHeight());
-			pf = new SubChartView(new JFreeChart("HSE Plot", JFreeChart.DEFAULT_TITLE_FONT, mplot, true), pane,
-			this.plot, this);
+			pf = new SubChartView(new JFreeChart(null, JFreeChart.DEFAULT_TITLE_FONT, mplot, true), pane, this.plot,
+			this);
 			plots.add(pf);
 			plotPane.getChildren().add(pf.getPane());
 		}

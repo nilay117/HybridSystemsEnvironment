@@ -359,6 +359,7 @@ public class ChartConfiguration
 			if (combinedPlot == null)
 			{
 				combinedPlot = new CombinedDomainXYPlot();
+
 			}
 		} else
 		{

@@ -3,13 +3,9 @@ package datagenerator;
 import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
-import edu.cross.ucsc.hse.core.chart.ChartType;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
 import edu.ucsc.cross.hse.core.task.TaskManager;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
 import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -28,7 +24,7 @@ public class DataGeneratorTasks extends TaskManager
 		// openEnvironmentAndPlot();//
 		// dataGeneratorSimulation();//
 		long l = (long) 1.9;
-		dataGeneratorSimulation();
+		untaryDataGeneratorSimulation();// untaryDataGeneratorSimulation();
 		System.out.println(System.nanoTime() + " " + 10000000E-9);
 	}
 
@@ -75,6 +71,34 @@ public class DataGeneratorTasks extends TaskManager
 			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
 		env.start(10.0, 100000);
+		// xyCombination().createChart(env);
+		// HybridChart1.createChart(env);
+		// HybridChart2.createChart(env);
+		// HybridChart3.createChart(env);
+		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
+		// env.save(new File("output/test"), false);
+		// //env.save(new File("output/testDat"), true);
+		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
+		// cv.setChartProperties(HybridChart2);
+
+	}
+
+	public static void untaryDataGeneratorSimulation()
+	{
+		Environment env = getConfiguredEnvironment();
+
+		ChartConfiguration HybridChart1 = xyCombination();
+		ChartConfiguration HybridChart2 = xOnly();
+		ChartConfiguration HybridChart3 = xyVsTimeVertical();
+		// env.add(HybridChart1, HybridChart2, HybridChart3);
+		for (int i = 0; i < 1; i++)
+		{
+			// CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);
+			// åenv.add(signalGenerator);
+			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
+		}
+		env.start(10.0, 100000);
+		xyVsTimeVertical().createChart(env);
 		// xyCombination().createChart(env);
 		// HybridChart1.createChart(env);
 		// HybridChart2.createChart(env);
@@ -165,28 +189,27 @@ public class DataGeneratorTasks extends TaskManager
 	public static ChartConfiguration xyVsTimeVertical()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
-		ChartConfiguration plot = new ChartConfiguration(800.0, 600.0);
+		ChartConfiguration plot = new ChartConfiguration(650.0, 400.0);
 		// plot.
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
 		{
-				{ 0, 0, 0, 2, 2, 2, 3 } });
-		plot.assignColors("DataGeneratorState", Color.black, Color.gray, Color.DARK_GRAY);
-		plot.assignStrokes("DataGeneratorState", new BasicStroke(0.5f));// Select data to display
+				{ 0, 0, 0 },
+				{ 1, 1, 1 } });
+		// plot.assignColors("DataGeneratorState", Color.black, Color.gray, Color.DARK_GRAY);
+		// plot.assignStrokes("DataGeneratorState", new BasicStroke(0.5f));// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected
 		// * null is used to select time as the x axis values
-		plot.chartProperties(0).setAxisSelections(null, "xValue");
-		plot.chartProperties(1).setAxisSelections(null, "yValue");
-		plot.chartProperties(2).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(1).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(0).setAxisSelections(null, "timeToNextData");
+
 		// Select axis labels
 		// * null is used to hide an axis label
-		plot.chartProperties(0).setAxisLabels(null, "X Value");
-		plot.chartProperties(1).setAxisLabels("Time (sec)", "Y Value");
-		plot.chartProperties(2).setChartType(ChartType.SCATTER_WITH_LINE);
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Data Generated");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Time to Next Generation");
 		// Specify legend visibility
-		plot.chartProperties(0).setDisplayLegend(true);
+		// plot.chartProperties(0).setDisplayLegend(true);
 		plot.chartProperties(1).setDisplayLegend(true);
-		plot.chartProperties(2).setDisplayLegend(true);
 		// Specify overall title for the plot
 		// * null is used to indicate no sub plot title
 		// * there are no sub plot titles by default so following lines can be ommitted for no sub plot titles
@@ -197,11 +220,6 @@ public class DataGeneratorTasks extends TaskManager
 		// * null is used to indicate no main title
 		// * there is no main title by default so following line can be ommitted if no main title is desired
 		plot.addMainTitle(null, null);
-
-		plot.getChartTemplate().getXYPlot().getDomainAxis().setTickLabelFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
-		plot.getChartTemplate().getTitle().setText("YYEEEE");// .setFont(new Font("Tahoma", Font.PLAIN, 50)); // 12));
-		plot.getChartTemplate().getXYPlot().getDomainAxis().setTickLabelsVisible(true);
-		plot.getChartTemplate().getLegend().setVisible(true);
 		return plot;
 	}
 

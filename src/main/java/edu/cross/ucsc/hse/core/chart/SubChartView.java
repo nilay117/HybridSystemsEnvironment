@@ -69,13 +69,13 @@ public class SubChartView
 				if (matchesSelection)
 				{
 					// \String label = this.data.getStateNames().get(data.getParentID() + data.getElementName());//
-					String label = data.getParent().extension().getUniqueLabel();
+					String label = data.getParent().extension().getUniqueLabel();// .getUniqueLabel();
 					// defaultValue).getLegendLabel(data);//
 					// getLegendLabel(data,
 					// names);
 					names.add(label);
 					XYSeries s1 = new XYSeries(label, false);
-					s1.setDescription(label);
+					s1.setDescription(data.getParent().extension().getUniqueLabel());
 					for (HybridTime ind : this.data.getStoreTimes())
 					{
 						Double y = (Double) data.getStoredData(ind);
@@ -94,7 +94,6 @@ public class SubChartView
 
 				}
 			}
-
 			ArrayList<String> serName = new ArrayList<String>(ser.keySet());
 			Collections.sort(serName);
 			for (String se : serName)

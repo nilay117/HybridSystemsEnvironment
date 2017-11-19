@@ -79,7 +79,7 @@ public class CSVFileParser
 	private String getLineIntro(Integer index)
 	{
 		HybridTime time = data.getStoreTimes().get(index);
-		String line = index + "," + time.getTime() + "," + time.getJumps();
+		String line = time.getTime() + "," + time.getJumps();
 		return line;
 	}
 
