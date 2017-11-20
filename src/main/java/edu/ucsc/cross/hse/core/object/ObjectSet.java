@@ -5,12 +5,12 @@ public class ObjectSet
 
 	private String name;
 	private String uniqueLabel;
-	private String address;
+	private Integer address;
 	private boolean simulated;
 
 	private boolean saveHistory;
 
-	public ObjectSetAPI extension()
+	public ObjectSetAPI data()
 	{
 		return new ObjectSetAPI(this);
 	}
@@ -18,7 +18,7 @@ public class ObjectSet
 	public ObjectSet()
 	{
 		this.name = this.getClass().getSimpleName();
-		this.address = this.toString();
+
 	}
 
 	public static class ObjectSetAPI
@@ -41,7 +41,7 @@ public class ObjectSet
 			return obj.uniqueLabel;
 		}
 
-		public String getAddress()
+		public Integer getAddress()
 		{
 			return obj.address;
 		}
@@ -66,7 +66,7 @@ public class ObjectSet
 			obj.uniqueLabel = name;
 		}
 
-		public void setAddress(String address)
+		public void setAddress(Integer address)
 		{
 			obj.address = address;
 		}

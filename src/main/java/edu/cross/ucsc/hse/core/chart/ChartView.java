@@ -1,16 +1,5 @@
 package edu.cross.ucsc.hse.core.chart;
 
-import com.be3short.io.format.FileSpecifications;
-import com.be3short.io.format.ImageFormat;
-import com.be3short.obj.modification.ObjectCloner;
-import de.erichseifert.vectorgraphics2d.Document;
-import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
-import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
-import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
-import de.erichseifert.vectorgraphics2d.svg.SVGProcessor;
-import de.erichseifert.vectorgraphics2d.util.PageSize;
-import edu.ucsc.cross.hse.core.container.EnvironmentData;
-import edu.ucsc.cross.hse.core.io.Console;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,6 +16,34 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Size2D;
+
+import com.be3short.io.format.FileSpecifications;
+import com.be3short.io.format.ImageFormat;
+import com.be3short.obj.modification.ObjectCloner;
+
+import de.erichseifert.vectorgraphics2d.Document;
+import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
+import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
+import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
+import de.erichseifert.vectorgraphics2d.svg.SVGProcessor;
+import de.erichseifert.vectorgraphics2d.util.PageSize;
+import edu.ucsc.cross.hse.core.container.EnvironmentData;
+import edu.ucsc.cross.hse.core.io.Console;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -44,19 +61,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
-import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.plot.CombinedDomainXYPlot;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.Size2D;
 
 public class ChartView
 {
@@ -179,12 +183,12 @@ public class ChartView
 		{
 			ArrayList<String> existingLabels = new ArrayList<String>();
 			LegendItemCollection items = new LegendItemCollection();
-			System.out.println(mplot.getLegendItems().getItemCount());
+			// System.out.println(mplot.getLegendItems().getItemCount());
 			for (int i = 0; i < mplot.getLegendItems().getItemCount(); i++)
 			{
 
 				LegendItem item = mplot.getLegendItems().get(i);
-				System.out.println(item.getLabel());
+				// System.out.println(item.getLabel());
 				if (!existingLabels.contains(item.getLabel()))
 				{
 					items.add(item);
@@ -401,7 +405,13 @@ public class ChartView
 		{
 			if (plot.getMainTitle().length() > 0)
 			{
-				heightAdj = plot.getHeight() - LabelProperties.measureFont(plot.getMainTitleFont());
+				try
+				{
+					heightAdj = plot.getHeight() - LabelProperties.measureFont(plot.getMainTitleFont());
+				} catch (Exception e)
+				{
+
+				}
 			}
 		}
 		return heightAdj;
@@ -563,7 +573,16 @@ public class ChartView
 		Double height = 0.0;
 		if (plot.getMainTitle() != null)
 		{
-			height = LabelProperties.measureFont(plot.getMainTitleFont());
+			try
+			{
+
+				height = LabelProperties.measureFont(plot.getMainTitleFont());
+
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+				// Console.error("Unable to create output plot: " + output.toString());
+			}
 		}
 		return height;
 	}

@@ -1,12 +1,14 @@
 package datagenerator;
 
-import circlegenerator.CircleSystem;
+import java.io.File;
+
 import com.be3short.io.format.ImageFormat;
+
+import circlegenerator.CircleSystem;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
 import edu.ucsc.cross.hse.core.task.TaskManager;
-import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -25,7 +27,7 @@ public class DataGeneratorTasks extends TaskManager
 		// dataGeneratorSimulation();//
 		long l = (long) 1.9;
 		untaryDataGeneratorSimulation();// untaryDataGeneratorSimulation();
-		System.out.println(System.nanoTime() + " " + 10000000E-9);
+		// System.out.println(System.nanoTime() + " " + 10000000E-9);
 	}
 
 	/*

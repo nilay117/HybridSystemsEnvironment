@@ -1,17 +1,19 @@
 package edu.ucsc.cross.hse.core.operator;
 
-import com.be3short.obj.access.FieldFinder;
-import com.be3short.obj.manipulation.DynamicObjectManipulator;
-import com.be3short.obj.manipulation.FieldMapper;
-import edu.ucsc.cross.hse.core.object.HybridSystem;
-import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
-import edu.ucsc.cross.hse.core.object.ObjectSet;
-import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+
+import com.be3short.obj.access.FieldFinder;
+import com.be3short.obj.manipulation.DynamicObjectManipulator;
+import com.be3short.obj.manipulation.FieldMapper;
+
+import edu.ucsc.cross.hse.core.object.HybridSystem;
+import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
+import edu.ucsc.cross.hse.core.time.HybridTime;
 
 public class ObjectOperator
 {
@@ -290,10 +292,11 @@ public class ObjectOperator
 	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionOperator manager)
 	{
 		// initializeFieldMapper();
+		Integer address = 0;
 		HashMap<Object, DynamicObjectManipulator> newObjectAccessMap = new HashMap<Object, DynamicObjectManipulator>();
 		for (HybridSystem<?> system : manager.getContents().getSystems())
 		{
-
+			system.getState().data().setAddress(address++);
 			try
 			{
 				HybridSystemOperator.initializeDynamicState(system);
@@ -304,6 +307,7 @@ public class ObjectOperator
 			{
 				e.printStackTrace();
 			}
+
 		}
 
 		return newObjectAccessMap;

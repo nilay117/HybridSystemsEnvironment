@@ -1,6 +1,9 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import java.util.ArrayList;
+
 import com.be3short.obj.manipulation.ObjectManipulator;
+
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
@@ -8,7 +11,6 @@ import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.object.ObjectSet.ObjectSetAPI;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
-import java.util.ArrayList;
 
 public class DataMonitor
 {
@@ -61,13 +63,12 @@ public class DataMonitor
 					int dup = 1;
 					for (ObjectSet set : duplicateNames)
 					{
-						if (parent.extension().getName().equals(set.extension().getName()))
+						if (parent.data().getName().equals(set.data().getName()))
 						{
 							dup++;
 						}
 					}
-					parent.extension().setUniqueLabel(parent.extension().getName() + "(" + dup + ")");
-					parent.extension().setAddress(parent.toString());
+					parent.data().setUniqueLabel(parent.data().getName() + "(" + dup + ")");
 					duplicateNames.add(parent);
 				}
 			} catch (Exception e)
@@ -91,7 +92,7 @@ public class DataMonitor
 			{
 				if (!otherObj.equals(obj))
 				{
-					if (otherObj.extension().getName().equals(obj.extension().getName()))
+					if (otherObj.data().getName().equals(obj.data().getName()))
 					{
 						nameAlreadyUnique = false;
 
@@ -100,7 +101,7 @@ public class DataMonitor
 			}
 			if (nameAlreadyUnique)
 			{
-				obj.extension().setUniqueLabel(obj.extension().getName());
+				obj.data().setUniqueLabel(obj.data().getName());
 			}
 
 		}

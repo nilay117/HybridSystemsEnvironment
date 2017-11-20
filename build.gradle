@@ -22,7 +22,11 @@ dependencies {
 
     // Math
     compile 'org.apache.commons:commons-math3:3.6.1'
-
+    compile 'org.jgrapht:jgrapht-core:1.0.1'
+    compile 'com.github.jgrapht:jgrapht:-SNAPSHOT'
+    compile group: 'gov.nist.math', name: 'jama', version: '1.0.2'
+    
+    
     // Utilities
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile 'com.github.be3short:ObjectTools:v0.3.1'

@@ -1,8 +1,17 @@
 
 package edu.ucsc.cross.hse.core.operator;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Scanner;
+
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
+
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
@@ -15,13 +24,6 @@ import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.monitor.EventMonitor;
 import edu.ucsc.cross.hse.core.monitor.JumpStatus;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Scanner;
 
 public class ExecutionOperator
 {
@@ -242,7 +244,7 @@ public class ExecutionOperator
 					input = in.nextLine();
 					if (input.equals("q"))
 					{
-						System.out.println("killing");
+						System.out.println("Stopping Environment");
 						jumpEvaluator.setRunning(false);
 					}
 				}

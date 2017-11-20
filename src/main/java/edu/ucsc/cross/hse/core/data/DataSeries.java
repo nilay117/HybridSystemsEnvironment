@@ -1,9 +1,10 @@
 package edu.ucsc.cross.hse.core.data;
 
-import edu.ucsc.cross.hse.core.object.ObjectSet;
-import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+
+import edu.ucsc.cross.hse.core.object.ObjectSet;
+import edu.ucsc.cross.hse.core.time.HybridTime;
 
 public class DataSeries<X>
 {
@@ -36,21 +37,21 @@ public class DataSeries<X>
 		return child.getName();
 	}
 
-	public String getParentID()
+	public Integer getParentID()
 	{
-		return parent.extension().getAddress();
+		return parent.data().getAddress();
 	}
 
 	public String getParentName()
 	{
-		return parent.extension().getUniqueLabel();
+		return parent.data().getUniqueLabel();
 	}
 
 	public DataSeries<?> getSeriesWithSameParent(String element_name, ArrayList<DataSeries<?>> series_list)
 	{
 		for (DataSeries<?> series : series_list)
 		{
-			if (series.getParentID().equals(parent.extension().getAddress()))
+			if (series.getParentID().equals(parent.data().getAddress()))
 			{
 				if (series.getElementName().equals(element_name))
 				{

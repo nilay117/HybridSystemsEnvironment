@@ -31,7 +31,7 @@ public class EnvironmentData
 		{
 			for (DataSeries<?> dataSeries : getAllDataSeries())
 			{
-				String leg = dataSeries.getParent().extension().getUniqueLabel();
+				String leg = dataSeries.getParent().data().getUniqueLabel();
 				if (!nameOrder.contains(leg))
 				{
 					nameOrder.add(leg);

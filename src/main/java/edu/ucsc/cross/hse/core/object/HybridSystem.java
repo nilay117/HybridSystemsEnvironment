@@ -1,9 +1,12 @@
 package edu.ucsc.cross.hse.core.object;
 
+import java.util.ArrayList;
+
 import com.be3short.data.cloning.ObjectCloner;
+
+import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.model.HybridDynamics;
-import java.util.ArrayList;
 
 // Hybrid system models are extensions of the
 // Hybrid System class, which contains
@@ -23,13 +26,31 @@ public abstract class HybridSystem<X extends ObjectSet> implements HybridDynamic
 	public HybridSystem(X state)
 	{
 		this.state = state;
-		state.extension().setHistorySaved(true);
-		state.extension().setSimulated(true);
+		state.data().setHistorySaved(true);
+		state.data().setSimulated(true);
+	}
+
+	public EnvironmentAccessor environment()
+	{
+		return new EnvironmentAccessor(this);
 	}
 
 	public static class EnvironmentAccessor
+
 	{
 
+		private HybridSystem<?> sys;
+		private Environment env;
+
+		public EnvironmentAccessor(HybridSystem<?> sys)
+		{
+			this.sys = sys;
+		}
+
+		public Object getAddressObject(Integer ind)
+		{
+			return EnvironmentContent.getSystem(sys, ind);
+		}
 	}
 
 	public static class HybridSystemOperator
