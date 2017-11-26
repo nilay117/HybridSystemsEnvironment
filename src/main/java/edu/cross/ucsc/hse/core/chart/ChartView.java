@@ -1,5 +1,16 @@
 package edu.cross.ucsc.hse.core.chart;
 
+import com.be3short.io.format.FileSpecifications;
+import com.be3short.io.format.ImageFormat;
+import com.be3short.obj.modification.ObjectCloner;
+import de.erichseifert.vectorgraphics2d.Document;
+import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
+import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
+import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
+import de.erichseifert.vectorgraphics2d.svg.SVGProcessor;
+import de.erichseifert.vectorgraphics2d.util.PageSize;
+import edu.ucsc.cross.hse.core.container.EnvironmentData;
+import edu.ucsc.cross.hse.core.io.Console;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,34 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.LegendItem;
-import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.plot.CombinedDomainXYPlot;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.Size2D;
-
-import com.be3short.io.format.FileSpecifications;
-import com.be3short.io.format.ImageFormat;
-import com.be3short.obj.modification.ObjectCloner;
-
-import de.erichseifert.vectorgraphics2d.Document;
-import de.erichseifert.vectorgraphics2d.VectorGraphics2D;
-import de.erichseifert.vectorgraphics2d.eps.EPSProcessor;
-import de.erichseifert.vectorgraphics2d.intermediate.CommandSequence;
-import de.erichseifert.vectorgraphics2d.svg.SVGProcessor;
-import de.erichseifert.vectorgraphics2d.util.PageSize;
-import edu.ucsc.cross.hse.core.container.EnvironmentData;
-import edu.ucsc.cross.hse.core.io.Console;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
@@ -61,6 +44,19 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.Size2D;
 
 public class ChartView
 {
@@ -354,21 +350,25 @@ public class ChartView
 			@Override
 			public void run()
 			{
+				try
+				{
+					JLabel label = new JLabel(" " + plot.getMainTitle() + " ");
+					Font font = plot.getMainTitleFont();
+					label.setFont(font);
 
-				JLabel label = new JLabel(" " + plot.getMainTitle() + " ");
-				Font font = plot.getMainTitleFont();
-				label.setFont(font);
+					JPanel panel = new JPanel();
+					panel.add(label, BorderLayout.CENTER);
 
-				JPanel panel = new JPanel();
-				panel.add(label, BorderLayout.CENTER);
+					// , new Rectangle(100,
+					// 100));
+					// panel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 
-				// , new Rectangle(100,
-				// 100));
-				// panel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+					swingNode.setContent(panel);// panel);
+					panels.add(panel);
+				} catch (Exception e)
+				{
 
-				swingNode.setContent(panel);// panel);
-				panels.add(panel);
-
+				}
 				// SwingUtilities.invokeLater(new Runnable()
 				// {
 				//

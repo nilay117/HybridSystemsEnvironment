@@ -1,8 +1,7 @@
 package edu.ucsc.cross.hse.core.graph;
 
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-
 import Jama.Matrix;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 public class NetworkGraph extends DirectedWeightedMultigraph<Integer, NetworkEdge>
 {

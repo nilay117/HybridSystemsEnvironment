@@ -15,6 +15,7 @@ public class LabelProperties
 
 	private Font font;
 	private Boolean visibility;
+
 	public Paint getColor()
 	{
 		return color;
@@ -69,20 +70,26 @@ public class LabelProperties
 	public static Double measureFont(Font font)
 	{
 		Double height = 0.0;
-	
+
 		Graphics graphics = new VectorGraphics2D();// (int) 100, (int) 100, (int) 400, (int) 400);
 		// get metrics from the graphics
-		FontMetrics metrics = graphics.getFontMetrics(font);
-		// get the height of a line of text in this
-		// font and render context
-		int hgt = metrics.getHeight();
+		try
+		{
+			FontMetrics metrics = graphics.getFontMetrics(font);
+			// get the height of a line of text in this
+			int hgt = metrics.getHeight();
+			Dimension size = new Dimension(0 + 2, hgt + 2);
+			height = size.getHeight() + 8;
+		} catch (Exception e)
+		{
+			// font and render context
+		}
+
 		// get the advance of my text in this font
 		// and render context
 		// calculate the size of a box to hold the
 		// text with some padding.
-		Dimension size = new Dimension(0 + 2, hgt + 2);
-		height = size.getHeight() + 8;
-	
+
 		return height;
 	}
 }
