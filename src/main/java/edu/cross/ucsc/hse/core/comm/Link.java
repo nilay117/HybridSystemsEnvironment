@@ -1,5 +1,7 @@
 package edu.cross.ucsc.hse.core.comm;
 
+import java.util.Map;
+
 public interface Link
 {
 
@@ -16,5 +18,6 @@ public interface Link
 	/*
 	 * Gets the properties of the link
 	 */
-	public <P> P getProperty(Class<P> property_type);
+	public Map<LinkProperty<?>, Object> getProperties();
+
 }

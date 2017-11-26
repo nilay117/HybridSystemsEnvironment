@@ -1,10 +1,9 @@
 package edu.cross.ucsc.hse.core.comm;
 
-public interface Pack
+public interface Packet<P>
 {
 
 	public PacketHeader getHeader();
 
-	public Object getPayload();
-
+	public P getPayload();
 }

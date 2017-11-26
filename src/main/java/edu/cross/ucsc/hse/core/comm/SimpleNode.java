@@ -1,10 +1,15 @@
 package edu.cross.ucsc.hse.core.comm;
 
 import edu.ucsc.cross.hse.core.object.ObjectSet;
+import java.util.ArrayList;
 import java.util.List;
 
-public class BasicNode extends ObjectSet implements Node
+public class SimpleNode extends ObjectSet implements Node
 {
+
+	private String address;
+	private NetworkConfiguration network;
+	private ArrayList<Packet<?>> pendingPackets;
 
 	@Override
 	public Object getAddress()
@@ -14,21 +19,21 @@ public class BasicNode extends ObjectSet implements Node
 	}
 
 	@Override
-	public List<Pack> getAdknowledgedPackets()
+	public List<Packet<?>> getAdknowledgedPackets()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Pack> getSentPackets()
+	public List<Packet<?>> getSentPackets()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Pack> getReceivedPackets()
+	public List<Packet<?>> getReceivedPackets()
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -77,17 +82,10 @@ public class BasicNode extends ObjectSet implements Node
 	}
 
 	@Override
-	public boolean transmitPacket(Pack packet)
+	public <P> boolean transmitPacket(Packet<P> packet)
 	{
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public Node createNewNode()
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

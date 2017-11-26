@@ -1,17 +1,22 @@
 package edu.cross.ucsc.hse.core.comm;
 
+import edu.ucsc.cross.hse.core.object.HybridSystem;
 import java.util.List;
 
 public interface Node
 {
 
+	public HybridSystem<?> getConnectedSystem();
+
 	public Object getAddress();
 
-	public List<Pack> getAdknowledgedPackets();
+	public List<Packet<?>> getAdknowledgedPackets();
 
-	public List<Pack> getSentPackets();
+	public List<Packet<?>> getPacketSendQueue();
 
-	public List<Pack> getReceivedPackets();
+	public List<Packet<?>> getSentPackets();
+
+	public List<Packet<?>> getReceivedPackets();
 
 	/*
 	 * Addresses of directly linked nodes that packets can be sent to
@@ -43,11 +48,6 @@ public interface Node
 	 */
 	public List<Link> getPathFromSource(Object source_address);
 
-	/*
-	 * Addresses of directly linked nodes that packets can be sent to
-	 */
-	public boolean transmitPacket(Pack packet);
-
-	public Node createNewNode();
+	public <P> boolean sendPacket(Packet<P> packet);
 
 }
