@@ -169,13 +169,14 @@ public class ChartView
 		}
 
 		cleanMultiDomainLegend(mplot);
+		// JFreeChart jf = mplot.getRootPlot().getLegendItems();
 		plotPane.setMaxSize(plot.getWidth(), plot.getHeight());
 		return true;
 	}
 
 	private void cleanMultiDomainLegend(CombinedDomainXYPlot mplot)
 	{
-		if (plot.isCombinedDomainPlot())
+		// if (plot.isCombinedDomainPlot())
 		{
 			ArrayList<String> existingLabels = new ArrayList<String>();
 			LegendItemCollection items = new LegendItemCollection();
@@ -187,8 +188,11 @@ public class ChartView
 				// System.out.println(item.getLabel());
 				if (!existingLabels.contains(item.getLabel()))
 				{
-					items.add(item);
-					existingLabels.add(item.getLabel());
+					if (plot.isDisplayGlobalLegend())
+					{
+						items.add(item);
+						existingLabels.add(item.getLabel());
+					}
 				}
 			}
 			mplot.setFixedLegendItems(items);
@@ -504,16 +508,21 @@ public class ChartView
 			b.setFillWidth(false);
 			b.setAlignment(Pos.CENTER);
 			mainPane.setCenter(b);
-
-			final SwingNode swingNode = new SwingNode();
 			if (this.getChartConfiguration().isDisplayGlobalLegend())
 			{
+
+				SwingNode swingNode = new SwingNode();
+
 				createSwingLabel(swingNode);
+			} else
+			{
+				// globalLegend.setVisible(false);
 			}
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+
 	}
 
 	private Size2D drawGlobalLegend()
@@ -757,68 +766,70 @@ public class ChartView
 		public MyPanel(ChartView panez, EnvironmentData chartz, ChartView p)
 		{
 			v = new SubChartView(chartz, new BorderPane(), panez.plot, 0, panez);
-			p.getChartConfiguration().chartProperties(0).setDisplayLegend(true);
-			v.toggleLegendVisibility(true);// .getChart().getLegend().setVisible(true);
+			// p.getChartConfiguration().chartProperties(0).setDisplayLegend(true);
+			// v.toggleLegendVisibility(panez.getChartConfiguration().isDisplayGlobalLegend());//
+			// .getChart().getLegend().setVisible(true);
 			this.panez = panez;
-			// v.getProps().addToYFilter(v.getFieldNames().get(0));
-			SwingUtilities.invokeLater(new Runnable()
+			if (v.ch.getChartConfiguration().isDisplayGlobalLegend())
+			{// v.getProps().addToYFilter(v.getFieldNames().get(0));
+				SwingUtilities.invokeLater(new Runnable()
 
-			{
-
-				@Override
-				public void run()
 				{
-					chart = v.getChart();
 
-					ArrayList<LegendItem> legendItems = new ArrayList<LegendItem>();
-					XYSeriesCollection ser = (XYSeriesCollection) chart.getXYPlot().getDataset();
-					for (SubChartView ch : plots)
+					@Override
+					public void run()
 					{
-						XYSeriesCollection series = (XYSeriesCollection) ch.getChart().getXYPlot().getDataset();
-						for (int in = 0; in < series.getSeriesCount(); in++)
-						{
-							XYSeries serie = series.getSeries(in);
-							try
-							{
-								ser.addSeries(serie);
-							} catch (Exception e)
-							{
+						chart = v.getChart();
 
-							}
-						}
-						try
-
+						ArrayList<LegendItem> legendItems = new ArrayList<LegendItem>();
+						XYSeriesCollection ser = (XYSeriesCollection) chart.getXYPlot().getDataset();
+						for (SubChartView ch : plots)
 						{
-							for (int i = 0; i < ch.getChart().getXYPlot().getLegendItems().getItemCount(); i++)
+							XYSeriesCollection series = (XYSeriesCollection) ch.getChart().getXYPlot().getDataset();
+							for (int in = 0; in < series.getSeriesCount(); in++)
 							{
-								LegendItem item = ch.getChart().getXYPlot().getLegendItems().get(i);
-								if (!legendItems.contains(item))
+								XYSeries serie = series.getSeries(in);
+								try
 								{
-									legendItems.add(item);
+									ser.addSeries(serie);
+								} catch (Exception e)
+								{
+
 								}
 							}
-						} catch (Exception e)
-						{
-							e.printStackTrace();
+							try
+
+							{
+								for (int i = 0; i < ch.getChart().getXYPlot().getLegendItems().getItemCount(); i++)
+								{
+									LegendItem item = ch.getChart().getXYPlot().getLegendItems().get(i);
+									if (!legendItems.contains(item))
+									{
+										legendItems.add(item);
+									}
+								}
+							} catch (Exception e)
+							{
+								e.printStackTrace();
+							}
 						}
+
+						// v.getProps().setLegendVisible(true);
+						// this.chart = v.createChart();// (new ViewPane(chart, p, null)).getChart().getChart();
+
+						for (LegendItem item : legendItems)
+						{
+							chart.getPlot().getLegendItems().add(item);
+						}
+
+						chart.getLegend().setVisible(true);
+						chart.getLegend().setBackgroundPaint(null);
+						globalLegend = chart.getLegend();
+						drawGlobalLegend();
+
 					}
-
-					// v.getProps().setLegendVisible(true);
-					// this.chart = v.createChart();// (new ViewPane(chart, p, null)).getChart().getChart();
-
-					for (LegendItem item : legendItems)
-					{
-						chart.getPlot().getLegendItems().add(item);
-					}
-
-					chart.getLegend().setVisible(true);
-					chart.getLegend().setBackgroundPaint(null);
-					globalLegend = chart.getLegend();
-					drawGlobalLegend();
-
-				}
-			});
-
+				});
+			}
 			// this.chart = v.getChart();
 			//
 			// ArrayList<LegendItem> legendItems = new ArrayList<LegendItem>();

@@ -1,12 +1,10 @@
 package edu.ucsc.cross.hse.core.object;
 
-import java.util.ArrayList;
-
 import com.be3short.data.cloning.ObjectCloner;
-
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.model.HybridDynamics;
+import java.util.ArrayList;
 
 // Hybrid system models are extensions of the
 // Hybrid System class, which contains

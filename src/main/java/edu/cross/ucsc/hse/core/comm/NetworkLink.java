@@ -1,6 +1,6 @@
 package edu.cross.ucsc.hse.core.comm;
 
-public class Pack<P>
+public class Network
 {
-
+public 
 }

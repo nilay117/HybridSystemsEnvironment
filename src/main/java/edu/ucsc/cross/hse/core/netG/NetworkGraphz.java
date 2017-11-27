@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.core.netG;
 
 import org.jgrapht.graph.DirectedPseudograph;
 
-public class NetworkGraphz<N>
+public class NetworkGraphz<Object>
 {
 
 	DirectedPseudograph<N, NetworkLink<N>> graph;

@@ -3,7 +3,7 @@ package edu.cross.ucsc.hse.core.comm;
 import edu.ucsc.cross.hse.core.object.Network;
 import java.util.ArrayList;
 
-public class NetworkNode
+public class NetworkNode implements Conne
 {
 
 	private Network network;
