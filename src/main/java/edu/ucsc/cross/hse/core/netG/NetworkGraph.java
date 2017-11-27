@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.graph;
+package edu.ucsc.cross.hse.core.netG;
 
 import Jama.Matrix;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -45,7 +45,6 @@ public class NetworkGraph extends DirectedWeightedMultigraph<Integer, NetworkEdg
 
 	public Matrix getLaplacian()
 	{
-		this.get
 		if (laplacian == null)
 		{
 			laplacian = computeLaplacian(this.getAdjacencyMatrix());
