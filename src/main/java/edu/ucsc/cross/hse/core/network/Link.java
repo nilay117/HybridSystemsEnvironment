@@ -1,4 +1,4 @@
-package edu.cross.ucsc.hse.core.model.perfectnetwork;
+package edu.ucsc.cross.hse.core.network;
 
 public interface Link<V extends NetworkNode<N>, N>
 {
