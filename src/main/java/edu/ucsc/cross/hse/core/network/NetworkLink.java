@@ -1,22 +1,22 @@
 package edu.ucsc.cross.hse.core.network;
 
-public class NetworkLink<V extends NetworkNode<N>, N> implements Link<V, N>
+public class NetworkLink<N> // implements Link<NetworkNode<N>, NetworkLink<N>>
 {
 
-	private V origin;
-	private V destination;
+	private NetworkNode<N> origin;
+	private NetworkNode<N> destination;
 
-	public V getOrigin()
+	public NetworkNode<N> getOrigin()
 	{
 		return origin;
 	}
 
-	public V getDestination()
+	public NetworkNode<N> getDestination()
 	{
 		return destination;
 	}
 
-	public NetworkLink(V org, V dest)
+	public NetworkLink(NetworkNode<N> org, NetworkNode<N> dest)
 	{
 		this.origin = org;
 		this.destination = dest;

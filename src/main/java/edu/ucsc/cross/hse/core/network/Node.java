@@ -5,6 +5,8 @@ import java.util.ArrayList;
 public interface Node<N>
 {
 
+	public Node<N> create(N state);
+
 	public N getNodeState();
 
 	public Packet<?> handlePacket(Packet<?> packet);

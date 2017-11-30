@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.core.network;
 
 import java.util.ArrayList;
 
-public class NetworkNode<N> implements Node<N>
+public class NetworkNode<N>
 {
 
 	private ArrayList<PacketHandler> packetHandlers;
@@ -57,10 +57,10 @@ public class NetworkNode<N> implements Node<N>
 		}
 	}
 
-	@Override
 	public void setTransmissionPackets(Packet<?> transmissionPackets)
 	{
 		// TODO Auto-generated method stub
 
 	}
+
 }

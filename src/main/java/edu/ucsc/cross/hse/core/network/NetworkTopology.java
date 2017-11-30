@@ -7,21 +7,21 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DirectedPseudograph;
 
-public class NetworkTopology<V extends NetworkNode<N>, L extends NetworkLink<V, N>, N>
+public class NetworkTopology<N>
 {
 
-	public NetworkTopology(Class<L> edge_class)
+	public DirectedPseudograph<NetworkNode<N>, NetworkLink<N>> network;
+	private AllDirectedPaths<NetworkNode<N>, NetworkLink<N>> paths;
+	private HashMap<NetworkNode<N>, HashMap<NetworkNode<N>, ArrayList<GraphPath<NetworkNode<N>, NetworkLink<N>>>>> flowz;
+	private HashMap<NetworkLink<N>, HashMap<LinkProperty, Double>> properties;
+
+	public NetworkTopology()
 	{
-		network = new DirectedPseudograph<V, L>(edge_class);// f);
-		paths = new AllDirectedPaths<V, L>(network);
+		network = new DirectedPseudograph<NetworkNode<N>, NetworkLink<N>>(new LinkFactory<N>());// f);
+		paths = new AllDirectedPaths<NetworkNode<N>, NetworkLink<N>>(network);
 	}
 
-	public DirectedPseudograph<V, L> network;
-	private AllDirectedPaths<V, L> paths;
-	private HashMap<V, HashMap<V, ArrayList<GraphPath<V, L>>>> flowz;
-	private HashMap<L, HashMap<LinkProperty, Double>> properties;
-
-	public void addLinkProperty(L link, LinkProperty property, Double value)
+	public void addLinkProperty(NetworkLink<N> link, LinkProperty property, Double value)
 	{
 		if (!properties.containsKey(link))
 		{
@@ -30,19 +30,20 @@ public class NetworkTopology<V extends NetworkNode<N>, L extends NetworkLink<V, 
 		properties.get(link).put(property, value);
 	}
 
-	public HashMap<V, HashMap<V, ArrayList<GraphPath<V, L>>>> getAllFlows(boolean update)
+	public HashMap<NetworkNode<N>, HashMap<NetworkNode<N>, ArrayList<GraphPath<NetworkNode<N>, NetworkLink<N>>>>> getAllFlows(
+	boolean update)
 	{
 
-		HashMap<V, HashMap<V, ArrayList<GraphPath<V, L>>>> flows = new HashMap<V, HashMap<V, ArrayList<GraphPath<V, L>>>>();
-		for (V node : network.vertexSet())
+		HashMap<NetworkNode<N>, HashMap<NetworkNode<N>, ArrayList<GraphPath<NetworkNode<N>, NetworkLink<N>>>>> flows = new HashMap<NetworkNode<N>, HashMap<NetworkNode<N>, ArrayList<GraphPath<NetworkNode<N>, NetworkLink<N>>>>>();
+		for (NetworkNode<N> node : network.vertexSet())
 		{
 			if (!flows.containsKey(node))
 			{
-				flows.put(node, new HashMap<V, ArrayList<GraphPath<V, L>>>());
+				flows.put(node, new HashMap<NetworkNode<N>, ArrayList<GraphPath<NetworkNode<N>, NetworkLink<N>>>>());
 			}
-			for (V dest : network.vertexSet())// network.edgesOf(node))
+			for (NetworkNode<N> dest : network.vertexSet())// network.edgesOf(node))
 			{
-				// for (Graph<V, V> flow : paths.getAllPaths(network, node, dest, false, null))
+				// for (Graph<NetworkNode<N>, V> flow : paths.getAllPaths(network, node, dest, false, null))
 				{
 					try
 					{
@@ -54,8 +55,9 @@ public class NetworkTopology<V extends NetworkNode<N>, L extends NetworkLink<V, 
 						{
 							flows.get(node).put(dest,
 
-							new ArrayList<GraphPath<V, L>>());// paths.getAllPaths(s, network.vertexSet(), false,
-																// 15)));// paths.getAllPaths(node,
+							new ArrayList<GraphPath<NetworkNode<N>, NetworkLink<N>>>());// paths.getAllPaths(s,
+																						// network.vertexSet(), false,
+							// 15)));// paths.getAllPaths(node,
 						}
 						{
 							flows.get(node).get(dest).addAll(paths.getAllPaths(s, sd, true, 25));// dest.getDestination(),

@@ -1,10 +1,10 @@
 package edu.ucsc.cross.hse.core.network;
 
-public interface Link<V extends NetworkNode<N>, N>
+public interface Link<N>
 {
 
-	public V getOrigin();
+	public NetworkNode<N> getOrigin();
 
-	public V getDestination();
+	public NetworkNode<N> getDestination();
 
 }
