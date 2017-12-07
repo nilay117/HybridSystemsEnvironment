@@ -1,16 +1,16 @@
 package edu.ucsc.cross.hse.core.container;
 
+import com.be3short.obj.modification.ObjectCloner;
+import edu.ucsc.cross.hse.core.model.Network;
+import edu.ucsc.cross.hse.core.object.HybridSystem;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.be3short.obj.modification.ObjectCloner;
-
-import edu.ucsc.cross.hse.core.object.HybridSystem;
-import edu.ucsc.cross.hse.core.object.ObjectSet;
-
-public class EnvironmentContent
+public class EnvironmentContents
 {
 
+	private ArrayList<Network<?, ?, ?>> networks;
 	private ArrayList<HybridSystem<?>> systems;
 
 	public void add(HybridSystem<?>... new_systems)
@@ -34,19 +34,40 @@ public class EnvironmentContent
 		}
 	}
 
+	public void add(Network<?, ?, ?>... new_networks)
+	{
+		for (Network<?, ?, ?> sys : new_networks)
+		{
+			if (!networks.contains(sys))
+			{
+				networks.add(sys);
+			}
+		}
+	}
+
+	public ArrayList<Network<?, ?, ?>> getNetworks()
+	{
+		return networks;
+	}
+
 	public ArrayList<HybridSystem<?>> getSystems()
 	{
 		return systems;
 	}
 
-	public void load(ArrayList<HybridSystem<?>> systems)
+	public void load(EnvironmentContents content)
 	{
-		this.systems = systems;
+		this.networks = content.networks;
 	}
 
-	public void load(EnvironmentContent content)
+	public void loadNetworks(ArrayList<Network<?, ?, ?>> networks)
 	{
-		this.systems = content.systems;
+		this.networks = networks;
+	}
+
+	public void loadSystems(ArrayList<HybridSystem<?>> systems)
+	{
+		this.systems = systems;
 	}
 
 	public void remove(HybridSystem<?>... remove_systems)
@@ -62,17 +83,31 @@ public class EnvironmentContent
 
 	}
 
-	public EnvironmentContent()
+	public void remove(Network<?, ?, ?>... remove_networks)
+	{
+
+		for (Network<?, ?, ?> sys : remove_networks)
+		{
+			if (networks.contains(sys))
+			{
+				networks.remove(sys);
+			}
+		}
+
+	}
+
+	public EnvironmentContents()
 	{
 		systems = new ArrayList<HybridSystem<?>>();
+		networks = new ArrayList<Network<?, ?, ?>>();
 		addresses.put(this, new HashMap<Integer, HybridSystem<?>>());
 	}
 
-	private static HashMap<EnvironmentContent, HashMap<Integer, HybridSystem<?>>> addresses = new HashMap<EnvironmentContent, HashMap<Integer, HybridSystem<?>>>();
+	private static HashMap<EnvironmentContents, HashMap<Integer, HybridSystem<?>>> addresses = new HashMap<EnvironmentContents, HashMap<Integer, HybridSystem<?>>>();
 
 	public static <T extends ObjectSet> HybridSystem<T> getSystem(HybridSystem<?> source, Integer address)
 	{
-		for (EnvironmentContent content : addresses.keySet())
+		for (EnvironmentContents content : addresses.keySet())
 		{
 			if (content.systems.contains(address))
 			{
@@ -91,4 +126,5 @@ public class EnvironmentContent
 		}
 		return null;
 	}
+
 }

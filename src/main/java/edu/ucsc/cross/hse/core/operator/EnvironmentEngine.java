@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.operator;
 
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
-import edu.ucsc.cross.hse.core.container.EnvironmentContent;
+import edu.ucsc.cross.hse.core.container.EnvironmentContents;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
@@ -12,8 +12,8 @@ import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.monitor.ComputationMonitor;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
-import edu.ucsc.cross.hse.core.monitor.EventMonitor;
-import edu.ucsc.cross.hse.core.monitor.ExecutionMonitor;
+import edu.ucsc.cross.hse.core.monitor.JumpMonitor;
+import edu.ucsc.cross.hse.core.monitor.TerminationMonitor;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -26,15 +26,21 @@ import java.util.Scanner;
 public class EnvironmentEngine
 {
 
-	Console console;
-	DataMonitor dataManager;
 	Environment env;
-	ObjectOperator exeContent;
+
+	// Monitors
+	DataMonitor dataManager;
 	ComputationMonitor computationMonitor;
-	ExecutionMonitor executionMonitor;
-	EventMonitor jumpEvaluator;
+	TerminationMonitor executionMonitor;
+	JumpMonitor jumpEvaluator;
+
+	// Operators
 	SimulationOperator simEngine;
 	SystemOperator systemControl;
+	ObjectOperator exeContent;
+
+	// Output console
+	Console console;
 
 	public static HashMap<Environment, EnvironmentEngine> operatorMap = new HashMap<Environment, EnvironmentEngine>();
 
@@ -43,7 +49,7 @@ public class EnvironmentEngine
 		return console;
 	}
 
-	public EnvironmentContent getContents()
+	public EnvironmentContents getContents()
 	{
 		return env.getContents();
 	}
@@ -68,7 +74,7 @@ public class EnvironmentEngine
 		return exeContent;
 	}
 
-	public ExecutionMonitor getExecutionMonitor()
+	public TerminationMonitor getExecutionMonitor()
 	{
 		return executionMonitor;
 	}
@@ -83,7 +89,7 @@ public class EnvironmentEngine
 		return env.getSettings().getExecutionParameters();
 	}
 
-	public EventMonitor getJumpEvaluator()
+	public JumpMonitor getJumpEvaluator()
 	{
 		return jumpEvaluator;
 	}
@@ -111,13 +117,13 @@ public class EnvironmentEngine
 	public void initializeComponents()
 	{
 		simEngine = new SimulationOperator(this);
-		jumpEvaluator = new EventMonitor(this);
+		jumpEvaluator = new JumpMonitor(this);
 		computationMonitor = new ComputationMonitor(this);
 		dataManager = new DataMonitor(this);
 		systemControl = new SystemOperator(this);
 		console = new Console(this);
 		exeContent = new ObjectOperator(this);
-		executionMonitor = new ExecutionMonitor(this);
+		executionMonitor = new TerminationMonitor(this);
 	}
 
 	public void prepare()

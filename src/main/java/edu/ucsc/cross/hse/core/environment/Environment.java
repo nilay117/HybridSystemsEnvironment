@@ -4,12 +4,14 @@ import com.be3short.data.cloning.ObjectCloner;
 import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
-import edu.ucsc.cross.hse.core.container.EnvironmentContent;
+import edu.ucsc.cross.hse.core.container.EnvironmentContents;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
+import edu.ucsc.cross.hse.core.model.Network;
+import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
@@ -23,7 +25,7 @@ public class Environment
 {
 
 	// Components
-	public EnvironmentContent content;
+	public EnvironmentContents content;
 	public EnvironmentData dataCollector;
 	public EnvironmentOutputs outputs;
 	public EnvironmentSettings settings;
@@ -55,6 +57,14 @@ public class Environment
 		content.add(system, quantity);
 	}
 
+	public void add(Network<?, ?, ?>... new_networks)
+	{
+		for (Network<?, ?, ?> net : new_networks)
+		{
+			content.add(net);
+		}
+	}
+
 	public Environment copy()
 	{
 		return ObjectCloner.deepInstanceClone(this);
@@ -65,7 +75,7 @@ public class Environment
 		outputs.generateOutputs(this);
 	}
 
-	public EnvironmentContent getContents()
+	public EnvironmentContents getContents()
 	{
 		return content;
 	}
@@ -103,7 +113,7 @@ public class Environment
 		return settings;
 	}
 
-	public void loadContent(EnvironmentContent contents)
+	public void loadContent(EnvironmentContents contents)
 	{
 		getContents().load(contents);
 	}
@@ -118,7 +128,7 @@ public class Environment
 			// if (dataCollector == null)
 			{
 				dataCollector = data;
-				EnvironmentData.populateListMap(dataCollector);
+				DataMonitor.populateListMap(dataCollector);
 			} // else
 			{
 				// getData().load(data.getStoreTimes(), data.getGlobalStateData());
@@ -173,6 +183,16 @@ public class Environment
 		content.remove(new_systems);
 	}
 
+	public void remove(Network<?, ?, ?>... remove_networks)
+	{
+
+		for (Network<?, ?, ?> net : remove_networks)
+		{
+			content.remove(net);
+		}
+
+	}
+
 	public void save(File file)
 	{
 		save(file, true);
@@ -224,7 +244,7 @@ public class Environment
 
 		getManager();
 		settings = new EnvironmentSettings();
-		content = new EnvironmentContent();
+		content = new EnvironmentContents();
 		outputs = new EnvironmentOutputs(this);
 		dataCollector = new EnvironmentData();
 	}

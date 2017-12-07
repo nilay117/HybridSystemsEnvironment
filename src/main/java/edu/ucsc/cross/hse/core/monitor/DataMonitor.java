@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.monitor;
 import com.be3short.obj.manipulation.ObjectManipulator;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
-import edu.ucsc.cross.hse.core.data.HybridArc;
+import edu.ucsc.cross.hse.core.data.HybridArcData;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.object.ObjectSet.ObjectSetAPI;
 import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
@@ -23,10 +23,12 @@ public class DataMonitor
 	private Double initialValueTime;
 	// private Double nextStoreTime;
 
+	public static HashMap<EnvironmentData, ArrayList<DataSeries<?>>> seriesListMap = new HashMap<EnvironmentData, ArrayList<DataSeries<?>>>();
+
 	public void loadMap()
 	{
 
-		manager.getDataCollector().getHybridArcMap().clear();
+		EnvironmentData.getHybridArcMap(manager.getDataCollector()).clear();
 		for (ObjectManipulator state : manager.getExecutionContent().getFieldParentMap().values())// .getSimulatedObjectAccessVector())
 		{
 			// state.getParent()
@@ -36,12 +38,14 @@ public class DataMonitor
 				ObjectSet parent = (ObjectSet) state.getParent();
 				if (ObjectSetAPI.isHistorySaved(parent))
 				{
-					if (!manager.getDataCollector().getHybridArcMap().containsKey(parent))
+					if (!EnvironmentData.getHybridArcMap(manager.getDataCollector()).containsKey(parent))
 					{
-						manager.getDataCollector().getHybridArcMap().put(parent,
-						HybridArc.createArc(parent, manager.getDataCollector().getStoreTimes()));
+
+						EnvironmentData.getHybridArcMap(manager.getDataCollector()).put(parent,
+
+						HybridArcData.createArc(parent, manager.getDataCollector().getStoreTimes()));
 					}
-					HybridArc<?> solution = manager.getDataCollector().getHybridArcMap().get(parent);
+					HybridArcData<?> solution = EnvironmentData.getHybridArcMap(manager.getDataCollector()).get(parent);
 					solution.addSeries(state.getField(), DataSeries.getSeries(
 					manager.getDataCollector().getStoreTimes(), parent, state.getField(), state.getField().getType()));
 				}
@@ -52,7 +56,7 @@ public class DataMonitor
 
 		}
 		initializeUniqueNamesAndAddresses();
-		EnvironmentData.populateListMap(manager.getDataCollector());
+		DataMonitor.populateListMap(manager.getDataCollector());
 	}
 
 	public void initializeUniqueNamesAndAddresses()
@@ -175,7 +179,7 @@ public class DataMonitor
 		.getSimulatedObjectAccessVector().length; objIndex++)
 		{
 			ObjectManipulator obj = manager.getExecutionContent().getSimulatedObjectAccessVector()[objIndex];
-			DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
+			DataSeries<?> data = DataMonitor.getAllDataSeries(manager.getDataCollector()).get(objIndex);
 			obj.updateObject(data.getAllStoredData().get(0));
 			if (clear)
 			{
@@ -203,7 +207,7 @@ public class DataMonitor
 		{
 			// if (!time.equals(manager.getDataCollector().getStoreTimes().get(0).getTime()))
 			// {
-			for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
+			for (DataSeries<?> data : DataMonitor.getAllDataSeries(manager.getDataCollector()))
 			// .getSimulatedObjectAccessVector().length; objIndex++)
 			{
 				ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
@@ -245,9 +249,10 @@ public class DataMonitor
 
 		if (manager.getDataCollector().getStoreTimes().size() > i)
 		{
-			for (Integer objIndex = 1; objIndex < manager.getDataCollector().getAllDataSeries().size(); objIndex++)
+			for (Integer objIndex = 1; objIndex < DataMonitor.getAllDataSeries(manager.getDataCollector())
+			.size(); objIndex++)
 			{
-				DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
+				DataSeries<?> data = DataMonitor.getAllDataSeries(manager.getDataCollector()).get(objIndex);
 				if (data.getAllStoredData().size() > i)
 				{
 					data.getAllStoredData().remove(i);
@@ -296,6 +301,30 @@ public class DataMonitor
 		} else
 		{
 			manager.getExecutionContent().updateSimulationTime(time);
+		}
+	}
+
+	public static ArrayList<DataSeries<?>> getAllDataSeries(EnvironmentData dat)
+	{
+		if (!seriesListMap.containsKey(dat))
+		{
+			populateListMap(dat);
+		}
+		return seriesListMap.get(dat);
+	}
+
+	public static void populateListMap(EnvironmentData data)
+	{
+		seriesListMap.put(data, new ArrayList<DataSeries<?>>());
+		for (HybridArcData<?> arc : EnvironmentData.getHybridArcMap(data).values())
+		{
+			for (DataSeries<?> series : arc.getData().values())
+			{
+				if (!seriesListMap.get(data).contains(series))
+				{
+					seriesListMap.get(data).add(series);
+				}
+			}
 		}
 	}
 

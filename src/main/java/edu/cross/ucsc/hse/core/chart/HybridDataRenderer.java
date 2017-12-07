@@ -1,6 +1,7 @@
 package edu.cross.ucsc.hse.core.chart;
 
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
+import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 
 /*
  * =========================================================== JFreeChart : a free chart library for the Java(tm)
@@ -1177,8 +1178,8 @@ implements XYItemRenderer, Cloneable, PublicCloneable, Serializable
 			return;
 		}
 
-		if (data.getAllDataSeries().get(series).getStoreTimes().get(item).getJumps()
-		.equals(data.getAllDataSeries().get(series).getStoreTimes().get(item - 1).getJumps()))
+		if (DataMonitor.getAllDataSeries(data).get(series).getStoreTimes().get(item).getJumps()
+		.equals(DataMonitor.getAllDataSeries(data).get(series).getStoreTimes().get(item - 1).getJumps()))
 		{
 			g2.setStroke(this.getSeriesStroke(series));
 

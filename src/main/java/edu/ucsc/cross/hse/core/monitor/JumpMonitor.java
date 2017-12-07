@@ -7,7 +7,7 @@ import org.apache.commons.math3.ode.events.EventHandler;
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
  * smoothly as the discontinuities are addressed discretely while the solver is paused
  */
-public class EventMonitor implements EventHandler
+public class JumpMonitor implements EventHandler
 {
 
 	public Double toggleFlag; // toggle value that switches sign if an event has occurred since the last check
@@ -52,7 +52,7 @@ public class EventMonitor implements EventHandler
 
 	public JumpStatus getCheckJumpStatus()
 	{
-		if (approachingJump || running)
+		if (approachingJump)
 		{
 			return JumpStatus.APPROACHING_JUMP;
 		} else
@@ -123,7 +123,7 @@ public class EventMonitor implements EventHandler
 				manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_OCCURRED);
 			} else
 			{
-				manager.getSystemControl().applyDynamics(false);
+				// manager.getSystemControl().applyDynamics(false);
 				return;
 			}
 
@@ -133,7 +133,7 @@ public class EventMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public EventMonitor(EnvironmentEngine manager)
+	public JumpMonitor(EnvironmentEngine manager)
 	{
 		this.manager = manager;
 		toggleFlag = 1.0;

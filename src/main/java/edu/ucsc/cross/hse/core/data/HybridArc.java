@@ -1,7 +1,9 @@
 package edu.ucsc.cross.hse.core.data;
 
+import edu.ucsc.cross.hse.core.file.CSVFileParser;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,46 +11,96 @@ import java.util.HashMap;
 public class HybridArc<X extends ObjectSet>
 {
 
-	private HashMap<Field, DataSeries<?>> data;
+	HashMap<Field, DataSeries<?>> data;
+	ArrayList<Double> times;
+	ArrayList<Integer> jumps;
+	ArrayList<HybridTime> storeTimes;
+	Class<X> emptyClass;
+	X system;
 
-	public HashMap<Field, DataSeries<?>> getData()
-	{
-		return data;
-	}
-
-	private ArrayList<HybridTime> storeTimes;
-	private X system;
-
-	public HybridArc(X system, ArrayList<HybridTime> store_times)
+	public HybridArc(X system, Class<X> empty_class, ArrayList<HybridTime> store_times)
 	{
 		this.system = system;
-		this.setStoreTimes(store_times);
+		emptyClass = empty_class;
+		storeTimes = (store_times);
 		data = new HashMap<Field, DataSeries<?>>();
 	}
 
-	public void addSeries(Field field, DataSeries<?> series)
+	public HashMap<HybridTime, X> getTrajectory()
 	{
-		data.put(field, series);
+		HashMap<HybridTime, X> solution = new HashMap<HybridTime, X>();
+
+		for (HybridTime ht : storeTimes)
+		{
+			X newInstance = createInstance(ht);
+			if (newInstance != null)
+			{
+				solution.put(ht, newInstance);
+			}
+		}
+
+		return solution;
 	}
 
-	public boolean containsSeries(Field field)
+	public X getPoint(HybridTime hybrid_time)
 	{
-		return data.containsKey(field);
+		HybridTime lookupTime = findMatchingTime(hybrid_time);
+		return createInstance(lookupTime);
 	}
 
-	public static <Y extends ObjectSet> HybridArc<Y> createArc(Y system, ArrayList<HybridTime> store_times)
+	private HybridTime findMatchingTime(HybridTime hybrid_time)
 	{
-		return new HybridArc<Y>(system, store_times);
+		if (storeTimes.contains(hybrid_time))
+		{
+			return hybrid_time;
+		} else
+		{
+			for (HybridTime time : storeTimes)
+			{
+				if (time.getJumps().equals(hybrid_time.getJumps()) && time.getTime() == hybrid_time.getTime())
+				{
+					return time;
+				}
+			}
+		}
+		return null;
 	}
 
-	public ArrayList<HybridTime> getStoreTimes()
+	private X createInstance(HybridTime hybrid_time)
 	{
-		return storeTimes;
+		X newInstance = null;
+		try
+		{
+			newInstance = emptyClass.newInstance();
+
+			for (Field field : data.keySet())
+			{
+				try
+				{
+					field.set(newInstance, data.get(field).getStoredData(hybrid_time));
+				} catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		} catch (Exception ee)
+		{
+			// TODO Auto-generated catch block
+			ee.printStackTrace();
+		}
+		return newInstance;
 	}
 
-	public void setStoreTimes(ArrayList<HybridTime> storeTimes)
+	public X getCurrent()
 	{
-		this.storeTimes = storeTimes;
+		return system;
 	}
 
+	public void exportCSV(File path)
+	{
+		CSVFileParser csv = new CSVFileParser(this);
+		csv.createCSVOutput(path);
+	}
 }

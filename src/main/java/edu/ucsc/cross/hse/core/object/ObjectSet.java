@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.object;
 
-public class ObjectSet
+public abstract class ObjectSet
 {
 
 	private String name;

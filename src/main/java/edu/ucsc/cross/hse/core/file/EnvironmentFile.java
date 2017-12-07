@@ -4,7 +4,7 @@ import com.be3short.io.format.FileFormat;
 import com.be3short.io.general.FileSystemInteractor;
 import com.be3short.obj.access.FieldFinder;
 import com.be3short.obj.modification.XMLParser;
-import edu.ucsc.cross.hse.core.container.EnvironmentContent;
+import edu.ucsc.cross.hse.core.container.EnvironmentContents;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
@@ -217,7 +217,7 @@ public class EnvironmentFile implements FileFormat
 		initializeContentMap();
 	}
 
-	public static final Class<EnvironmentContent> CONTENT = EnvironmentContent.class;
+	public static final Class<EnvironmentContents> CONTENT = EnvironmentContents.class;
 
 	public static final Class<EnvironmentData> DATA = EnvironmentData.class;
 

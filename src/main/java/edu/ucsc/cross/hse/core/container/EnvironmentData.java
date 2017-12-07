@@ -2,7 +2,9 @@ package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
+import edu.ucsc.cross.hse.core.data.HybridArcData;
 import edu.ucsc.cross.hse.core.file.CSVFileParser;
+import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.io.File;
@@ -13,23 +15,23 @@ import java.util.HashMap;
 public class EnvironmentData
 {
 
-	private HashMap<ObjectSet, HybridArc<?>> hybridArcMap;
+	private HashMap<ObjectSet, HybridArcData<?>> hybridArcMap;
 	private ArrayList<HybridTime> hybridTimeDomain;
 
-	public ArrayList<DataSeries<?>> getAllDataSeries()
+	public <X extends ObjectSet> HybridArc<X> getSolution(X state)
 	{
-		if (!seriesListMap.containsKey(this))
+		if (hybridArcMap.containsKey(state))
 		{
-			populateListMap(this);
+			return (HybridArc<X>) hybridArcMap.get(state);
 		}
-		return seriesListMap.get(this);
+		return null;
 	}
 
 	public ArrayList<String> getAllStoredObjectSetNames()
 	{
 		ArrayList<String> nameOrder = new ArrayList<String>();
 		{
-			for (DataSeries<?> dataSeries : getAllDataSeries())
+			for (DataSeries<?> dataSeries : DataMonitor.getAllDataSeries(this))
 			{
 				String leg = dataSeries.getParent().data().getUniqueLabel();
 				if (!nameOrder.contains(leg))
@@ -55,11 +57,6 @@ public class EnvironmentData
 		return earliestTime;
 	}
 
-	public HashMap<ObjectSet, HybridArc<?>> getHybridArcMap()
-	{
-		return hybridArcMap;
-	}
-
 	public HybridTime getLastStoredTime()
 	{
 		HybridTime lastTime = null;
@@ -79,31 +76,14 @@ public class EnvironmentData
 	{
 		// hybridTimeDomain.clear();
 		hybridTimeDomain = (new_data.getStoreTimes());
-		hybridArcMap = new_data.getHybridArcMap();
+		hybridArcMap = EnvironmentData.getHybridArcMap(this);
 		// EnvironmentData.populateListMap(this);
 	}
 
 	public EnvironmentData()
 	{
 		hybridTimeDomain = new ArrayList<HybridTime>();
-		hybridArcMap = (new HashMap<ObjectSet, HybridArc<?>>());
-	}
-
-	private static HashMap<EnvironmentData, ArrayList<DataSeries<?>>> seriesListMap = new HashMap<EnvironmentData, ArrayList<DataSeries<?>>>();
-
-	public static void populateListMap(EnvironmentData data)
-	{
-		seriesListMap.put(data, new ArrayList<DataSeries<?>>());
-		for (HybridArc<?> arc : data.hybridArcMap.values())
-		{
-			for (DataSeries<?> series : arc.getData().values())
-			{
-				if (!seriesListMap.get(data).contains(series))
-				{
-					seriesListMap.get(data).add(series);
-				}
-			}
-		}
+		hybridArcMap = (new HashMap<ObjectSet, HybridArcData<?>>());
 	}
 
 	public void exportToCSVFile()
@@ -116,5 +96,10 @@ public class EnvironmentData
 	{
 		CSVFileParser parser = new CSVFileParser(this);
 		parser.createCSVOutput(output);
+	}
+
+	public static HashMap<ObjectSet, HybridArcData<?>> getHybridArcMap(EnvironmentData dat)
+	{
+		return dat.hybridArcMap;
 	}
 }

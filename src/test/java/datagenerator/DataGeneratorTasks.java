@@ -2,6 +2,7 @@ package datagenerator;
 
 import circlegenerator.CircleSystem;
 import com.be3short.io.format.ImageFormat;
+import com.be3short.obj.modification.XMLParser;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
@@ -97,6 +98,9 @@ public class DataGeneratorTasks extends TaskManager
 			// åenv.add(signalGenerator);
 			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
+
+		DataGeneratorSystem test = DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0);
+		env.add(test);
 		env.start(10.0, 100000);
 		xyVsTimeVertical().createChart(env);
 		// xyCombination().createChart(env);
@@ -104,6 +108,9 @@ public class DataGeneratorTasks extends TaskManager
 		// HybridChart2.createChart(env);
 		// HybridChart3.createChart(env);
 		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
+
+		System.out.println(XMLParser.serializeObject(env.getData().getSolution(test.getState())));
+		env.getData().getSolution(test.getState()).exportCSV(new File("output/testCSV.csv"));
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
@@ -285,7 +292,7 @@ public class DataGeneratorTasks extends TaskManager
 		// Convergence threshold of an event
 		env.getSettings().getComputationSettings().eventHandlerConvergenceThreshold = .00000000000001;
 		// Event handler maximum interval to check for an event
-		env.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval = .5E-5;
+		env.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval = .5E-6;
 		// Integrator type to be used
 		env.getSettings().getComputationSettings().integratorType = IntegratorType.DORMAND_PRINCE_853;
 		// Factor that event handling interval value will be reduced when event handling error occurs
@@ -307,7 +314,7 @@ public class DataGeneratorTasks extends TaskManager
 		// Factor to reduce minimum step size (if using variable step integrator) when a step size related error occurs
 		env.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor = 1.0;
 
-		env.getSettings().getInterfaceSettings().runInRealTime = true;
+		env.getSettings().getInterfaceSettings().runInRealTime = false;
 		return env;
 	}
 }

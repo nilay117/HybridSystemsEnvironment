@@ -1,18 +1,12 @@
 package edu.ucsc.cross.hse.core.data;
 
+import edu.ucsc.cross.hse.core.object.ObjectSet;
+import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import edu.ucsc.cross.hse.core.object.ObjectSet;
-import edu.ucsc.cross.hse.core.time.HybridTime;
-
 public class DataSeries<X>
 {
-
-	// private Class<X> dataClass;
-	// private String elementName;
-	// private String parentID;
-	// private String parentName;
 
 	private ObjectSet parent;
 	private Field child;

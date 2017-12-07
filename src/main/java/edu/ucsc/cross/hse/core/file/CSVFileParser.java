@@ -2,6 +2,10 @@ package edu.ucsc.cross.hse.core.file;
 
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
+import edu.ucsc.cross.hse.core.data.HybridArc;
+import edu.ucsc.cross.hse.core.data.HybridArcData;
+import edu.ucsc.cross.hse.core.monitor.DataMonitor;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.io.File;
@@ -19,10 +23,16 @@ public class CSVFileParser
 		this.data = data;
 	}
 
+	public CSVFileParser(HybridArc<? extends ObjectSet> data)
+	{
+		this.data = new EnvironmentData();
+		EnvironmentData.getHybridArcMap(this.data).put(data.getCurrent(), (HybridArcData<?>) data);
+	}
+
 	private String createHeader()
 	{
 		String header = "time,jumps";
-		for (DataSeries<?> series : data.getAllDataSeries())
+		for (DataSeries<?> series : DataMonitor.getAllDataSeries(data))
 		{
 			header += "," + series.getElementName();
 		}
@@ -48,7 +58,7 @@ public class CSVFileParser
 		{
 			String line = getLineIntro(index);
 			HybridTime time = data.getStoreTimes().get(index);
-			for (DataSeries<?> data : data.getAllDataSeries())
+			for (DataSeries<?> data : DataMonitor.getAllDataSeries(data))
 			{
 
 				line += "," + data.getStoredData(time).toString();

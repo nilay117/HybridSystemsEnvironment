@@ -3,6 +3,7 @@ package edu.cross.ucsc.hse.core.chart;
 import com.be3short.data.cloning.ObjectCloner;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
+import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.awt.Color;
 import java.awt.Font;
@@ -46,7 +47,7 @@ public class SubChartView
 		HashMap<String, XYSeries> ser = new HashMap<String, XYSeries>();
 		if (properties().getyDataSelection() != null)
 		{
-			for (DataSeries<?> data : data.getAllDataSeries())
+			for (DataSeries<?> data : DataMonitor.getAllDataSeries(data))
 			{
 				boolean matchesSelection = true;
 				DataSeries<?> xS = null;
@@ -58,7 +59,8 @@ public class SubChartView
 				}
 				if (properties().getxDataSelection() != null)
 				{
-					xS = data.getSeriesWithSameParent(properties().getxDataSelection(), this.data.getAllDataSeries());
+					xS = data.getSeriesWithSameParent(properties().getxDataSelection(),
+					DataMonitor.getAllDataSeries(this.data));
 					if (xS == null)
 					{
 						matchesSelection = false;
@@ -112,7 +114,7 @@ public class SubChartView
 	public ArrayList<String> getFieldNames()
 	{
 		ArrayList<String> fieldNames = new ArrayList<String>();
-		for (DataSeries<?> e : data.getAllDataSeries())
+		for (DataSeries<?> e : DataMonitor.getAllDataSeries(data))
 		{
 
 			if (!fieldNames.contains(e.getElementName()))

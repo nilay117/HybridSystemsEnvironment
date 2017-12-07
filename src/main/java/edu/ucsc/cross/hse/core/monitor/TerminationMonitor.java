@@ -8,12 +8,10 @@ import org.apache.commons.math3.ode.events.EventHandler;
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
  * smoothly as the discontinuities are addressed discretely while the solver is paused
  */
-public class ExecutionMonitor implements EventHandler
+public class TerminationMonitor implements EventHandler
 {
 
 	private EnvironmentEngine manager; // manager of the environment
-	private Double startTime; // nanoseconds
-	private Double elapsedTime; // nanoseconds
 	private Double endTime;
 	private boolean paused;
 
@@ -107,11 +105,9 @@ public class ExecutionMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public ExecutionMonitor(EnvironmentEngine manager)
+	public TerminationMonitor(EnvironmentEngine manager)
 	{
 		this.manager = manager;
-		startTime = 0.0;
-		elapsedTime = 0.0;
 		paused = false;
 	}
 }
