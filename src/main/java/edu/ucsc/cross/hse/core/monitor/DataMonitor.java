@@ -275,25 +275,24 @@ public class DataMonitor
 			{
 				storeNewData(time);
 			}
-		} else// if (jump_status.equals(JumpStatus.APPROACHING_JUMP))
+		} else if (jump_status.equals(JumpStatus.APPROACHING_JUMP))
 		{
 
-			if (time > (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
+			if (time >= (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
 			{
 				removePreviousVals(time);
-
 				storeNewData(time);
 			}
-		} // else
-			// {
+		} else
+		{
 			//
 			// if (time > (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
 			// {
 			//
-			// storeNewData(time);
+			storeNewData(time);
 			// }
 			//
-			// }
+		}
 
 	}
 

@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import com.be3short.obj.modification.ObjectCloner;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.operator.SimulationOperator;
@@ -28,6 +29,7 @@ public class ComputationMonitor
 	 * Total time that the environment has been running (excluding pauses and errors)
 	 */
 	private Double runTime;
+	private double[] initialY;
 
 	/*
 	 * Get the total run time
@@ -48,6 +50,7 @@ public class ComputationMonitor
 		FirstOrderIntegrator integrator = getSimulationIntegrator();
 		SimulationOperator ode = manager.getSimEngine();
 		double[] y = manager.getExecutionContent().getValueVector();
+		initialY = (double[]) ObjectCloner.xmlClone(y);
 		manager.getDataManager().storeNewData(manager.getExecutionContent().getHybridSimTime().getTime());
 
 		if (manager.getSettings().getInterfaceSettings().runInRealTime)
@@ -120,6 +123,8 @@ public class ComputationMonitor
 
 				else
 				{
+					//// manager.getExecutionContent().updateSimulationTime(0.0, 0);
+					// manager.getExecutionContent().readStateValues(initialY);
 					// manager.getDataManager().revertToInitialValues();//
 					// manager.getExecutionContent().getSimulationTime());
 				} // }
