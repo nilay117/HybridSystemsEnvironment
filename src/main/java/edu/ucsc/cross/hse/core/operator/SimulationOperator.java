@@ -26,7 +26,7 @@ public class SimulationOperator implements FirstOrderDifferentialEquations
 	public void computeDerivatives(double t, double[] y, double[] yDot)
 	throws MaxCountExceededException, DimensionMismatchException
 	{
-		content.getDataManager().performDataActions(t, y, content.getJumpEvaluator().getCheckJumpStatus());
+		// content.getDataManager().performDataActions(t, y, content.getJumpEvaluator().getCheckJumpStatus());
 		content.getSystemControl().applyDynamics(false);
 		content.getExecutionContent().updateChangeVector(yDot);
 	}

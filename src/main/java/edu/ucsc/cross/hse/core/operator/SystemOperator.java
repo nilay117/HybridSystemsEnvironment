@@ -100,7 +100,7 @@ public class SystemOperator
 	{
 		if (jump)
 		{
-			storeChangeValues(true);
+			// storeChangeValues(true);
 		} else
 		{
 			clearChangeValues();

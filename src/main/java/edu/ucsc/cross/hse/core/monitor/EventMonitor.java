@@ -1,9 +1,8 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import org.apache.commons.math3.ode.events.EventHandler;
-
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import org.apache.commons.math3.ode.events.EventHandler;
 
 /*
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
@@ -37,7 +36,7 @@ public class EventMonitor implements EventHandler
 												// hasn't been reached
 		} else
 		{
-			manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
+			// manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
 			return EventHandler.Action.RESET_STATE; // otherwise terminate the
 			// environment
 		}
@@ -105,7 +104,7 @@ public class EventMonitor implements EventHandler
 	@Override
 	public void resetState(double t, double[] y)
 	{
-		manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
+
 		executeJumps(t, y);
 	}
 
@@ -116,15 +115,26 @@ public class EventMonitor implements EventHandler
 
 	private void executeJumps(double t, double[] y)
 	{
+		JumpStatus jumpStatus = JumpStatus.JUMP_OCCURRED;
 		while (manager.getSystemControl().checkDomain(true))
 		{
+			if (jumpStatus.equals(JumpStatus.JUMP_OCCURRED))
+			{
+				System.out.println("Jump detected");
+				manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
+			}
 			if (manager.getExecutionContent().getHybridSimTime()
 			.getJumps() < manager.getSettings().getExecutionParameters().maximumJumps)
 			{
 				manager.getSystemControl().applyDynamics(true); // execute all jumps
-				manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_OCCURRED);
+				manager.getDataManager().performDataActions(t, y, jumpStatus);
+				if (jumpStatus.equals(JumpStatus.JUMP_OCCURRED))
+				{
+					jumpStatus = JumpStatus.MULTI_JUMP_OCCURRED;
+				}
 			} else
 			{
+				manager.getSystemControl().applyDynamics(false);
 				return;
 			}
 

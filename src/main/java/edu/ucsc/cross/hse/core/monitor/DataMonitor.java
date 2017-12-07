@@ -1,9 +1,7 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import java.util.ArrayList;
-
+import com.be3short.obj.manipulation.DynamicObjectManipulator;
 import com.be3short.obj.manipulation.ObjectManipulator;
-
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
@@ -11,11 +9,19 @@ import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.object.ObjectSet.ObjectSetAPI;
 import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
 import edu.ucsc.cross.hse.core.time.HybridTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataMonitor
 {
 
 	private ExecutionOperator manager;
+
+	/*
+	 * This mapping contains the initial value of every object contained within the environment
+	 */
+	private HashMap<Object, Object> initialValueMapping;
+	private Double initialValueTime;
 	// private Double nextStoreTime;
 
 	public void loadMap()
@@ -114,16 +120,18 @@ public class DataMonitor
 
 	public void performDataActions(double time, double state_vector[], JumpStatus jump_status, boolean override_store)
 	{
-
-		updateTime(time, jump_status);
-		loadData(state_vector, jump_status);
-		if (override_store)
+		// if (time > initialValueTime && time > 0)
 		{
-			storeNewData(time);
+			updateTime(time, jump_status);
+			loadData(state_vector, jump_status);
+			if (override_store)
+			{
+				storeNewData(time);
 
-		} else
-		{
-			updateData(time, jump_status);
+			} else
+			{
+				updateData(time, jump_status);
+			}
 		}
 	}
 
@@ -137,16 +145,19 @@ public class DataMonitor
 				{
 					try
 					{
-						removeLastValue();
+						// if (lastTime() > 0.0)
+						{
+							removeLastValue();
+						}
 					} catch (Exception removeLastValueFail)
 					{
 						removeLastValueFail.printStackTrace();
 					}
 				}
-			} else
-			{
-				System.out.println("yo");
-			}
+			} // else
+				// {
+				// System.out.println("yo");
+				// }
 		} catch (Exception removeValsFail)
 		{
 			removeValsFail.printStackTrace();
@@ -174,21 +185,16 @@ public class DataMonitor
 		}
 	}
 
-	public void revertToLastStoredValue(Double time)
+	public void revertToLastStoredValue(double initial_val_time)
 	{
-		if (manager.getDataCollector().getStoreTimes().size() > 1)
-		{
-			removePreviousVals(time);
-			manager.getExecutionContent().readStateValues(manager.getExecutionContent().updateValueVector(null));
-			manager.getExecutionContent().updateValueVector(null);
-			manager.getExecutionContent().updateSimulationTime(lastTime());
-			storeNewData(lastTime());
-		} else
-		{
-			restoreInitialData(false);
-			manager.getExecutionContent().updateSimulationTime(manager.getDataCollector().getStoreTimes().get(0));
-			// manager.getExecutionContent().updateValueVector(null);
-		}
+
+		removePreviousVals(lastTime());
+		manager.getExecutionContent().readStateValues(manager.getExecutionContent().updateValueVector(null));
+		manager.getExecutionContent().updateValueVector(null);
+		manager.getExecutionContent().updateSimulationTime(lastTime(),
+		manager.getDataCollector().getLastStoredTime().getJumps());
+		storeNewData(lastTime());
+
 	}
 
 	public void storeNewData(Double time)
@@ -196,17 +202,17 @@ public class DataMonitor
 		// removePreviousVals(time);
 		try
 		{
-			if (!time.equals(manager.getDataCollector().getStoreTimes().get(0).getTime()))
+			// if (!time.equals(manager.getDataCollector().getStoreTimes().get(0).getTime()))
+			// {
+			for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
+			// .getSimulatedObjectAccessVector().length; objIndex++)
 			{
-				for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
-				// .getSimulatedObjectAccessVector().length; objIndex++)
-				{
-					ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
-					.get(data.getParent().toString() + data.getChild().getName());// [objIndex];
-					// DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
-					storeDataGeneral(data, obj.getObject());
-				}
+				ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
+				.get(data.getParent().toString() + data.getChild().getName());// [objIndex];
+				// DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
+				storeDataGeneral(data, obj.getObject());
 			}
+			// }
 		} catch (
 
 		Exception removeValsFail)
@@ -224,7 +230,7 @@ public class DataMonitor
 
 	private void loadData(double state_vector[], JumpStatus jump_status)
 	{
-		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
+		if (jump_status.equals(JumpStatus.JUMP_OCCURRED) || jump_status.equals(JumpStatus.MULTI_JUMP_OCCURRED))
 		{
 			manager.getExecutionContent().updateValueVector(state_vector);
 		} else
@@ -235,11 +241,12 @@ public class DataMonitor
 
 	private void removeLastValue()
 	{
+
 		int i = manager.getDataCollector().getStoreTimes().indexOf(manager.getDataCollector().getLastStoredTime());
 
 		if (manager.getDataCollector().getStoreTimes().size() > i)
 		{
-			for (Integer objIndex = 0; objIndex < manager.getDataCollector().getAllDataSeries().size(); objIndex++)
+			for (Integer objIndex = 1; objIndex < manager.getDataCollector().getAllDataSeries().size(); objIndex++)
 			{
 				DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
 				if (data.getAllStoredData().size() > i)
@@ -254,29 +261,45 @@ public class DataMonitor
 
 	private void updateData(Double time, JumpStatus jump_status)
 	{
-
-		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
+		// System.out.println(time + " last " + lastTime());
+		if (jump_status.equals(JumpStatus.MULTI_JUMP_OCCURRED) || jump_status.equals(JumpStatus.JUMP_OCCURRED))
 		{
 			storeNewData(time);
 		} else if (jump_status.equals(JumpStatus.JUMP_DETECTED))
+		// || jump_status.equals(JumpStatus.JUMP_OCCURRED))
 		{
-			removePreviousVals(time);
-			storeNewData(time);
-		} else // if (jump_status.equals(JumpStatus.APPROACHING_JUMP) || )
+			// removePreviousVals(time);
+			// removePreviousVals(time);
+			System.out.println(time + " last " + lastTime());
+			// if (time >= (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
+			{
+				storeNewData(time);
+			}
+		} else// if (jump_status.equals(JumpStatus.APPROACHING_JUMP))
 		{
+
 			if (time > (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
 			{
 				removePreviousVals(time);
+
 				storeNewData(time);
 			}
-
-		}
+		} // else
+			// {
+			//
+			// if (time > (lastTime() + manager.getSettings().getOutputSettings().dataPointInterval))
+			// {
+			//
+			// storeNewData(time);
+			// }
+			//
+			// }
 
 	}
 
 	private void updateTime(Double time, JumpStatus jump_status)
 	{
-		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
+		if (jump_status.equals(JumpStatus.JUMP_OCCURRED) || jump_status.equals(JumpStatus.MULTI_JUMP_OCCURRED))
 		{
 			manager.getExecutionContent().updateSimulationTime(time, 1);
 
@@ -289,7 +312,63 @@ public class DataMonitor
 	public DataMonitor(ExecutionOperator manager)
 	{
 		this.manager = manager;
+
 		// nextStoreTime = 0.0;
+	}
+
+	public void storeInitialValues(double initial_val_time)
+	{
+		initialValueTime = initial_val_time;
+		initialValueMapping = new HashMap<Object, Object>();
+		HashMap<Object, DynamicObjectManipulator> objectManipulators = manager.getExecutionContent()
+		.getFieldParentMap();
+
+		for (Object obj : manager.getExecutionContent().getFieldParentMap().keySet())
+		{
+			initialValueMapping.put(obj, objectManipulators.get(obj).getObject());
+		}
+	}
+
+	public void revertToInitialValues()
+	{
+		revertToInitialValues(null);
+	}
+
+	public void revertToInitialValues(Double initial_val_time)
+	{
+		Double initialTime = initial_val_time;
+		if (initialTime == null)
+		{
+			initialTime = initialValueTime;
+		}
+		manager.getDataCollector().getStoreTimes().clear();
+		// restoreInitialData(true);
+		// initialValueMapping = new HashMap<Object, Object>();
+		HashMap<Object, DynamicObjectManipulator> objectManipulators = manager.getExecutionContent()
+		.getFieldParentMap();
+		// for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
+		// // .getSimulatedObjectAccessVector().length; objIndex++)
+		// {
+		// data.getAllStoredData().clear();
+		// }
+		for (Object obj : manager.getExecutionContent().getFieldParentMap().keySet())
+		{
+			try
+			{
+				objectManipulators.get(obj).updateObject(initialValueMapping.get(obj));
+				// objectManipulators.get(obj).getField().set(objectManipulators.get(obj).getChangeParent(), 0.0);
+			} catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		manager.getExecutionContent().readStateValues(manager.getExecutionContent().updateValueVector(null));
+		manager.getExecutionContent().updateValueVector(null);
+		manager.getExecutionContent().updateSimulationTime(initialTime, 0);
+		// manager.getExecutionContent().updateValueVector(null);
+		// manager.getExecutionContent().updateSimulationTime(initialTime);
+		storeNewData(initialTime);
 	}
 
 	/*

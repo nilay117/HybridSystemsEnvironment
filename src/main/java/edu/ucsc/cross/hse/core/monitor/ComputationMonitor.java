@@ -1,5 +1,9 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import edu.ucsc.cross.hse.core.io.Console;
+import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import edu.ucsc.cross.hse.core.operator.SimulationOperator;
+import edu.ucsc.cross.hse.core.setting.ComputationSettings;
 import org.apache.commons.math3.exception.NoBracketingException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
@@ -8,11 +12,6 @@ import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince54Integrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
-
-import edu.ucsc.cross.hse.core.io.Console;
-import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
-import edu.ucsc.cross.hse.core.operator.SimulationOperator;
-import edu.ucsc.cross.hse.core.setting.ComputationSettings;
 
 /*
  * Executes and monitors an instance of the Hybrid Environment. Errors are caught and handled accordingly to keep
@@ -50,6 +49,7 @@ public class ComputationMonitor
 		SimulationOperator ode = manager.getSimEngine();
 		double[] y = manager.getExecutionContent().getValueVector();
 		manager.getDataManager().storeNewData(manager.getExecutionContent().getHybridSimTime().getTime());
+
 		if (manager.getSettings().getInterfaceSettings().runInRealTime)
 		{
 			runRealTimeIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
@@ -98,8 +98,9 @@ public class ComputationMonitor
 			FirstOrderIntegrator integrator = getSimulationIntegrator();
 
 			Double stopTime = integrator.integrate(manager.getSimEngine(),
-			manager.getExecutionContent().getHybridSimTime().getTime(), manager.getExecutionContent().getValueVector(),
-			end_time, manager.getExecutionContent().getValueVector());
+			manager.getExecutionContent().getHybridSimTime().getTime(),
+			manager.getExecutionContent().updateValueVector(null), end_time,
+			manager.getExecutionContent().updateValueVector(null));
 			return stopTime;
 		} catch (Exception e)
 		{
@@ -110,9 +111,23 @@ public class ComputationMonitor
 			// manager.getDataManager().restoreInitialData();
 			// } else
 			// {
-			// if (manager.getDataCollector().getStoreTimes().size() > 1)
+			try
 			{
-				manager.getDataManager().revertToLastStoredValue(manager.getExecutionContent().getSimulationTime());
+				if (manager.getDataCollector().getStoreTimes().size() > 1)
+				{
+					// manager.getDataManager().revertToLastStoredValue(manager.getExecutionContent().getSimulationTime());
+				}
+
+				else
+				{
+					// manager.getDataManager().revertToInitialValues();//
+					// manager.getExecutionContent().getSimulationTime());
+				} // }
+			} catch (Exception ee)
+
+			{
+				// manager.getDataManager().revertToInitialValues();//
+				// manager.getExecutionContent().getSimulationTime());
 			} // }
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
@@ -338,23 +353,23 @@ public class ComputationMonitor
 		FirstOrderIntegrator integrator = null;
 		switch (manager.getSettings().getComputationSettings().integratorType)
 		{
-		case EULER:
-			integrator = new EulerIntegrator(manager.getSettings().getComputationSettings().odeMinimumStepSize);
-			break;
-		case DORMAND_PRINCE_853:
-			integrator = new DormandPrince853Integrator(
-			manager.getSettings().getComputationSettings().odeMinimumStepSize,
-			manager.getSettings().getComputationSettings().odeMaximumStepSize,
-			manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
-			manager.getSettings().getComputationSettings().odeRelativeTolerance);
-			break;
-		case DORMAND_PRINCE_54:
-			integrator = new DormandPrince54Integrator(
-			manager.getSettings().getComputationSettings().odeMinimumStepSize,
-			manager.getSettings().getComputationSettings().odeMaximumStepSize,
-			manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
-			manager.getSettings().getComputationSettings().odeRelativeTolerance);
-			break;
+			case EULER:
+				integrator = new EulerIntegrator(manager.getSettings().getComputationSettings().odeMinimumStepSize);
+				break;
+			case DORMAND_PRINCE_853:
+				integrator = new DormandPrince853Integrator(
+				manager.getSettings().getComputationSettings().odeMinimumStepSize,
+				manager.getSettings().getComputationSettings().odeMaximumStepSize,
+				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
+				manager.getSettings().getComputationSettings().odeRelativeTolerance);
+				break;
+			case DORMAND_PRINCE_54:
+				integrator = new DormandPrince54Integrator(
+				manager.getSettings().getComputationSettings().odeMinimumStepSize,
+				manager.getSettings().getComputationSettings().odeMaximumStepSize,
+				manager.getSettings().getComputationSettings().odeSolverAbsoluteTolerance,
+				manager.getSettings().getComputationSettings().odeRelativeTolerance);
+				break;
 		}
 		loadEventHandlers(integrator);
 		return integrator;

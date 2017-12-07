@@ -1,17 +1,8 @@
 
 package edu.ucsc.cross.hse.core.operator;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Scanner;
-
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
-
 import edu.ucsc.cross.hse.core.container.EnvironmentContent;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
@@ -22,8 +13,14 @@ import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.monitor.ComputationMonitor;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.monitor.EventMonitor;
-import edu.ucsc.cross.hse.core.monitor.JumpStatus;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class ExecutionOperator
 {
@@ -129,10 +126,11 @@ public class ExecutionOperator
 		prepareConsole();
 		exeContent.prepareComponents(this);
 		dataManager.loadMap();
-		if (!getSettings().getInterfaceSettings().runInRealTime)
-		{
-			dataManager.performDataActions(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
-		}
+		// if (!getSettings().getInterfaceSettings().runInRealTime)
+		// {
+		// dataManager.performDataActions(0.0, exeContent.getValueVector(), JumpStatus.NO_JUMP, true);
+		// }
+		dataManager.storeInitialValues(0.0);
 	}
 
 	public void resetData()
