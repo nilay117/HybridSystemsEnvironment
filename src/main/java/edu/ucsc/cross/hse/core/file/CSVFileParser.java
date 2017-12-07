@@ -3,10 +3,10 @@ package edu.ucsc.cross.hse.core.file;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
-import edu.ucsc.cross.hse.core.data.HybridArcData;
+import edu.ucsc.cross.hse.core.data.HybridArc.HybridArcData;
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,10 +23,11 @@ public class CSVFileParser
 		this.data = data;
 	}
 
-	public CSVFileParser(HybridArc<? extends ObjectSet> data)
+	public <T extends ObjectSet> CSVFileParser(HybridArc<T> data)
 	{
 		this.data = new EnvironmentData();
-		EnvironmentData.getHybridArcMap(this.data).put(data.getCurrent(), (HybridArcData<?>) data);
+		this.data.getStoreTimes().addAll(data.getDataDomain());
+		EnvironmentData.getHybridArcMap(this.data).put(data.getCurrentObject(), new HybridArcData<T>(data));
 	}
 
 	private String createHeader()
@@ -42,7 +43,7 @@ public class CSVFileParser
 	public void createCSVOutput()
 	{
 		String filepath = "output/"
-		+ EnvironmentEngine.getStartTime(EnvironmentEngine.getContainingEnvironment(data), false).toString()
+		+ ExecutionEngine.getStartTime(ExecutionEngine.getContainingEnvironment(data), false).toString()
 		+ "/environmentData.csv";
 		createCSVOutput(new File(filepath));
 	}

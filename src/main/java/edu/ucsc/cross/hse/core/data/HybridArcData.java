@@ -35,11 +35,6 @@ public class HybridArcData<X extends ObjectSet> extends HybridArc<X>
 		return new HybridArcData<Y>(system, cl, store_times);
 	}
 
-	public ArrayList<HybridTime> getStoreTimes()
-	{
-		return storeTimes;
-	}
-
 	public void setStoreTimes(ArrayList<HybridTime> storeTimes)
 	{
 		this.storeTimes = storeTimes;

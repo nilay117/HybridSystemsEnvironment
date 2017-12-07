@@ -1,17 +1,17 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import edu.ucsc.cross.hse.core.io.Console;
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import org.apache.commons.math3.ode.events.EventHandler;
 
 /*
- * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
- * smoothly as the discontinuities are addressed discretely while the solver is paused
+ * Continuously monitors the environment to interrupt the execution when the time or jump threshold is reached, or a
+ * manual halt has been requested. This allows the ODE to stop automatically without input from the engine.
  */
-public class TerminationMonitor implements EventHandler
+public class InterruptMonitor implements EventHandler
 {
 
-	private EnvironmentEngine manager; // manager of the environment
+	private ExecutionEngine manager; // manager of the environment
 	private Double endTime;
 	private boolean paused;
 
@@ -37,11 +37,7 @@ public class TerminationMonitor implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
-		// if (manager.getSettings().getInterfaceSettings().runInRealTime)
-		{
-			Console.printInfoStatus(manager);
-		}
-
+		Console.printInfoStatus(manager);
 		if (isRunning())
 		{
 			return 1;
@@ -61,10 +57,6 @@ public class TerminationMonitor implements EventHandler
 		if (manager.getSettings().getInterfaceSettings().runInRealTime)
 		{
 			endTime += endTime + .000000001 * (System.nanoTime());
-			//
-			// // if (manager.getSettings().getInterfaceSettings().stepSizeNanoseconds
-			// // + elapsedTime > manager.getSettings().getExecutionParameters().maximumTime)
-			// // endTime = (Double.valueOf(System.nanoTime()));
 		}
 		paused = false;
 	}
@@ -72,7 +64,6 @@ public class TerminationMonitor implements EventHandler
 	/*
 	 * Performs actions necessary to reset the state after a jump has occurred
 	 */
-
 	public boolean isRunning()
 	{
 		return !paused && !thresholdExceeded();
@@ -105,7 +96,7 @@ public class TerminationMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public TerminationMonitor(EnvironmentEngine manager)
+	public InterruptMonitor(ExecutionEngine manager)
 	{
 		this.manager = manager;
 		paused = false;

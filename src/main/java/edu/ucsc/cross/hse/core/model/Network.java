@@ -26,7 +26,7 @@ public class Network<N, C, P>
 		this.properties.put(link, properties);
 	}
 
-	public HashMap<N, HashMap<N, ArrayList<GraphPath<N, C>>>> getPaths()
+	public HashMap<N, HashMap<N, ArrayList<GraphPath<N, C>>>> getAllPaths()
 	{
 
 		HashMap<N, HashMap<N, ArrayList<GraphPath<N, C>>>> flows = new HashMap<N, HashMap<N, ArrayList<GraphPath<N, C>>>>();
@@ -66,6 +66,40 @@ public class Network<N, C, P>
 			}
 		}
 		return flows;
+	}
+
+	public HashMap<N, ArrayList<GraphPath<N, C>>> getPaths(N node)
+	{
+		HashMap<N, ArrayList<GraphPath<N, C>>> path = new HashMap<N, ArrayList<GraphPath<N, C>>>();
+		for (N dest : graph.vertexSet())// network.edgesOf(node))
+		{
+			// for (Graph<N, V> flow : paths.getAllPaths(network, node, dest, false, null))
+			{
+				try
+				{
+					ListOrderedSet s = new ListOrderedSet();
+					s.add(node);
+					ListOrderedSet sd = new ListOrderedSet();
+					sd.add(dest);
+					if (!path.containsKey(dest))
+					{
+						path.put(dest,
+
+						new ArrayList<GraphPath<N, C>>());// paths.getAllPaths(s,
+						// network.vertexSet(), false,
+						// 15)));// paths.getAllPaths(node,
+					}
+					{
+						path.get(dest).addAll(paths.getAllPaths(s, sd, true, 25));// dest.getDestination(),
+					}
+					// false, null);
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		return path;
 	}
 
 	public DirectedPseudograph<N, C> getGraph()

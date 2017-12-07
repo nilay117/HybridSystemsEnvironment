@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.monitor;
 
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import edu.ucsc.cross.hse.core.io.Console;
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.operator.SimulationOperator;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings;
 import org.apache.commons.math3.exception.NoBracketingException;
@@ -22,13 +22,12 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 public class ComputationMonitor
 {
 
-	private EnvironmentEngine manager;
+	private ExecutionEngine manager;
 
 	/*
 	 * Total time that the environment has been running (excluding pauses and errors)
 	 */
-	private Double runTime;
-	private Double timeElapsed = 0.0;
+	private Double timeElapsed;
 
 	/*
 	 * Get the total run time
@@ -37,7 +36,7 @@ public class ComputationMonitor
 	 */
 	public Double getRunTime()
 	{
-		return runTime;
+		return timeElapsed;
 	}
 
 	/*
@@ -45,7 +44,6 @@ public class ComputationMonitor
 	 */
 	public void launchEnvironment()
 	{
-		long startTime = System.currentTimeMillis();
 		FirstOrderIntegrator integrator = getSimulationIntegrator();
 		SimulationOperator ode = manager.getSimEngine();
 		double[] y = manager.getExecutionContent().getValueVector();
@@ -54,20 +52,9 @@ public class ComputationMonitor
 			manager.getExecutionContent().updateSimulationTime(Double.valueOf(System.nanoTime()) / 1000000000.0);
 		}
 		manager.getDataManager().storeNewData(manager.getExecutionContent().getHybridSimTime().getTime());
-
-		// if (manager.getSettings().getInterfaceSettings().runInRealTime)
-		// {
-		// runRealTimeIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
-		// manager.getExecutionParameters().maximumTime, y);
-		// } else
-		{
-			runIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
-			manager.getExecutionParameters().maximumTime, y);
-		}
-		// runIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
-		// manager.getExecutionParameters().getMaximumTime(), y);
-		runTime += Double.valueOf(((System.currentTimeMillis() - startTime))) / 1000.0;
-
+		timeElapsed = 0.0;
+		runIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
+		manager.getExecutionParameters().maximumTime, y);
 	}
 
 	/*
@@ -111,8 +98,6 @@ public class ComputationMonitor
 
 		} catch (Exception e)
 		{
-			// e.printStackTrace();
-
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
@@ -122,7 +107,6 @@ public class ComputationMonitor
 
 			if (recursion_level < ComputationSettings.maximumRecursiveIntegratorCalls)// !this.getInterruptHandler().isTerminating())
 			{
-
 				return recursiveIntegrator(recursion_level + 1, end_time);
 			} else
 			{
@@ -228,10 +212,6 @@ public class ComputationMonitor
 		manager.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval * 100000,
 		manager.getSettings().getComputationSettings().eventHandlerConvergenceThreshold * 100000,
 		manager.getSettings().getComputationSettings().maxEventHandlerIterations);
-		// integrator.addEventHandler(getInterruptHandler(),
-		// manager.getSettings().getEnvironmentSettings().ehMaxCheckInterval,
-		// manager.getSettings().getEnvironmentSettings().ehConvergence,
-		// manager.getSettings().getEnvironmentSettings().ehMaxIterationCount);
 	}
 
 	/*
@@ -430,11 +410,11 @@ public class ComputationMonitor
 	 * 
 	 * // this.getInterruptHandler().interruptEnv(true); } }
 	 */
-	public ComputationMonitor(EnvironmentEngine manager)
+	public ComputationMonitor(ExecutionEngine manager)
 	{
 
 		this.manager = manager;
-		runTime = 0.0;
+
 	}
 
 	public Double getTimeElapsed()

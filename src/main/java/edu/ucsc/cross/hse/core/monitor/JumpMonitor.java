@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import org.apache.commons.math3.ode.events.EventHandler;
 
 /*
@@ -15,7 +15,7 @@ public class JumpMonitor implements EventHandler
 	private boolean approachingJump; // flag indicating that the environment is approaching a jump, meaning that a jump
 										// has been detected by the ode but the pre-jump value has not been finalized
 
-	private EnvironmentEngine manager; // manager of the environment
+	private ExecutionEngine manager; // manager of the environment
 
 	private boolean running; // flag indicating that the environment is terminating
 
@@ -133,7 +133,7 @@ public class JumpMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public JumpMonitor(EnvironmentEngine manager)
+	public JumpMonitor(ExecutionEngine manager)
 	{
 		this.manager = manager;
 		toggleFlag = 1.0;

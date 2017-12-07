@@ -3,10 +3,10 @@ package edu.ucsc.cross.hse.core.monitor;
 import com.be3short.obj.manipulation.ObjectManipulator;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
-import edu.ucsc.cross.hse.core.data.HybridArcData;
+import edu.ucsc.cross.hse.core.data.HybridArc.HybridArcData;
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.object.ObjectSet.ObjectSetAPI;
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class DataMonitor
 {
 
-	private EnvironmentEngine manager;
+	private ExecutionEngine manager;
 
 	/*
 	 * This mapping contains the initial value of every object contained within the environment
@@ -328,7 +328,7 @@ public class DataMonitor
 		}
 	}
 
-	public DataMonitor(EnvironmentEngine manager)
+	public DataMonitor(ExecutionEngine manager)
 	{
 		this.manager = manager;
 

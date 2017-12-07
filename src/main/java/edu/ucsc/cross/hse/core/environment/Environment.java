@@ -8,12 +8,12 @@ import edu.ucsc.cross.hse.core.container.EnvironmentContents;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.model.Network;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -25,10 +25,10 @@ public class Environment
 {
 
 	// Components
-	public EnvironmentContents content;
-	public EnvironmentData dataCollector;
-	public EnvironmentOutputs outputs;
-	public EnvironmentSettings settings;
+	private EnvironmentContents content;
+	private EnvironmentData dataCollector;
+	private EnvironmentOutputs outputs;
+	private EnvironmentSettings settings;
 
 	public void add(ChartConfiguration... plot)
 	{
@@ -89,13 +89,13 @@ public class Environment
 		return dataCollector;
 	}
 
-	public EnvironmentEngine getManager()
+	private ExecutionEngine getManager()
 	{
-		if (!EnvironmentEngine.operatorMap.containsKey(this))
+		if (!ExecutionEngine.operatorMap.containsKey(this))
 		{
-			EnvironmentEngine.operatorMap.put(this, new EnvironmentEngine(this));
+			ExecutionEngine.operatorMap.put(this, new ExecutionEngine(this));
 		}
-		return EnvironmentEngine.operatorMap.get(this);
+		return ExecutionEngine.operatorMap.get(this);
 	}
 
 	public EnvironmentOutputs getOutputs()

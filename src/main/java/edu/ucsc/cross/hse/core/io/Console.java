@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.io;
 
 import com.be3short.io.info.SystemInfo;
-import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,13 +26,13 @@ public class Console
 	private static PrintWriter fileOut;
 	private static Double infoStatusPrintInterval;
 
-	private static EnvironmentEngine manager;
+	private static ExecutionEngine manager;
 
-	private static EnvironmentEngine getManager()
+	private static ExecutionEngine getManager()
 	{
 		if (manager == null)
 		{
-			manager = EnvironmentEngine.getOperator(null);
+			manager = ExecutionEngine.getOperator(null);
 		}
 		return manager;
 	}
@@ -88,7 +88,7 @@ public class Console
 		print(LogSettings.infoLabel, message, throwable, OutputType.INFO);
 	}
 
-	public static void printCompleteStatus(EnvironmentEngine manager)
+	public static void printCompleteStatus(ExecutionEngine manager)
 	{
 		if (getManager().getSettings().getLogSettings().numProgressUpdateOutputs > 0)
 		{
@@ -99,12 +99,12 @@ public class Console
 
 	}
 
-	public static void printInfoStatus(EnvironmentEngine manager)
+	public static void printInfoStatus(ExecutionEngine manager)
 	{
 		printInfoStatus(manager, false);
 	}
 
-	public static void printInfoStatus(EnvironmentEngine manager, boolean override_time)
+	public static void printInfoStatus(ExecutionEngine manager, boolean override_time)
 	{
 		if ((getManager().getExecutionContent().getSimulationTime() >= nextInfoPrint) || override_time)
 		{
@@ -297,7 +297,7 @@ public class Console
 		debugStatusThread.start();
 	}
 
-	public Console(EnvironmentEngine manage)
+	public Console(ExecutionEngine manage)
 	{
 		manager = manage;
 

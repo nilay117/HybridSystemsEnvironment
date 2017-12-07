@@ -2,9 +2,10 @@ package edu.ucsc.cross.hse.core.container;
 
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
-import edu.ucsc.cross.hse.core.data.HybridArcData;
+import edu.ucsc.cross.hse.core.data.HybridArc.HybridArcData;
 import edu.ucsc.cross.hse.core.file.CSVFileParser;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
+import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.io.File;
@@ -22,7 +23,16 @@ public class EnvironmentData
 	{
 		if (hybridArcMap.containsKey(state))
 		{
-			return (HybridArc<X>) hybridArcMap.get(state);
+			return (HybridArc<X>) hybridArcMap.get(state).getArc();
+		}
+		return null;
+	}
+
+	public <X extends ObjectSet> HybridArc<X> getSolution(HybridSystem<X> system)
+	{
+		if (hybridArcMap.containsKey(system.getState()))
+		{
+			return (HybridArc<X>) hybridArcMap.get(system.getState()).getArc();
 		}
 		return null;
 	}

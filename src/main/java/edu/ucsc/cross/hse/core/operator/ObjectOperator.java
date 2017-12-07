@@ -1,19 +1,18 @@
 package edu.ucsc.cross.hse.core.operator;
 
+import com.be3short.obj.access.FieldFinder;
+import com.be3short.obj.manipulation.DynamicObjectManipulator;
+import com.be3short.obj.manipulation.FieldMapper;
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.object.HybridSystem;
+import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
+import edu.ucsc.cross.hse.core.object.ObjectSet;
+import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
-
-import com.be3short.obj.access.FieldFinder;
-import com.be3short.obj.manipulation.DynamicObjectManipulator;
-import com.be3short.obj.manipulation.FieldMapper;
-
-import edu.ucsc.cross.hse.core.object.HybridSystem;
-import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
-import edu.ucsc.cross.hse.core.object.ObjectSet;
-import edu.ucsc.cross.hse.core.time.HybridTime;
 
 public class ObjectOperator
 {
@@ -21,9 +20,8 @@ public class ObjectOperator
 	private double[] changeVector;
 	private DynamicObjectManipulator[] objectAccessVector;
 	private HashMap<Object, DynamicObjectManipulator> objectMap;
-	private HybridTime simTime; // Simulation time
 	private double[] valueVector;
-	EnvironmentEngine manager;
+	ExecutionEngine manager;
 
 	public double[] getChangeVector()
 	{
@@ -84,7 +82,7 @@ public class ObjectOperator
 
 	public HybridTime getHybridSimTime()
 	{
-		return simTime;
+		return manager.getContents().getTime();
 	}
 
 	public DynamicObjectManipulator[] getSimulatedObjectAccessVector()
@@ -99,7 +97,7 @@ public class ObjectOperator
 
 	public Double getSimulationTime()
 	{
-		return simTime.getTime();
+		return manager.getContents().getTime().getTime();
 	}
 
 	public double[] getValueVector()
@@ -113,9 +111,9 @@ public class ObjectOperator
 		setSimTime(new HybridTime(getHybridSimTime().getTime(), getHybridSimTime().getJumps() + jump_increment));
 	}
 
-	public void prepareComponents(EnvironmentEngine manager)
+	public void prepareComponents(ExecutionEngine manager)
 	{
-		simTime = new HybridTime(0.0, 0);
+		manager.getContents().setTime(new HybridTime(0.0, 0));
 		initializeFieldMapper();
 		objectMap = initializeObjectAccessMap(manager);
 		objectAccessVector = initializeObjectAccessVector(objectMap, manager);
@@ -143,7 +141,7 @@ public class ObjectOperator
 
 	public void setSimTime(HybridTime simTime)
 	{
-		this.simTime = simTime;
+		manager.getContents().setTime(simTime);
 	}
 
 	public void setSimulatedObjectAccessVector(DynamicObjectManipulator[] simulatedObjectAccessVector)
@@ -289,7 +287,7 @@ public class ObjectOperator
 		// initializeMap(object_map, state, dynamic);
 	}
 
-	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(EnvironmentEngine manager)
+	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionEngine manager)
 	{
 		// initializeFieldMapper();
 		Integer address = 0;
@@ -313,10 +311,10 @@ public class ObjectOperator
 		return newObjectAccessMap;
 	}
 
-	public ObjectOperator(EnvironmentEngine manager)
+	public ObjectOperator(ExecutionEngine manager)
 	{
 		this.manager = manager;
-		simTime = new HybridTime(0.0, 0);
+		// manager.getContents().setTime(new HybridTime(0.0, 0));
 	}
 
 	public static final FieldMapper fieldMapper = new FieldMapper(ObjectSet.class);
@@ -334,7 +332,7 @@ public class ObjectOperator
 	}
 
 	private static DynamicObjectManipulator[] initializeObjectAccessVector(
-	HashMap<Object, DynamicObjectManipulator> object_map, EnvironmentEngine manager)
+	HashMap<Object, DynamicObjectManipulator> object_map, ExecutionEngine manager)
 	{
 		ArrayList<DynamicObjectManipulator> stateObjectList = new ArrayList<DynamicObjectManipulator>();
 		for (DynamicObjectManipulator obj : object_map.values())

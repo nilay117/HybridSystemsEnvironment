@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.operator;
 
+import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
@@ -12,7 +13,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 public class SimulationOperator implements FirstOrderDifferentialEquations
 {
 
-	private EnvironmentEngine content;
+	private ExecutionEngine content;
 
 	/*
 	 * Computes the new derivatives of each hybrid state element using the newly stored values from vector y
@@ -42,7 +43,7 @@ public class SimulationOperator implements FirstOrderDifferentialEquations
 		return content.getExecutionContent().getSimulatedObjectAccessVector().length;
 	}
 
-	public SimulationOperator(EnvironmentEngine content)
+	public SimulationOperator(ExecutionEngine content)
 	{
 		this.content = content;
 	}

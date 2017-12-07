@@ -1,5 +1,5 @@
 
-package edu.ucsc.cross.hse.core.operator;
+package edu.ucsc.cross.hse.core.engine;
 
 import com.be3short.io.format.FileFormat;
 import com.be3short.io.format.FileSpecifications;
@@ -12,8 +12,12 @@ import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.monitor.ComputationMonitor;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
+import edu.ucsc.cross.hse.core.monitor.InterruptMonitor;
 import edu.ucsc.cross.hse.core.monitor.JumpMonitor;
-import edu.ucsc.cross.hse.core.monitor.TerminationMonitor;
+import edu.ucsc.cross.hse.core.object.HybridSystem;
+import edu.ucsc.cross.hse.core.operator.ObjectOperator;
+import edu.ucsc.cross.hse.core.operator.SimulationOperator;
+import edu.ucsc.cross.hse.core.operator.SystemOperator;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -23,7 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class EnvironmentEngine
+public class ExecutionEngine
 {
 
 	Environment env;
@@ -31,7 +35,7 @@ public class EnvironmentEngine
 	// Monitors
 	DataMonitor dataManager;
 	ComputationMonitor computationMonitor;
-	TerminationMonitor executionMonitor;
+	InterruptMonitor executionMonitor;
 	JumpMonitor jumpEvaluator;
 
 	// Operators
@@ -42,7 +46,7 @@ public class EnvironmentEngine
 	// Output console
 	Console console;
 
-	public static HashMap<Environment, EnvironmentEngine> operatorMap = new HashMap<Environment, EnvironmentEngine>();
+	public static HashMap<Environment, ExecutionEngine> operatorMap = new HashMap<Environment, ExecutionEngine>();
 
 	public Console getConsole()
 	{
@@ -74,7 +78,7 @@ public class EnvironmentEngine
 		return exeContent;
 	}
 
-	public TerminationMonitor getExecutionMonitor()
+	public InterruptMonitor getExecutionMonitor()
 	{
 		return executionMonitor;
 	}
@@ -123,7 +127,7 @@ public class EnvironmentEngine
 		systemControl = new SystemOperator(this);
 		console = new Console(this);
 		exeContent = new ObjectOperator(this);
-		executionMonitor = new TerminationMonitor(this);
+		executionMonitor = new InterruptMonitor(this);
 	}
 
 	public void prepare()
@@ -163,7 +167,7 @@ public class EnvironmentEngine
 	String file_name)
 	{
 		FileSpecifications<T> specs = new FileSpecifications<T>(file_name, spec_type);
-		specs.prependDirectory(EnvironmentEngine.getStartTime(env, false).toString());
+		specs.prependDirectory(ExecutionEngine.getStartTime(env, false).toString());
 		specs.prependDirectory(env.getSettings().getOutputSettings().outputDirectory);
 		return specs;
 	}
@@ -175,7 +179,7 @@ public class EnvironmentEngine
 		{
 			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
 			env.getSettings().getOutputSettings().configurationFileName
-			+ EnvironmentEngine.getStartTime(env, true).toString());
+			+ ExecutionEngine.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
 			env.save(spe, false);
 			Console.info("Configuration saved: " + spe.getAbsolutePath());
@@ -185,7 +189,7 @@ public class EnvironmentEngine
 		{
 			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
 			env.getSettings().getOutputSettings().environmentFileName
-			+ EnvironmentEngine.getStartTime(env, true).toString());
+			+ ExecutionEngine.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
 			env.save(spe, true);
 			Console.info("Environment saved: " + spe.getAbsolutePath());
@@ -253,7 +257,7 @@ public class EnvironmentEngine
 		return debugStatusThread;
 	}
 
-	public EnvironmentEngine(Environment envi)
+	public ExecutionEngine(Environment envi)
 	{
 		env = envi;
 		initializeComponents();
@@ -263,7 +267,7 @@ public class EnvironmentEngine
 
 	private static HashMap<Environment, String> startTimes = new HashMap<Environment, String>();
 
-	private static ArrayList<EnvironmentEngine> operators = new ArrayList<EnvironmentEngine>();
+	private static ArrayList<ExecutionEngine> operators = new ArrayList<ExecutionEngine>();
 
 	private ArrayList<Object> components()
 	{
@@ -272,12 +276,26 @@ public class EnvironmentEngine
 	}
 
 	// Operator
+	public static Environment getSystemContainingEnvironment(HybridSystem<?> sys)
+	{
+		for (Environment env : operatorMap.keySet())
+		{
+
+			if (env.getContents().getSystems().contains(sys))
+			{
+				return env;
+			}
+		}
+		return null;
+	}
+
+	// Operator
 	public static Environment getContainingEnvironment(Object component)
 	{
 		for (Environment env : operatorMap.keySet())
 		{
 			ArrayList<Object> objs = new ArrayList<Object>(
-			Arrays.asList(env.content, env.dataCollector, env.outputs, env.settings));
+			Arrays.asList(env.getContents(), env.getData(), env.getOutputs(), env.getSettings()));
 			if (objs.contains(component))
 			{
 				return env;
@@ -290,14 +308,14 @@ public class EnvironmentEngine
 	HashMap<FileSpecifications<F>, T> unappended, Object component)
 	{
 		HashMap<FileSpecifications<F>, T> appended = new HashMap<FileSpecifications<F>, T>();
-		String prefix = String.valueOf(getStartTime(EnvironmentEngine.getContainingEnvironment(component), false));
+		String prefix = String.valueOf(getStartTime(ExecutionEngine.getContainingEnvironment(component), false));
 		for (FileSpecifications<F> spec : unappended.keySet())
 		{
 			FileSpecifications<F> specs = spec.copy();
 			if (!specs.isNullFile())
 			{
 				specs.prependDirectory((FileSpecifications.checkSlashes(new File(
-				EnvironmentEngine.getContainingEnvironment(component).getSettings().getOutputSettings().outputDirectory)
+				ExecutionEngine.getContainingEnvironment(component).getSettings().getOutputSettings().outputDirectory)
 				.getAbsolutePath(), prefix)));
 				// System.out.println("final path: " + specs.getLocation(false).getAbsolutePath());
 
@@ -307,14 +325,14 @@ public class EnvironmentEngine
 		return appended;
 	}
 
-	public static EnvironmentEngine getOperator(Object object)
+	public static ExecutionEngine getOperator(Object object)
 	{
-		EnvironmentEngine op = null;
+		ExecutionEngine op = null;
 		if (operators.size() > 0)
 		{
 			op = operators.get(0);
 		}
-		for (EnvironmentEngine operator : operators)
+		for (ExecutionEngine operator : operators)
 		{
 			if (operator.components().contains(object))
 			{

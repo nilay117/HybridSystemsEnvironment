@@ -110,7 +110,41 @@ public class DataGeneratorTasks extends TaskManager
 		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
 
 		System.out.println(XMLParser.serializeObject(env.getData().getSolution(test.getState())));
-		env.getData().getSolution(test.getState()).exportCSV(new File("output/testCSV.csv"));
+		env.getData().getSolution(test.getState()).exportToCSVFile(new File("output/testCSV.csv"));
+		// env.save(new File("output/test"), false);
+		// //env.save(new File("output/testDat"), true);
+		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
+		// cv.setChartProperties(HybridChart2);
+
+	}
+
+	public static void zuntaryDataGeneratorSimulation()
+	{
+		Environment env = getConfiguredEnvironment();
+
+		ChartConfiguration HybridChart1 = xyCombination();
+		ChartConfiguration HybridChart2 = xOnly();
+		ChartConfiguration HybridChart3 = xyVsTimeVertical();
+		// env.add(HybridChart1, HybridChart2, HybridChart3);
+		for (int i = 0; i < 1; i++)
+		{
+			// CircleSystem signalGenerator = new CircleSystem(Math.random() * 5.0 + .2, Math.random() * 5.0 + .3);
+			// åenv.add(signalGenerator);
+			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
+		}
+
+		DataGeneratorSystem test = DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0);
+		env.add(test);
+		env.start(10.0, 100000);
+		xyVsTimeVertical().createChart(env);
+		// xyCombination().createChart(env);
+		// HybridChart1.createChart(env);
+		// HybridChart2.createChart(env);
+		// HybridChart3.createChart(env);
+		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
+
+		System.out.println(XMLParser.serializeObject(env.getData().getSolution(test.getState())));
+		env.getData().getSolution(test.getState()).exportToCSVFile(new File("output/testCSV.csv"));
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());

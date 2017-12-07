@@ -12,18 +12,32 @@ public class HybridArc<X extends ObjectSet>
 {
 
 	HashMap<Field, DataSeries<?>> data;
-	ArrayList<Double> times;
+	Class<X> emptyClass;
 	ArrayList<Integer> jumps;
 	ArrayList<HybridTime> storeTimes;
-	Class<X> emptyClass;
 	X system;
+	ArrayList<Double> times;
 
-	public HybridArc(X system, Class<X> empty_class, ArrayList<HybridTime> store_times)
+	public void exportToCSVFile(File path)
 	{
-		this.system = system;
-		emptyClass = empty_class;
-		storeTimes = (store_times);
-		data = new HashMap<Field, DataSeries<?>>();
+		CSVFileParser csv = new CSVFileParser(this);
+		csv.createCSVOutput(path);
+	}
+
+	public X getCurrentObject()
+	{
+		return system;
+	}
+
+	public ArrayList<HybridTime> getDataDomain()
+	{
+		return storeTimes;
+	}
+
+	public X getPoint(HybridTime hybrid_time)
+	{
+		HybridTime lookupTime = findMatchingTime(hybrid_time);
+		return createInstance(lookupTime);
 	}
 
 	public HashMap<HybridTime, X> getTrajectory()
@@ -40,30 +54,6 @@ public class HybridArc<X extends ObjectSet>
 		}
 
 		return solution;
-	}
-
-	public X getPoint(HybridTime hybrid_time)
-	{
-		HybridTime lookupTime = findMatchingTime(hybrid_time);
-		return createInstance(lookupTime);
-	}
-
-	private HybridTime findMatchingTime(HybridTime hybrid_time)
-	{
-		if (storeTimes.contains(hybrid_time))
-		{
-			return hybrid_time;
-		} else
-		{
-			for (HybridTime time : storeTimes)
-			{
-				if (time.getJumps().equals(hybrid_time.getJumps()) && time.getTime() == hybrid_time.getTime())
-				{
-					return time;
-				}
-			}
-		}
-		return null;
 	}
 
 	private X createInstance(HybridTime hybrid_time)
@@ -93,14 +83,72 @@ public class HybridArc<X extends ObjectSet>
 		return newInstance;
 	}
 
-	public X getCurrent()
+	private HybridTime findMatchingTime(HybridTime hybrid_time)
 	{
-		return system;
+		if (storeTimes.contains(hybrid_time))
+		{
+			return hybrid_time;
+		} else
+		{
+			for (HybridTime time : storeTimes)
+			{
+				if (time.getJumps().equals(hybrid_time.getJumps()) && time.getTime() == hybrid_time.getTime())
+				{
+					return time;
+				}
+			}
+		}
+		return null;
 	}
 
-	public void exportCSV(File path)
+	public HybridArc(X system, Class<X> empty_class, ArrayList<HybridTime> store_times)
 	{
-		CSVFileParser csv = new CSVFileParser(this);
-		csv.createCSVOutput(path);
+		this.system = system;
+		emptyClass = empty_class;
+		storeTimes = (store_times);
+		data = new HashMap<Field, DataSeries<?>>();
+	}
+
+	public static class HybridArcData<X extends ObjectSet>
+	{
+
+		HybridArc<X> arc;
+
+		public HashMap<Field, DataSeries<?>> getData()
+		{
+			return arc.data;
+		}
+
+		public HybridArcData(HybridArc<X> arc)
+		{
+			this.arc = arc;
+		}
+
+		public void addSeries(Field field, DataSeries<?> series)
+		{
+			arc.data.put(field, series);
+		}
+
+		public boolean containsSeries(Field field)
+		{
+			return arc.data.containsKey(field);
+		}
+
+		public static <Y extends ObjectSet> HybridArcData<Y> createArc(Y system, ArrayList<HybridTime> store_times)
+		{
+			Class<Y> cl = (Class<Y>) system.getClass();
+			return new HybridArcData<Y>(new HybridArc<Y>(system, cl, store_times));
+		}
+
+		public void setStoreTimes(ArrayList<HybridTime> storeTimes)
+		{
+			arc.storeTimes = storeTimes;
+		}
+
+		public HybridArc<X> getArc()
+		{
+			return arc;
+		}
+
 	}
 }
