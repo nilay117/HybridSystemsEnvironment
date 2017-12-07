@@ -12,8 +12,8 @@ import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.monitor.ComputationMonitor;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
+import edu.ucsc.cross.hse.core.monitor.DomainMonitor;
 import edu.ucsc.cross.hse.core.monitor.InterruptMonitor;
-import edu.ucsc.cross.hse.core.monitor.JumpMonitor;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.operator.ObjectOperator;
 import edu.ucsc.cross.hse.core.operator.SimulationOperator;
@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class ExecutionEngine
+public class EnvironmentEngine
 {
 
 	Environment env;
@@ -36,7 +36,7 @@ public class ExecutionEngine
 	DataMonitor dataManager;
 	ComputationMonitor computationMonitor;
 	InterruptMonitor executionMonitor;
-	JumpMonitor jumpEvaluator;
+	DomainMonitor jumpEvaluator;
 
 	// Operators
 	SimulationOperator simEngine;
@@ -46,7 +46,7 @@ public class ExecutionEngine
 	// Output console
 	Console console;
 
-	public static HashMap<Environment, ExecutionEngine> operatorMap = new HashMap<Environment, ExecutionEngine>();
+	public static HashMap<Environment, EnvironmentEngine> operatorMap = new HashMap<Environment, EnvironmentEngine>();
 
 	public Console getConsole()
 	{
@@ -93,7 +93,7 @@ public class ExecutionEngine
 		return env.getSettings().getExecutionParameters();
 	}
 
-	public JumpMonitor getJumpEvaluator()
+	public DomainMonitor getJumpEvaluator()
 	{
 		return jumpEvaluator;
 	}
@@ -121,7 +121,7 @@ public class ExecutionEngine
 	public void initializeComponents()
 	{
 		simEngine = new SimulationOperator(this);
-		jumpEvaluator = new JumpMonitor(this);
+		jumpEvaluator = new DomainMonitor(this);
 		computationMonitor = new ComputationMonitor(this);
 		dataManager = new DataMonitor(this);
 		systemControl = new SystemOperator(this);
@@ -132,34 +132,27 @@ public class ExecutionEngine
 
 	public void prepare()
 	{
-		prepareConsole();
+		createLog();
 		exeContent.prepareComponents(this);
 		dataManager.loadMap();
 	}
 
-	public void resetData()
+	public void reset()
 	{
 		dataManager.restoreInitialData();
-		// dataCollector = new ExecutionData();
 	}
 
 	public void run()
 	{
-		// writeFiles(true);
 		prepare();
 		start();
 		stop();
 		env.getOutputs().generateOutputs(env, true);
 		generateFiles();
-		// writeFiles(false);
-
 	}
 
 	public void stop()
 	{
-
-		jumpEvaluator.setRunning(false);
-		// Console.printInfoStatus(this, true);
 		Console.info("Environment Stopped");
 	}
 
@@ -167,7 +160,7 @@ public class ExecutionEngine
 	String file_name)
 	{
 		FileSpecifications<T> specs = new FileSpecifications<T>(file_name, spec_type);
-		specs.prependDirectory(ExecutionEngine.getStartTime(env, false).toString());
+		specs.prependDirectory(EnvironmentEngine.getStartTime(env, false).toString());
 		specs.prependDirectory(env.getSettings().getOutputSettings().outputDirectory);
 		return specs;
 	}
@@ -179,7 +172,7 @@ public class ExecutionEngine
 		{
 			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
 			env.getSettings().getOutputSettings().configurationFileName
-			+ ExecutionEngine.getStartTime(env, true).toString());
+			+ EnvironmentEngine.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
 			env.save(spe, false);
 			Console.info("Configuration saved: " + spe.getAbsolutePath());
@@ -189,7 +182,7 @@ public class ExecutionEngine
 		{
 			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
 			env.getSettings().getOutputSettings().environmentFileName
-			+ ExecutionEngine.getStartTime(env, true).toString());
+			+ EnvironmentEngine.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
 			env.save(spe, true);
 			Console.info("Environment saved: " + spe.getAbsolutePath());
@@ -198,17 +191,17 @@ public class ExecutionEngine
 
 	}
 
-	private void prepareConsole()
+	private void createLog()
 	{
 		if (env.getSettings().getOutputSettings().saveLogToFile)
 		{
-			prepareDir();
+			createDir();
 			Console.startOutputFile(new File(env.getSettings().getOutputSettings().outputDirectory + "/"
 			+ getStartTime(env, false) + "/log" + getStartTime(env, true) + ".txt"));
 		}
 	}
 
-	private void prepareDir()
+	private void createDir()
 	{
 
 		File dir = new File(
@@ -219,17 +212,12 @@ public class ExecutionEngine
 
 	private void start()
 	{
-		prepareDir();
+		createDir();
 		Console.info("Environment Started");
-		jumpEvaluator.setRunning(true);
-		// if (!getSettings().getInterfaceSettings().runInRealTime)
-		{
-			console.startStatusPrintThread();
-		}
+		console.startStatusPrintThread();
 		Thread term = launchTerminationThread();
 		computationMonitor.launchEnvironment();
 		term.stop();
-
 	}
 
 	private Thread launchTerminationThread()
@@ -246,8 +234,9 @@ public class ExecutionEngine
 					input = in.nextLine();
 					if (input.equals("q"))
 					{
+						executionMonitor.setPaused(true);
 						System.out.println("Stopping Environment");
-						jumpEvaluator.setRunning(false);
+
 					}
 				}
 
@@ -257,7 +246,7 @@ public class ExecutionEngine
 		return debugStatusThread;
 	}
 
-	public ExecutionEngine(Environment envi)
+	public EnvironmentEngine(Environment envi)
 	{
 		env = envi;
 		initializeComponents();
@@ -267,7 +256,7 @@ public class ExecutionEngine
 
 	private static HashMap<Environment, String> startTimes = new HashMap<Environment, String>();
 
-	private static ArrayList<ExecutionEngine> operators = new ArrayList<ExecutionEngine>();
+	private static ArrayList<EnvironmentEngine> operators = new ArrayList<EnvironmentEngine>();
 
 	private ArrayList<Object> components()
 	{
@@ -308,14 +297,14 @@ public class ExecutionEngine
 	HashMap<FileSpecifications<F>, T> unappended, Object component)
 	{
 		HashMap<FileSpecifications<F>, T> appended = new HashMap<FileSpecifications<F>, T>();
-		String prefix = String.valueOf(getStartTime(ExecutionEngine.getContainingEnvironment(component), false));
+		String prefix = String.valueOf(getStartTime(EnvironmentEngine.getContainingEnvironment(component), false));
 		for (FileSpecifications<F> spec : unappended.keySet())
 		{
 			FileSpecifications<F> specs = spec.copy();
 			if (!specs.isNullFile())
 			{
 				specs.prependDirectory((FileSpecifications.checkSlashes(new File(
-				ExecutionEngine.getContainingEnvironment(component).getSettings().getOutputSettings().outputDirectory)
+				EnvironmentEngine.getContainingEnvironment(component).getSettings().getOutputSettings().outputDirectory)
 				.getAbsolutePath(), prefix)));
 				// System.out.println("final path: " + specs.getLocation(false).getAbsolutePath());
 
@@ -325,14 +314,14 @@ public class ExecutionEngine
 		return appended;
 	}
 
-	public static ExecutionEngine getOperator(Object object)
+	public static EnvironmentEngine getOperator(Object object)
 	{
-		ExecutionEngine op = null;
+		EnvironmentEngine op = null;
 		if (operators.size() > 0)
 		{
 			op = operators.get(0);
 		}
-		for (ExecutionEngine operator : operators)
+		for (EnvironmentEngine operator : operators)
 		{
 			if (operator.components().contains(object))
 			{

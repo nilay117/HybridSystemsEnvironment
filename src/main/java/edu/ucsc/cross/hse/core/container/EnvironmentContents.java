@@ -1,8 +1,8 @@
 package edu.ucsc.cross.hse.core.container;
 
 import com.be3short.obj.modification.ObjectCloner;
-import edu.ucsc.cross.hse.core.model.Network;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
+import edu.ucsc.cross.hse.core.object.Network;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.util.ArrayList;
 

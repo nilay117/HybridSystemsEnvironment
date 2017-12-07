@@ -4,7 +4,7 @@ import com.be3short.io.format.FileSpecifications;
 import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.cross.ucsc.hse.core.chart.ChartView;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.task.TaskManager;
 import java.util.ArrayList;
@@ -38,8 +38,8 @@ public class EnvironmentOutputs
 	public void generateOutputs()
 	{
 
-		generateCharts(ExecutionEngine.getContainingEnvironment(this),
-		ExecutionEngine.getContainingEnvironment(this).getSettings().getOutputSettings().saveChartsToFile);
+		generateCharts(EnvironmentEngine.getContainingEnvironment(this),
+		EnvironmentEngine.getContainingEnvironment(this).getSettings().getOutputSettings().saveChartsToFile);
 	}
 
 	public void generateOutputs(Environment envi)
@@ -79,7 +79,7 @@ public class EnvironmentOutputs
 	private void generateCharts(Environment envi, boolean create_files)
 	{
 
-		HashMap<FileSpecifications<ImageFormat>, ChartConfiguration> plotz = ExecutionEngine.getAppendedFiles(plots,
+		HashMap<FileSpecifications<ImageFormat>, ChartConfiguration> plotz = EnvironmentEngine.getAppendedFiles(plots,
 		this);
 
 		int append = 1;
@@ -91,11 +91,11 @@ public class EnvironmentOutputs
 				if (specs.isNullFile())
 				{
 					specs = envi.getSettings().getOutputSettings().chartFileFormat
-					.createFileSpecs(("chart" + append++) + ExecutionEngine.getStartTime(envi, true).toString());
+					.createFileSpecs(("chart" + append++) + EnvironmentEngine.getStartTime(envi, true).toString());
 
 				}
 
-				specs.prependDirectory(ExecutionEngine.getStartTime(envi, false).toString());
+				specs.prependDirectory(EnvironmentEngine.getStartTime(envi, false).toString());
 				specs.prependDirectory(envi.getSettings().getOutputSettings().outputDirectory);
 				new ChartView(envi.getData(), plot, TaskManager.createStage(), specs);
 			} else

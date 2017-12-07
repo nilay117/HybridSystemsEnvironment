@@ -13,10 +13,8 @@ public class HybridArc<X extends ObjectSet>
 
 	HashMap<Field, DataSeries<?>> data;
 	Class<X> emptyClass;
-	ArrayList<Integer> jumps;
 	ArrayList<HybridTime> storeTimes;
 	X system;
-	ArrayList<Double> times;
 
 	public void exportToCSVFile(File path)
 	{

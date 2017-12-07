@@ -8,12 +8,12 @@ import edu.ucsc.cross.hse.core.container.EnvironmentContents;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.container.EnvironmentOutputs;
 import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
-import edu.ucsc.cross.hse.core.model.Network;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
+import edu.ucsc.cross.hse.core.object.Network;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -89,13 +89,13 @@ public class Environment
 		return dataCollector;
 	}
 
-	private ExecutionEngine getManager()
+	private EnvironmentEngine getManager()
 	{
-		if (!ExecutionEngine.operatorMap.containsKey(this))
+		if (!EnvironmentEngine.operatorMap.containsKey(this))
 		{
-			ExecutionEngine.operatorMap.put(this, new ExecutionEngine(this));
+			EnvironmentEngine.operatorMap.put(this, new EnvironmentEngine(this));
 		}
-		return ExecutionEngine.operatorMap.get(this);
+		return EnvironmentEngine.operatorMap.get(this);
 	}
 
 	public EnvironmentOutputs getOutputs()
@@ -242,11 +242,11 @@ public class Environment
 	public Environment()
 	{
 
-		getManager();
 		settings = new EnvironmentSettings();
 		content = new EnvironmentContents();
 		outputs = new EnvironmentOutputs(this);
 		dataCollector = new EnvironmentData();
+		getManager();
 	}
 
 	public static Environment createEnvironment(File file)

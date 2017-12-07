@@ -76,7 +76,7 @@ public class SubChartView
 					// getLegendLabel(data,
 					// names);
 					names.add(label);
-					XYSeries s1 = new XYSeries(label, false);
+					XYSeries s1 = new XYSeries(label, false, true);
 					s1.setDescription(data.getParent().data().getUniqueLabel());
 					for (HybridTime ind : this.data.getStoreTimes())
 					{

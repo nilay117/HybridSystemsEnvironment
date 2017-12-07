@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.object;
 
 import com.be3short.data.cloning.ObjectCloner;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.model.HybridDynamics;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public abstract class HybridSystem<X extends ObjectSet> implements HybridDynamic
 
 	public Environment environment()
 	{
-		return ExecutionEngine.getSystemContainingEnvironment(this);
+		return EnvironmentEngine.getSystemContainingEnvironment(this);
 	}
 
 	public static class EnvironmentAccessor
@@ -46,7 +46,7 @@ public abstract class HybridSystem<X extends ObjectSet> implements HybridDynamic
 
 		public Environment getAddressObject()
 		{
-			return ExecutionEngine.getSystemContainingEnvironment(sys);
+			return EnvironmentEngine.getSystemContainingEnvironment(sys);
 		}
 	}
 

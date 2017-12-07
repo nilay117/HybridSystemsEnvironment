@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.io.Console;
 import org.apache.commons.math3.ode.events.EventHandler;
 
@@ -11,7 +11,7 @@ import org.apache.commons.math3.ode.events.EventHandler;
 public class InterruptMonitor implements EventHandler
 {
 
-	private ExecutionEngine manager; // manager of the environment
+	private EnvironmentEngine manager; // manager of the environment
 	private Double endTime;
 	private boolean paused;
 
@@ -58,7 +58,7 @@ public class InterruptMonitor implements EventHandler
 		{
 			endTime += endTime + .000000001 * (System.nanoTime());
 		}
-		paused = false;
+		// paused = false;
 	}
 
 	/*
@@ -66,15 +66,15 @@ public class InterruptMonitor implements EventHandler
 	 */
 	public boolean isRunning()
 	{
-		return !paused && !thresholdExceeded();
+		return !paused && !thresholdReached();
 	}
 
-	public boolean thresholdExceeded()
+	public boolean thresholdReached()
 	{
 		Double timeOverThreshold = manager.getExecutionContent().getSimulationTime() - endTime;
 		Integer jumpsOverThreshold = manager.getExecutionContent().getHybridSimTime().getJumps()
 		- manager.getExecutionParameters().maximumJumps;
-		if (timeOverThreshold > 0 && jumpsOverThreshold > 0)
+		if (timeOverThreshold >= 0 || jumpsOverThreshold >= 0)
 		{
 			return true;
 		} else
@@ -96,9 +96,12 @@ public class InterruptMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public InterruptMonitor(ExecutionEngine manager)
+	public InterruptMonitor(EnvironmentEngine manager)
 	{
+
 		this.manager = manager;
 		paused = false;
+		init(0.0, new double[]
+		{ 0.0 }, 0.0);
 	}
 }

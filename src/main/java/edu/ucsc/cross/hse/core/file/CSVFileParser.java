@@ -4,7 +4,7 @@ import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
 import edu.ucsc.cross.hse.core.data.HybridArc.HybridArcData;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.time.HybridTime;
@@ -43,7 +43,7 @@ public class CSVFileParser
 	public void createCSVOutput()
 	{
 		String filepath = "output/"
-		+ ExecutionEngine.getStartTime(ExecutionEngine.getContainingEnvironment(data), false).toString()
+		+ EnvironmentEngine.getStartTime(EnvironmentEngine.getContainingEnvironment(data), false).toString()
 		+ "/environmentData.csv";
 		createCSVOutput(new File(filepath));
 	}

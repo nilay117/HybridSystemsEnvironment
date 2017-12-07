@@ -1,4 +1,4 @@
-package edu.ucsc.cross.hse.core.model;
+package edu.ucsc.cross.hse.core.object;
 
 import java.util.ArrayList;
 import java.util.HashMap;

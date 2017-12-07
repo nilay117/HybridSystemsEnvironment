@@ -3,7 +3,7 @@ package edu.ucsc.cross.hse.core.operator;
 import com.be3short.obj.access.FieldFinder;
 import com.be3short.obj.manipulation.DynamicObjectManipulator;
 import com.be3short.obj.manipulation.FieldMapper;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
@@ -21,7 +21,7 @@ public class ObjectOperator
 	private DynamicObjectManipulator[] objectAccessVector;
 	private HashMap<Object, DynamicObjectManipulator> objectMap;
 	private double[] valueVector;
-	ExecutionEngine manager;
+	EnvironmentEngine manager;
 
 	public double[] getChangeVector()
 	{
@@ -111,7 +111,7 @@ public class ObjectOperator
 		setSimTime(new HybridTime(getHybridSimTime().getTime(), getHybridSimTime().getJumps() + jump_increment));
 	}
 
-	public void prepareComponents(ExecutionEngine manager)
+	public void prepareComponents(EnvironmentEngine manager)
 	{
 		manager.getContents().setTime(new HybridTime(0.0, 0));
 		initializeFieldMapper();
@@ -287,7 +287,7 @@ public class ObjectOperator
 		// initializeMap(object_map, state, dynamic);
 	}
 
-	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionEngine manager)
+	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(EnvironmentEngine manager)
 	{
 		// initializeFieldMapper();
 		Integer address = 0;
@@ -311,7 +311,7 @@ public class ObjectOperator
 		return newObjectAccessMap;
 	}
 
-	public ObjectOperator(ExecutionEngine manager)
+	public ObjectOperator(EnvironmentEngine manager)
 	{
 		this.manager = manager;
 		// manager.getContents().setTime(new HybridTime(0.0, 0));
@@ -332,7 +332,7 @@ public class ObjectOperator
 	}
 
 	private static DynamicObjectManipulator[] initializeObjectAccessVector(
-	HashMap<Object, DynamicObjectManipulator> object_map, ExecutionEngine manager)
+	HashMap<Object, DynamicObjectManipulator> object_map, EnvironmentEngine manager)
 	{
 		ArrayList<DynamicObjectManipulator> stateObjectList = new ArrayList<DynamicObjectManipulator>();
 		for (DynamicObjectManipulator obj : object_map.values())

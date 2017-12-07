@@ -4,7 +4,8 @@ import com.be3short.obj.manipulation.ObjectManipulator;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc.HybridArcData;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
+import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.object.ObjectSet;
 import edu.ucsc.cross.hse.core.object.ObjectSet.ObjectSetAPI;
 import edu.ucsc.cross.hse.core.time.HybridTime;
@@ -14,50 +15,7 @@ import java.util.HashMap;
 public class DataMonitor
 {
 
-	private ExecutionEngine manager;
-
-	/*
-	 * This mapping contains the initial value of every object contained within the environment
-	 */
-	private HashMap<Object, Object> initialValueMapping;
-	private Double initialValueTime;
-	// private Double nextStoreTime;
-
-	public static HashMap<EnvironmentData, ArrayList<DataSeries<?>>> seriesListMap = new HashMap<EnvironmentData, ArrayList<DataSeries<?>>>();
-
-	public void loadMap()
-	{
-
-		EnvironmentData.getHybridArcMap(manager.getDataCollector()).clear();
-		for (ObjectManipulator state : manager.getExecutionContent().getFieldParentMap().values())// .getSimulatedObjectAccessVector())
-		{
-			// state.getParent()
-			// String parentName = state.getParent().getClass().getSimpleName();
-			try
-			{
-				ObjectSet parent = (ObjectSet) state.getParent();
-				if (ObjectSetAPI.isHistorySaved(parent))
-				{
-					if (!EnvironmentData.getHybridArcMap(manager.getDataCollector()).containsKey(parent))
-					{
-
-						EnvironmentData.getHybridArcMap(manager.getDataCollector()).put(parent,
-
-						HybridArcData.createArc(parent, manager.getDataCollector().getStoreTimes()));
-					}
-					HybridArcData<?> solution = EnvironmentData.getHybridArcMap(manager.getDataCollector()).get(parent);
-					solution.addSeries(state.getField(), DataSeries.getSeries(
-					manager.getDataCollector().getStoreTimes(), parent, state.getField(), state.getField().getType()));
-				}
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-		}
-		initializeUniqueNamesAndAddresses();
-		DataMonitor.populateListMap(manager.getDataCollector());
-	}
+	private EnvironmentEngine manager;
 
 	public void initializeUniqueNamesAndAddresses()
 	{
@@ -89,31 +47,37 @@ public class DataMonitor
 		removeIndicesFromNonDuplicateNames(duplicateNames);
 	}
 
-	/*
-	 * Removes the index number appended to a unique name that was already unique.
-	 */
-	private void removeIndicesFromNonDuplicateNames(ArrayList<ObjectSet> objects)
+	public void loadMap()
 	{
-		for (ObjectSet obj : objects)
-		{
-			boolean nameAlreadyUnique = true;
-			for (ObjectSet otherObj : objects)
-			{
-				if (!otherObj.equals(obj))
-				{
-					if (otherObj.data().getName().equals(obj.data().getName()))
-					{
-						nameAlreadyUnique = false;
 
-					}
-				}
-			}
-			if (nameAlreadyUnique)
+		EnvironmentData.getHybridArcMap(manager.getDataCollector()).clear();
+		for (ObjectManipulator state : manager.getExecutionContent().getFieldParentMap().values())// .getSimulatedObjectAccessVector())
+		{
+
+			try
 			{
-				obj.data().setUniqueLabel(obj.data().getName());
+				ObjectSet parent = (ObjectSet) state.getParent();
+				if (ObjectSetAPI.isHistorySaved(parent))
+				{
+					if (!EnvironmentData.getHybridArcMap(manager.getDataCollector()).containsKey(parent))
+					{
+
+						EnvironmentData.getHybridArcMap(manager.getDataCollector()).put(parent,
+
+						HybridArcData.createArc(parent, manager.getDataCollector().getStoreTimes()));
+					}
+					HybridArcData<?> solution = EnvironmentData.getHybridArcMap(manager.getDataCollector()).get(parent);
+					solution.addSeries(state.getField(), DataSeries.getSeries(
+					manager.getDataCollector().getStoreTimes(), parent, state.getField(), state.getField().getType()));
+				}
+			} catch (Exception e)
+			{
+				e.printStackTrace();
 			}
 
 		}
+		initializeUniqueNamesAndAddresses();
+		DataMonitor.populateListMap(manager.getDataCollector());
 	}
 
 	public void performDataActions(double time, double state_vector[], JumpStatus jump_status)
@@ -188,16 +152,19 @@ public class DataMonitor
 		}
 	}
 
-	public void revertToLastStoredValue(double initial_val_time)
+	public Double resetToLastData()
 	{
-
-		removePreviousVals(lastTime());
-		manager.getExecutionContent().readStateValues(manager.getExecutionContent().updateValueVector(null));
-		manager.getExecutionContent().updateValueVector(null);
-		manager.getExecutionContent().updateSimulationTime(lastTime(),
-		manager.getDataCollector().getLastStoredTime().getJumps());
-		storeNewData(lastTime());
-
+		removePreviousVals(manager.getDataCollector().getLastStoredTime().getTime());
+		HybridTime time = manager.getDataCollector().getLastStoredTime();
+		for (DataSeries<?> data : DataMonitor.getAllDataSeries(manager.getDataCollector()))
+		// .getSimulatedObjectAccessVector().length; objIndex++)
+		{
+			ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
+			.get(data.getParent().toString() + data.getChild().getName());// [objIndex];
+			// DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
+			obj.updateObject(data.getStoredData(time));
+		}
+		return time.getTime();
 	}
 
 	public void storeNewData(Double time)
@@ -242,6 +209,33 @@ public class DataMonitor
 		}
 	}
 
+	/*
+	 * Removes the index number appended to a unique name that was already unique.
+	 */
+	private void removeIndicesFromNonDuplicateNames(ArrayList<ObjectSet> objects)
+	{
+		for (ObjectSet obj : objects)
+		{
+			boolean nameAlreadyUnique = true;
+			for (ObjectSet otherObj : objects)
+			{
+				if (!otherObj.equals(obj))
+				{
+					if (otherObj.data().getName().equals(obj.data().getName()))
+					{
+						nameAlreadyUnique = false;
+
+					}
+				}
+			}
+			if (nameAlreadyUnique)
+			{
+				obj.data().setUniqueLabel(obj.data().getName());
+			}
+
+		}
+	}
+
 	private void removeLastValue()
 	{
 
@@ -249,7 +243,7 @@ public class DataMonitor
 
 		if (manager.getDataCollector().getStoreTimes().size() > i)
 		{
-			for (Integer objIndex = 1; objIndex < DataMonitor.getAllDataSeries(manager.getDataCollector())
+			for (Integer objIndex = 0; objIndex < DataMonitor.getAllDataSeries(manager.getDataCollector())
 			.size(); objIndex++)
 			{
 				DataSeries<?> data = DataMonitor.getAllDataSeries(manager.getDataCollector()).get(objIndex);
@@ -266,12 +260,15 @@ public class DataMonitor
 	private void updateData(Double time, JumpStatus jump_status)
 	{
 
-		if (jump_status.equals(JumpStatus.MULTI_JUMP_OCCURRED) || jump_status.equals(JumpStatus.JUMP_OCCURRED))
+		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
 		{
+			Console.debug(
+			"Jump occurred : t = " + time + " j = " + manager.getExecutionContent().getHybridSimTime().getJumps());
 			storeNewData(time);
 		} else if (jump_status.equals(JumpStatus.JUMP_DETECTED))
 		{
-			System.out.println(time + " last " + lastTime());
+			Console.debug(
+			"Jump detected : t = " + time + " j = " + manager.getExecutionContent().getHybridSimTime().getJumps());
 			{
 				storeNewData(time);
 			}
@@ -304,6 +301,15 @@ public class DataMonitor
 		}
 	}
 
+	public DataMonitor(EnvironmentEngine manager)
+	{
+		this.manager = manager;
+
+		// nextStoreTime = 0.0;
+	}
+
+	public static HashMap<EnvironmentData, ArrayList<DataSeries<?>>> seriesListMap = new HashMap<EnvironmentData, ArrayList<DataSeries<?>>>();
+
 	public static ArrayList<DataSeries<?>> getAllDataSeries(EnvironmentData dat)
 	{
 		if (!seriesListMap.containsKey(dat))
@@ -326,13 +332,6 @@ public class DataMonitor
 				}
 			}
 		}
-	}
-
-	public DataMonitor(ExecutionEngine manager)
-	{
-		this.manager = manager;
-
-		// nextStoreTime = 0.0;
 	}
 
 	/*

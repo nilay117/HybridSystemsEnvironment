@@ -1,6 +1,6 @@
 package edu.ucsc.cross.hse.core.model;
 
-public interface HybridOutput<U, D>
+public interface HybridController<U, D>
 {
 
 	public U uC();

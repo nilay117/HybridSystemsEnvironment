@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.core.operator;
 
 import com.be3short.io.xml.XMLParser;
 import com.be3short.obj.manipulation.DynamicObjectManipulator;
-import edu.ucsc.cross.hse.core.engine.ExecutionEngine;
+import edu.ucsc.cross.hse.core.engine.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
@@ -10,7 +10,7 @@ import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
 public class SystemOperator
 {
 
-	private ExecutionEngine content;
+	private EnvironmentEngine content;
 
 	public void applyDynamics(boolean jump_occurring)
 	{
@@ -142,7 +142,7 @@ public class SystemOperator
 		}
 	}
 
-	public SystemOperator(ExecutionEngine content)
+	public SystemOperator(EnvironmentEngine content)
 	{
 		this.content = content;
 	}
