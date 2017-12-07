@@ -1,8 +1,7 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import com.be3short.obj.modification.ObjectCloner;
 import edu.ucsc.cross.hse.core.io.Console;
-import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.operator.SimulationOperator;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings;
 import org.apache.commons.math3.exception.NoBracketingException;
@@ -23,13 +22,13 @@ import org.apache.commons.math3.ode.nonstiff.EulerIntegrator;
 public class ComputationMonitor
 {
 
-	private ExecutionOperator manager;
+	private EnvironmentEngine manager;
 
 	/*
 	 * Total time that the environment has been running (excluding pauses and errors)
 	 */
 	private Double runTime;
-	private double[] initialY;
+	private Double timeElapsed = 0.0;
 
 	/*
 	 * Get the total run time
@@ -50,14 +49,17 @@ public class ComputationMonitor
 		FirstOrderIntegrator integrator = getSimulationIntegrator();
 		SimulationOperator ode = manager.getSimEngine();
 		double[] y = manager.getExecutionContent().getValueVector();
-		initialY = (double[]) ObjectCloner.xmlClone(y);
-		manager.getDataManager().storeNewData(manager.getExecutionContent().getHybridSimTime().getTime());
-
 		if (manager.getSettings().getInterfaceSettings().runInRealTime)
 		{
-			runRealTimeIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
-			manager.getExecutionParameters().maximumTime, y);
-		} else
+			manager.getExecutionContent().updateSimulationTime(Double.valueOf(System.nanoTime()) / 1000000000.0);
+		}
+		manager.getDataManager().storeNewData(manager.getExecutionContent().getHybridSimTime().getTime());
+
+		// if (manager.getSettings().getInterfaceSettings().runInRealTime)
+		// {
+		// runRealTimeIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
+		// manager.getExecutionParameters().maximumTime, y);
+		// } else
 		{
 			runIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
 			manager.getExecutionParameters().maximumTime, y);
@@ -99,48 +101,24 @@ public class ComputationMonitor
 		try
 		{
 			FirstOrderIntegrator integrator = getSimulationIntegrator();
-
+			System.out.println(
+			"Integrating from " + manager.getExecutionContent().getHybridSimTime().getTime() + " t " + end_time);
 			Double stopTime = integrator.integrate(manager.getSimEngine(),
 			manager.getExecutionContent().getHybridSimTime().getTime(),
 			manager.getExecutionContent().updateValueVector(null), end_time,
 			manager.getExecutionContent().updateValueVector(null));
 			return stopTime;
+
 		} catch (Exception e)
 		{
-			e.printStackTrace();
-			// if (manager.getExecutionContent()
-			// .getSimulationTime() <= manager.getSettings().getComputationSettings().odeMaximumStepSize)
-			// {
-			// manager.getDataManager().restoreInitialData();
-			// } else
-			// {
-			try
-			{
-				if (manager.getDataCollector().getStoreTimes().size() > 1)
-				{
-					// manager.getDataManager().revertToLastStoredValue(manager.getExecutionContent().getSimulationTime());
-				}
+			// e.printStackTrace();
 
-				else
-				{
-					//// manager.getExecutionContent().updateSimulationTime(0.0, 0);
-					// manager.getExecutionContent().readStateValues(initialY);
-					// manager.getDataManager().revertToInitialValues();//
-					// manager.getExecutionContent().getSimulationTime());
-				} // }
-			} catch (Exception ee)
-
-			{
-				// manager.getDataManager().revertToInitialValues();//
-				// manager.getExecutionContent().getSimulationTime());
-			} // }
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
 			problemResolved = problemResolved || handleEhCountIssues(e);
 
 			printOutUnresolvedIssues(e, problemResolved);
-			// handleFatalError(e);
 
 			if (recursion_level < ComputationSettings.maximumRecursiveIntegratorCalls)// !this.getInterruptHandler().isTerminating())
 			{
@@ -246,6 +224,10 @@ public class ComputationMonitor
 		manager.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval,
 		manager.getSettings().getComputationSettings().eventHandlerConvergenceThreshold,
 		manager.getSettings().getComputationSettings().maxEventHandlerIterations);
+		integrator.addEventHandler(manager.getExecutionMonitor(),
+		manager.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval * 100000,
+		manager.getSettings().getComputationSettings().eventHandlerConvergenceThreshold * 100000,
+		manager.getSettings().getComputationSettings().maxEventHandlerIterations);
 		// integrator.addEventHandler(getInterruptHandler(),
 		// manager.getSettings().getEnvironmentSettings().ehMaxCheckInterval,
 		// manager.getSettings().getEnvironmentSettings().ehConvergence,
@@ -280,20 +262,75 @@ public class ComputationMonitor
 	private Double runIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
 	Double start_time, Double duration, double[] ode_vector)
 	{
+		Double timeElapsed = 0.0;
+		Double startTime = 0.0;
+
+		Double endTime = manager.getExecutionParameters().maximumTime;
+		while (timeElapsed < manager.getExecutionParameters().maximumTime)
+		{
+
+			if (manager.getSettings().getInterfaceSettings().runInRealTime)
+			{
+
+				Double step = manager.getExecutionContent().getSimulationTime()
+				+ (manager.getSettings().getInterfaceSettings().stepSizeNanoseconds / 1000000000.0);
+				Double stepStartTime = manager.getExecutionContent().getSimulationTime();
+				System.out.println("Stepping from " + startTime + " to " + step);
+				endTime = recursiveIntegrator(0, step);// step);
+				timeElapsed += endTime - stepStartTime;
+				Double waitTime = endTime;
+				while (waitTime > System.nanoTime() / 1000000000)
+				{
+					System.out.println("Waiting for " + System.nanoTime() / 1000000000 + " to reach " + waitTime);
+				}
+
+			} else
+			{
+				timeElapsed = recursiveIntegrator(0);
+
+			}
+
+			// timeExpired = endTime >= manager.getExecutionParameters().maximumTime;
+			// jumpsExpired = manager.getExecutionContent().getHybridSimTime()
+			// .getJumps() >= manager.getExecutionParameters().maximumJumps;
+			// terminated = !manager.getJumpEvaluator().isRunning();
+			//
+		}
+		manager.getDataManager().performDataActions(endTime, manager.getExecutionContent().getValueVector(),
+		JumpStatus.NO_JUMP, true);
+		return timeElapsed;
+	}
+
+	/*
+	 * Starts the specified integrator for the specified dynamics, start time, and duration
+	 * 
+	 * @param integrator - integrator to be used
+	 * 
+	 * @param ode - set of differential equations that define the dynamical system
+	 * 
+	 * @param start_time - initial time when integration will start
+	 * 
+	 * @param duration - final time when integration will be complete
+	 * 
+	 * @param ode_vector - initial values of all variables associated with the ode
+	 */
+	private Double runIntegratorz(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
+	Double start_time, Double duration, double[] ode_vector)
+	{
 		Double endTime = 0.0;
 		boolean timeExpired = false;
 		boolean jumpsExpired = false;
 		boolean terminated = false;
-		while (!timeExpired && !jumpsExpired && !terminated)
-		{
+		// while (!timeExpired && !jumpsExpired && !terminated)
+		// {
 
-			endTime = recursiveIntegrator(0);
-			timeExpired = endTime >= manager.getExecutionParameters().maximumTime;
-			jumpsExpired = manager.getExecutionContent().getHybridSimTime()
-			.getJumps() >= manager.getExecutionParameters().maximumJumps;
-			terminated = !manager.getJumpEvaluator().isRunning();
-
-		}
+		endTime = recursiveIntegrator(0);
+		// timeExpired = endTime >= manager.getExecutionParameters().maximumTime;
+		// jumpsExpired = manager.getExecutionContent().getHybridSimTime()
+		// .getJumps() >= manager.getExecutionParameters().maximumJumps;
+		// terminated = !manager.getJumpEvaluator().isRunning();
+		//
+		// }
 		manager.getDataManager().performDataActions(endTime, manager.getExecutionContent().getValueVector(),
 		JumpStatus.NO_JUMP, true);
 		return endTime;
@@ -312,43 +349,43 @@ public class ComputationMonitor
 	 * 
 	 * @param ode_vector - initial values of all variables associated with the ode
 	 */
-	private Double runRealTimeIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
-	Double start_time, Double duration, double[] ode_vector)
-	{
-		Double endTime = 0.0;
-		double correctedEndTime = (System.nanoTime() / 1000000000.0)
-		+ manager.getSettings().getExecutionParameters().maximumTime;
-		double intervalDuration = manager.getSettings().getInterfaceSettings().advanceTimeThresholdNanoseconds
-		/ 2000000000.0;
-		double intervalTime = (System.nanoTime() / 1000000000.0) + intervalDuration;
-		boolean terminated = false;
-		manager.getExecutionContent().updateSimulationTime(System.nanoTime() / 1000000000.0);
-		manager.getDataManager().performDataActions(manager.getExecutionContent().getSimulationTime(),
-		manager.getExecutionContent().getValueVector(), JumpStatus.NO_JUMP, true);
-		while (!terminated)
-		{
-
-			endTime = recursiveIntegrator(0, (double) intervalTime);
-			terminated = !manager.getJumpEvaluator().isRunning();
-			// System.out
-			// .println("Check " + manager.getExecutionContent().getSimulationTime() + (System.nanoTime() -
-			// intervalTime));
-			while ((intervalTime + intervalDuration) > (System.nanoTime() / 1000000000.0))
-			{
-
-			}
-			if (intervalTime < correctedEndTime)
-			{
-				intervalTime = System.nanoTime() / 1000000000.0 + 2 * intervalDuration;
-			} else
-			{
-				break;
-			}
-		}
-		manager.getDataManager().performDataActions(endTime, manager.getExecutionContent().getValueVector(),
-		JumpStatus.NO_JUMP, true);
-		return endTime;
-	}
+	// private Double runRealTimeIntegrator(FirstOrderIntegrator integrator, FirstOrderDifferentialEquations ode,
+	// Double start_time, Double duration, double[] ode_vector)
+	// {
+	// Double elapsedTime = 0.0;
+	// + manager.getSettings().getExecutionParameters().maximumTime;
+	// double intervalDuration = manager.getSettings().getInterfaceSettings().stepSizeNanoseconds
+	// / 2000000000.0;
+	// double intervalTime = (System.nanoTime() / 1000000000.0) + intervalDuration;
+	// boolean terminated = false;
+	// manager.getExecutionContent().updateSimulationTime(System.nanoTime() / 1000000000.0);
+	// manager.getDataManager().performDataActions(manager.getExecutionContent().getSimulationTime(),
+	// manager.getExecutionContent().getValueVector(), JumpStatus.NO_JUMP, true);
+	// while (!terminated)
+	// {
+	// FirstOrderIntegrator inte = getSimulationIntegrator();
+	//
+	// endTime = recursiveIntegrator(0, (double) intervalTime);
+	// terminated = !manager.getJumpEvaluator().isRunning();
+	// // System.out
+	// // .println("Check " + manager.getExecutionContent().getSimulationTime() + (System.nanoTime() -
+	// // intervalTime));
+	// while ((intervalTime + intervalDuration) > (System.nanoTime() / 1000000000.0))
+	// {
+	//
+	// }
+	// if (intervalTime < correctedEndTime)
+	// {
+	// intervalTime = System.nanoTime() / 1000000000.0 + 2 * intervalDuration;
+	// } else
+	// {
+	// break;
+	// }
+	// }
+	// manager.getDataManager().performDataActions(endTime, manager.getExecutionContent().getValueVector(),
+	// JumpStatus.NO_JUMP, true);
+	// return endTime;
+	// }
 
 	/*
 	 * Instantiates the simulation integrator based on the current settings
@@ -393,11 +430,16 @@ public class ComputationMonitor
 	 * 
 	 * // this.getInterruptHandler().interruptEnv(true); } }
 	 */
-	public ComputationMonitor(ExecutionOperator manager)
+	public ComputationMonitor(EnvironmentEngine manager)
 	{
 
 		this.manager = manager;
 		runTime = 0.0;
+	}
+
+	public Double getTimeElapsed()
+	{
+		return timeElapsed;
 	}
 
 }

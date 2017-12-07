@@ -5,12 +5,13 @@ public class InterfaceSettings
 
 	public boolean runInRealTime; // run environment in real time (if possible)
 
-	public double advanceTimeThresholdNanoseconds; // maximum amount of time ahead of real time before pausing
-	// environment in microseconds
+	public double stepSizeNanoseconds; // duration of discretized environment operating step when operating in real time
+										// mode. Environment operates intermittently in real time mode to allow delays
+										// in operation to synchronize with real time.
 
 	public InterfaceSettings()
 	{
 		this.runInRealTime = false;
-		this.advanceTimeThresholdNanoseconds = 10000000;
+		this.stepSizeNanoseconds = 100000000;
 	}
 }

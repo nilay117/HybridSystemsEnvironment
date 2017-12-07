@@ -12,7 +12,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 public class SimulationOperator implements FirstOrderDifferentialEquations
 {
 
-	private ExecutionOperator content;
+	private EnvironmentEngine content;
 
 	/*
 	 * Computes the new derivatives of each hybrid state element using the newly stored values from vector y
@@ -42,7 +42,7 @@ public class SimulationOperator implements FirstOrderDifferentialEquations
 		return content.getExecutionContent().getSimulatedObjectAccessVector().length;
 	}
 
-	public SimulationOperator(ExecutionOperator content)
+	public SimulationOperator(EnvironmentEngine content)
 	{
 		this.content = content;
 	}

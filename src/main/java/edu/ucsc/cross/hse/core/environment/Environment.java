@@ -11,7 +11,7 @@ import edu.ucsc.cross.hse.core.container.EnvironmentSettings;
 import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
-import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.setting.ExecutionParameters;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -79,13 +79,13 @@ public class Environment
 		return dataCollector;
 	}
 
-	public ExecutionOperator getManager()
+	public EnvironmentEngine getManager()
 	{
-		if (!ExecutionOperator.operatorMap.containsKey(this))
+		if (!EnvironmentEngine.operatorMap.containsKey(this))
 		{
-			ExecutionOperator.operatorMap.put(this, new ExecutionOperator(this));
+			EnvironmentEngine.operatorMap.put(this, new EnvironmentEngine(this));
 		}
-		return ExecutionOperator.operatorMap.get(this);
+		return EnvironmentEngine.operatorMap.get(this);
 	}
 
 	public EnvironmentOutputs getOutputs()

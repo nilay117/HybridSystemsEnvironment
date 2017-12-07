@@ -2,7 +2,7 @@ package edu.ucsc.cross.hse.core.file;
 
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
-import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.time.HybridTime;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,7 +32,7 @@ public class CSVFileParser
 	public void createCSVOutput()
 	{
 		String filepath = "output/"
-		+ ExecutionOperator.getStartTime(ExecutionOperator.getContainingEnvironment(data), false).toString()
+		+ EnvironmentEngine.getStartTime(EnvironmentEngine.getContainingEnvironment(data), false).toString()
 		+ "/environmentData.csv";
 		createCSVOutput(new File(filepath));
 	}

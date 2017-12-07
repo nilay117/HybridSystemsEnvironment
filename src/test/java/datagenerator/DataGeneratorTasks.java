@@ -1,14 +1,12 @@
 package datagenerator;
 
-import java.io.File;
-
-import com.be3short.io.format.ImageFormat;
-
 import circlegenerator.CircleSystem;
+import com.be3short.io.format.ImageFormat;
 import edu.cross.ucsc.hse.core.chart.ChartConfiguration;
 import edu.ucsc.cross.hse.core.environment.Environment;
 import edu.ucsc.cross.hse.core.setting.ComputationSettings.IntegratorType;
 import edu.ucsc.cross.hse.core.task.TaskManager;
+import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -285,9 +283,9 @@ public class DataGeneratorTasks extends TaskManager
 		// Factor that event handling convergence value will be reduced when event handling error occurs
 		env.getSettings().getComputationSettings().convergenceErrorCorrectionFactor = 1.0;
 		// Convergence threshold of an event
-		env.getSettings().getComputationSettings().eventHandlerConvergenceThreshold = .001;
+		env.getSettings().getComputationSettings().eventHandlerConvergenceThreshold = .00000000000001;
 		// Event handler maximum interval to check for an event
-		env.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval = .00001;
+		env.getSettings().getComputationSettings().eventHandlerMaximumCheckInterval = .5E-5;
 		// Integrator type to be used
 		env.getSettings().getComputationSettings().integratorType = IntegratorType.DORMAND_PRINCE_853;
 		// Factor that event handling interval value will be reduced when event handling error occurs
@@ -297,19 +295,19 @@ public class DataGeneratorTasks extends TaskManager
 		// Maximum number of event handler iterations
 		env.getSettings().getComputationSettings().maxEventHandlerIterations = 10;
 		// Maximum step size for variable step integrator
-		env.getSettings().getComputationSettings().odeMaximumStepSize = .01;
+		env.getSettings().getComputationSettings().odeMaximumStepSize = .001;
 		// Ode step size if using a fixed step integrator, or minimum ode step size of a variable step integrator
 		env.getSettings().getComputationSettings().odeMinimumStepSize = .5E-5;
 		// Relative tolerance of the ode solver
-		env.getSettings().getComputationSettings().odeRelativeTolerance = 1.0e-4;
+		env.getSettings().getComputationSettings().odeRelativeTolerance = 1.0e-9;
 		// Absolute tolerance of the ode solver
-		env.getSettings().getComputationSettings().odeSolverAbsoluteTolerance = 1.0e-4;
+		env.getSettings().getComputationSettings().odeSolverAbsoluteTolerance = 1.0e-9;
 		// Factor to reduce the maximum /fixed step size when a step size related error occurs
 		env.getSettings().getComputationSettings().stepSizeErrorMaxCorrectionFactor = 1.0;
 		// Factor to reduce minimum step size (if using variable step integrator) when a step size related error occurs
 		env.getSettings().getComputationSettings().stepSizeErrorMinCorrectionFactor = 1.0;
 
-		env.getSettings().getInterfaceSettings().runInRealTime = false;
+		env.getSettings().getInterfaceSettings().runInRealTime = true;
 		return env;
 	}
 }

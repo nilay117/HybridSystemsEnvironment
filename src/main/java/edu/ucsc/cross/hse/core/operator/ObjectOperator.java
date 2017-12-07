@@ -23,7 +23,7 @@ public class ObjectOperator
 	private HashMap<Object, DynamicObjectManipulator> objectMap;
 	private HybridTime simTime; // Simulation time
 	private double[] valueVector;
-	ExecutionOperator manager;
+	EnvironmentEngine manager;
 
 	public double[] getChangeVector()
 	{
@@ -113,7 +113,7 @@ public class ObjectOperator
 		setSimTime(new HybridTime(getHybridSimTime().getTime(), getHybridSimTime().getJumps() + jump_increment));
 	}
 
-	public void prepareComponents(ExecutionOperator manager)
+	public void prepareComponents(EnvironmentEngine manager)
 	{
 		simTime = new HybridTime(0.0, 0);
 		initializeFieldMapper();
@@ -289,7 +289,7 @@ public class ObjectOperator
 		// initializeMap(object_map, state, dynamic);
 	}
 
-	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(ExecutionOperator manager)
+	private HashMap<Object, DynamicObjectManipulator> initializeObjectAccessMap(EnvironmentEngine manager)
 	{
 		// initializeFieldMapper();
 		Integer address = 0;
@@ -313,7 +313,7 @@ public class ObjectOperator
 		return newObjectAccessMap;
 	}
 
-	public ObjectOperator(ExecutionOperator manager)
+	public ObjectOperator(EnvironmentEngine manager)
 	{
 		this.manager = manager;
 		simTime = new HybridTime(0.0, 0);
@@ -334,7 +334,7 @@ public class ObjectOperator
 	}
 
 	private static DynamicObjectManipulator[] initializeObjectAccessVector(
-	HashMap<Object, DynamicObjectManipulator> object_map, ExecutionOperator manager)
+	HashMap<Object, DynamicObjectManipulator> object_map, EnvironmentEngine manager)
 	{
 		ArrayList<DynamicObjectManipulator> stateObjectList = new ArrayList<DynamicObjectManipulator>();
 		for (DynamicObjectManipulator obj : object_map.values())

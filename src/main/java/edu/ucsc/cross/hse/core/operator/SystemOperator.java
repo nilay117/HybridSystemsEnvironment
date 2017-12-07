@@ -9,7 +9,7 @@ import edu.ucsc.cross.hse.core.object.HybridSystem.HybridSystemOperator;
 public class SystemOperator
 {
 
-	private ExecutionOperator content;
+	private EnvironmentEngine content;
 
 	public void applyDynamics(boolean jump_occurring)
 	{
@@ -141,7 +141,7 @@ public class SystemOperator
 		}
 	}
 
-	public SystemOperator(ExecutionOperator content)
+	public SystemOperator(EnvironmentEngine content)
 	{
 		this.content = content;
 	}

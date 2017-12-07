@@ -1,7 +1,6 @@
 package edu.ucsc.cross.hse.core.monitor;
 
-import edu.ucsc.cross.hse.core.io.Console;
-import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import org.apache.commons.math3.ode.events.EventHandler;
 
 /*
@@ -16,7 +15,7 @@ public class EventMonitor implements EventHandler
 	private boolean approachingJump; // flag indicating that the environment is approaching a jump, meaning that a jump
 										// has been detected by the ode but the pre-jump value has not been finalized
 
-	private ExecutionOperator manager; // manager of the environment
+	private EnvironmentEngine manager; // manager of the environment
 
 	private boolean running; // flag indicating that the environment is terminating
 
@@ -28,8 +27,7 @@ public class EventMonitor implements EventHandler
 	{
 		approachingJump = false;
 
-		if (!running || (manager.getExecutionContent().getHybridSimTime()
-		.getJumps() >= manager.getExecutionParameters().maximumJumps))
+		if (!manager.getExecutionMonitor().isRunning())
 		{
 
 			return EventHandler.Action.STOP; // continue if jump limit
@@ -48,7 +46,6 @@ public class EventMonitor implements EventHandler
 	@Override
 	public double g(double t, double[] y)
 	{
-		Console.printInfoStatus(manager);
 		manager.getDataManager().performDataActions(t, y, getCheckJumpStatus());
 		return getFlag();
 	}
@@ -69,7 +66,7 @@ public class EventMonitor implements EventHandler
 		boolean jumpOccurring = manager.getSystemControl().checkDomain(true);
 		approachingJump = (approachingJump || jumpOccurring);
 
-		if (jumpOccurring || !running)
+		if (jumpOccurring)
 		{
 			// toggleCount = toggleCount + 1;
 			toggleFlag = -1 * toggleFlag;
@@ -85,6 +82,7 @@ public class EventMonitor implements EventHandler
 	public void init(double t0, double[] y0, double t)
 	{
 		approachingJump = false;
+		running = true;
 	}
 
 	/*
@@ -115,23 +113,14 @@ public class EventMonitor implements EventHandler
 
 	private void executeJumps(double t, double[] y)
 	{
-		JumpStatus jumpStatus = JumpStatus.JUMP_OCCURRED;
-		while (manager.getSystemControl().checkDomain(true))
+		manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
+		while (manager.getExecutionMonitor().isRunning())
 		{
-			if (jumpStatus.equals(JumpStatus.JUMP_OCCURRED))
-			{
-				System.out.println("Jump detected");
-				manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_DETECTED);
-			}
-			if (manager.getExecutionContent().getHybridSimTime()
-			.getJumps() < manager.getSettings().getExecutionParameters().maximumJumps)
+
+			if (manager.getSystemControl().checkDomain(true))
 			{
 				manager.getSystemControl().applyDynamics(true); // execute all jumps
-				manager.getDataManager().performDataActions(t, y, jumpStatus);
-				if (jumpStatus.equals(JumpStatus.JUMP_OCCURRED))
-				{
-					jumpStatus = JumpStatus.MULTI_JUMP_OCCURRED;
-				}
+				manager.getDataManager().performDataActions(t, y, JumpStatus.JUMP_OCCURRED);
 			} else
 			{
 				manager.getSystemControl().applyDynamics(false);
@@ -144,7 +133,7 @@ public class EventMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public EventMonitor(ExecutionOperator manager)
+	public EventMonitor(EnvironmentEngine manager)
 	{
 		this.manager = manager;
 		toggleFlag = 1.0;

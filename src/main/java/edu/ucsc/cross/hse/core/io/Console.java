@@ -1,7 +1,7 @@
 package edu.ucsc.cross.hse.core.io;
 
 import com.be3short.io.info.SystemInfo;
-import edu.ucsc.cross.hse.core.operator.ExecutionOperator;
+import edu.ucsc.cross.hse.core.operator.EnvironmentEngine;
 import edu.ucsc.cross.hse.core.setting.LogSettings;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,13 +26,13 @@ public class Console
 	private static PrintWriter fileOut;
 	private static Double infoStatusPrintInterval;
 
-	private static ExecutionOperator manager;
+	private static EnvironmentEngine manager;
 
-	private static ExecutionOperator getManager()
+	private static EnvironmentEngine getManager()
 	{
 		if (manager == null)
 		{
-			manager = ExecutionOperator.getOperator(null);
+			manager = EnvironmentEngine.getOperator(null);
 		}
 		return manager;
 	}
@@ -88,7 +88,7 @@ public class Console
 		print(LogSettings.infoLabel, message, throwable, OutputType.INFO);
 	}
 
-	public static void printCompleteStatus(ExecutionOperator manager)
+	public static void printCompleteStatus(EnvironmentEngine manager)
 	{
 		if (getManager().getSettings().getLogSettings().numProgressUpdateOutputs > 0)
 		{
@@ -99,12 +99,12 @@ public class Console
 
 	}
 
-	public static void printInfoStatus(ExecutionOperator manager)
+	public static void printInfoStatus(EnvironmentEngine manager)
 	{
 		printInfoStatus(manager, false);
 	}
 
-	public static void printInfoStatus(ExecutionOperator manager, boolean override_time)
+	public static void printInfoStatus(EnvironmentEngine manager, boolean override_time)
 	{
 		if ((getManager().getExecutionContent().getSimulationTime() >= nextInfoPrint) || override_time)
 		{
@@ -116,7 +116,7 @@ public class Console
 			+ getManager().getExecutionContent().getHybridSimTime().getJumps());
 			if (getManager().getExecutionContent().getSimulationTime() >= nextInfoPrint)
 			{
-				nextInfoPrint = nextInfoPrint + infoStatusPrintInterval;
+				nextInfoPrint = getManager().getExecutionContent().getSimulationTime() + infoStatusPrintInterval;
 			}
 		}
 	}
@@ -297,7 +297,7 @@ public class Console
 		debugStatusThread.start();
 	}
 
-	public Console(ExecutionOperator manage)
+	public Console(EnvironmentEngine manage)
 	{
 		manager = manage;
 
