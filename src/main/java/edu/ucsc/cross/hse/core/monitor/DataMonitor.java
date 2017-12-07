@@ -143,8 +143,10 @@ public class DataMonitor
 						removeLastValueFail.printStackTrace();
 					}
 				}
+			} else
+			{
+				System.out.println("yo");
 			}
-
 		} catch (Exception removeValsFail)
 		{
 			removeValsFail.printStackTrace();
@@ -153,6 +155,11 @@ public class DataMonitor
 
 	public void restoreInitialData()
 	{
+		restoreInitialData(true);
+	}
+
+	public void restoreInitialData(boolean clear)
+	{
 		manager.getDataCollector().getStoreTimes().clear();
 		for (Integer objIndex = 0; objIndex < manager.getExecutionContent()
 		.getSimulatedObjectAccessVector().length; objIndex++)
@@ -160,29 +167,51 @@ public class DataMonitor
 			ObjectManipulator obj = manager.getExecutionContent().getSimulatedObjectAccessVector()[objIndex];
 			DataSeries<?> data = manager.getDataCollector().getAllDataSeries().get(objIndex);
 			obj.updateObject(data.getAllStoredData().get(0));
-			data.getAllStoredData().clear();
+			if (clear)
+			{
+				data.getAllStoredData().clear();
+			}
 		}
 	}
 
 	public void revertToLastStoredValue(Double time)
 	{
-		removePreviousVals(time);
-		manager.getExecutionContent().readStateValues(manager.getExecutionContent().updateValueVector(null));
-		manager.getExecutionContent().updateValueVector(null);
-		manager.getExecutionContent().updateSimulationTime(lastTime());
-		storeNewData(lastTime());
+		if (manager.getDataCollector().getStoreTimes().size() > 1)
+		{
+			removePreviousVals(time);
+			manager.getExecutionContent().readStateValues(manager.getExecutionContent().updateValueVector(null));
+			manager.getExecutionContent().updateValueVector(null);
+			manager.getExecutionContent().updateSimulationTime(lastTime());
+			storeNewData(lastTime());
+		} else
+		{
+			restoreInitialData(false);
+			manager.getExecutionContent().updateSimulationTime(manager.getDataCollector().getStoreTimes().get(0));
+			// manager.getExecutionContent().updateValueVector(null);
+		}
 	}
 
 	public void storeNewData(Double time)
 	{
 		// removePreviousVals(time);
-		for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
-		// .getSimulatedObjectAccessVector().length; objIndex++)
+		try
 		{
-			ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
-			.get(data.getParent().toString() + data.getChild().getName());// [objIndex];
-			// DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
-			storeDataGeneral(data, obj.getObject());
+			if (!time.equals(manager.getDataCollector().getStoreTimes().get(0).getTime()))
+			{
+				for (DataSeries<?> data : manager.getDataCollector().getAllDataSeries())
+				// .getSimulatedObjectAccessVector().length; objIndex++)
+				{
+					ObjectManipulator obj = manager.getExecutionContent().getFieldParentMap()
+					.get(data.getParent().toString() + data.getChild().getName());// [objIndex];
+					// DataSeries<?> data = manager.getDataCollector().getGlobalStateData().get(objIndex);
+					storeDataGeneral(data, obj.getObject());
+				}
+			}
+		} catch (
+
+		Exception removeValsFail)
+		{
+			removeValsFail.printStackTrace();
 		}
 		manager.getDataCollector().getStoreTimes()
 		.add(new HybridTime(time, manager.getExecutionContent().getHybridSimTime().getJumps()));

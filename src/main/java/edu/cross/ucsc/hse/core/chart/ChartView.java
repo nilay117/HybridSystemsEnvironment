@@ -176,26 +176,32 @@ public class ChartView
 
 	private void cleanMultiDomainLegend(CombinedDomainXYPlot mplot)
 	{
-		// if (plot.isCombinedDomainPlot())
+		try
 		{
-			ArrayList<String> existingLabels = new ArrayList<String>();
-			LegendItemCollection items = new LegendItemCollection();
-			// System.out.println(mplot.getLegendItems().getItemCount());
-			for (int i = 0; i < mplot.getLegendItems().getItemCount(); i++)
+			// if (plot.isCombinedDomainPlot())
 			{
-
-				LegendItem item = mplot.getLegendItems().get(i);
-				// System.out.println(item.getLabel());
-				if (!existingLabels.contains(item.getLabel()))
+				ArrayList<String> existingLabels = new ArrayList<String>();
+				LegendItemCollection items = new LegendItemCollection();
+				// System.out.println(mplot.getLegendItems().getItemCount());
+				for (int i = 0; i < mplot.getLegendItems().getItemCount(); i++)
 				{
-					if (plot.isDisplayGlobalLegend())
+
+					LegendItem item = mplot.getLegendItems().get(i);
+					// System.out.println(item.getLabel());
+					if (!existingLabels.contains(item.getLabel()))
 					{
-						items.add(item);
-						existingLabels.add(item.getLabel());
+						if (plot.isDisplayGlobalLegend())
+						{
+							items.add(item);
+							existingLabels.add(item.getLabel());
+						}
 					}
 				}
+				mplot.setFixedLegendItems(items);
 			}
-			mplot.setFixedLegendItems(items);
+		} catch (Exception e)
+		{
+
 		}
 	}
 

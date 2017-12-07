@@ -49,7 +49,7 @@ public class ComputationMonitor
 		FirstOrderIntegrator integrator = getSimulationIntegrator();
 		SimulationOperator ode = manager.getSimEngine();
 		double[] y = manager.getExecutionContent().getValueVector();
-
+		manager.getDataManager().storeNewData(manager.getExecutionContent().getHybridSimTime().getTime());
 		if (manager.getSettings().getInterfaceSettings().runInRealTime)
 		{
 			runRealTimeIntegrator(integrator, ode, manager.getExecutionContent().getHybridSimTime().getTime(),
@@ -103,7 +103,17 @@ public class ComputationMonitor
 			return stopTime;
 		} catch (Exception e)
 		{
-			manager.getDataManager().revertToLastStoredValue(manager.getExecutionContent().getSimulationTime());
+			e.printStackTrace();
+			// if (manager.getExecutionContent()
+			// .getSimulationTime() <= manager.getSettings().getComputationSettings().odeMaximumStepSize)
+			// {
+			// manager.getDataManager().restoreInitialData();
+			// } else
+			// {
+			// if (manager.getDataCollector().getStoreTimes().size() > 1)
+			{
+				manager.getDataManager().revertToLastStoredValue(manager.getExecutionContent().getSimulationTime());
+			} // }
 			boolean problemResolved = false;
 			problemResolved = problemResolved || handleStepSizeIssues(e);
 			problemResolved = problemResolved || handleBracketingIssues(e);
