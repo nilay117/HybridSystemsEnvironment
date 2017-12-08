@@ -1,5 +1,6 @@
 package edu.ucsc.cross.hse.core.file;
 
+import com.be3short.io.general.FileSystemInteractor;
 import edu.ucsc.cross.hse.core.container.EnvironmentData;
 import edu.ucsc.cross.hse.core.data.DataSeries;
 import edu.ucsc.cross.hse.core.data.HybridArc;
@@ -42,7 +43,8 @@ public class CSVFileParser
 
 	public void createCSVOutput()
 	{
-		String filepath = "output/"
+		String filepath = EnvironmentEngine.getContainingEnvironment(data).getSettings()
+		.getOutputSettings().outputDirectory + "/"
 		+ EnvironmentEngine.getStartTime(EnvironmentEngine.getContainingEnvironment(data), false).toString()
 		+ "/environmentData.csv";
 		createCSVOutput(new File(filepath));
@@ -98,13 +100,10 @@ public class CSVFileParser
 	{
 		try
 		{
-			// file.mkdirs();
-
+			FileSystemInteractor.createOutputFile(file, "");
 			writers.put(this, new PrintWriter(new FileOutputStream(file)));
-			// file.createNewFile();
 		} catch (Exception e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

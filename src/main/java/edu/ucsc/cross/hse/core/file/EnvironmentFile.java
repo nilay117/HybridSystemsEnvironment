@@ -338,4 +338,24 @@ public class EnvironmentFile implements FileFormat
 		return inputFile;
 	}
 
+	public static void checkforDirs(File file)
+	{
+		try
+		{
+			// file.mkdirs();
+			String directory = "";
+			String dirs[] = file.getAbsolutePath().split("/");
+			for (int i = 0; i < dirs.length - 1; i++)
+			{
+				directory += dirs[i] + "/";
+			}
+			File dirFile = new File(directory);
+			dirFile.mkdirs();
+
+		} catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

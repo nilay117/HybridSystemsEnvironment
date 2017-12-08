@@ -200,7 +200,7 @@ public class DataMonitor
 
 	private void loadData(double state_vector[], JumpStatus jump_status)
 	{
-		if (jump_status.equals(JumpStatus.JUMP_OCCURRED) || jump_status.equals(JumpStatus.MULTI_JUMP_OCCURRED))
+		if (jump_status.equals(JumpStatus.JUMP_OCCURRED))
 		{
 			manager.getExecutionContent().updateValueVector(state_vector);
 		} else

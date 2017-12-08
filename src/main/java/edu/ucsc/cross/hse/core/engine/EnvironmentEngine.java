@@ -12,7 +12,7 @@ import edu.ucsc.cross.hse.core.file.EnvironmentFile;
 import edu.ucsc.cross.hse.core.io.Console;
 import edu.ucsc.cross.hse.core.monitor.ComputationMonitor;
 import edu.ucsc.cross.hse.core.monitor.DataMonitor;
-import edu.ucsc.cross.hse.core.monitor.DomainMonitor;
+import edu.ucsc.cross.hse.core.monitor.DynamicsMonitor;
 import edu.ucsc.cross.hse.core.monitor.InterruptMonitor;
 import edu.ucsc.cross.hse.core.object.HybridSystem;
 import edu.ucsc.cross.hse.core.operator.ObjectOperator;
@@ -36,7 +36,7 @@ public class EnvironmentEngine
 	DataMonitor dataManager;
 	ComputationMonitor computationMonitor;
 	InterruptMonitor executionMonitor;
-	DomainMonitor jumpEvaluator;
+	DynamicsMonitor jumpEvaluator;
 
 	// Operators
 	SimulationOperator simEngine;
@@ -93,7 +93,7 @@ public class EnvironmentEngine
 		return env.getSettings().getExecutionParameters();
 	}
 
-	public DomainMonitor getJumpEvaluator()
+	public DynamicsMonitor getJumpEvaluator()
 	{
 		return jumpEvaluator;
 	}
@@ -121,7 +121,7 @@ public class EnvironmentEngine
 	public void initializeComponents()
 	{
 		simEngine = new SimulationOperator(this);
-		jumpEvaluator = new DomainMonitor(this);
+		jumpEvaluator = new DynamicsMonitor(this);
 		computationMonitor = new ComputationMonitor(this);
 		dataManager = new DataMonitor(this);
 		systemControl = new SystemOperator(this);

@@ -103,31 +103,6 @@ public class EnvironmentContents
 		time = new HybridTime(0.0, 0);
 		// addresses.put(this, new HashMap<Integer, HybridSystem<?>>());
 	}
-	//
-	// private static HashMap<EnvironmentContents, HashMap<Integer, HybridSystem<?>>> addresses = new
-	// HashMap<EnvironmentContents, HashMap<Integer, HybridSystem<?>>>();
-	//
-	// public static <T extends ObjectSet> HybridSystem<T> getSystem(HybridSystem<?> source, Integer address)
-	// {
-	// for (EnvironmentContents content : addresses.keySet())
-	// {
-	// if (content.systems.contains(address))
-	// {
-	// return (HybridSystem<T>) addresses.get(content).get(address);
-	// }
-	// {
-	// for (HybridSystem<?> sys : content.systems)
-	// {
-	// if (sys.getState().data().getAddress().equals(address))
-	// {
-	// addresses.get(content).put(address, sys);
-	// return (HybridSystem<T>) sys;
-	// }
-	// }
-	// }
-	// }
-	// return null;
-	// }
 
 	public HybridTime getTime()
 	{

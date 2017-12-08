@@ -57,13 +57,24 @@ public class DataGeneratorTasks extends TaskManager
 		// env.generateOutputs();
 	}
 
+	public void exampleSetup()
+	{
+		Environment environment = new Environment();
+		SensorSystem sensor = getSensor(1.0, 1.0, 0.0, 0.0);
+		ChartConfiguration plot = sensorPlot();
+		environment.add(sensor);
+		environment.add(plot);
+		environment.start(20.0, 10);
+		plot.createChart(environment);
+	}
+
 	public static void dataGeneratorSimulation()
 	{
 		Environment env = getConfiguredEnvironment();
 
 		ChartConfiguration HybridChart1 = xyCombination();
 		ChartConfiguration HybridChart2 = xOnly();
-		ChartConfiguration HybridChart3 = xyVsTimeVertical();
+		ChartConfiguration HybridChart3 = sensorPlot();
 		// env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 5; i++)
 		{
@@ -76,11 +87,28 @@ public class DataGeneratorTasks extends TaskManager
 		// HybridChart1.createChart(env);
 		// HybridChart2.createChart(env);
 		// HybridChart3.createChart(env);
-		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
+		// env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
 		// cv.setChartProperties(HybridChart2);
+
+	}
+
+	public static SensorSystem getSensor(Double generated_data_size, Double generation_interval,
+	Double initial_data_size, Double initial_generation_time)
+	{
+
+		// initialize parameters with argument values
+		SensorParameters parameters = new SensorParameters(generated_data_size, generation_interval);
+
+		// initialize state with argument values
+		SensorState state = new SensorState(initial_data_size, initial_generation_time);
+
+		// create data generator hybrid system
+		SensorSystem system = new SensorSystem(state, parameters);
+
+		return system;
 
 	}
 
@@ -90,7 +118,7 @@ public class DataGeneratorTasks extends TaskManager
 
 		ChartConfiguration HybridChart1 = xyCombination();
 		ChartConfiguration HybridChart2 = xOnly();
-		ChartConfiguration HybridChart3 = xyVsTimeVertical();
+		ChartConfiguration HybridChart3 = sensorPlot();
 		// env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 1; i++)
 		{
@@ -99,18 +127,18 @@ public class DataGeneratorTasks extends TaskManager
 			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
 
-		DataGeneratorSystem test = DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0);
+		SensorSystem test = DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0);
 		env.add(test);
 		env.start(10.0, 100000);
-		xyVsTimeVertical().createChart(env);
+		sensorPlot().createChart(env);
 		// xyCombination().createChart(env);
 		// HybridChart1.createChart(env);
 		// HybridChart2.createChart(env);
 		// HybridChart3.createChart(env);
-		env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
+		// env.getData().exportToCSVFile();// new File("output/testCSV.csv"));
 
-		System.out.println(XMLParser.serializeObject(env.getData().getSolution(test.getState())));
-		env.getData().getSolution(test.getState()).exportToCSVFile(new File("output/testCSV.csv"));
+		// System.out.println(XMLParser.serializeObject(env.getData().getSolution(test.getState())));
+		// env.getData().getSolution(test.getState()).exportToCSVFile(new File("output/testCSV.csv"));
 		// env.save(new File("output/test"), false);
 		// //env.save(new File("output/testDat"), true);
 		// ChartView cv = new ChartView(env.getData(), HybridChart1, new Stage());
@@ -124,7 +152,7 @@ public class DataGeneratorTasks extends TaskManager
 
 		ChartConfiguration HybridChart1 = xyCombination();
 		ChartConfiguration HybridChart2 = xOnly();
-		ChartConfiguration HybridChart3 = xyVsTimeVertical();
+		ChartConfiguration HybridChart3 = sensorPlot();
 		// env.add(HybridChart1, HybridChart2, HybridChart3);
 		for (int i = 0; i < 1; i++)
 		{
@@ -133,10 +161,10 @@ public class DataGeneratorTasks extends TaskManager
 			env.add(DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0));
 		}
 
-		DataGeneratorSystem test = DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0);
+		SensorSystem test = DataGeneratorOperations.getRandomizedGenerator(1.0, 1.0, 1.0, 1.0);
 		env.add(test);
 		env.start(10.0, 100000);
-		xyVsTimeVertical().createChart(env);
+		sensorPlot().createChart(env);
 		// xyCombination().createChart(env);
 		// HybridChart1.createChart(env);
 		// HybridChart2.createChart(env);
@@ -227,7 +255,7 @@ public class DataGeneratorTasks extends TaskManager
 		return plot;
 	}
 
-	public static ChartConfiguration xyVsTimeVertical()
+	public static ChartConfiguration sensorPlot()
 	{
 		// Create a new plot configuration with specified width (600.0) and height (600.0)
 		ChartConfiguration plot = new ChartConfiguration(650.0, 400.0);
@@ -235,8 +263,45 @@ public class DataGeneratorTasks extends TaskManager
 		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
 		plot.setLayout(new Integer[][]
 		{
-				{ 0, 0, 0 },
-				{ 1, 1, 1 } });
+				{ 0, },
+				{ 1 } });
+		// plot.assignColors("DataGeneratorState", Color.black, Color.gray, Color.DARK_GRAY);
+		// plot.assignStrokes("DataGeneratorState", new BasicStroke(0.5f));// Select data to display
+		// * selections should be a string that matches the variable name of the data to be selected
+		// * null is used to select time as the x axis values
+		plot.chartProperties(1).setAxisSelections(null, "dataGenerated");
+		plot.chartProperties(0).setAxisSelections(null, "timeToNextData");
+
+		// Select axis labels
+		// * null is used to hide an axis label
+		plot.chartProperties(1).setAxisLabels("Time (sec)", "Data Generated");
+		plot.chartProperties(0).setAxisLabels("Time (sec)", "Time to Next Generation");
+		// Specify legend visibility
+		plot.chartProperties(0).setDisplayLegend(false);
+		plot.chartProperties(1).setDisplayLegend(true);
+		// Specify overall title for the plot
+		// * null is used to indicate no sub plot title
+		// * there are no sub plot titles by default so following lines can be ommitted for no sub plot titles
+		plot.chartProperties(0).setTitle("Total Sensor Data");
+		plot.chartProperties(1).setTitle(null);
+
+		// Specify overall title for the plot
+		// * null is used to indicate no main title
+		// * there is no main title by default so following line can be ommitted if no main title is desired
+		plot.addMainTitle(null, null);
+		return plot;
+	}
+
+	public static ChartConfiguration sensorPlotCommented()
+	{
+		// Create a new plot configuration with specified width (600.0) and height (600.0)
+		ChartConfiguration plot = new ChartConfiguration(650.0, 400.0);
+		// plot.
+		// Set layout to generate two horizontal plots with plot 0 on top and plot 1 on the bottom
+		plot.setLayout(new Integer[][]
+		{
+				{ 0, },
+				{ 1 } });
 		// plot.assignColors("DataGeneratorState", Color.black, Color.gray, Color.DARK_GRAY);
 		// plot.assignStrokes("DataGeneratorState", new BasicStroke(0.5f));// Select data to display
 		// * selections should be a string that matches the variable name of the data to be selected

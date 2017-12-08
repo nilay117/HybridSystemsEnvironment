@@ -7,7 +7,7 @@ import org.apache.commons.math3.ode.events.EventHandler;
  * Continuously monitors the system to interrupt the system upon each jump detected. This allows the ODE to function
  * smoothly as the discontinuities are addressed discretely while the solver is paused
  */
-public class DomainMonitor implements EventHandler
+public class DynamicsMonitor implements EventHandler
 {
 
 	public Double toggleFlag; // toggle value that switches sign if an event has occurred since the last check
@@ -118,7 +118,7 @@ public class DomainMonitor implements EventHandler
 	/*
 	 * Constructor to link the environment
 	 */
-	public DomainMonitor(EnvironmentEngine manager)
+	public DynamicsMonitor(EnvironmentEngine manager)
 	{
 		this.manager = manager;
 		toggleFlag = 1.0;

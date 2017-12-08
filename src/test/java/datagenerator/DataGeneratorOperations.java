@@ -50,27 +50,27 @@ public class DataGeneratorOperations extends TaskManager
 		return e;
 	}
 
-	public static DataGeneratorSystem getGenerator(Double generated_data_size, Double generation_interval,
+	public static SensorSystem getGenerator(Double generated_data_size, Double generation_interval,
 	Double initial_data_size, Double initial_generation_time)
 	{
 
 		// initialize parameters with argument values
-		DataGeneratorParameters parameters = new DataGeneratorParameters(generated_data_size, generation_interval);
+		SensorParameters parameters = new SensorParameters(generated_data_size, generation_interval);
 
 		// initialize state with argument values
-		DataGeneratorState state = new DataGeneratorState(initial_data_size, initial_generation_time);
+		SensorState state = new SensorState(initial_data_size, initial_generation_time);
 
 		// create data generator hybrid system
-		DataGeneratorSystem system = new DataGeneratorSystem(state, parameters);
+		SensorSystem system = new SensorSystem(state, parameters);
 
 		return system;
 
 	}
 
-	public static ArrayList<DataGeneratorSystem> getRandomizedGenerators(Integer num_generators, Double random_interval,
+	public static ArrayList<SensorSystem> getRandomizedGenerators(Integer num_generators, Double random_interval,
 	Double fixed_interval, Double random_gen_size, Double fixed_gen_size)
 	{
-		ArrayList<DataGeneratorSystem> systems = new ArrayList<DataGeneratorSystem>();
+		ArrayList<SensorSystem> systems = new ArrayList<SensorSystem>();
 
 		for (int index = 0; index < num_generators; index++)
 		{
@@ -81,13 +81,13 @@ public class DataGeneratorOperations extends TaskManager
 			Double randomSize = random_gen_size * Math.random() + fixed_gen_size;
 
 			// initialize parameters
-			DataGeneratorParameters parameters = new DataGeneratorParameters(randomInterval, randomSize);
+			SensorParameters parameters = new SensorParameters(randomInterval, randomSize);
 
 			// initialize state
-			DataGeneratorState state = new DataGeneratorState(0, parameters.generationInterval);
+			SensorState state = new SensorState(0, parameters.generationInterval);
 
 			// initialize system
-			DataGeneratorSystem system = new DataGeneratorSystem(state, parameters);
+			SensorSystem system = new SensorSystem(state, parameters);
 
 			// load the current data generator system into environment
 			systems.add(system);
@@ -278,16 +278,16 @@ public class DataGeneratorOperations extends TaskManager
 		return plot;
 	}
 
-	public static DataGeneratorSystem getRandomizedGenerator(Double random_interval, Double fixed_interval,
+	public static SensorSystem getRandomizedGenerator(Double random_interval, Double fixed_interval,
 	Double random_gen_size, Double fixed_gen_size)
 	{
 
-		DataGeneratorParameters p = new DataGeneratorParameters(random_interval * Math.random() + fixed_interval,
+		SensorParameters p = new SensorParameters(random_interval * Math.random() + fixed_interval,
 		random_gen_size * Math.random() + fixed_gen_size);
 
-		DataGeneratorState state = new DataGeneratorState(0, p.generationInterval);
+		SensorState state = new SensorState(0, p.generationInterval);
 
-		DataGeneratorSystem sys = new DataGeneratorSystem(state, p);
+		SensorSystem sys = new SensorSystem(state, p);
 		return sys;
 	}
 
