@@ -171,8 +171,7 @@ public class EnvironmentEngine
 		if (env.getSettings().getOutputSettings().saveConfigurationToFile)
 		{
 			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
-			env.getSettings().getOutputSettings().configurationFileName
-			+ EnvironmentEngine.getStartTime(env, true).toString());
+			env.getSettings().getOutputSettings().configurationFileName + EnvironmentEngine.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
 			env.save(spe, false);
 			Console.info("Configuration saved: " + spe.getAbsolutePath());
@@ -181,8 +180,7 @@ public class EnvironmentEngine
 		if (env.getSettings().getOutputSettings().saveEnvironmentToFile)
 		{
 			FileSpecifications<EnvironmentFile> specs = getFileSpecifications(env, new EnvironmentFile(),
-			env.getSettings().getOutputSettings().environmentFileName
-			+ EnvironmentEngine.getStartTime(env, true).toString());
+			env.getSettings().getOutputSettings().environmentFileName + EnvironmentEngine.getStartTime(env, true).toString());
 			File spe = specs.getLocation(true);
 			env.save(spe, true);
 			Console.info("Environment saved: " + spe.getAbsolutePath());

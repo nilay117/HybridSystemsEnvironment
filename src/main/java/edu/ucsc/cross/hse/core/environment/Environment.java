@@ -47,6 +47,11 @@ public class Environment
 		outputs.addChart(plot, path, format);
 	}
 
+	/*
+	 * Add new hybrid systems to the environment contents
+	 * 
+	 * @param new_systems - list of systems to add
+	 */
 	public void add(HybridSystem<?>... new_systems)
 	{
 		content.add(new_systems);

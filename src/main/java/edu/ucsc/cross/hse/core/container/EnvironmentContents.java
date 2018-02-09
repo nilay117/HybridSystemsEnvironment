@@ -13,6 +13,11 @@ public class EnvironmentContents
 	private ArrayList<HybridSystem<?>> systems;
 	private HybridTime time;
 
+	/*
+	 * Add new hybrid systems to the environment contents
+	 * 
+	 * @param new_systems - list of systems to add
+	 */
 	public void add(HybridSystem<?>... new_systems)
 	{
 		for (HybridSystem<?> sys : new_systems)
@@ -24,6 +29,11 @@ public class EnvironmentContents
 		}
 	}
 
+	/*
+	 * Add multiple copies of a hybrid system to the environment contents
+	 * 
+	 * @param new_systems - list of systems to add
+	 */
 	public void add(HybridSystem<?> system, Integer quantity)
 	{
 		add(system);
@@ -34,6 +44,11 @@ public class EnvironmentContents
 		}
 	}
 
+	/*
+	 * Add new network topologies to the environment contents
+	 * 
+	 * @param new_networks - list of networks to add
+	 */
 	public void add(Network<?, ?, ?>... new_networks)
 	{
 		for (Network<?, ?, ?> sys : new_networks)

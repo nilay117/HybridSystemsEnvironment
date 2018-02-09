@@ -3,6 +3,7 @@ package edu.ucsc.cross.hse.core.object;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.collections.set.ListOrderedSet;
+import org.jgrapht.EdgeFactory;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.DirectedPseudograph;
@@ -15,6 +16,12 @@ public class Network<N, C, P>
 	private HashMap<C, P> properties;
 
 	public Network(Class<C> connection_class)
+	{
+		graph = new DirectedPseudograph<N, C>(connection_class);// f);
+		paths = new AllDirectedPaths<N, C>(graph);
+	}
+
+	public Network(EdgeFactory<N, C> connection_class)
 	{
 		graph = new DirectedPseudograph<N, C>(connection_class);// f);
 		paths = new AllDirectedPaths<N, C>(graph);
